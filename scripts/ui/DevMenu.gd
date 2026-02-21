@@ -157,18 +157,41 @@ func _unlock_range(prefix: String, from: int, to: int) -> void:
 		GameState.unlock_mission("%s%02d" % [prefix, i])
 
 func _run_tests() -> void:
-	var runner = load("res://tests/unit/test_game_logic.gd").new()
+	var runner_script = load("res://tests/runner/TestRunner.gd")
+	var runner = runner_script.new()
 	add_child(runner)
+
 	var output = runner.run_all()
 	runner.queue_free()
 
-	# Show results in a popup
-	var popup = AcceptDialog.new()
-	popup.title = "Unit Test Results"
-	popup.dialog_text = output
-	popup.min_size = Vector2(600, 500)
-	add_child(popup)
-	popup.popup_centered()
+	# Show results in scrollable popup
+	var dialog = Window.new()
+	dialog.title = "Test Results — Ash & Oil"
+	dialog.size   = Vector2i(700, 550)
+	dialog.unresizable = false
+	add_child(dialog)
+
+	var vbox = VBoxContainer.new()
+	vbox.set_anchors_preset(Control.PRESET_FULL_RECT)
+	dialog.add_child(vbox)
+
+	var scroll = ScrollContainer.new()
+	scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	vbox.add_child(scroll)
+
+	var lbl = Label.new()
+	lbl.text = output
+	lbl.add_theme_font_size_override("font_size", 11)
+	lbl.add_theme_color_override("font_color", Color(0.85, 0.85, 0.85))
+	lbl.autowrap_mode = TextServer.AUTOWRAP_WORD
+	scroll.add_child(lbl)
+
+	var close_btn = Button.new()
+	close_btn.text = "CLOSE"
+	close_btn.pressed.connect(func(): dialog.queue_free())
+	vbox.add_child(close_btn)
+
+	dialog.popup_centered()
 
 func _unlock_sides() -> void:
 	for sid in ["S01","S02","S03","S04","S05","S06","S07","S08","S09","S10","S11","S12","S13","S14","S15"]:
