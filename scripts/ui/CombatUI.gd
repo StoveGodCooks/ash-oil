@@ -1,6 +1,8 @@
 extends Control
 ## Full combat screen with UI built programmatically
 
+const LOG_AUTOWRAP_MODE: TextServer.AutowrapMode = TextServer.AutowrapMode.AUTOWRAP_WORD
+
 # ============ COMBAT STATE ============
 var champion_hp: int = 30
 var champion_max_hp: int = 30
@@ -197,7 +199,7 @@ func _build_ui() -> void:
 	log_label = Label.new()
 	log_label.text = "Combat begins..."
 	log_label.add_theme_font_size_override("font_size", 11)
-	log_label.autowrap_mode = TextServer.AUTOWRAP_WORD
+	log_label.autowrap_mode = LOG_AUTOWRAP_MODE
 	log_label.custom_minimum_size = Vector2(0, 60)
 	main_vbox.add_child(log_label)
 
@@ -396,8 +398,7 @@ func _on_victory() -> void:
 	_log("=== VICTORY! All enemies defeated! ===")
 	_update_all_ui()
 
-	GameState.change_meter("RENOWN", 2)
-	GameState.add_gold(50)
+	# Rewards/meters are applied by MissionManager from missions.json.
 	MissionManager.complete_mission("M01")
 
 	end_turn_btn.text = "CONTINUE →"

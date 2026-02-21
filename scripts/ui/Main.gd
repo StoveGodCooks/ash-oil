@@ -81,5 +81,6 @@ func _on_continue_pressed() -> void:
 	if SaveManager.load_game(1):
 		print("--- GAME LOADED ---")
 		print("RENOWN: %d | HEAT: %d | Gold: %d" % [GameState.RENOWN, GameState.HEAT, GameState.gold])
+		get_tree().change_scene_to_file("res://scenes/CombatScreen.tscn")
 	else:
 		print("No save file found!")

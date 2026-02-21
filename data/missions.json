@@ -1,0 +1,18 @@
+{
+  "M01": {
+    "title": "The Token",
+    "meter_changes": {
+      "RENOWN": 2
+    },
+    "relationships": {
+      "Marcus": 1
+    },
+    "hooks_created": [],
+    "victory_rewards": {
+      "gold": 50
+    },
+    "retreat_rewards": {
+      "gold": 10
+    }
+  }
+}
