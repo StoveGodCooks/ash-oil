@@ -1,0 +1,342 @@
+Hook Object Schema (minimal + future-proof)
+
+Hook
+
+hookId (uuid)
+
+type (enum)
+
+subjectIds (array: teammateId(s), vowType, etc.)
+
+createdAt (act, missionIndex, hubVisitIndex)
+
+escalationLevel (0–3)
+
+ignoredCount (int)
+
+state (active | resolved | suppressed)
+
+ttl (optional; default none)
+
+meta (freeform: severity, cause, rivalId, etc.)
+
+Contract
+
+resolveHooks[] (list of hook type+subject matchers)
+
+resolveMode (full | partial | convert)
+
+failOutcome (escalate | mutate | createNewHook)
+
+onComplete effects (heal, bond, gold, etc.)
+
+1) Hook Generation Triggers (after every expedition)
+
+Hooks are generated in a single pass, post-expedition, using the signals you already list. (Progress, Party Condition, Relationship State, Economy, Rival State). Your board doc already mandates “After every expedition, generate Hooks.” ✅
+
+Injury Hooks (the ones you asked about explicitly)
+
+We map directly onto your injury tiers:
+
+injury_minor: teammateId
+
+Create when any of these are true:
+
+Teammate gains Tier 1 Minor Wound during expedition (first time this expedition).
+
+Teammate ends expedition with 1 active Minor and no existing injury hook for them.
+
+Meta suggested:
+
+meta.severity = "minor"
+
+meta.countMinor = N (current minor count)
+
+meta.source = "knockout" | "crit" | "hazard" | ...
+
+injury_major: teammateId
+
+Create when any of these are true:
+
+Teammate gains Tier 2 Serious OR Tier 3 Grave injury.
+
+Teammate ends expedition with 2+ Minor injuries (even if they didn’t roll into Serious yet).
+
+Rationale: your injury system explicitly warns that 2 minors is “danger zone.”
+
+Meta suggested:
+
+meta.severity = "serious" | "grave" | "minor_stack"
+
+meta.countMinor = N
+
+meta.hasSerious = true/false
+
+meta.hasGrave = true/false
+
+Rule of thumb:
+
+0–1 minor = injury_minor
+
+2+ minor OR serious/grave = injury_major
+
+Other core hook triggers (tight set; everything else can be added later)
+low_supplies
+
+Create when:
+
+Supplies below threshold (you already track supply level).
+Meta: meta.supplyBand = "low" | "critical"
+
+debt_pressure (if debt enabled)
+
+Create when:
+
+Debt burden > threshold or interest tick triggered.
+Meta: meta.debtBand
+
+bond_fracture: A,B
+
+Create when:
+
+A specific pair triggers fracture tag (argument, sacrifice ignored, betrayal flag, etc.)
+
+trust_drop: teammateId
+
+Create when:
+
+A trust drop tag is recorded (hidden meter) OR vow broken against that teammate.
+
+vow_created / vow_broken
+
+Create when:
+
+Vow created/broken tag occurs.
+
+rival_targets: teammateId
+
+Create when:
+
+Rival state sets/changes a targeted teammate OR “attempted intrusion” event occurs.
+
+2) Hook Escalation Rules (Level 0 → 1 → 2 → 3)
+
+Your board doc already says: ignored hooks increment escalation counters, cap at 3. Here’s the exact behavior.
+
+What counts as “ignored”
+
+A hook is “ignored” if a hub visit occurs and:
+
+No chosen contract resolves it (full/partial/convert), AND
+
+No hub service resolves it (doctor/shaman, mediation, pay debt, etc.)
+
+Then:
+
+ignoredCount += 1
+
+escalationLevel = min(3, escalationLevel + 1)
+
+Global escalation effects (applies to all hook types)
+
+At each escalation level, apply these general knobs to any contract that targets the hook:
+
+L0 (fresh): normal
+
+Resolver contracts appear with normal risk/reward.
+
+L1: pressure
+
+Resolver contracts gain +1 Risk Tag (Timed / Injury Risk / Elite Presence — pick one that fits).
+
+Resolver rewards get a small boost (player feels the pull).
+
+L2: consequences begin
+
+If hook still active at hub arrival: apply a soft penalty immediately (type-specific below).
+
+Resolver contracts become harder (enemy tier bump / trial modifier more likely).
+
+L3 (cap): forced or breaking point
+
+Board must generate at least 1 “Hard Resolver” contract that is the best/cleanest fix, but costly.
+
+If the player still doesn’t resolve it this visit, trigger a forced event on departure or in next expedition start (type-specific below).
+
+3) Type-Specific Escalation Effects (what actually happens)
+A) Injury Hooks
+injury_minor escalation
+
+L0: show 1–2 Recovery contracts as normal.
+
+L1: recovery contracts add Injury Risk tag (or “Timed Extraction”).
+
+L2: apply a minor readiness penalty at expedition start:
+
+the injured teammate starts with -1 Stamina on Turn 1 or -2 HP at Wave start (pick one globally).
+
+L3: trigger a mandatory dilemma:
+
+Either: “sit them out this mission” prompt (free)
+
+Or: accept a harder recovery contract as your side slot (board guarantees it).
+
+Resolution for injury_minor:
+
+Completing a recovery contract that includes Heal/Reduce Injury resolves it.
+
+Using hub Doctor to heal resolves it immediately.
+
+If injury naturally heals (sit-out mechanic) resolves at completion.
+
+injury_major escalation
+
+L0: recovery contracts appear, plus “safe route” variants.
+
+L1: increase the chance of Serious worsening events (no new injury tier needed; just tension).
+
+L2: apply a major readiness penalty until resolved:
+
+“start each combat with Weakened 1” or “max HP -10% during expedition only”
+
+L3: forced event:
+
+“Medical Crisis” contract is guaranteed on board (counts as one of the minimum 2 resolver contracts), and if skipped:
+
+the teammate gains an additional Minor (if serious) OR a permanent scar check (if already grave-risk tagged)
+
+Resolution for injury_major:
+
+A contract can resolve via:
+
+Full: reduces injury tier (Serious → Minor) or removes stacked minors
+
+Convert: turns injury_major into injury_minor (e.g., stabilized but not healed)
+
+Hub advanced doctor/shaman options can:
+
+Resolve full or convert depending on service used.
+
+This matches your injury system’s escalation warnings and makes “ignoring injuries” mechanically felt without instantly bricking a run.
+
+B) Relationship Hooks (bond_fracture, trust_drop, vow_broken, grief_active)
+
+L1: resolver contracts gain “Mid difficulty” + “Narrative consequence if failed” tag (you already list this).
+
+L2: apply a pair penalty:
+
+the involved pair starts expeditions with -1 hand size on Turn 1 (or “first support card played is weakened”).
+
+L3: forced event:
+
+“Blowup” at expedition start: choose one:
+
+lock out “support cards” for that pair for 1 wave
+
+or accept a mediation contract that consumes a side slot
+
+Resolution:
+
+“Mediation Run / Forced Pairing / Personal Errand” contracts resolve.
+
+Failure typically escalates (not resolves).
+
+C) Economy Hooks (low_supplies, debt_pressure)
+
+L1: shop offers include more “Supply” entries (counter-weighting synergy).
+
+L2: apply a consumption penalty:
+
+start expedition with -1 consumable charge / reduced rest effectiveness
+
+L3: forced event:
+
+“Shortage” adds a Trial modifier to next expedition if still ignored.
+
+Resolution:
+
+Completing supply convoy / salvage resolves.
+
+Paying debt / restocking resolves.
+
+D) Rival Hooks (rival_targets)
+
+This interacts with your existing Rival Clock and Rival Contract trigger (vengeanceClock==6).
+
+L1: increase “Rival Presence” risk tag chance in board generation.
+
+L2: “intrusion chance” can trigger a mid-expedition encounter modifier.
+
+L3: if not addressed, advance Vengeance Clock by +1 automatically (or force a rival slot next board if near cap).
+
+Resolution:
+
+Rescue/intercept/bait contracts resolve or suppress depending on outcome:
+
+Win intercept: resolves
+
+Ignore bait: escalates + heat
+
+Rescue success: resolves + reduces heat
+
+4) Resolution Conditions (how a contract resolves a hook)
+
+Each contract declares exactly what it can do:
+
+Resolution modes
+
+Full resolve: hook removed (state=resolved)
+
+Partial resolve: reduces escalation (escalationLevel -= 1, ignoredCount reset), hook remains
+
+Convert: hook changes type (injury_major → injury_minor, trust_drop → bond_fracture, etc.)
+
+Suppress: hook hidden for N visits but returns (good for rivals)
+
+Completion/Failure mapping (standard)
+
+If contract completed: apply resolveMode
+
+If contract failed:
+
+For “recovery/relationship” contracts: default failOutcome=escalate
+
+For economy/rival: failOutcome=mutate (creates follow-up hook like debt_pressure or rival_heat_spike)
+
+Required rule (keep your board guarantee consistent)
+
+At each hub visit:
+
+Board must offer ≥2 contracts whose resolveHooks[] match active hooks (your doc already mandates this).
+
+If hooks are few, those slots become build-enablers.
+
+Quick Example (shows the whole loop)
+
+Player finishes expedition with:
+
+Teammate Kira has 2 minors → create injury_major: kira (minor_stack)
+
+Supplies low → low_supplies
+
+Rival targets Marcus → rival_targets: marcus
+
+Next hub board must include at least 2 resolvers, e.g.:
+
+Field Medic Escort (resolves injury_major:kira convert→minor)
+
+Supply Convoy (resolves low_supplies)
+Plus:
+
+A build enabler
+
+A wildcard / maybe rival slot if clock capped
+
+If player ignores medic contract:
+
+injury_major:kira escalates L0→L1
+Repeat ignores:
+
+At L2, Kira starts fights penalized
+
+At L3, a “Medical Crisis” hard resolver is guaranteed and skipping causes a forced consequence

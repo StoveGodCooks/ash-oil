@@ -1,0 +1,205 @@
+# SYSTEM BLIND SPOT AUDIT  
+## Card Game – Structural Review (v1)
+
+This document outlines potential blind spots discovered during a full-system audit.  
+These are not criticisms — they are pressure-test points meant to strengthen the design before scaling.
+
+---
+
+# 1️⃣ Combat System Blind Spots
+
+## 1.1 Mana Tempo Compression
+
+### Risk:
+Mana generation currently scales from:
+- +1 passive per turn
+- +1 per card played (up to +2)
+- +1 per 5 damage taken
+- Accessories and gear modifiers
+- Faction interactions (e.g., Enraged builds)
+
+In optimized builds, Ability 2 (7 Mana) may become accessible too early (Turn 2 in edge cases).
+
+### Why It Matters:
+This compresses combat pacing and may trivialize mid-fight tension.
+
+### Recommendation:
+- Implement a **hard cap on Mana gained per turn** (e.g., max 4 from sources, excluding passive).
+- Monitor Ability 2 timing across all factions in Act 1 and Act 2.
+
+---
+
+## 1.2 AEGIS Long-Fight Dominance
+
+### Risk:
+Armor:
+- Does not decay
+- Converts to HP (Fortress)
+- Can double
+- Has cap increases via gear
+- Can scale very high in drawn-out fights
+
+AEGIS may become mathematically dominant in long encounters, especially vs non-poison factions.
+
+### Why It Matters:
+If long fights favor AEGIS too strongly, faction triangle balance erodes.
+
+### Recommendation:
+- Introduce more **Armor Shred mechanics** in Act 2+ enemies.
+- Add boss traits that temporarily reduce Armor caps.
+- Ensure ECLIPSE and SPECTER have reliable scaling counters.
+
+---
+
+## 1.3 Poison Exponential Scaling
+
+### Risk:
+SPECTER’s Poison:
+- Scales passively via Miasma
+- Doubles via Plague Mastery
+- Deals immediate and over-time damage
+
+In multi-enemy fights, poison can spike extremely high if allowed to stack uncontested.
+
+### Why It Matters:
+Late-game builds may default to poison dominance.
+
+### Recommendation:
+- Ensure late-game enemies include partial cleanse or poison mitigation.
+- Monitor poison cap reach frequency.
+- Track whether poison becomes the safest universal strategy.
+
+---
+
+# 2️⃣ Gear System Blind Spots
+
+## 2.1 Accessory Slot Overload
+
+### Risk:
+Accessory slot currently influences:
+- Mana generation
+- Card draw
+- Stamina
+- Status scaling
+- Tempo acceleration
+
+It carries more systemic weight than weapon or armor slots.
+
+### Why It Matters:
+Optimal builds may revolve around accessory selection more than core identity.
+
+### Recommendation:
+- Introduce select Weapons or Armor pieces that affect resource flow.
+- Slightly redistribute systemic influence away from accessories.
+
+---
+
+# 3️⃣ Faction Triangle Stability
+
+### Current Triangle:
+- AEGIS > ECLIPSE
+- ECLIPSE > SPECTER
+- SPECTER > AEGIS
+
+### Blind Spot:
+High-skill players may lean toward SPECTER due to:
+- Poison bypassing armor
+- Control reducing burst threats
+- Exponential scaling
+
+### Recommendation:
+- Playtest late-game meta for faction drift.
+- Ensure cleanse and disruption mechanics remain relevant at high tiers.
+
+---
+
+# 4️⃣ Contract Board & Hook System
+
+## 4.1 Escalation Legibility
+
+### Risk:
+Hooks escalate internally if ignored.
+
+If escalation is not visibly reflected in:
+- Contract tone
+- Dialogue tension
+- Risk tags
+- Rival behavior
+
+Players may perceive punishment as arbitrary.
+
+### Recommendation:
+- Escalation must be emotionally legible, not numerically visible.
+- Contracts should visibly feel more desperate or volatile over time.
+
+---
+
+# 5️⃣ Economy Pressure Curve
+
+### Observation:
+Economy is healthy overall.
+Projected deficit encourages meaningful decisions.
+
+### Blind Spot:
+Early-game gold totals may feel slightly comfortable unless sinks apply pressure.
+
+### Recommendation:
+- Slightly increase early healing or upgrade pressure.
+- Ensure Act 1 choices carry opportunity cost.
+
+---
+
+# 6️⃣ Final Boss Variant System
+
+### Strength:
+Final boss phases dynamically react to:
+- Loyalty Index
+- Cohesion Index
+- Debt Burden
+- Rival Heat
+- Faction Alignment
+
+### Blind Spot:
+If consequences are not foreshadowed throughout the campaign, players may feel blindsided by endings like:
+- Mutiny
+- Blood Ledger
+
+### Recommendation:
+- Seed terminal “receipts”
+- Add subtle narrative warnings
+- Foreshadow consequences long before finale
+
+---
+
+# 7️⃣ Cross-System Integration Opportunities
+
+| System | Current Links | Potential Deepening |
+|--------|---------------|--------------------|
+| Combat | Gear, Factions | Relationship tension affecting mid-fight behavior |
+| Rival | Contracts | Combat modifiers tied to personal grudges |
+| Hooks | Board | Economy penalties or cost modifiers |
+| Boss Traits | Shop | Stronger counter-item weighting |
+
+Greater cross-system interaction will elevate the design from layered to fully interwoven.
+
+---
+
+# 🔥 Top 5 Watchpoints (Priority Monitoring)
+
+1. Mana generation enabling early Ability 2 usage  
+2. AEGIS armor scaling dominance  
+3. Poison exponential late-game control  
+4. Accessory slot systemic overload  
+5. Final boss feeling unfair without narrative foreshadowing  
+
+---
+
+# Conclusion
+
+The foundation is strong, modular, and unusually deep.
+
+The current blind spots are not structural failures — they are scaling risks.  
+Addressing them early will prevent late-stage rebalance pain.
+
+This system is capable of supporting high mastery and long-term depth.  
+Now the focus shifts to stress-testing and cross-system refinement.

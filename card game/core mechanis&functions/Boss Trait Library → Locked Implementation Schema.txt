@@ -1,0 +1,385 @@
+# Boss Trait Library → Locked Implementation Schema (v1)
+Aligned to:
+- CORE SYSTEM MASTER SPEC: boss traits are mechanical; impact enemy behavior, risk score, reward weighting, shop weighting :contentReference[oaicite:0]{index=0}
+- Dynamic Story + Quest System: hooks + receiptsLog are first-class outputs :contentReference[oaicite:1]{index=1}
+- Dynamic Contract Board + Hook System: hooks escalate and must be serviced by contracts :contentReference[oaicite:2]{index=2}
+- Trial Modifier Library overlap rules (avoid stacking same effect) :contentReference[oaicite:3]{index=3}
+
+---
+
+## Global Conventions
+
+### Schema (per trait)
+- id
+- name
+- combatRule
+- telegraph
+- counterTags[]  → feeds Shop Counter Weighting (30% counter pool)
+- riskTags[]     → displayed on contract preview
+- riskScore      → 0–10 (used in contract risk score + reward weighting)
+- onResultHooks  → { onWin[], onRetreat[], onDefeat[] } (hooks are data-driven tags)
+- receiptLines   → { onPreview[], onWin[], onRetreat[], onDefeat[] } (1–2 lines each)
+
+### CounterTags (standardized)
+Use these tags to drive shop weighting pools:
+- ArmorBreak, ArmorPierce, MultiHit, Sustain, Cleanse, AntiHeal
+- AoE, AddControl, Tempo, CostControl, DebuffPlan, DebuffSpam
+- Burst, ExecuteSafety, Scaling, Positioning, DispelCounter
+
+### Trial Overlap Rule (LOCK CANDIDATE)
+If a contract boss has a trait that overlaps a trial modifier, that modifier is removed from the trial offer set for that contract.
+Examples:
+- Armor Wall ↔ Reinforced
+- Tempo Tax ↔ Hexed
+- Summoner/Swarm ↔ Swarm
+- Dispel ↔ Cleanse Ward
+- Execute ↔ Executioner
+(Prevents “double punishment” and keeps trials spicy.) :contentReference[oaicite:4]{index=4}
+
+---
+
+# 12 Boss Traits (Data Objects)
+
+## 01) ARMOR_WALL
+id: ARMOR_WALL  
+name: Armor Wall  
+combatRule: >
+  Boss starts with +12 Armor. At the start of boss turn, if Armor < 6, gain +6 Armor.
+  Armor cap for boss = 40.  
+telegraph: >
+  "Plating Seals" — Armor refresh is displayed as a predictable start-of-turn pulse when threshold is met.  
+counterTags: [ArmorBreak, ArmorPierce, MultiHit, DebuffPlan]  
+riskTags: [HighDefense, AttritionFight]  
+riskScore: 7  
+onResultHooks:
+  onWin: []
+  onRetreat: [low_supplies]        # retreat implies you lacked answers
+  onDefeat: [injury_major, low_supplies]
+receiptLines:
+  onPreview:
+    - "BOSS TRAIT: ARMOR WALL — target plated. countermeasures recommended."
+  onWin:
+    - "ARMOR WALL BREACHED — plating failure logged."
+  onRetreat:
+    - "RETREAT LOGGED — armor countermeasures insufficient."
+  onDefeat:
+    - "FAILURE LOGGED — plating overcame output. supplies deficit flagged."
+
+---
+
+## 02) BLEED_PUNISHER
+id: BLEED_PUNISHER  
+name: Bleed Punisher  
+combatRule: >
+  If boss has Bleeding at start of its turn, it consumes all Bleeding stacks:
+  deal direct HP damage = stacks × 2 (ignores Armor), then gain "Coagulate" (immune to Bleeding) for 1 turn.  
+telegraph: >
+  "Backlash Pending" icon appears whenever boss currently has Bleeding; triggers at boss turn start.  
+counterTags: [Burst, DebuffPlan, Sustain, DispelCounter]  
+riskTags: [DebuffRisk, PunishMisplay]  
+riskScore: 6  
+onResultHooks:
+  onWin: []
+  onRetreat: [trust_drop]          # someone blames the plan
+  onDefeat: [injury_major, bond_fracture]
+receiptLines:
+  onPreview:
+    - "BOSS TRAIT: BLEED PUNISHER — bleed will be converted into harm."
+  onWin:
+    - "BLEED LOOP BROKEN — backlash denied."
+  onRetreat:
+    - "WITHDRAWAL LOGGED — bleed strategy flagged as hazardous."
+  onDefeat:
+    - "CASCADE FAILURE — backlash executed. cohesion impacted."
+
+---
+
+## 03) POISON_BLOOM
+id: POISON_BLOOM  
+name: Poison Bloom  
+combatRule: >
+  If boss has Poison at start of its turn, it converts it into Bloom (max 10):
+  heal = Bloom and gain Armor = Bloom, then reduce Poison by 2.
+  (Poison is still usable, but becomes a sustain engine if unchecked.)  
+telegraph: >
+  "Blooming" meter shows current Bloom value before it triggers on boss turn start.  
+counterTags: [AntiHeal, Burst, DebuffSpam, CostControl]  
+riskTags: [HealingBoss, AntiDot]  
+riskScore: 7  
+onResultHooks:
+  onWin: []
+  onRetreat: [low_supplies]
+  onDefeat: [injury_major, low_supplies]
+receiptLines:
+  onPreview:
+    - "BOSS TRAIT: POISON BLOOM — toxins metabolized into armor + recovery."
+  onWin:
+    - "BLOOM SUPPRESSED — recovery loop interrupted."
+  onRetreat:
+    - "RETREAT LOGGED — bloom saturation exceeded capability."
+  onDefeat:
+    - "LOSS LOGGED — bloom sustained target beyond tolerance."
+
+---
+
+## 04) SUMMONER
+id: SUMMONER  
+name: Summoner  
+combatRule: >
+  Every 2 boss turns, summon 1 add. Adds persist.
+  While any add is alive, boss gains +1 Damage per add (stacking).  
+telegraph: >
+  "Summon Cycle" counter (2→1→SUMMON) shown on boss intent track.  
+counterTags: [AoE, AddControl, Tempo, Positioning]  
+riskTags: [AddPressure, ScalingThreat]  
+riskScore: 8  
+onResultHooks:
+  onWin: []
+  onRetreat: [stress_spike]        # (use your stress hook naming convention)
+  onDefeat: [injury_major, stress_spike]
+receiptLines:
+  onPreview:
+    - "BOSS TRAIT: SUMMONER — add pressure expected. clear protocols advised."
+  onWin:
+    - "SUMMON LOOP CONTAINED — external threats neutralized."
+  onRetreat:
+    - "WITHDRAWAL LOGGED — add pressure exceeded containment."
+  onDefeat:
+    - "COLLAPSE LOGGED — adds overran formation."
+
+---
+
+## 05) DISPEL
+id: DISPEL  
+name: Dispel  
+combatRule: >
+  Once per boss turn, the first debuff applied to boss is cleansed immediately
+  (priority: Weakened > Poison > Bleeding). At 50% HP, boss triggers one-time Full Dispel (remove all debuffs).  
+telegraph: >
+  "Ward Up" indicator shows whether the per-turn cleanse is available; 50% HP shows "Purge Incoming" warning.  
+counterTags: [RawDamage, DebuffSpam, Scaling, CostControl]  
+riskTags: [DebuffResist, TimingFight]  
+riskScore: 6  
+onResultHooks:
+  onWin: []
+  onRetreat: [trust_drop]
+  onDefeat: [injury_major, trust_drop]
+receiptLines:
+  onPreview:
+    - "BOSS TRAIT: DISPEL — debuffs will be erased. stack timing required."
+  onWin:
+    - "DISPEL WINDOW BAITED — purge exhausted."
+  onRetreat:
+    - "RETREAT LOGGED — dispel denied leverage."
+  onDefeat:
+    - "FAILURE LOGGED — purge neutralized control plan."
+
+---
+
+## 06) TEMPO_TAX
+id: TEMPO_TAX  
+name: Tempo Tax  
+combatRule: >
+  At start of player turn, apply Tax:
+  the first card played costs +1 Stamina (min 1).
+  Every 3rd boss turn, Tax escalates for 1 round: first two cards cost +1.  
+telegraph: >
+  "Tax Active" shown on player turn. One turn before escalation: "Audit Pending" warning.  
+counterTags: [CostControl, Tempo, HighValueCards, StaminaEngine]  
+riskTags: [ResourceDenial, SlowStart]  
+riskScore: 8  
+onResultHooks:
+  onWin: []
+  onRetreat: [vow_broken]          # if you use vows; otherwise use trust_drop
+  onDefeat: [injury_major, debt_pressure]
+receiptLines:
+  onPreview:
+    - "BOSS TRAIT: TEMPO TAX — output will be throttled."
+  onWin:
+    - "TAX EVADED — tempo restored."
+  onRetreat:
+    - "RETREAT LOGGED — throttling achieved. audit recorded."
+  onDefeat:
+    - "FAILURE LOGGED — resource denial succeeded."
+
+---
+
+## 07) EXECUTE
+id: EXECUTE  
+name: Execute  
+combatRule: >
+  Boss deals +50% damage to targets below 30% HP.
+  When any player unit enters execute range, boss gains +1 Speed for that turn.  
+telegraph: >
+  "Finisher" icon appears over any unit in execute range; boss intent highlights lethal potential.  
+counterTags: [ExecuteSafety, Sustain, ArmorBreak, Tempo]  
+riskTags: [LethalThreshold, PunishLowHP]  
+riskScore: 7  
+onResultHooks:
+  onWin: []
+  onRetreat: [injury_minor]
+  onDefeat: [injury_major]
+receiptLines:
+  onPreview:
+    - "BOSS TRAIT: EXECUTE — low HP will be collected."
+  onWin:
+    - "EXECUTION DENIED — threshold control maintained."
+  onRetreat:
+    - "WITHDRAWAL LOGGED — termination window approached."
+  onDefeat:
+    - "TERMINATION LOGGED — execute condition met."
+
+---
+
+## 08) COUNTERATTACK
+id: COUNTERATTACK  
+name: Counterattack  
+combatRule: >
+  Once per round, the first time boss takes Attack damage, it deals counter damage back to attacker (direct HP):
+  Counter = 5 + TraitRank. Multi-hit triggers counter only once.  
+telegraph: >
+  "Counter Ready" marker resets each round; clears after counter triggers.  
+counterTags: [SkillOpeners, ArmorPlan, Sustain, DebuffPlan]  
+riskTags: [PunishAggro, SequencingTest]  
+riskScore: 6  
+onResultHooks:
+  onWin: []
+  onRetreat: [bond_fracture]       # mis-sequencing hurts trust in tactics
+  onDefeat: [injury_major, bond_fracture]
+receiptLines:
+  onPreview:
+    - "BOSS TRAIT: COUNTERATTACK — first strike each round will be answered."
+  onWin:
+    - "COUNTER LOOP DISARMED — sequencing verified."
+  onRetreat:
+    - "RETREAT LOGGED — counter pressure fractured formation."
+  onDefeat:
+    - "FAILURE LOGGED — counter pattern harvested mistakes."
+
+---
+
+## 09) SHIELDER
+id: SHIELDER  
+name: Shielder  
+combatRule: >
+  Boss begins with Barrier 10 (separate from Armor; must be broken first).
+  First time Barrier breaks, boss gains Enraged 1 for 2 turns.
+  Barrier refreshes once to 6 after a 1-turn cooldown.  
+telegraph: >
+  Barrier value shown as an outer ring; "Barrier Re-forming" state is displayed during cooldown.  
+counterTags: [MultiHit, ArmorPierce, Burst, WeakenedPlan]  
+riskTags: [AntiBurst, TwoLayerDefense]  
+riskScore: 7  
+onResultHooks:
+  onWin: []
+  onRetreat: [low_supplies]
+  onDefeat: [injury_major, low_supplies]
+receiptLines:
+  onPreview:
+    - "BOSS TRAIT: SHIELDER — layered defenses detected."
+  onWin:
+    - "BARRIER SHATTERED — defense stack compromised."
+  onRetreat:
+    - "RETREAT LOGGED — barrier cycling outlasted burst."
+  onDefeat:
+    - "FAILURE LOGGED — layered defense held."
+
+---
+
+## 10) STUN
+id: STUN  
+name: Stun  
+combatRule: >
+  Every 3rd boss turn, it uses Stunning Blow:
+  apply Stunned 1 (recommended implementation: player loses 2 Stamina next turn instead of a full skip).
+  Cooldown prevents consecutive stuns.  
+telegraph: >
+  Turn cadence: "Stun Charging" appears one turn before the stun beat.  
+counterTags: [Cleanse, StaminaEngine, HandSize, Tempo]  
+riskTags: [ControlLoss, TurnDisruption]  
+riskScore: 7  
+onResultHooks:
+  onWin: []
+  onRetreat: [stress_spike]
+  onDefeat: [injury_major, stress_spike]
+receiptLines:
+  onPreview:
+    - "BOSS TRAIT: STUN — command latency expected."
+  onWin:
+    - "STUN CYCLE BROKEN — control retained."
+  onRetreat:
+    - "RETREAT LOGGED — disruption exceeded tolerance."
+  onDefeat:
+    - "FAILURE LOGGED — control loss confirmed."
+
+---
+
+## 11) SWARM
+id: SWARM  
+name: Swarm  
+combatRule: >
+  Each boss turn: boss gains +1 Damage.
+  Also spawns a 1-HP token. Tokens explode on death for 2 damage to a random player unit.
+  If 3+ tokens exist, boss uses a weak AoE ping.  
+telegraph: >
+  Token count is shown. At 3 tokens: "Swarm Critical" warning appears.  
+counterTags: [AoE, AddControl, Tempo, Sustain]  
+riskTags: [Escalation, BoardFlood]  
+riskScore: 8  
+onResultHooks:
+  onWin: []
+  onRetreat: [low_supplies]
+  onDefeat: [injury_major, low_supplies]
+receiptLines:
+  onPreview:
+    - "BOSS TRAIT: SWARM — attrition via saturation."
+  onWin:
+    - "SWARM CONTAINED — flood prevented."
+  onRetreat:
+    - "RETREAT LOGGED — saturation exceeded clearance rate."
+  onDefeat:
+    - "FAILURE LOGGED — swarm escalated beyond control."
+
+---
+
+## 12) ENDURANCE
+id: ENDURANCE  
+name: Endurance  
+combatRule: >
+  Boss has breakpoints at 75/50/25% HP.
+  At each breakpoint: gain +8 Armor, cleanse Weakened, and gain Resolve (takes 1 less damage per hit) until next player turn.  
+telegraph: >
+  Breakpoint markers shown on boss HP bar; "Breakpoint Imminent" flashes when within 5% HP.  
+counterTags: [Scaling, ArmorBreak, MultiHit, Tempo]  
+riskTags: [LongFight, BreakpointSpikes]  
+riskScore: 9  
+onResultHooks:
+  onWin: []
+  onRetreat: [debt_pressure]       # long fights burn supplies; tie into economy hooks
+  onDefeat: [injury_major, debt_pressure]
+receiptLines:
+  onPreview:
+    - "BOSS TRAIT: ENDURANCE — target will not collapse cleanly."
+  onWin:
+    - "ENDURANCE BROKEN — breakpoints exhausted."
+  onRetreat:
+    - "RETREAT LOGGED — endurance outlasted reserves."
+  onDefeat:
+    - "FAILURE LOGGED — breakpoint spikes overwhelmed output."
+
+---
+
+# Minimal Mapping: Trait → Contract Risk Score / Reward Weighting
+Suggested contractRiskScore addition:
+- Add the riskScore of each boss trait (1–2 traits), then clamp + normalize with act scaling.
+Example:
+- 1 trait: +6 risk
+- 2 traits: +12 risk (high)
+This is consistent with: traits alter contract risk score + reward weighting :contentReference[oaicite:5]{index=5}
+
+---
+
+# Notes for Your Existing Systems (No New Systems Added)
+- Hooks listed use your existing hook approach (injury_major, trust_drop, bond_fracture, low_supplies, vow_broken, etc.) 
+- Receipts are short, “logged” lines that fit receiptsLog in the story system :contentReference[oaicite:7]{index=7}
+- Shop counter-weighting uses counterTags; you already locked the 50/30/20 weighting model :contentReference[oaicite:8]{index=8}

@@ -1,0 +1,638 @@
+HISTORICAL SYNTHESIS: ROMAN PROVINCIAL WORLD (c. 110–135 CE)
+Fiction Writer's Research Package — Dark Adventure Tone
+REGION SNAPSHOT: What Fear Looks Like Here
+What people fear: Not death—but shame, erasure, and the gods withdrawing. A magistrate fears his name chiseled off public monuments after disgrace [HIGH: epigraphic evidence shows damnatio memoriae, though formalized later]. A merchant fears bandits and the local duumvir who'll invent a debt. A freedman fears his patron dying—his status dies with him [HIGH: Dupont 1993 on freedman dependency; citation:10]. Everyone fears prodigia—births of deformed lambs, rain of blood, statues sweating—because these mean the pax deorum (peace with gods) is broken, and the governor will demand expiation [HIGH: Cambridge Ancient History on prodigies as state business; citation:3].
+
+What power looks like: Power is visible. It wears the latus clavus (broad purple stripe) on a tunic, sits in the front row of the arena, funds the bathhouse dedication, and has names repeated in acclamations at games [HIGH: Dupont on "the gaze of others" as social control; citation:10]. Power is also behind things—the retired centurion who now runs the guild of shippers (navicularii) and controls who gets contracts [HIGH: OpenStax on collegia and state supervision; citation:7]. The governor is far away in his province capital; local power is men you see at the forum every morning.
+
+What "normal" feels like: The day begins before dawn—clients waiting at your patron's door for the salutatio, the morning greeting ritual, hoping for the sportula (small food gift or coins) [HIGH: Dupont on clientela; citation:10]. Streets smell of garum (fermented fish sauce), urine from fulleries, baking bread. You hear: hammering from bronze shops, hawkers at vegetable stalls, the stridor of a saw in the marble yard. You feel time by the market cycle (nundinae, every eight days) and by which games are coming [HIGH: Dupont on Roman time-reckoning; citation:10]. Normal includes knowing your place—when to step aside for a litter carrying a decurion's wife, which benches you sit on at the baths.
+
+FOUR-CITY DIFFERENTIATION SHEET
+City	Specialization	What It Looks Like	Corruption Lever
+Arena City (Start)	Spectacle production, gladiator schools (ludi), beast imports	Stone amphitheatre dominates skyline. Guilds of lanistae (trainers), bestiarii (beast-handlers), scaenici (stage performers). Inns near arena gates.	Game-fixing & contract skimming. The aediles who contract games take bribes from lanistae for favorable match-ups. Dead gladiators mean the lanista loses his deposit [HIGH: WHE on fines for damaged gladiators; citation:2]. Betting rings controlled by freedmen with ties to decurions.
+Ridge City	Volcanic stone quarries, sulfur mining, "exotic" thermal baths	Dark stone buildings. Air smells of sulfur. Heated baths fed by volcanic vents—no need for furnaces. Quarry slaves with distinctive lung cough.	Quarry leases & workplace death. The conductor (lease-holder) bribes the imperial procurator to underreport output. Accidental deaths "don't happen"—bodies go into active vents. Local cult interprets tremors; priests sell "protections."
+Port City	Import hub: wild beasts (Africa, East), marble, grain, slaves	Warehouses (horrea). Government supervision of annona shipments. Guild of navicularii (shippers) with imperial contracts. Beast cages stacked near docks.	Customs fraud & beast supply. The portitor (customs collector) sets "ad hoc" rates. Shipwrecks are suspiciously convenient. Beast mortality on voyage blamed on "rough seas"—lanistae pay extra for "hardier" stock they never receive.
+Shrine Town	Imperial cult temple + competing mystery cults	Marble gleam. Processional routes. Permanent priests (flamines) with political careers. Competing shrines (Isis, Mithras, local deity) in backstreets.	Omen manufacturing & cult rivalry. Priests read entrails to favor patrons. Mithraic initiates are also army veterans—they share things. Isis priests control Nile water for rituals—hard to verify authenticity [MED: Temple of Isis at Pompeii used Nile water; citation:9]. Accusations of "impiety" ruin business rivals.
+SPECTACLE-AS-POLITICS MODULE
+How Games Control Loyalty, Rivals, Rumor, Shame
+The funding mechanism [HIGH: WHE; citation:2]:
+
+Local magistrates (aediles, duoviri) must fund games as the "price" of holding office—personal expenditure expected.
+
+Wealthy men fund munera (gladiator shows) to gain popularity for higher office or imperial attention.
+
+The Augustales—freedmen priests of the imperial cult—fund games to buy status their birth denies them [HIGH: Arnold on Seviri Augustales; citation:1].
+
+Seating as social map [HIGH: WHE; citation:2]:
+
+Augustus codified seating by class. Front rows: decurions and equestrians. Behind them: citizens by tribe. Behind them: freedmen. Top/back: women, slaves, non-citizens.
+
+Visible hierarchy: Everyone sees who matters. A freedman who married a free woman—where does she sit? Shame is visible.
+
+Rumor and acclamation [HIGH: general Roman political practice]:
+
+Crowds chant at games—demands, complaints, praise. Emperors and governors listened (sometimes). Local politicians hear: "Leave the old rates!" "Give us more bread!"
+
+Acclamations become public record—sometimes transcribed and kept [DISPUTED: some scholarship suggests acclamations were recorded in minutes; exact practice varies by period].
+
+Shame sanctions:
+
+A debtor who can't pay—his name announced at games before the crowd? [UNVERIFIED for small cities, but attested in satire].
+
+Damnatio memoriae: After a corrupt official's death (or disgrace), his name chiseled off inscriptions, his statues removed. His children carry the stain.
+
+Betting and bribes [HIGH: curse tablets confirm betting; citation:2]:
+
+Betting dens near arena. Odds set by freedmen with connections to stables.
+
+Curse tablets (defixiones) buried in graves and arena sand: "Bind the horses of the Blues, break their legs, blind their driver" [HIGH: archaeological finds at circuses].
+
+Lanistae bribe aediles to classify fighters as "better" than they are—higher fees paid, crowd disappointed when scrub fights.
+
+RELIGION-AS-WEAPON MODULE
+Omens, Rituals, Imperial Cult Pressure, Cult Competition
+The core mechanism [HIGH: Cambridge Ancient History; citation:3]:
+
+Roman religion = contract with gods. Correct ritual = divine support. Failed ritual = disaster.
+
+Therefore: Who controls ritual controls the interpretation of disaster.
+
+Public belief vs. elite manipulation:
+
+Ordinary people believe. When the sacred chickens won't eat, you don't fight [HIGH: Claudius Pulcher story; citation:3].
+
+Elite know it's manipulable—but they also believe, just differently. Cicero was an augur; he knew the rules and their political use.
+
+Prodigies: When something weird happens (hermaphrodite birth, lightning strike), the Senate or local decurions consult Sibylline Books or haruspices. Response: expiation rituals, sometimes human sacrifice? [DISPUTED: Rare by imperial period, but archaizing revival under some emperors].
+
+Imperial cult mechanics [HIGH: OpenStax; citation:9]:
+
+Deified emperors get temples, priests (flamines), games.
+
+Living emperors: not officially gods in Rome—but in provinces? Yes, often. Provincials equate emperor with Jupiter or Roma to gain favor.
+
+Seviri Augustales: Freedmen priests of imperial cult—massive local status. They fund buildings, games, dedications. Their names on inscriptions forever.
+
+Political pressure: Showing insufficient devotion = disloyalty accusation.
+
+Local cults vs. Roman pressure:
+
+Some cults "translated": local goddess becomes Minerva, with Roman interpretation.
+
+Some suppressed: Druidism under Tiberius/Claudius—political threat, human sacrifice claims.
+
+Mystery cults (Isis, Mithras) tolerated but watched. Mithraea are small, enclosed, initiatory—perfect for conspiracy fears? [HIGH: OpenStax on Mithras in army; citation:9].
+
+Rituals as political theater:
+
+Supplicationes: Whole city prays, wears wreaths, visits temples—ordered after victory or to avert disaster. Shows unity, but who calls for it?
+
+Lectisternium: Gods' images on couches, public feast shared with deities. Crowd control through free food.
+
+Haruspicy: Etruscan diviners read animal livers. If they're in someone's pay, liver says what patron wants.
+
+Cult competition dynamics:
+
+Isis temple vs. Capitoline temple: Which gets more donations? More votives? More political marriages dedicated there?
+
+Accusing rival of superstitio (excessive, foreign, dangerous religiosity) = political weapon [HIGH: Roman legal concept].
+
+Curse tablets again: Bind rivals before court cases, before games, before business deals.
+
+VOLCANO-LIVING MODULE
+Setting: Ridge City sits on or near an active volcanic ridge (not Vesuvius—erupted 79 CE, too early for Hadrianic setting; this is a different, continuously active system).
+
+Daily Impacts [Synthesized from general volcanic region parallels + Roman sources]
+Sensory texture:
+
+Smell: Sulfur constant. Newcomers gag; locals claim not to notice. Clothes smell of it after an hour outside.
+
+Sound: Low rumble some days. Ground pops and creaks. Locals distinguish "mountain talking" from "mountain angry."
+
+Sight: Steam vents at edges of town. Some streets have warm cobbles. At night, faint glow from certain fissures.
+
+Taste: Water tastes metallic. Sulfur springs used for healing—smell lingers on skin after baths.
+
+Industries:
+
+Quarrying: Volcanic stone (like basalt or tuff) for export—lightweight, hard, good for concrete [HIGH: Roman concrete used volcanic pozzolana; actual quarries known].
+
+Sulfur mining: For medicine, fumigation, wool bleaching. Nauseating work. Slaves with short life expectancy.
+
+Thermal baths: No furnaces needed—hot water piped directly. Gratis for citizens? Funded by wealthy hoping cures attract visitors.
+
+Viticulture: Volcanic soil = good wine (like Vesuvius slopes). Some vineyards higher up, risky, produce "mountain wine" prized.
+
+Hazards:
+
+Gas vents: Shepherds lose sheep in certain hollows. Locals mark dangerous spots with small shrines—"Here the earth breathes poison."
+
+Tremors: Frequent small shakes. Buildings flex—wood frames essential. Masonry cracks repaired constantly.
+
+Cracks open: Suddenly, in fields. Steam rises. If someone falls in—no recovery. Considered divine punishment.
+
+Ash fall: Minor events dust crops. Locals pray to Vulcan/Mount deities.
+
+How People Interpret the Ridge
+Official religion:
+
+Temple to Vulcan on high ground, outside city (gods of fire kept outside ancient cities traditionally). Priests watch mountain signs.
+
+Sacrifices offered before quarrying—appease deities before taking stone.
+
+Local interpretation [UNVERIFIED but plausible]:
+
+The mountain is alive. It has moods. It punishes impiety.
+
+Drowned victims in vents—they offended the fire god. No recovery of body; no funeral rites? This matters enormously to Romans—unburied means restless spirit. Families pay priests for "proxy" burials with effigies.
+
+Tremors before elections? Priests interpret as divine preference.
+
+Elite manipulation:
+
+When rival's shipment delayed—"the mountain swallowed his mules" (happened? convenient story).
+
+Prophecies from vent priests: "The god says the current duumvir pleases him." Useful.
+
+Healing springs: Cures attributed to local nymphs or deities. Priests manage access, fees, interpretations.
+
+TRAVEL-AS-WAR-TALES MODULE
+Route Control, Patrols, Papers/Bribes, Bandits, Displaced People
+The road system [HIGH: general Roman infrastructure]:
+
+Main roads: paved, maintained by local cities responsible for sections. Milestones with emperor's names—propaganda.
+
+Secondary roads: gravel, dirt, seasonal impassability.
+
+Road stations: Mutationes (horse changes), mansiones (overnight lodging with some food), often with small garrison.
+
+Patrols and military presence [HIGH: Charles University thesis on road stations; citation:5]:
+
+Auxiliary units stationed in burgi (small forts) along major routes, especially near passes, bridges, provincial boundaries.
+
+Not continuous patrols—more like rapid response to bandit reports. Troops also collect road tolls, escort tax shipments.
+
+Beneficiarii: Soldiers seconded to administrative duties, man checkpoints, check documents [HIGH: epigraphic evidence for beneficiarii stations].
+
+Documents and bureaucracy [HIGH: Arnold on provincial administration; citation:1]:
+
+Tesserae: Token or document for official travel? [DISPUTED: Military diplomata are official; civilian travel documents less attested but logically necessary for cursus publicus].
+
+Cursus publicus: Imperial postal system—requires permits (diplomata) from governor. Only officials use it. Everyone else? Private arrangements.
+
+Local levies: Latrunculatores—local "bandit hunters" raised by cities, sometimes subsidized by Rome [MED: Known from inscriptions in Balkans/Anatolia].
+
+Bribes and extortion [HIGH: Arnold on Publicani abuses; citation:1]:
+
+Toll stations (portoria) at provincial boundaries, city gates, bridges, mountain passes. Tax rates set—but collectors? Publicani (earlier period) or imperial slaves/freedmen (by Hadrianic era) [HIGH: OpenStax on shift from publicani to procurators; citation:7].
+
+Known abuse: "Your load exceeds allowance." "Your goods are luxuries, higher rate." "Receipt? Lost. Pay again at next gate."
+
+Military checkpoints: Soldiers "checking for weapons" = shaking down travelers.
+
+Banditry as career [HIGH: Charles University on endemic banditry in unstable regions; citation:5]:
+
+Not just desperate poor—sometimes deserters from army, fugitive slaves, displaced peasants (land seized for veterans).
+
+Bandit leaders become folk heroes locally, "freedom fighters" against Rome. Roman sources call them latrones (bandits) regardless of motive.
+
+Some bands have spies in towns, fences for goods, protectors among local elite who buy stolen livestock cheap.
+
+Festivals and movement:
+
+During feriae (religious holidays), courts closed, some travel restricted? [MED: Feriae concept; travel restrictions unclear].
+
+Market days (nundinae) draw crowds to cities—good for merchants, good for pickpockets, good for spies mixing in crowds.
+
+Games days: Travelers rush to arrive. Inns fill. Prices spike. Prostitutes and gamblers set up outside walls.
+
+Displaced people [HIGH: general social history]:
+
+Veterans settled in colonies—land taken from locals, resentment, some locals become coloni (tenant farmers) on their own land.
+
+Refugees from beyond frontier? Germani, Dacians, Parthians—settled as laeti (barbarian settlers) on empty land, serve in army [MED: laeti system more 3rd century but antecedents exist].
+
+Beggars at city gates: disabled veterans, widows, evicted tenants. Considered shameful, but also visible failure of patron-client system.
+
+DAILY LIFE TEXTURE PACK
+Food [HIGH: Dupont on Roman food; citation:10]
+Breakfast (ientaculum): Bread dipped in wine, maybe cheese, olives. Eaten standing.
+
+Lunch (prandium): Cold meat, bread, vegetables, fruit. Light.
+
+Dinner (cena): Main meal late afternoon/evening. For wealthy: multiple courses, guests, reclining. For poor: porridge (puls), bread, cheap wine, whatever was at market.
+
+Staples: Bread (bakeries everywhere), olive oil (for cooking, lighting, bathing), wine (watered, often resinated), garum (fish sauce—used like soy sauce).
+
+Street food: Sausages, chickpea soup, fried fish, pastries. Eaten at counters—Pompeii has hundreds.
+
+Markets [HIGH: OpenStax on trade; citation:7]
+Macellum: Food market—meat, fish, vegetables. Butchers, fishmongers. Marble counters with drainage for blood/melted ice.
+
+Forum: General goods, also law courts, public meetings, statue gallery.
+
+Nundinae: Every eight days, country people flood in, sell produce, buy city goods. Also debt-payment days.
+
+Shops (tabernae): Street-front rooms in buildings. Shutter closed = not open. Shutter open + goods displayed = open.
+
+Baths [HIGH: general Roman daily life]
+Open afternoon to dusk (men) / morning (women) sometimes separate or alternating hours.
+
+Sequence: changing room (apodyterium) → warm room (tepidarium) → hot room (caldarium) → cold plunge (frigidarium). Oil applied, scraped off with strigil.
+
+Social function: business deals, gossip, flirting, exercise (palaestra), library, snack bar.
+
+Entrance fee: cheap (one quadrans, smallest coin). Some baths free if funded by benefactor.
+
+Gestures and Insults [HIGH: literary and rhetorical sources, e.g., Quintilian, Cicero]
+Gestures:
+
+Infamous finger: Middle finger extended—sexual insult [HIGH: Martial, Juvenal].
+
+Thumb pressed between fingers? [DISPUTED: Modern myth? Some scholars question "fig" gesture in Roman period].
+
+Hand on heart: sincerity.
+
+Looking away: contempt.
+
+Insults:
+
+"Gladiator": implies low-born, maybe ex-slave, disreputable.
+
+"Greekling" (Graeculus): pretentious, untrustworthy, effeminate.
+
+"Philosopher": sometimes insult in political contexts = useless, un-Roman.
+
+"Sister's wife"? [UNVERIFIED: Some scholars suggest incest accusations common in invective].
+
+"You buy your togas second-hand." (poverty shame)
+
+Clothing [HIGH: Dupont; citation:10]
+Toga: Formal wear for citizens—heavy, awkward, expensive. Most wear it rarely (court, games, ceremonies). Elite wear it as statement.
+
+Tunic: Daily wear for men. Knee-length, belted. Colored bands (clavi) indicate status: broad purple = senator, narrow = equestrian.
+
+Women: Stola (matron) over tunic, palla (wrap). Hair elaborate—slaves spend hours with curling irons, pins, wigs (blonde from Germany).
+
+Freedmen: Can wear toga if citizen—but may choose darker wool, cheaper cut, revealing status anxiety. Sometimes over-dress—satirized for it.
+
+Footwear: Calcei (leather shoes) for forum. Socci (slippers) indoors. Caligae (military sandals) for soldiers. Pero (rustic boot) for country.
+
+Housing
+Insulae (apartment blocks): 3-5 stories. Shops ground floor, apartments above. Upper floors cheaper, smaller, riskier (collapse, fire). No running water above ground floor. Latrines? Shared, or chamber pots emptied onto street—watch below! [HIGH: Roman legal complaints about pot-dumping].
+
+Domus (private house for wealthy): Atrium (reception with pool), peristyle (garden courtyard), cubicula (bedrooms), triclinium (dining room). Walls painted (Pompeian styles). Floor mosaics.
+
+Street level: Latrines public—multi-seat, social, sponges on sticks shared? [DISPUTED: Shared sponge stick debated—literary evidence but hygiene practicality questioned].
+
+WRITER TOOLKIT
+100 Micro-Details (Skimmable)
+Urban texture:
+
+Stepping stones across streets (to avoid sewage/rainwater)
+
+Shop shutters with bronze fittings
+
+Graffiti: political endorsements, insults, "I came here, I fucked, I left" [HIGH: Pompeian graffiti]
+
+Fuller's urine collection pots on street corners
+
+Wheel ruts worn into stone pavement
+
+Chickens pecking in forum
+
+Pigeons on temple steps—augurs might watch them
+
+Dye vats outside fulleries—smell revolting
+
+Mill donkeys wearing blinders, walking in circles
+
+Ovens fired at dawn—smell of fresh bread
+
+Bar counters with dolia (jars) sunk in for hot food
+
+Bronze vessels displayed outside workshops
+
+Scribes at forum corners—write letters for illiterate
+
+Money changers tables with coin piles
+
+Lictors walking before magistrate—fasces visible
+
+Schoolboys reciting aloud—through walls
+
+Potter's wheel sound—squeak rhythmic
+
+Temple pigeons—sacred? nuisance?
+
+Well ropes wearing grooves in stone
+
+Sundial on forum—only if decurions paid for it
+
+Religious texture:
+21. Lares figurines in domestic shrines—tiny dancing figures
+22. Wool fillets on altar trees
+23. Burnt offering smell—burning fat, wine
+24. Votive body parts (clay hands, feet, eyes) at healing shrines
+25. Curse tablets folded, pierced with nails
+26. Blood on altar—still wet, flies
+27. Priest's shaved head (Isis) among hairy men
+28. Mithraeum benches—initiates recline
+29. Torchlight processions at night
+30. Wreaths on doors—birth, marriage, triumph
+31. Funeral masks in wealthy atria—ancestor wax faces
+32. Grave goods: broken pottery, food, coins for Charon
+33. Lamp-lit tombs outside gates—family picnics there
+32. Shrine at crossroads—Competalia festivals
+33. Augur's curved staff (lituus)
+34. Flamen's hat with point and wool
+35. Sacred chicken cages—for auspices
+36. Diviners reading knucklebones
+37. Amulets on children: bulla (freeborn), leather pouch (slave)
+38. Phallus carvings above doorways—apotropaic
+39. Temple doors open only certain days
+
+Arena/spectacle texture:
+40. Sand rakers before dawn—smoothing arena
+41. Iron rings bolted to floor for animal chains
+42. Elevator shafts under Colosseum? Not in small cities—manual hoists
+43. Ticket pieces—broken pottery shards with seat numbers [HIGH: tokens known]
+44. Program sellers—gladiator pairings painted on walls
+45. Bookmakers with wax tablets—odds, bets recorded
+46. Women throwing apples to winning gladiators—? [UNVERIFIED but literary trope]
+47. Caged animals roaring at night—keeps residents awake
+48. Elephant dung smell near beast pens
+49. Gladiator school walls—high, no windows
+50. Training swords—wooden, heavier than real
+51. Palm branches for winners
+52. Money purses thrown to popular gladiators
+53. Fans with "team colors"—Blue, Green ribbons
+54. Curse tablets buried at starting gates
+55. Starting gates mechanism—sprung open simultaneously? [DISPUTED: technology known but not universal]
+56. Sand damped down before combat—less dust
+57. Graffiti: "Celadus the Thracian makes the girls sigh" [HIGH: Pompeian]
+58. Retiarius net weighted with lead pellets
+59. Secutor helmet with tiny eyeholes—suffocating
+60. Gladiator scars—face, legs, arms visible
+
+Travel/road texture:
+61. Milestones: distance to next city, emperor's names
+62. Roadside tombs with banqueting rooms—picnic spots
+63. Shrines at passes—Hermes/Mercury for travelers
+64. Water troughs for animals at mansiones
+65. Overnight stables—smell, noise, thieves
+66. Innkeepers known to drug guests, steal [MED: literary trope, maybe real]
+67. Road menders—soldiers or local corvée labor
+68. Wagon wheels with iron tires—sound on stone
+69. Mule trains with bells—warning on narrow roads
+70. Checkpoint poles lowering across road
+71. Waxed tablets for receipts, passes
+72. Legionary boots—studded soles sound on pavement
+73. Auxiliary spears with different heads—ethnic styles
+74. Civilian travelers walking, leading donkeys
+75. Litters for wealthy—curtains, four bearers
+76. Riders passing—official couriers, change horses at stations
+77. Bridge toll collector—table, box, spear
+78. Ferrymen at unbridged rivers—argument over fares
+79. Bandit lookout fires on hills at night
+80. Burned wagon remains as warning
+
+Body/clothing/texture:
+81. Toga folding—complicated, needs slave training
+82. Stola sleeves—sewn, not pinned like Greek
+83. Hairpins with poison? [MYTH? Some suspicion of poisoning via hairpins in sources]
+84. Saffron-dyed wedding veil
+85. Bulla (amulet) given up at manhood—deposited in Lares shrine
+86. Beard styles: philosophers long, soldiers short, Hadrianic Greeks? [HIGH: Hadrian wore beard, trendsetter]
+87. Calluses on laborer hands—distinct from scribe's ink-stained fingers
+88. Sunburn lines—toga leaves neck white?
+89. Perfume on wealthy—overpowers street smells
+90. Sweat scraped off at baths—sold to fullers for cleaning? [HIGH: urine used, sweat? UNVERIFIED]
+
+Domestic texture:
+91. Mosaic thresholds with "AVE" (welcome) or "CAVE CANEM" (beware dog)
+92. Bronze door knockers—lion heads
+93. Locks with iron keys—worn on finger rings
+94. Looms in atrium—women weaving ancestral tradition
+95. Kitchen smoke staining ceiling
+96. Latrine seats—cold stone, shared sponge
+97. Garden fountains—trickle sound in peristyle
+98. Bed frames—bronze, with woven webbing
+99. Lamps—clay, multiple nozzles, soot on ceiling
+100. Mice—everywhere, cat domestication limited
+
+25 Hollywood-Wrong (Misconceptions to Avoid)
+[MYTH] Gladiators didn't salute "We who are about to die" every time. That's one literary reference (Suetonius?), not daily ritual. [DISPUTED: Possibly at naumachiae only].
+
+[MYTH] Thumbs down meant death. Gladiator outcome decided by missio (sparing) or iugula (kill)—gesture unclear. Thumb hidden or turned? Scholars debate.
+
+[MYTH] All gladiators were slaves. Many were auctorati—free men who volunteered, swore oath to endure branding/death/beatings for pay [HIGH: WHE; citation:2].
+
+[MYTH] Christians were thrown to lions constantly. Before Decius (250 CE), persecution sporadic, local, not empire-wide. Pliny-Trajan letters show "don't seek them out" policy [HIGH: OpenStax; citation:9].
+
+[MYTH] Romans had orgies daily. Elite dinner parties sometimes sexualized, but daily life far more restrained. Moralists exaggerate for effect.
+
+[MYTH] Togas worn daily. Only for formal occasions. Most men wore tunics.
+
+[MYTH] Vestals buried alive for broken vows. Only if sexual impurity proven—rare. Punishment: yes, but not automatic [HIGH: OpenStax; citation:9].
+
+[MYTH] All roads lead to Rome. True proverbially—but regional networks existed.
+
+[MYTH] Roman concrete was secret lost tech. Recipe known—volcanic ash (pozzolana) mixed with lime. Not lost, just not used after fall [HIGH: modern replication].
+
+[MYTH] Emperors were always insane/decadent. Succession created bad ones, but most were competent administrators.
+
+[MYTH] Slavery was race-based. Roman slavery = anyone conquered, or debt, or born slave. No racial ideology [HIGH: OpenStax on slavery].
+
+[MYTH] Romans spoke like BBC toga dramas. Latin had regional accents, vulgar Latin differed from literary.
+
+[MYTH] Colosseum flooded for naval battles. Naumachiae in purpose-built basins, not arenas [HIGH: WHE; citation:2]. Colosseum had hypogeum (underground) preventing flooding.
+
+[MYTH] Roman women stayed home. Elite women managed households, attended games, baths, theater. Working women ran shops, bars.
+
+[MYTH] Romans hated "barbarians." More complex—some admired Germans' virtue, Parthians' horsemanship. Also recruited them as auxiliaries [HIGH: Haynes on auxilia; citation:8].
+
+[MYTH] Romans didn't innovate in war. Wrong—adopted gladius (Spain), pilum (Samnites?), cavalry tactics from Gauls/Germans.
+
+[MYTH] Centurions were brutal martinets. Some were, but promotion from ranks meant they understood men. Veterans respected.
+
+[MYTH] Roman economy was primitive. Complex trade networks, banking, loans, insurance (bottomry loans) [HIGH: OpenStax; citation:7].
+
+[MYTH] Romans didn't have books. Codex (modern book form) appears late 1st c. CE—Christians adopted early. Scrolls still common.
+
+[MYTH] All gladiator fights to death. Skilled gladiators expensive to replace—most fights supervised, surrender accepted [HIGH: WHE; citation:2].
+
+[MYTH] Romans vomited between courses. Vomitorium = passage for crowd exit, not puking room. Elite overeating satire misread.
+
+[MYTH] Roman religion was dead ritual without belief. Ordinary people believed. State religion and personal religion coexisted [HIGH: Cambridge Ancient History; citation:3].
+
+[MYTH] Temples were open all day. Usually only on specific days, for specific rituals. Otherwise priests maintained.
+
+[MYTH] Public toilets seated together without modesty. Excavated latrines show seats close—but literary sources suggest embarrassment possible? [DISPUTED: Social norms unclear].
+
+[MYTH] Aqueducts brought water to everyone. To fountains, baths, some wealthy homes. Most carried water from public fountains.
+
+20 Conflict Generators (No Plot)
+Aedile contracts games, lanista delivers substandard fighters. City angry. Who bribed whom? [HIGH: corruption patterns; citation:2]
+
+Haruspex reads liver—omens favor one candidate's opponent. Candidate's freedmen lean on haruspex. Body found. [HIGH: religion as weapon; citation:3]
+
+Quarry slave claims he saw the mountain "open" before tremor—priests say he's lying. He's witness to something else. [Volcano module]
+
+Shipment of beasts for Arena City arrives half-dead. Port City shippers blame weather. Arena City lanista blames poison. [HIGH: beast trade; citation:2]
+
+Mithraeum cave "accidentally" collapses during initiation—only veterans inside. Shrine Town priest of Magna Mater whispers "jealousy." [HIGH: Mithras in army; citation:9]
+
+Bridge toll collector demands bribe from freedman carrying inheritance documents. Freedman can't pay—arrives late, loses inheritance. [HIGH: portoria abuses; citation:1]
+
+Ridge City thermal bath water runs cold same week visiting official arrives. Sabotage? Tremor warning? [Volcano module]
+
+Gladiator wins freedom, refuses to leave—wants to stay in school. His former owner demands him back as slave. [HIGH: auctorati status; citation:2]
+
+Customs official at Port City seizes "uncustomed" goods—actually rival's shipment. Rival accuses him of using office for vendetta. [HIGH: portoria; citation:7]
+
+Veteran settles on land outside Arena City—previous owner's family still there, working as tenants. Who has rights? [HIGH: veteran settlement; citation:1]
+
+Curse tablet found in forum—names decurion's son for "theft of affection." Boy's fiancée's family withdraws. [HIGH: curse tablets; citation:2]
+
+Road patrol finds body near checkpoint—wearing military belt but civilian clothes. Auxiliary unit wants investigation; local magistrate wants quiet. [HIGH: road stations; citation:5]
+
+Isis priest claims Nile water for rituals contaminated—blames "jealous gods" of ridge. Actually, rival cult poisoned it. [HIGH: Isis cult; citation:9]
+
+Shrine Town's imperial temple dedication—date set but haruspex says omens bad. Postpone? Offend emperor? [HIGH: imperial cult pressures; citation:9]
+
+Bandit leader captured—offers to name protectors in elite. Governor wants names. Local decurions want him dead fast. [HIGH: bandit-elite collusion; citation:5]
+
+Woman wears stola (married woman dress) but unmarried—freedman's daughter pretending. Other matrons demand action. [HIGH: clothing as status; citation:10]
+
+Bathhouse donor's name on inscription—someone chisels it at night. Who? Debtors? Rivals? His own freedmen paid? [HIGH: damnatio memoriae practice]
+
+Grain shipment for Arena City missing—navicularii claim storm, but Port City warehouse slaves saw it unloaded at night. [HIGH: annona fraud; citation:7]
+
+Gladiator favored to win—bets placed heavily—dies first round. Betting den owner vanishes. Crowd riots. [HIGH: betting; citation:2]
+
+New provincial census—old man appears on list but died last year. Someone still paying tax in his name? Who benefits? [HIGH: census/tax structure; citation:1]
+
+GLOSSARY: Latin Civic/Arena Terms
+Term	Meaning	Context
+Aedilis	Magistrate responsible for public buildings, markets, games	Entry-level office, spends own money on games [HIGH: Arnold; citation:1]
+Ala	Cavalry unit (auxiliary)	"Wing" – stationed in province [HIGH: Haynes; citation:8]
+Amphitheatrum	Arena for spectacles	Oval, not round (circus is different)
+Annona	Grain supply (public dole, also tax grain)	Controlled by imperial prefect [HIGH: OpenStax; citation:7]
+Apodyterium	Changing room at baths	Where clothes watched by slaves
+Auctoratus	Free man who volunteers as gladiator	Swears oath: "endure branding, chains, death" [HIGH: WHE; citation:2]
+Augur	Priest who interprets bird signs	Political office, manipulates outcomes [HIGH: Cambridge; citation:3]
+Augustales	Priests of imperial cult (often freedmen)	Massive local status [HIGH: Arnold; citation:1]
+Auxilia	Non-citizen troops	Become citizens after service [HIGH: Haynes; citation:8]
+Basilica	Law court/business hall	In forum, also for merchants
+Beneficiarius	Soldier with administrative post	Often at checkpoints [HIGH: epigraphic]
+Bestiarius	Beast-fighter in arena	Lower status than gladiator [HIGH: WHE; citation:2]
+Bulla	Amulet worn by freeborn child	Removed at manhood
+Caldarium	Hot room at baths	Heated by hypocaust (underfloor)
+Caliga	Military boot	Studded sole, worn by soldiers and caligae makers
+Capitolium	Temple to Jupiter, Juno, Minerva	Main temple in Roman colonies
+Census	Population/property registration	Every 5 years, tax basis [HIGH: OpenStax; citation:7]
+Centuria	Army unit (80 men); also voting unit	Dual meaning
+Centurio	Legion officer	Backbone of army, 60 per legion
+Civitas	Citizen community; also "city" as political entity	Civitas libera = free town [HIGH: Arnold; citation:1]
+Cliens	Dependent of patron	Morning greetings, political support [HIGH: Dupont; citation:10]
+Collegium	Guild/association	Licensed? Sometimes suppressed [HIGH: OpenStax on navicularii; citation:7]
+Colonia	Veteran settlement colony	Roman citizens, Roman law [HIGH: Arnold; citation:1]
+Comitia	Assembly (voting)	By imperial period, mostly ceremonial
+Conductor	Lease-holder (mines, quarries, taxes)	Rents right to exploit [HIGH: Arnold; citation:1]
+Contubernium	Army tent group (8 men)	Shared barrack room [HIGH: Haynes; citation:8]
+Corona	Crown/wreath	Awarded for valor; also worn at sacrifices
+Cursus publicus	Imperial postal system	Permits required [HIGH: Arnold; citation:1]
+Damnatio ad bestias	Condemned to beasts	Execution method [HIGH: WHE; citation:2]
+Damnatio memoriae	Erasure from memory	Names chiseled, statues destroyed
+Decurio	Local senator (town councilor)	Hereditary? Wealth requirement [HIGH: Arnold; citation:1]
+Defixio	Curse tablet	Buried, pierced, invoked gods to harm [HIGH: WHE; citation:2]
+Diploma	Military discharge certificate	Grants citizenship, marriage rights [HIGH: Haynes; citation:8]
+Dominus	Master (of slaves, of household)	Also respectful address later
+Duovir	Chief magistrate in colony (two)	Like consul in Rome [HIGH: Arnold; citation:1]
+Eques	Equestrian (knight); also cavalryman	Second rank below senators
+Equitata	Part-mounted cohort	Mixed infantry/cavalry unit [HIGH: Haynes; citation:8]
+Flamen	Priest assigned to specific god	Flamen Dialis (Jupiter), Flamen Augusti [HIGH: Cambridge; citation:3]
+Forum	Public square	Markets, law, statues, political life
+Frigidarium	Cold room at baths	Plunge pool
+Genius	Guardian spirit (of person, place)	Household genius honored at lararium [HIGH: OpenStax; citation:9]
+Gladius	Spanish sword	Standard legionary weapon
+Haruspex	Etruscan diviner (reads livers)	Consulted for prodigies [HIGH: Cambridge; citation:3]
+Insula	Apartment block	Multi-story rental housing [HIGH: Dupont; citation:10]
+Lanista	Gladiator trainer/owner	Despised but necessary [HIGH: WHE; citation:2]
+Lararium	Household shrine	Lares figurines, offerings [HIGH: OpenStax; citation:9]
+Lares	Household gods	Protectors of family, crossroads
+Latifundia	Large estates	Owned by absentee elite, worked by slaves/tenants
+Latro	Bandit/brigand	Also political rebel label [HIGH: Charles University; citation:5]
+Legatus	Legion commander; also governor's deputy	Senatorial rank [HIGH: Arnold; citation:1]
+Legio	Legion (c. 5000 men)	Roman citizens only [HIGH: Haynes; citation:8]
+Lex	Law	Lex provinciae = provincial charter [HIGH: Arnold; citation:1]
+Lictor	Attendant of magistrate	Carries fasces (rods + axe)
+Ludus	School; also gladiator school	Ludus magnus at Rome
+Macellum	Food market	Butcher, fish, vegetable [HIGH: archaeology]
+Mansio	Overnight station on road	For official travelers [HIGH: Charles University; citation:5]
+Municipium	Town with Latin/Roman rights	Local elite become citizens [HIGH: Arnold; citation:1]
+Munus	Gladiator show (pl. munera)	Originally funeral duty [HIGH: WHE; citation:2]
+Mutatio	Relay station (change horses)	Less amenities than mansio
+Navicularius	Shipowner (grain transport)	State-supervised guilds [HIGH: OpenStax; citation:7]
+Nundinae	Market day (every eight)	Rural sellers flood in [HIGH: Dupont; citation:10]
+Ordo	Town council (decurions)	Governing body [HIGH: Arnold; citation:1]
+Palaestra	Exercise ground (attached to baths)	Wrestling, ball games
+Patronus	Patron (protects clients)	Also legal advocate
+Pax deorum	"Peace with gods"	State religion goal—correct ritual [HIGH: Cambridge; citation:3]
+Pilus	Senior centurion	Primus pilus = top centurion
+Pomerium	Sacred city boundary	Extended by emperors only
+Portitor	Customs/toll collector	Often slave/freedman [HIGH: OpenStax; citation:7]
+Portorium	Customs duty/toll	Provincial boundaries, city gates [HIGH: Arnold; citation:1]
+Praefectus	Prefect (commander/official)	Praefectus castrorum = camp prefect
+Procurator	Imperial financial official	Manages taxes, estates [HIGH: Arnold; citation:1]
+Prodigium	Omen/portent	State responds, expiation required [HIGH: Cambridge; citation:3]
+Provincia	Province; also task/command	Originally "sphere of action" [HIGH: Arnold; citation:1]
+Publicanus	Tax collector (Republican system)	Replaced by procurators under empire [HIGH: OpenStax; citation:7]
+Quadrans	Smallest coin	Bath entrance fee
+Quaestor	Financial magistrate	Junior office [HIGH: Arnold; citation:1]
+Rudis	Wooden sword	Given to freed gladiators [HIGH: WHE; citation:2]
+Salutatio	Morning greeting of patron by clients	Daily ritual [HIGH: Dupont; citation:10]
+Sestertius	Bronze coin (value 4 asses)	Common accounting unit
+Sevir	Sevir Augustalis – imperial cult priest (freedman)	Six men board [HIGH: Arnold; citation:1]
+Sportula	Handout to clients (food or coins)	Given at salutatio [HIGH: Dupont; citation:10]
+Stola	Married woman's dress	Sign of status [HIGH: Dupont; citation:10]
+Strigil	Curved scraper for bath oil/sweat	Bronze/iron, used after oiling
+Taberna	Shop/tavern	Street-front room, often with counter
+Tablinum	Office/reception room in domus	Between atrium and peristyle
+Tepidarium	Warm room at baths	Transitional
+Tessera	Token/ticket	Also military password
+Thermae	Baths (large public baths)	Distinct from balneum (small)
+Toga	Roman male citizen garment	Formal wear, wool, semi-circular [HIGH: Dupont; citation:10]
+Tribunus	Tribune (military officer; also plebeian official)	Tribunus militum = cohort commander
+Triclinium	Dining room	Three couches, reclining
+Turma	Cavalry squadron (30 men)	16 per ala [HIGH: Haynes; citation:8]
+Venatio	Animal hunt (arena event)	Exotic beasts [HIGH: WHE; citation:2]
+Venator	Hunter (in arena)	Lower than gladiator?
+Vestalis	Vestal virgin	Priests of Vesta, sacred fire [HIGH: OpenStax; citation:9]
+Via	Road	Via Appia, via publica etc.
+Vicus	Neighborhood/district; also village	Has local magistri [HIGH: Arnold; citation:1]
+PRIORITY "MUST-CONFIRM" LIST
+Before writing, verify these specifics for your exact year (c. 110–135 CE):
+
+Governor's title: Is your province imperial or senatorial? Legatus Augusti pro praetore (imperial) or proconsul (senatorial)? Affects tone [HIGH: Arnold; citation:1].
+
+Auxiliary units stationed nearby: Known from military diplomas—check epigraphic databases for your fictional region's equivalent. Real units had names, origins [HIGH: Haynes; citation:8].
+
+Road station spacing: Average 20-30 Roman miles between mansiones. Check against your map distances [HIGH: Charles University; citation:5].
+
+Tax rates: Portoria varied by province (2-5% typically). Hadrianic adjustments known from sources [HIGH: OpenStax; citation:7].
+
+Imperial cult practice: Was there a templum divi Traiani? Hadrian deified Trajan—cults active [HIGH: OpenStax; citation:9].
+
+Gladiator types present: By this period, specific classes (Thraex, Murmillo, Retiarius, Secutor) standardized—check regional preferences [HIGH: WHE; citation:2].
+
+Local product exports: Your region produces what? Match to real provincial exports (olive oil, wine, garum, wool, timber, marble) [HIGH: OpenStax; citation:7].
+
+Mithras cult spread: By Hadrian, Mithraea appear in military sites—civilian? Check archaeological distribution for your region [HIGH: OpenStax; citation:9].
+
+Legal status of cities: Are they coloniae (Roman citizens), municipia (Latin rights), or civitates peregrinae (subject)? Affects law, citizenship [HIGH: Arnold; citation:1].
+
+Veteran settlement patterns: Where did auxiliaries settle after discharge? Often near former stations, married local women [HIGH: Haynes; citation:8].
+
+Research notes: This synthesis prioritizes scholarly consensus where available. The most reliable sources used: Cambridge Ancient History (religion) , World History Encyclopedia (games) , OpenStax (economy/trade/religion) , Haynes on auxilia , Charles University thesis on road stations , Arnold on provincial administration , Dupont on daily life . Disputed and unverified claims are tagged accordingly. For additional depth, consult epigraphic corpora (CIL, ILS) and provincial archaeology reports specific to your chosen region.

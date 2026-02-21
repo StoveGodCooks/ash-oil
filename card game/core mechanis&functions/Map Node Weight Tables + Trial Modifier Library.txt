@@ -1,0 +1,345 @@
+📊 Map Node Weight Tables + Trial Modifier Library (v0.1 LOCKED)
+0) Conventions
+Node Types
+
+C = Combat (Normal)
+
+E = Elite
+
+EV = Event
+
+R = Rest
+
+CA = Cache (loot/supplies)
+
+S = Shop/Service
+
+B = Boss
+
+RI = Rival Intrusion (special modifier node; only in Rival contracts)
+
+General rules (global)
+
+Boss always appears as the final node.
+
+Standard / Power / Rival contracts must contain ≥1 Event.
+
+Standard / Rival contracts must contain ≥1 Rest OR ≥1 Shop.
+
+Recovery contracts contain 0 Elites.
+
+Safe lane biases toward R/EV/S; Risk lane biases toward E/CA.
+
+1) Step-by-step Node Weight Tables (2-lane map)
+
+Each step: generate Left and Right node types using lane bias tables below.
+(You can treat each lane as a weighted roll per step.)
+
+Lane biases
+Safe lane weights (per step roll)
+
+C 35%
+
+EV 25%
+
+R 20%
+
+S 10%
+
+CA 10%
+
+E 0% (unless contract explicitly allows elites in safe lane)
+
+Risk lane weights (per step roll)
+
+C 30%
+
+CA 25%
+
+E 20%
+
+EV 15%
+
+R 5%
+
+S 5%
+
+Clamp rule: if a contract class limits elites, set E=0% and re-normalize.
+
+2) Contract Class Templates (node counts + step weights)
+2.1 SHORT Contract (5 nodes total)
+
+Fixed structure: Step 5 = B
+Goal: fast side jobs, early pacing.
+
+Required: C ≥ 2
+
+Recommended step plan (1–4):
+
+Step 1: C (100% both lanes)
+
+Step 2: Safe roll (Safe lane table), Risk roll (Risk lane table) but clamp E to 10% max
+
+Step 3: C 70% / EV 30%
+
+Step 4: R 40% / S 20% / EV 25% / CA 15%
+
+Guarantee rules:
+
+Ensure at least one of EV/R/S appears in steps 2–4 (if not, force Step 4 = EV).
+
+2.2 STANDARD Contract (7 nodes total)
+
+Fixed structure: Step 7 = B
+Required: EV ≥ 1, R ≥ 1, C ≥ 3, E ≤ 1
+
+Step weights
+
+Step 1: C (100%)
+
+Step 2:
+
+Safe lane: EV 35 / CA 25 / C 25 / R 15
+
+Risk lane: CA 35 / C 30 / EV 20 / E 10 / R 5
+
+Step 3: C 75 / EV 25
+
+Step 4 (recovery step): R 50 / S 25 / EV 15 / CA 10
+
+Step 5: C 70 / EV 15 / CA 15
+
+Step 6 (pressure step):
+
+Safe lane: EV 30 / C 35 / R 20 / S 15
+
+Risk lane: E 25 / CA 25 / C 30 / EV 20
+
+Clamp: if an Elite already spawned earlier, set E=0 here.
+
+Guarantee rules:
+
+If no EV by end of Step 3 → force Step 4 = EV (instead of R).
+
+If no R by end of Step 4 → force Step 4 = R.
+
+2.3 POWER Contract (7 nodes total)
+
+Fixed structure: Step 7 = B
+Required: E ≥ 2, EV ≥ 1, C ≥ 2
+
+Step weights
+
+Step 1: C (100%)
+
+Step 2: E 60 / CA 20 / EV 20
+
+Step 3: C 70 / EV 30
+
+Step 4:
+
+Safe lane: S 30 / R 30 / EV 20 / CA 20
+
+Risk lane: CA 35 / E 35 / EV 15 / C 15
+
+Step 5: E 60 / C 20 / EV 20
+
+Step 6: S 35 / R 35 / EV 20 / CA 10
+
+Guarantee rules:
+
+If fewer than 2 Elites by Step 5 → force Step 5 = E.
+
+If no EV by Step 4 → force Step 4 = EV (safe lane).
+
+2.4 RECOVERY Contract (5–7 nodes)
+
+Elites: E = 0 always
+Purpose: resolve injury/stress hooks, stabilize builds.
+
+Recovery-Short (5 nodes)
+
+Step 1: C (100%)
+
+Step 2: EV 50 / R 30 / S 20
+
+Step 3: C 60 / CA 25 / EV 15
+
+Step 4: R 55 / S 25 / EV 20
+
+Step 5: B (mini-boss profile; lower lethality)
+
+Recovery-Standard (7 nodes)
+
+Step 1: C (100%)
+
+Step 2: EV 45 / R 30 / S 25
+
+Step 3: C 60 / CA 25 / EV 15
+
+Step 4: R 50 / S 30 / EV 20
+
+Step 5: C 55 / EV 25 / CA 20
+
+Step 6: R 45 / S 35 / EV 20
+
+Step 7: B
+
+Guarantee rules:
+
+Must include ≥2 of (R, S, EV) in steps 2–6.
+
+2.5 RIVAL Contract (7–8 nodes)
+
+Includes: 1 guaranteed RI node (special)
+Required: EV ≥ 1, RI = 1, C ≥ 3, R or S ≥ 1
+
+Rival-Standard (7 nodes)
+
+Step 1: C (100%)
+
+Step 2: EV 60 / C 25 / CA 15 (rival-themed)
+
+Step 3: C 70 / CA 15 / EV 15
+
+Step 4: RI (100%) ✅ guaranteed
+
+Step 5: C 60 / E 20 / EV 20
+
+Step 6: R 45 / S 35 / EV 20
+
+Step 7: B (rival-modified boss OR rival as add)
+
+Rival-Extended (8 nodes) (late game / high heat)
+
+Step 1: C
+
+Step 2: EV (rival)
+
+Step 3: C
+
+Step 4: RI
+
+Step 5: C
+
+Step 6: E 50 / CA 25 / EV 25
+
+Step 7: R 45 / S 35 / EV 20
+
+Step 8: B
+
+Guarantee rules:
+
+If E appears in Step 6, Step 7 must be R or S.
+
+3) Cache Trap Chance (risk legibility)
+
+Caches can be “clean” or “trapped.” Trap chance is driven by contract class:
+
+Recovery: 5%
+
+Short: 10%
+
+Standard: 15%
+
+Power: 25%
+
+Rival: 30% (or +10% if Rival Heat high)
+
+Trap outcomes should generate hooks (injury/stress/conflict), not just damage.
+
+4) Shop Stock Weighting (build planning)
+
+When a contract is selected, it has Boss Traits. Shops should bias toward counters:
+
+50% normal stock pool
+
+30% counters for shown Boss Traits
+
+20% “party condition” items (injury/stress/supplies)
+
+This ensures boss preview actually matters.
+
+⚔️ Trial Modifier Library (v0.1)
+
+Trials are optional modifiers offered on Elite nodes (mainly in Power contracts; sometimes in Standard/Rival).
+
+Trial rules
+
+Player can Accept or Decline.
+
+Accepting increases difficulty but improves rewards.
+
+Trials should be legible and build-relevant.
+
+Trial rewards (pick 1 bundle per accepted trial)
+
+Upgrade Bundle: 1 guaranteed card upgrade option + extra reroll
+
+Rare Bundle: chance at rare mod / link unlock token
+
+Economy Bundle: +gold +supplies +shop discount token
+
+Recovery Bundle: heal + reduce injury severity chance (small)
+
+Trial modifiers (15 starter)
+
+Reinforced — Enemies start with extra Armor.
+
+Frenzy — Enemies gain +1 tempo for first 2 turns (speed/initiative equivalent).
+
+Thick Hide — First instance of damage each round is reduced.
+
+Blood Price — Healing is 50% less effective during this node.
+
+Attrition — You draw 1 fewer card for the first 3 turns.
+
+Overtime — After turn X, enemies gain stacking damage/tempo each turn.
+
+Marked — A random teammate starts “Marked” (takes extra threat) until cleansed.
+
+Sunder — Your block/armor generation is reduced (or decays).
+
+Swarm — Adds spawn at fixed intervals.
+
+Counterstance — Enemies counter the first attack each round.
+
+Hexed — First skill card played each round is “taxed” (cost +1 / reduced effect).
+
+Cleanse Ward — Enemies cleanse a debuff the first time they receive one.
+
+No Retreat — Retreat disabled for this node (only for Elite nodes; never for entire run).
+
+Shattered Supplies — Consumables are disabled for this node.
+
+Executioner — Enemies deal extra damage to low-HP targets.
+
+Trial selection weighting (by contract class)
+
+Recovery: 0% (no trials)
+
+Short: 0–10% (rare)
+
+Standard: 20% (on elite only)
+
+Power: 80% (on elite)
+
+Rival: 40% (on elite)
+
+RI (Rival Intrusion) Modifier Library (v0.1)
+
+When RI triggers, it modifies the next node (Step 5 usually). Choose 1 intrusion based on Rival state + current hooks.
+
+Targeted Weakness — targeted teammate starts next combat with a debuff.
+
+Stolen Supplies — lose a small amount of supplies; generate low_supplies hook.
+
+False Orders — first turn: 1 random card is locked/unplayable.
+
+Split Focus — enemies spawn an extra add that pressures your backline.
+
+Rigged Field — hazard present (damage or debuff zone).
+
+Bounty Tag — rival marks a teammate; if they drop, penalty escalates (hook).
+
+Panic Spike — stress increases for one teammate (hook generator).

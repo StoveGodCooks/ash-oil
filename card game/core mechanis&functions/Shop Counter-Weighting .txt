@@ -1,0 +1,204 @@
+Shop Counter-Weighting (P0 Lock)
+Why we’re doing this
+
+Your blind spot audit flags that mana tempo can compress and that accessories can carry too much systemic weight. Counter-weighting makes the shop behave like a balance valve: it offers what the player needs to stay viable, but never guarantees the “best” build pieces.
+
+This is also consistent with your shop pillar: RNG mitigation without grinding.
+
+Core rule: Shops are biased, not random
+
+Every shop roll is influenced by a ShopBiasProfile that looks at:
+
+A) Player state tags
+
+Faction (AEGIS / ECLIPSE / SPECTER)
+
+Current act (1/2/3)
+
+Current gear slots filled (Weapon/Armor/Accessory)
+
+Current resource posture (too much mana? too much armor? too much poison?)
+
+Current injuries / condition severities (if relevant)
+
+B) Threat state tags
+
+Next mission enemy archetypes (from contract board / map node)
+
+Active rival traits (if rival is hunting you)
+
+Trial modifiers on the route node (from your trial library)
+
+The result: the shop “tries” to present at least one meaningful counter option each time you visit.
+
+“Counter Slots” in every shop inventory (locked)
+
+Each shop inventory is generated as:
+
+Inventory layout (V1)
+
+Gear: 3 items
+
+Cards: 3 items
+
+Services: 2 options (fixed list, act-scaled costs)
+
+1 “Counter Offer” slot (can be gear or card, but must be a counter)
+
+Total visible: 9 entries (or 8 if you prefer fewer; the important part is the “Counter Offer” slot exists).
+
+The Counter Offer slot must satisfy ONE:
+
+A Counter Offer is any item that addresses one of these:
+
+Tempo counter (prevents mana spikes / slows enemy snowball / provides defense early)
+
+Armor counter (armor shred, armor bypass, anti-fortress)
+
+Poison counter (cleanse, resist, shorten debuffs, accelerate kills to beat DOT)
+
+Burst counter (weakening, blinds, dampeners, guard)
+
+Sustain counter (healing/injury mitigation if player is limping)
+
+This forces meaningful choices without making outcomes deterministic.
+
+The anti-accessory dominance rule (this is the key)
+
+Accessories are where your strongest tempo/resource effects typically live.
+
+So we hard-limit them in the shop, not by rewriting all accessories yet:
+
+Accessory availability cap (per shop visit)
+
+Act 1: max 1 accessory can appear in Gear offerings
+
+Act 2: max 1 accessory
+
+Act 3: max 2 accessories
+
+And the Counter Offer slot cannot be an accessory unless the player has no accessory equipped.
+
+This single rule prevents “shop = accessory fishing.”
+
+Weighted selection algorithm (text-friendly, easy to implement later)
+Step 1 — build weights by slot
+
+Base weights:
+
+Weapon: 1.0
+
+Armor: 1.0
+
+Accessory: 0.6 (pre-nerfed via weighting)
+
+Adjusters:
+
+If player is missing a slot: that slot weight × 1.8
+
+If player is over-indexed:
+
+Too much mana generation already: Accessory weight × 0.35
+
+Too much armor scaling: Armor weight × 0.7
+
+Too much poison scaling: Status-synergy gear weight × 0.7
+
+If next mission is heavy threat:
+
+Anti-Armor / Anti-Poison / Anti-Burst counters get a guaranteed “candidate list” in Step 3
+
+Step 2 — pick gear slots respecting caps
+
+Roll 3 gear items:
+
+Roll 1: weighted by slot
+
+Roll 2: weighted by slot
+
+Roll 3: weighted by slot
+Then apply:
+
+Accessory cap
+
+No duplicates (same item)
+
+Rarity gating (act-based below)
+
+Step 3 — generate Counter Offer
+
+Select 1 item from a Counter Pool computed from threats + player weakness:
+
+If next mission includes “armor wall” enemies → prioritize armor shred/bypass
+
+If poison-heavy enemies → prioritize cleanse/resist/fast kill cards
+
+If rival is active with assassination traits → prioritize defensive tempo
+
+Counter Offer must be purchasable (price within plausible range). If not, downgrade rarity.
+
+Rarity gating (by act) for gear & cards
+
+This keeps “gold-starved choices” intact and stops early “god rolls.”
+
+Gear rarity availability
+
+Act 1: Common 70%, Rare 30%, Epic 0%
+
+Act 2: Common 40%, Rare 50%, Epic 10%
+
+Act 3: Common 20%, Rare 50%, Epic 30%
+
+Counter Offer rarity rules
+
+Counter Offer can be at most Rare in Act 1, unless:
+
+player has 2+ injuries at S2+ severity → then allow Epic at 5% (rare rescue)
+
+“Pity” without freebies: the Bad Luck Buffer
+
+If player visits 2 shops in a row without seeing a relevant counter:
+
+Next shop Counter Offer is guaranteed to target the largest threat gap (not the best item; just a relevant class of item).
+
+This prevents unwinnable RNG spirals.
+
+Shop reroll behavior (important with weighting)
+
+Reroll should not reset the counter guarantee.
+
+Reroll rules:
+
+Reroll cost: stays as your doc specifies (or scale by act)
+
+A reroll regenerates only:
+
+the 3 gear
+
+the 3 cards
+But the Counter Offer stays counter-aligned (it can change item, but must remain a counter).
+
+This stops reroll spam from bypassing the design intent.
+
+What this solves immediately (without coding or rewriting gear)
+
+✅ Keeps accessories from being the “always correct purchase”
+✅ Reduces mana tempo compression by making “mana engines” harder to fish for early
+✅ Makes threat scouting / rivals / trials matter because the shop reacts to them
+✅ Preserves your core economy philosophy: scarcity + meaningful choices
+
+What I’d do next (still P0, still text-only)
+
+If you’re aligned with counter-weighting, the next step is to define the Counter Pools as simple tags in text:
+
+COUNTER_ARMOR
+
+COUNTER_POISON
+
+COUNTER_BURST
+
+COUNTER_TEMPO
+
+COUNTER_SUSTAIN
+
+Then we tag existing gear/cards in your library with 1–2 counter tags. That’s a fast pass and gives you huge control later.

@@ -1,0 +1,485 @@
+# Game Design Document: Tactical Card Expedition Game
+
+## Core Concept
+A single-player card-based tactical game combining Legends of Runeterra's combat mechanics with XCOM's strategic depth and Expeditions: Rome's mission structure. Players lead a champion and their lieutenants through multi-encounter expeditions where decisions, resource management, and unit survival create meaningful strategic gameplay.
+
+---
+
+## Game Pillars
+
+### 1. Meaningful Progression
+- Multi-encounter missions that feel like real expeditions, not single-fight errands
+- "Expeditions of Rome meets XCOM" - substantial operations with weight and consequence
+- No constant hub bouncing - commit to full missions with escalating stakes
+
+### 2. Strategic Depth Over Graphics
+- Card game format allows deep mechanics without heavy graphics requirements
+- Complex systems and tactical decisions are the core appeal
+- Gameplay richness compensates for visual limitations
+
+### 3. Attachment to Units
+- Named heroes with progression systems
+- Injury consequences create emotional investment
+- Veteran units become irreplaceable through experience and story
+
+### 4. Challenging But Fair
+- Hard but beatable difficulty scaling
+- Clear telegraphing and player agency
+- NOT Darkest Dungeon brutal - challenging without being punishing
+- Players should lose due to decisions, not RNG or unfair mechanics
+
+---
+
+## Combat System
+
+### Core Mechanics
+- **Legends of Runeterra-style card combat**
+  - Alternating action system (back-and-forth play)
+  - Unit positioning on board matters
+  - Units persist between turns and can be buffed/damaged
+  - Tactical without requiring complex grid movement
+
+### Unit Composition
+- **1 Main Champion** - Player's avatar, cannot permanently die
+- **3-4 Lieutenant Slots** - Named heroes with unique abilities
+- **Total Roster: 6-8 units** - Allows rotation when units need recovery
+
+### Unit Progression
+- Survive missions → gain XP → unlock new cards/abilities
+- Each lieutenant has skill tree or card unlock path
+- Veterans become genuinely powerful
+- Higher level units add more powerful cards to deck pool OR provide passive benefits
+
+---
+
+## Mission Structure
+
+### Expedition Format
+Each mission consists of **4-6 consecutive encounters**:
+
+**Wave 1-2: Scouts/Light Enemies**
+- Warm-up encounters
+- Establish tactical positioning
+- Minimal resource drain
+
+**Wave 3-4: Main Force**
+- Primary challenge
+- Significant resource drain
+- Tests player strategy
+
+**Wave 5-6: Elite/Boss**
+- Climactic encounter
+- Special mechanics and telegraphed attacks
+- Multiple phases possible
+
+### Between-Encounter Decision Points
+
+After each encounter, players choose:
+
+**Push Forward** (no rest)
+- Keep momentum, enemies don't reinforce
+- Injuries/HP stay as-is
+- Faster mission completion
+- High risk
+
+**Quick Breather** (short rest)
+- Heal 30% HP on all units
+- Remove 1 minor status effect per unit
+- Enemies may regroup/reinforce
+- Costs 1 supply
+
+**Full Rest** (camp)
+- Heal 70% HP
+- Use healing cards/abilities
+- May trigger random event (ambush, find loot, morale boost)
+- Enemy gets stronger for final encounter
+- Costs 2 supplies
+
+**Strategic Retreat** (abandon mission)
+- Keep loot from completed encounters
+- All knocked out units risk grave injury (dice roll)
+- Mission failure consequences
+- "XCOM evac" moment
+
+---
+
+## Injury System
+
+### Two-Track Health System
+
+**HP (Combat Health)**
+- Your combat health during encounters
+- Regenerates partially (30-50%) between encounters within same mission
+- Drop to 0 HP = knocked out for rest of that encounter
+- Can use healing cards/abilities during combat
+
+**Injury Track (Real Damage)**
+- Separate from HP - represents lasting harm
+- Does NOT automatically heal between encounters
+
+### When Injuries Occur
+- HP drops to 0 (knocked out = minimum 1 injury)
+- Critical hits from enemies
+- Failing to block devastating attacks
+- Environmental hazards
+- Taking damage while already at low HP
+
+### Injury Severity Levels
+
+**Minor Wounds** (heal naturally over time)
+- Examples:
+  - Bruised ribs: -1 HP for next mission
+  - Strained arm: One random card costs +1 this mission
+  - Dazed: Draw -1 card first turn
+- Healing: Goes away after sitting out 1-2 missions OR basic medical resources
+
+**Serious Injuries** (require resources + time)
+- Examples:
+  - Broken leg: Can't use movement cards effectively
+  - Deep cut: Lose 1 HP per turn until treated
+  - Concussion: 50% chance to discard random card each turn
+- Healing: Need medic/supplies/gold to treat, takes multiple missions
+
+**Grave Injuries** (permanent scars)
+- Examples:
+  - Lost eye: -1 to ranged attack cards permanently
+  - Bad knee: -2 max stamina forever
+  - Shattered ribs: Starts each mission with -2 HP
+  - Nerve damage: One random card type costs +1 permanently
+- **NEVER FULLY HEAL** - permanent consequence of reckless play
+
+### Injury Escalation
+
+**Finish mission with 1-2 injuries:**
+- Minor wounds, heal normally
+
+**Finish with 3+ injuries OR get injured while already wounded:**
+- Risk grave injury
+- Game warns: "⚠️ Lt. Marcus is badly wounded. Deploying him again risks permanent injury."
+
+**Player choice:**
+- Rest veteran (lose their power for missions) OR risk permanent damage
+- Creates meaningful strategic decisions
+
+### Injury Warning System
+
+Game provides explicit warnings:
+- "⚠️ Lt. Marcus: 2 injuries, low HP - another knockdown risks GRAVE INJURY"
+- "⚠️ Warning: 3 units injured - retreating now may be wise"
+- Players make informed risk vs reward decisions
+
+---
+
+## Difficulty Scaling
+
+### Philosophy
+- **Hard but predictable** - Losses from decisions, not RNG
+- **Clear telegraphing** - Players can see dangers coming
+- **Comeback mechanics** - Getting behind ≠ unwinnable spiral
+- **Player agency** - Choose your challenge level
+
+### Target Metrics
+- **60-70% mission success rate** - Sweet spot between boring and frustrating
+- **Most missions should be "close calls"** not "easy stomps" or "brutal wipes"
+
+### Injury Rate Targets
+- 1-2 minor injuries per mission = normal
+- 0 injuries = excellent execution, player feels good
+- 3+ injuries = warning signs, time to adjust strategy
+- Grave injuries = rare, result of ignoring multiple warnings
+
+### Mission Difficulty Tiers
+
+Players choose mission difficulty before deployment:
+
+**EASY ⭐** (Tutorial/Recovery missions)
+- 3 encounters, weak enemies
+- Good for training new recruits
+- Lower rewards
+- Example: "Bandit Raid" - disorganized enemies
+
+**MEDIUM ⭐⭐** (Standard progression)
+- 4-5 encounters
+- Mixed enemy types
+- Standard rewards
+- Example: "Enemy Patrol" - organized resistance
+
+**HARD ⭐⭐⭐** (Veteran squads)
+- 5-6 encounters, elite enemies
+- High injury risk
+- Great rewards
+- Example: "Fortified Position" - prepared enemies
+
+**EXTREME ⭐⭐⭐⭐** (Optional challenges)
+- 6+ encounters, brutal difficulty
+- Expect injuries
+- Legendary loot
+- Example: "Enemy Stronghold" - extreme danger
+
+**Key principle:** Players never forced into unfair fights
+
+### Progressive Campaign Difficulty
+
+**Act 1 (Missions 1-10): Learning Phase**
+- Injuries are rarer
+- Enemies telegraph clearly
+- Easier to retreat successfully
+- Generous healing resources
+- Goal: Learn systems without punishment
+
+**Act 2 (Missions 11-25): Challenge Ramps**
+- Enemies hit harder
+- More complex encounter design
+- Injuries more common but manageable
+- Resources tighten slightly
+- Goal: Master tactics and resource management
+
+**Act 3 (Missions 26+): Expert Play**
+- Assumes system mastery
+- Creative enemy combinations
+- Injury management critical
+- Resource optimization required
+- Goal: Execute perfect strategy
+
+**Important:** Even in Act 3, medium difficulty missions available for recovery/training
+
+### Dynamic Difficulty Adjustment (Behind-the-Scenes)
+
+**Track player performance:**
+- Win rate on missions
+- Average injuries per mission
+- Resource accumulation rate
+- Retreat frequency
+
+**If player struggling:**
+- Slightly reduce enemy damage (5-10%)
+- Increase loot/resource drops
+- Offer easier mission options
+- Give more healing between encounters
+
+**If player crushing:**
+- Enemies get slightly smarter AI
+- More aggressive enemy compositions
+- Better rewards for harder missions
+
+**Critical:** This should be invisible - players shouldn't feel patronized
+
+### Injury Recovery Balance
+
+**Generous recovery options:**
+- Natural healing is FREE, just takes time (2-3 missions)
+- Medical treatment reasonably priced (not punitive)
+- Always have backup units available
+- Starting roster: 6-8 units for 4 deployment slots = room for rotation
+
+**Avoiding Darkest Dungeon's mistakes:**
+- Injuries are setbacks, not disasters
+- Can always field competent team
+- Healing resources are available
+- Grave injuries rare (only from reckless play)
+
+### Enemy Design for Fair Challenge
+
+**Telegraphed Danger:**
+- "⚠️ Enemy Berserker preparing MASSIVE STRIKE (8 damage) - blocks recommended"
+- "🎯 Archer targeting Lt. Kira (wounded) - 70% hit chance"
+- Show what's coming so players can respond
+
+**Counterplay Always Exists:**
+- Every dangerous enemy has weakness
+- Block cards reduce damage
+- Positioning matters
+- CC/debuffs are valuable
+- Players never helpless
+
+**Stat-Based Scaling (NOT BS Mechanics):**
+- Later enemies have more HP/damage (visible numbers)
+- NOT: "This enemy ignores all defenses"
+- NOT: "Random chance to permanently wound"
+
+### Hidden Safety Mechanics
+
+**Death Protection** (first time per mission)
+- First time unit would die/get grave injury = survives with serious injuries instead
+- Players don't know this exists
+- Prevents one mistake from destroying veteran
+
+**Clutch Moments**
+- When dire, slightly increase chance for good card draws
+- Not noticeable, just gives fighting chance
+
+**Resource Floor**
+- Can't get stuck unable to progress
+- Always at least one free/cheap healing option
+- Basic starter units always available
+
+### Player Agency in Difficulty
+
+**Optional Modifiers at Mission Start:**
+- "Deploy with -1 unit for +50% rewards"
+- "Enemies stronger but drop better loot"
+- "Permadeath enabled this mission (hardcore mode)"
+
+Let players push themselves when ready
+
+### Feedback and Learning
+
+**Post-Mission Breakdown:**
+- "Lt. Marcus took 45 damage this mission - consider more defensive cards"
+- "You used 3 healing cards - enemy type X hits hard, prepare better"
+- "Perfect mission! No injuries sustained"
+
+Help players understand and improve
+
+---
+
+## Example Mission Flow
+
+### Mission Start
+- 4 units deploy: Main Champion + 3 Lieutenants, all fresh
+
+### Encounter 1 (Scouts)
+- Easy fight
+- Lt. Kira takes some damage but no injuries
+- **Decision Point:** Push forward or quick rest?
+
+### Encounter 2 (Ambush)
+- Harder fight
+- Lt. Marcus knocked out → gains "Sprained Ankle" injury
+- Lt. Kira hit hard, low HP
+- **Decision Point:** Push (Marcus limping, Kira vulnerable) or full rest (enemies fortify)?
+
+### Player Chooses: Quick Rest
+- Marcus still has Sprained Ankle (-1 movement)
+- Kira back to 60% HP
+- Enemies ahead warned of approach
+
+### Encounter 3 (Main Force)
+- Tough fight, damage spread around
+- Lt. Kira knocked out → gains "Sword Slash" injury (now 2 injuries total)
+- Champion takes damage but survives
+- **⚠️ NEW WARNING:** "Lt. Kira gravely wounded - another injury becomes permanent"
+
+### Critical Decision Point
+Options:
+- Push to final boss with Kira at risk?
+- Full rest but final boss gets stronger?
+- Retreat and take the loss?
+
+### Player Chooses: Push Forward (Risky)
+
+### Encounter 4 (Boss)
+- Play carefully, keep Kira in back
+- Lt. Marcus takes hits, gets knocked out → 2nd injury
+- **WIN** but barely
+
+### Mission End Results
+- **Lt. Kira:** 2 injuries, needs medical attention (3 missions OR costs resources)
+- **Lt. Marcus:** 2 injuries, same situation
+- **If mission lost:** Kira's injuries would have become permanent grave injury
+
+### Post-Mission Hub
+**Medical Tent Options:**
+- Pay 50 gold → heal Kira in 1 mission instead of 3
+- Let her rest naturally (unavailable 3 missions)
+- Deploy her anyway next mission (RISK grave injury)
+
+---
+
+## Tension Sources
+
+The game creates tension through:
+
+1. **Multi-unit injury management** across multiple encounters
+2. **Rest vs push decisions** with real consequences
+3. **Veteran power vs fragility** - strong but vulnerable
+4. **Resource allocation** - healing vs upgrading
+5. **Roster rotation** when veterans need recovery
+6. **Escalating stakes** within each expedition
+7. **Clear warnings** that let players knowingly take risks
+
+---
+
+## Key Design Principles
+
+### What Makes This Different
+
+**Not Darkest Dungeon:**
+- Challenging but not punishing
+- Generous recovery systems
+- Clear feedback and warnings
+- No death spirals
+
+**Not Standard Deck Builder:**
+- Multi-encounter expeditions
+- Unit persistence and injury management
+- Squad-based rather than pure solo hero
+
+**Not Full Tactics Game:**
+- Card-based combat keeps complexity manageable
+- No complex grid movement
+- Focus on card synergies and deck building
+
+### Core Player Experience
+
+Players should feel:
+- **Strategic mastery** through good decision-making
+- **Attachment to units** through progression and scars
+- **Meaningful choices** at every decision point
+- **Fair challenge** - hard but beatable
+- **Progression** both within missions and across campaign
+- **Stories emerging** from veteran units with battle scars
+
+---
+
+## Future Development Areas
+
+### To Be Designed
+
+1. **Card Mechanics Specifics**
+   - Deck building system
+   - Card types and categories
+   - Combat flow details
+   - Resource system (mana/energy/etc)
+
+2. **Hub/Progression Systems**
+   - Upgrade trees
+   - Recruitment mechanics
+   - Campaign map structure
+   - Between-mission activities
+
+3. **Enemy Design**
+   - Enemy types and abilities
+   - Encounter variety
+   - Boss mechanics
+   - Faction differences
+
+4. **Setting/Theme**
+   - Fantasy, sci-fi, historical?
+   - Art direction
+   - Narrative framing
+   - World building
+
+5. **Economy/Resources**
+   - Currency types
+   - Loot system
+   - Crafting/upgrades
+   - Resource sinks
+
+---
+
+## Success Criteria
+
+The game succeeds when:
+
+- Players feel attached to their veteran units
+- Missions feel like meaningful expeditions, not chores
+- Difficulty is challenging but fair
+- Strategic decisions feel impactful
+- Comeback from setbacks is possible
+- Learning curve is manageable
+- Replayability through different builds/strategies
+
+---
+
+*Document Status: Core systems locked. Ready for detailed mechanical design.*

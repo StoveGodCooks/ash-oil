@@ -1,0 +1,811 @@
+Final Polish Pass - Comprehensive System Review
+Let me do a thorough analysis of our entire combat system with all refinements, then identify any gaps or final improvements before we lock it.
+
+📋 COMPLETE SYSTEM AUDIT
+✅ Combat Math (Foundation)
+
+ Damage formula refined (Flat → % → Armor → Min 1)
+ Status effects defined (5 types, caps, timing)
+ Faction passives integrated (Fortress, Bloodlust, Miasma)
+ DoT mechanics clarified (ignores Armor, affected by Enraged)
+ Multi-hit interactions validated
+
+Status: SOLID ✓
+
+✅ Card Design (55 Total)
+
+ AEGIS: 15 cards (tank/armor focus)
+ ECLIPSE: 15 cards (burst/bleed focus)
+ SPECTER: 15 cards (control/poison focus)
+ Neutral: 10 cards (utility/support)
+ All cards redesigned for squad combat (3v3)
+ Positioning requirements specified
+ Cost distribution balanced (avg 1.8 Stamina)
+
+Status: SOLID ✓
+
+✅ Squad Combat (3v3)
+
+ Simultaneous turn system
+ Front/back line positioning
+ Card assignment to units
+ Shared deck (7 cards drawn/turn)
+ Individual HP tracking per unit
+ Injury tracking per unit
+
+Status: SOLID ✓
+
+✅ Expedition Structure (6 Waves)
+
+ Multi-wave missions
+ Rest system between waves
+ HP persistence across waves
+ Status effects reset between waves
+ Injury accumulation system
+ Retreat mechanic
+
+Status: SOLID ✓
+
+✅ Injury System (Two-Track Health)
+
+ HP vs Injury Track separation
+ Three tiers (Minor/Serious/Grave)
+ Escalation path (1 Minor → 2 Minor → Serious → Grave)
+ Warning system (⚠️ at each tier)
+ Hub healing options (Natural/Doctor/Shaman)
+ Per-unit tracking
+
+Status: SOLID ✓
+
+✅ New Refinements Added
+Transparency & Fairness:
+
+ Boss preview before mission (Refinement 1)
+ Enemy intent system (Refinement 2)
+ Combat log with step-by-step math (Refinement 10)
+ Turn undo system (Refinement 9)
+
+Deck Building:
+
+ Free card removal service (Refinement 3)
+ Draft starting deck system (Refinement 5)
+ Deck library save system (Refinement 12)
+
+Tactical Depth:
+
+ Enhanced positional tactics (Refinement 6)
+ Synergy cards for faction combos (Refinement 7)
+ Conditional skill-testing cards (Refinement 8)
+
+Quality of Life:
+
+ Comeback mechanics (underdog bonus) (Refinement 4)
+ Quick simulation mode (Refinement 11)
+
+Innovation:
+
+ Dynamic difficulty adjustment (Refinement 13)
+ Veteran unique signature cards (Refinement 14)
+ Injury medals system (Refinement 15)
+
+Status: ALL ADDED ✓
+
+🔍 GAP ANALYSIS - What's Missing?
+GAP 1: Enemy Design Incomplete ⚠️
+Current State:
+
+We have player cards designed
+Enemy composition vague ("3 ECLIPSE scouts")
+No enemy AI behavior defined
+No unique enemy abilities
+
+What We Need:
+ENEMY ARCHETYPES (Design 8-10 types)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+SCOUT (Wave 1-2):
+- HP: 12-15
+- AI: Uses basic attacks (Slash, Quick Strike)
+- Threat: Low, warm-up enemy
+- Drops: 10-15 gold
+
+BRUISER (Wave 2-4):
+- HP: 20-25
+- AI: Prioritizes front line, applies Bleeding
+- Threat: Medium damage dealer
+- Drops: 15-25 gold
+
+TANK (Wave 3-5):
+- HP: 28-35, Armor 5-8
+- AI: Uses Fortify, blocks for allies
+- Threat: High HP, protects dangerous allies
+- Drops: 20-30 gold
+
+SNIPER (Wave 3-5):
+- HP: 15-18
+- AI: Targets back line, applies Poison
+- Threat: Bypasses front line protection
+- Drops: 20-30 gold
+
+CONTROLLER (Wave 4-6):
+- HP: 22-28
+- AI: Applies Weakened, supports allies
+- Threat: Debuffs your squad
+- Drops: 25-35 gold
+
+ELITE (Wave 5-6):
+- HP: 35-45
+- AI: Two actions per turn, unique abilities
+- Threat: High, mini-boss
+- Drops: 30-50 gold + Rare gear chance
+
+BOSS (Wave 6):
+- HP: 50-80
+- AI: Multi-phase, telegraphed ultimates
+- Threat: Extreme, campaign milestone
+- Drops: 50-100 gold + Rare/Epic gear
+Action Item: Design 10 enemy types with AI behaviors
+
+GAP 2: Mission Design Incomplete ⚠️
+Current State:
+
+We know missions have 6 waves
+No actual missions designed
+No difficulty progression curve
+
+What We Need:
+MISSION ROSTER (Design 10-15 missions)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Mission 1: TUTORIAL - "First Blood"
+- Waves: 3 (short intro)
+- Enemies: ECLIPSE Scouts only
+- Boss: None (ends at Wave 3)
+- Difficulty: ★☆☆☆
+- Rewards: 50 gold, 1 Common gear, unlock AEGIS cards
+- Purpose: Teach basic combat
+
+Mission 2: "Bandit Camp Raid"
+- Waves: 4
+- Enemies: Mix of ECLIPSE + SPECTER
+- Boss: Elite ECLIPSE "Bandit Leader" (Wave 4)
+- Difficulty: ★★☆☆
+- Rewards: 80 gold, 1 Common + 1 Rare gear
+- Purpose: Introduce status effects
+
+Mission 5: "Fortified Outpost"
+- Waves: 5
+- Enemies: Heavy AEGIS presence (Tanks + Bruisers)
+- Boss: AEGIS "Commander" (Wave 5)
+- Difficulty: ★★★☆
+- Rewards: 120 gold, 1 Rare + 1 Epic (10%)
+- Purpose: Test anti-armor strategies
+
+Mission 10: FINAL - "Enemy Stronghold"
+- Waves: 6
+- Enemies: All factions mixed, Elite spam
+- Boss: Multi-phase ECLIPSE/SPECTER hybrid boss
+- Difficulty: ★★★★
+- Rewards: 200 gold, 1 Epic guaranteed, Campaign complete
+- Purpose: Ultimate test
+Action Item: Design 10 missions with enemy wave compositions
+
+GAP 3: Ability Costs Not Locked ⚠️
+Current State:
+
+Mana system designed (0 start, +1/turn, +1/card)
+Ability costs vague ("3-4 Mana" for Ability 1)
+No actual abilities finalized
+
+What We Need:
+FACTION ABILITIES (Lock all 9)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+AEGIS ABILITIES:
+1. Bulwark (3 Mana)
+   - Gain Armor = 50% missing HP (max 10)
+   - Fast defensive response
+
+2. Aegis Wall (7 Mana)
+   - Gain 15 Armor, Apply Weakened 5 to all enemies, Draw 1
+   - Ultimate defensive lockdown
+
+ECLIPSE ABILITIES:
+1. Blood Rush (3 Mana)
+   - Next attack deals +8 damage, Apply Bleeding 2
+   - Burst damage enabler
+
+2. Execute (7 Mana)
+   - Deal 15 damage, If kill, restore 10 HP
+   - High-risk finisher
+
+SPECTER ABILITIES:
+1. Enfeeble (3 Mana)
+   - Apply Weakened 4, Enemy discards 1 card
+   - Hard disruption
+
+2. Virulent Plague (8 Mana)
+   - Double all Poison on all enemies, Deal damage = total Poison
+   - Poison payoff ultimate
+Action Item: Lock all 9 abilities with exact costs
+
+GAP 4: Starting Deck Composition Undefined ⚠️
+Current State:
+
+Draft system designed (Refinement 5)
+No actual starting deck defined
+
+What We Need:
+STARTING DECK TEMPLATES (Per Faction)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+AEGIS CHAMPION (Level 1) - Guaranteed 7 cards:
+- 2x Shield Bash
+- 2x Brace
+- 1x Retaliate
+- 1x Iron Will
+- 1x Fortify
+
++ DRAFT 3 from: Shieldwall, Stand Ground, Guardian Stance
+
+ECLIPSE LIEUTENANT (Level 1) - Guaranteed 5 cards:
+- 2x Slash
+- 1x Quick Strike
+- 1x Execution
+- 1x Lacerate
+
++ DRAFT 2 from: Rend, Flurry, Blood Frenzy
+
+SPECTER LIEUTENANT (Level 1) - Guaranteed 5 cards:
+- 2x Toxin Dart
+- 1x Enfeeble
+- 1x Strike
+- 1x Corrupt
+
++ DRAFT 2 from: Siphon, Weaken, Withering Curse
+
+NEUTRAL POOL (Add 2-3):
+- Bandage, Reposition, Defend Ally, Prepare, Focus Fire
+
+TOTAL STARTING DECK: 19-22 cards
+Action Item: Define exact starting cards per faction
+
+GAP 5: Gear Acquisition Schedule Vague ⚠️
+Current State:
+
+24 gear pieces designed
+Drop rates estimated ("Common 80% Missions 1-5")
+No exact schedule
+
+What We Need:
+GEAR DROP SCHEDULE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Mission 1: Iron Gladius (guaranteed first weapon)
+Mission 2: Leather Vest (guaranteed first armor)
+Mission 3: Iron Ring (guaranteed first accessory)
+
+Mission 4-6: Common pool (random drops)
+Mission 7: First Rare guaranteed (choose 1 of 3 shown)
+Mission 10: Epic weapon or armor (choose 1 of 2)
+
+Boss Kills: Always drop gear 1 tier higher than mission level
+- Mission 5 boss → Rare guaranteed
+- Mission 10 boss → Epic guaranteed
+
+Market: All gear available for purchase (except Epics until Mission 8+)
+Action Item: Create exact gear unlock/drop schedule
+
+GAP 6: Economy Not Balanced ⚠️
+Current State:
+
+Gold rewards estimated (10-100 range)
+Costs defined but not validated
+No earning/spending balance tested
+
+What We Need:
+ECONOMY VALIDATION
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+INCOME (Per Mission):
+- Mission 1-3: 50-80 gold
+- Mission 4-7: 80-120 gold
+- Mission 8-10: 120-200 gold
+- Total Campaign: ~1200 gold earned
+
+SINKS:
+- Healing (Minor): 20-30 gold × 10 uses = 200-300
+- Healing (Serious): 50-80 gold × 3 uses = 150-240
+- Gear purchases: 500-800 (fill gaps in bad RNG)
+- Card removal: 50-100 total
+- Deck upgrades: 200-300
+
+TOTAL SPENDING: ~1200-1800 gold
+
+BALANCE: Player should be slightly gold-starved (choices matter)
+Action Item: Run economy simulation, validate balance
+
+GAP 7: Tutorial Sequence Missing ⚠️
+Current State:
+
+Complex systems designed
+No onboarding for new players
+
+What We Need:
+TUTORIAL MISSION FLOW
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Wave 1: Basic Combat
+→ Teach: Playing cards, Stamina, HP, Armor
+→ Enemy: 1 weak Scout (10 HP)
+→ Goal: Play 3 cards, defeat enemy
+
+Wave 2: Status Effects
+→ Teach: Bleeding, Weakened
+→ Enemy: 1 Scout that applies Bleeding
+→ Goal: Apply Weakened, survive Bleeding damage
+
+Wave 3: Positioning
+→ Teach: Front/back line, targeting
+→ Enemy: 1 front Scout + 1 back Sniper
+→ Goal: Reposition unit, attack back line
+
+RESULT: Player understands core loop
+THEN: Unlock full game
+Action Item: Design tutorial mission with step-by-step guidance
+
+GAP 8: UI/UX Flow Undefined ⚠️
+Current State:
+
+Text-based game
+No UI mockups or flow diagrams
+
+What We Need:
+SCREEN FLOW DIAGRAM
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+[Main Menu]
+   ↓
+[Campaign Map] → See all 10 missions, progress
+   ↓
+[Mission Preview] → Boss info, rewards, difficulty
+   ↓
+[Squad Selection] → Draft starting deck
+   ↓
+[Wave 1 Combat] → Card assignment, combat resolution
+   ↓
+[Decision Point] → Push/Rest/Retreat
+   ↓
+[Wave 2-6...] → Repeat
+   ↓
+[Mission Complete] → Rewards, injuries, level up
+   ↓
+[Hub] → Healing, shopping, deck building, next mission
+   ↓
+[Repeat]
+
+Combat Screen Layout:
+┌─────────────────────────────────────┐
+│ ENEMIES:  [Front] [Front] [Back]    │
+│           HP/Status shown            │
+├─────────────────────────────────────┤
+│ YOUR SQUAD: [Front] [Front] [Back]  │
+│             HP/Status shown          │
+├─────────────────────────────────────┤
+│ HAND: [Card1] [Card2] ... [Card7]   │
+│ Stamina: 9/9  Mana: 4                │
+├─────────────────────────────────────┤
+│ [Assign to Unit] [Play] [Undo]      │
+│ [End Turn] [Combat Log]              │
+└─────────────────────────────────────┘
+Action Item: Create UI flow document for implementation
+
+GAP 9: Synergy Card Details Missing ⚠️
+Current State:
+
+Synergy card concept defined (Refinement 7)
+No actual cards designed
+
+What We Need:
+SYNERGY CARDS (Design 10 Total)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+AEGIS + ECLIPSE:
+1. Bleeding Edge (2 Stamina)
+   - Deal 6 damage. Gain Armor = Bleeding on target (max 8).
+   
+2. Fortified Assault (3 Stamina)
+   - Deal 10 damage. If you have 10+ Armor, deal 15 instead.
+
+AEGIS + SPECTER:
+3. Toxic Fortress (2 Stamina)
+   - Gain 6 Armor. Apply Poison 2 to all enemies.
+   
+4. Resilient Miasma (3 Stamina)
+   - Gain 5 Armor. If any enemy has Poison, gain +5 Armor.
+
+ECLIPSE + SPECTER:
+5. Predator Tactics (1 Stamina)
+   - Deal 8 damage. If target has Bleeding AND Poison, deal 14.
+   
+6. Exsanguinate (3 Stamina)
+   - Convert all Poison on target to Bleeding (1:1).
+
+ALL THREE FACTIONS:
+7. Triumvirate Strike (4 Stamina) [Ultimate]
+   - Deal 12 damage. Gain 8 Armor. Apply Bleeding 2 and Poison 2.
+   - Requires all 3 factions in squad.
+
+Unlock: After Mission 5 (mid-game reward)
+Drop Rate: Rare (treat as Rare card rarity)
+Action Item: Design 10 synergy cards with exact effects
+
+GAP 10: Veteran Signature Cards Undesigned ⚠️
+Current State:
+
+Concept defined (Refinement 14)
+No actual cards created
+
+What We Need:
+VETERAN SIGNATURE CARDS (9 Total - 3 per faction)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+AEGIS SIGNATURES:
+Level 10: "Unbreakable Will" (4 Stamina, Exhaust)
+- Gain Armor = 100% missing HP (no cap). All allies gain 5 Armor.
+
+Level 12: "Fortress Incarnate" (Passive ability)
+- Fortress healing increased from 30% → 50% of Armor gained.
+
+Level 15: "Last Stand" (0 Stamina, Exhaust)
+- If below 30% HP, gain 20 Armor, draw 3 cards, +3 Stamina this turn.
+
+ECLIPSE SIGNATURES:
+Level 10: "Bladestorm" (4 Stamina, Exhaust)
+- Deal 8 damage three times. For each kill, restore 5 HP.
+
+Level 12: "Blood God" (Passive ability)
+- Bloodlust bonus increased from +2 → +4 damage.
+
+Level 15: "Execution Mastery" (Passive ability)
+- All attacks deal +50% damage to enemies below 30% HP.
+
+SPECTER SIGNATURES:
+Level 10: "Miasma Burst" (4 Stamina, Exhaust)
+- Apply Poison = total Poison on all enemies (max 12). Draw 2.
+
+Level 12: "Plague Master" (Passive ability)
+- Miasma triggers twice (+2 Poison instead of +1).
+
+Level 15: "Death Touch" (2 Stamina, Exhaust)
+- Double all status effects on target (Poison, Bleeding, Weakened).
+
+Unlock: Automatically upon reaching level
+Uniqueness: Only this specific unit can use their signature
+Action Item: Design 9 veteran signature cards
+
+GAP 11: Injury Medal Details Missing ⚠️
+Current State:
+
+Concept defined (Refinement 15)
+No actual medals designed
+
+What We Need:
+INJURY MEDALS (Design 15 Total - 5 per tier)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+MINOR INJURY MEDALS (Earn after 5 missions with injury):
+
+"Bruised Ribs" → "Survivor's Grit"
+- Penalty: Start waves -2 HP
+- Bonus: +1 Stamina if HP < 50%
+
+"Strained Arm" → "Adapted Fighter"
+- Penalty: Random card +1 cost
+- Bonus: When that card played, draw 1 card
+
+"Dazed" → "Focused Mind"
+- Penalty: Draw -1 first turn
+- Bonus: Cards cost -1 Stamina first turn
+
+SERIOUS INJURY MEDALS:
+
+"Deep Cut" → "Scar of Defiance"
+- Penalty: Lose 1 HP/turn
+- Bonus: Deal +2 damage while < 30% HP
+
+"Broken Leg" → "Immovable"
+- Penalty: Back line only
+- Bonus: Gain 2 Armor at start of each turn
+
+GRAVE INJURY MEDALS:
+
+"Lost Eye" → "One-Eyed Veteran"
+- Penalty: -1 damage all attacks
+- Bonus: Enemies target you 50% less
+
+"Bad Knee" → "Grizzled Survivor"
+- Penalty: -2 max HP
+- Bonus: Start missions with +1 Mana
+
+Unlock: Automatically after 5 missions with same injury
+Visual: Unit gains unique icon/badge
+Action Item: Design 15 injury medals (5 per tier)
+
+🔧 FINAL IMPROVEMENTS NEEDED
+Improvement 1: Resource Generation Needs Tuning
+Current:
+
++3 Stamina/turn (fixed)
++1 Mana/turn + 1/card played + 1/5 damage taken
+May be too fast or too slow
+
+Test Needed:
+
+Can you play 2-3 cards/turn consistently? (Goal: yes)
+Can you afford abilities by Turn 3-4? (Goal: yes for Ability 1, Turn 5-6 for Ability 2)
+Do late turns feel flooded with resources? (Goal: no, should stay tight)
+
+Action: Run simulation, tune generation rates
+
+Improvement 2: Multi-Target Balance Unclear
+Current:
+
+AoE cards exist (Phalanx, Toxic Cloud)
+No clear power budget vs single-target
+
+Question:
+
+Should "Deal 5 damage to all" (15 total) cost same as "Deal 15 to one"?
+Or should AoE be less efficient per-target?
+
+Proposal:
+
+AoE = 60-70% efficiency of single-target
+"Deal 10 to one" (2 Stamina) vs "Deal 4 to all" (2 Stamina, 12 total if 3 enemies)
+Balances AoE power without making it useless
+
+Action: Define AoE cost multiplier rule
+
+Improvement 3: Turn Timing Cap Needed
+Current:
+
+No turn limit
+Games could go 20+ turns (stalemate)
+
+Proposal:
+TURN LIMIT: 15 turns
+After Turn 15:
+- All units take 5% max HP damage per turn (both sides)
+- "The battle drags on, exhaustion sets in"
+- Forces aggression, prevents infinite stall
+
+OR
+
+FATIGUE SYSTEM:
+- Turn 10+: All cards cost +1 Stamina
+- Turn 15+: All units lose 1 HP/turn
+- Forces eventual resolution
+Action: Decide turn limit/fatigue system
+
+Improvement 4: Retreat Consequences Undefined
+Current:
+
+Retreat = keep rewards, injured units risk Grave injury (50%)
+May be too punishing or too generous
+
+Questions:
+
+Should retreat cost gold?
+Should retreat fail the mission permanently?
+Should retreat have a "retreat counter" (3 retreats = campaign loss)?
+
+Proposal:
+RETREAT MECHANICS:
+- Keep gold/gear earned so far (as designed)
+- All knocked out units: 50% Grave injury risk (as designed)
+- Mission marked FAILED (cannot retry for better rewards)
+- NEW: Retreat count tracked (3 retreats in 10 missions = Warning: "Morale low")
+- If 5 retreats: Campaign difficulty increases permanently (+10% enemy stats)
+Action: Define exact retreat mechanics and consequences
+
+Improvement 5: Faction Balance Verification
+Current:
+
+Rock-paper-scissors designed (AEGIS > ECLIPSE > SPECTER > AEGIS)
+Target: 60/40 to 65/35 matchups
+Not validated with actual numbers
+
+Test Needed:
+
+Simulate 100 fights: AEGIS vs ECLIPSE
+Simulate 100 fights: ECLIPSE vs SPECTER
+Simulate 100 fights: SPECTER vs AEGIS
+Validate win rates match targets
+
+Action: Run faction matchup simulations, tune HP/damage if needed
+
+Improvement 6: Card Upgrade System Missing
+Current:
+
+Cards can be "upgraded" (mentioned in design)
+No upgrade mechanic defined
+
+Proposal:
+CARD UPGRADE SYSTEM (Hub Service)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+FORGE (Unlock Mission 3)
+Upgrade cards for permanent improvements.
+
+Examples:
+- Shield Bash → Shield Bash+
+  - Before: 5 damage, 3 Armor (1 Stamina)
+  - After: 7 damage, 4 Armor (1 Stamina)
+  
+- Slash → Slash+
+  - Before: 6 damage, Bleeding 1 (1 Stamina)
+  - After: 8 damage, Bleeding 2 (1 Stamina)
+
+Cost: 50-100 gold per upgrade
+Limit: Can upgrade same card multiple times (Slash → Slash+ → Slash++)
+Max upgrade: +2 tiers
+
+Visual: Card shows "+" or "++" suffix
+Action: Define upgrade costs and effect increases for all 55 cards
+
+Improvement 7: Mission Failure Consequences Vague
+Current:
+
+Retreat = mission failed
+What happens if all units die mid-mission?
+
+Proposal:
+MISSION FAILURE OUTCOMES:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+RETREAT (Player choice):
+- Keep rewards earned
+- Injured units risk Grave injury
+- Mission marked failed
+
+TOTAL PARTY WIPE (All 3 units knocked out):
+- Keep 50% of rewards earned
+- ALL units gain 1 Serious injury (severe consequence)
+- Forced return to hub
+- Mission available to retry (but no rewards for waves already cleared)
+
+Campaign continues (no permadeath).
+But wipe = very costly (3 Serious injuries to heal).
+Action: Define exact wipe consequences
+
+Improvement 8: Boss Loot Table Missing
+Current:
+
+Bosses drop "better loot"
+No exact table
+
+Proposal:
+BOSS LOOT TABLES:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Early Boss (Mission 2, 4):
+- Gold: 50-80
+- Gear: 1 Common guaranteed + 1 Rare (30% chance)
+- Card: Unlock 1 new card for your faction
+
+Mid Boss (Mission 5, 7):
+- Gold: 80-120
+- Gear: 1 Rare guaranteed + 1 Epic (20% chance)
+- Card: Unlock 1 new card OR upgrade token
+
+Late Boss (Mission 8, 9):
+- Gold: 120-180
+- Gear: 1 Rare + 1 Epic (50% chance)
+- Card: Unlock 1 Epic card OR 2 upgrade tokens
+
+Final Boss (Mission 10):
+- Gold: 200
+- Gear: 1 Epic guaranteed + 1 Epic (second roll, 50%)
+- Card: Unlock all remaining cards for your faction
+- Special: Campaign victory screen, stats summary
+Action: Create exact loot tables for all boss encounters
+
+📊 COMPLETE CHECKLIST - What Needs to Be Locked
+TIER 1: CRITICAL (Must Lock Before Simulator)
+
+ Lock all 9 faction abilities (exact costs, effects)
+ Define 8-10 enemy archetypes (HP, AI, abilities)
+ Lock starting deck composition (exact cards per faction)
+ Define AoE damage efficiency rule (60-70% of single-target?)
+ Lock resource generation rates (confirm 3 Stamina, Mana formula)
+
+TIER 2: HIGH PRIORITY (Before First Playtest)
+
+ Design 10 missions (wave compositions, bosses, rewards)
+ Create gear drop schedule (which gear, which mission)
+ Design 10 synergy cards (faction combos)
+ Design 9 veteran signature cards (level 10/12/15)
+ Design 15 injury medals (5 per tier)
+ Define card upgrade costs and effects (55 cards × 2 upgrade tiers)
+
+TIER 3: MEDIUM PRIORITY (Before V1 Release)
+
+ Design tutorial mission (3-wave intro)
+ Create UI/UX flow document
+ Balance economy (gold income vs sinks)
+ Define retreat exact mechanics (consequences, limits)
+ Define mission failure mechanics (wipe consequences)
+ Create boss loot tables (8-10 bosses)
+ Add turn limit or fatigue system
+
+TIER 4: POLISH (Before V2)
+
+ Validate faction balance (100 simulations per matchup)
+ Tune multi-target balance (test AoE cards)
+ Test resource generation (does it feel good?)
+ Implement dynamic difficulty (invisible adjustment)
+
+
+🎯 RECOMMENDED NEXT STEPS
+Step 1: Lock The Critical 5 (Today)
+Let's finalize these RIGHT NOW:
+
+Lock all 9 abilities - I'll design exact costs/effects
+Define 8 enemy archetypes - I'll create stat blocks
+Lock starting decks - I'll specify exact 19-22 cards per faction combo
+Define AoE efficiency - Let's decide 60% or 70%?
+Confirm resources - Keep 3 Stamina/turn, 0 start Mana, +1/turn+card?
+
+Step 2: Design Mission Suite (Tomorrow)
+
+Create 10 missions with exact enemy wave breakdowns
+Define boss loot tables
+Balance economy across 10 missions
+
+Step 3: Add New Cards (Day 3)
+
+Design 10 synergy cards
+Design 9 veteran signatures
+Design 15 injury medals
+
+Step 4: Build Simulator (Day 4-5)
+
+Implement combat simulator with all locked systems
+Run 100+ simulations
+Validate balance
+
+Step 5: Polish Pass (Day 6-7)
+
+Tutorial mission
+UI/UX documentation
+Final tweaks based on simulation data
+
+
+❓ DECISION POINTS FOR YOU
+Before we lock everything, I need your input on:
+Q1: AoE Damage Efficiency?
+
+Option A: 60% efficiency (Deal 4 to all = 12 total vs 10 to one)
+Option B: 70% efficiency (Deal 5 to all = 15 total vs 10 to one)
+Option C: Same efficiency (Deal 10 to all = 30 total vs 10 to one) [Very strong]
+
+Q2: Turn Limit?
+
+Option A: No limit (games can go 20+ turns)
+Option B: 15 turn limit with fatigue damage
+Option C: 20 turn limit with fatigue
+
+Q3: Retreat Limit?
+
+Option A: Unlimited retreats (but consequences per retreat)
+Option B: 3 retreats per campaign (hard limit)
+Option C: 5 retreats, but each increases difficulty
+
+Q4: Starting Mana?
+
+Option A: 0 Mana (abilities Turn 3-4)
+Option B: 2 Mana (abilities Turn 2-3)
+Option C: 3 Mana (abilities Turn 1-2) [Too fast?]
+
+Tell me your choices and I'll lock the system!

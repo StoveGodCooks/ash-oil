@@ -1,0 +1,197 @@
+# CARD UI SPEC v1 — PC Web / Neocities (LOCKED)
+**Status:** LOCKED (v1)  
+**Platform Target:** PC-first (Neocities web build)  
+**Card Style Choice:** **Dossier / Terminal Panel** with a subtle physical-card silhouette  
+**Primary Goal:** readability + cohesion + “watched / logged / system file” vibe
+
+---
+
+## 0) Master Defaults (Single Source of Truth)
+- **Base render size:** **420 × 588 px** (portrait)
+- **Inspect / zoom size (optional):** **630 × 882 px**
+- **Hover scale:** **1.08 max**
+- **Browser zoom support:** must read cleanly at **100%** and **125%**
+
+**Aspect ratio note:** Keep all templates and art crops aligned to this portrait ratio to prevent rework.
+
+---
+
+## 1) Visual Language (What this should feel like)
+- Not a fantasy parchment card.
+- Not a clean mobile UI tile.
+- It’s a **classified file / terminal dossier** with stamps, IDs, subtle telemetry, and constrained windows.
+
+**Keywords:** clinical, uneasy, monitored, archived, corrupted, procedural.
+
+---
+
+## 2) Layer Stack (Top → Bottom)
+1. **FX Layer**  
+   - glow, scanline shimmer, rarity pulse, corner bracket pulse (subtle)
+2. **Frame Layer**  
+   - border + corners + silhouette + top/bottom rails
+3. **UI Chrome Layer**  
+   - title plate, type strip, stamps, pips rails, chips
+4. **Icon Layer**  
+   - cost chip icon, faction stamp, keyword chips, rarity pips
+5. **Text Layer**  
+   - name, type, rules, flavor, metadata
+6. **Art Layer**  
+   - illustration inside a “file preview / camera feed” window
+7. **Backdrop Layer**  
+   - matte panel + light noise/vignette texture
+
+**Hard Rule:** The rules box must remain clean/quiet. No busy art behind rules text.
+
+---
+
+## 3) Zones + Layout (Dossier Template)
+### A) Top Bar — Title Plate
+- **Left:** Card Name
+- **Right:** **Cost Chip** (largest single icon on the card)
+
+### B) Art Window — File Preview
+- A framed “preview” window for art.
+- Allowed overlays (very subtle):  
+  - gridlines, timestamp, “REC”, crosshair corners, scanline
+- **Never** allow overlays to reduce subject readability.
+
+### C) Type Strip (under art)
+- Example: `TACTIC — Ambush` / `ENTITY — Rival` / `GEAR — Field Kit`
+
+### D) Rules Box (bottom third)
+- Primary effect text
+- Keyword chips just above rules box (optional)
+- **Rules text should not exceed 6 lines at base size.**
+
+### E) Footer Microtext
+- Set code, card ID, “hash”, build tag, artist credit (tiny)
+- Example: `PCR1 • MN-024 • HASH: 8F2A • BUILD: A`
+
+---
+
+## 4) Typography (Readability Rules)
+- **Name:** condensed / terminal-ish sans, **22–26px**
+- **Rules:** clean sans, **18–20px**, generous line height
+- **Microtext:** **11–12px**
+- **Do not** use more than 2 font families in v1.
+
+**Hard Rule:** If rules exceed 6 lines, use:
+- “Inspect view” expanded text, OR
+- “Extended details” panel outside the card (UI), not on-card.
+
+---
+
+## 5) Icon System (Consistency Lock)
+### Style choice (LOCKED)
+- **Thin-line technical icons** with slight roughness (dossier vibe)
+
+### Core icon slots
+- **Cost** (top-right chip)
+- **Faction/Alignment** (top-left stamp)
+- **Rarity** (1–3 pips near title or footer)
+- **Keywords** (small chips above rules box)
+
+**Hard Rule:** One icon language only. No mixing glyph styles.
+
+---
+
+## 6) Rarity Language (Readable in Grayscale)
+Rarity must be identifiable by **shape + pips**, not only color.
+
+- **Common:** neutral frame, minimal FX, 0–1 pip
+- **Uncommon:** subtle accent stripe, **1 pip**
+- **Rare:** stronger accent rail + faint glow, **2 pips**
+- **Mythic / Corrupted:** distortion motif + “WARNING” stamp, **3 pips**
+
+**Corrupted motif ideas:** corner fractures, misalignment, “data smear” lines (subtle).
+
+---
+
+## 7) Color + Texture (PC Web Friendly)
+### Palette approach
+- Dark neutrals + **one accent** (v1 default = **AMBER**)
+- Accent used for: pips, small rails, selection brackets, rare glow
+
+### Texture placement rules
+Allowed only in:
+- frame edges
+- footer microtext area
+- ultra-light overlay inside art window
+
+**Banned:** heavy grime behind rules text.
+
+---
+
+## 8) Interaction States (PC-only)
+- **Idle:** very subtle scanline/noise (optional)
+- **Hover:** gentle tilt + mild glow + border crisping (no large jump)
+- **Selected/Targeted:** strong outline + pulsing corner brackets
+- **Disabled:** desaturate + `ACCESS REVOKED` stamp
+- **New/Upgraded:** quick `FILE UPDATED` flash (200–300ms)
+
+**Hard Rule:** Hover effects must not shift layout or cause reflow.
+
+---
+
+## 9) Art Direction Rules (So the set stays coherent)
+- Art should feel like it was captured, cataloged, or recovered.
+- Prefer: dramatic lighting, high contrast subject separation, minimal background clutter.
+- If art is busy, apply a UI “matte mask” so text zones stay quiet.
+
+**Art window overlay intensity:** 5–10% max.
+
+---
+
+## 10) Asset Formats (Neocities constraints)
+- **Illustrations:** WebP (high quality, optimized)
+- **Frames / stamps / icons:** PNG (transparent)
+- **Textures:** WebP or PNG if alpha required
+
+**Target sizes (guideline):**
+- Try to keep most assets **< 300–600KB** each.
+- Cards can load many at once; keep total page weight reasonable.
+
+---
+
+## 11) Folder Structure + Naming (LOCKED)
+### Suggested structure
+- `/assets/cards/art/` (webp)
+- `/assets/cards/frame/` (png)
+- `/assets/cards/icons/` (png/svg)
+- `/assets/cards/textures/` (webp/png)
+
+### Naming convention
+- `art_<cardId>_v01.webp`
+- `frame_common_v01.png`
+- `frame_rare_v01.png`
+- `frame_corrupted_v01.png`
+- `icon_cost_v01.png`
+- `icon_status_<name>_v01.png`
+
+---
+
+## 12) Starter Asset Pack (Minimum Viable “Looks Real”)
+1. **Frames:** common, rare, corrupted (3 PNGs)
+2. **Icons:** 8–12 core technical icons (cost + key statuses)
+3. **Textures:** 2–3 subtle panel/noise textures
+4. **Placeholders:** 6 art placeholders (WebP) to populate the first build
+
+---
+
+## 13) Locked Decisions Summary
+- **Card template:** Dossier/terminal panel + soft physical silhouette
+- **Base size:** 420×588 (inspect 630×882)
+- **Icon style:** thin-line technical (single language)
+- **Rarity system:** pips + shape (grayscale-safe)
+- **Accent default:** AMBER (can change later, but v1 uses one accent)
+- **Rules readability:** quiet rules box; max 6 lines at base
+
+---
+
+## 14) Next Implementation Step (Not part of spec; included as a note)
+- Produce a pixel-accurate zone map (exact px heights for title/art/type/rules/footer).
+- Build the base HTML/CSS card component that supports the layer stack + hover/selected states.
+- Generate first-pass frames + icons consistent with the above.
+
+(END — CARD UI SPEC v1 LOCKED)

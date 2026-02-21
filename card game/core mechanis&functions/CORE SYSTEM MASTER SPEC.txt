@@ -1,0 +1,407 @@
+🧠 CARD GAME – CORE SYSTEM MASTER SPEC (v1.0 LOCKED)
+1️⃣ CORE DESIGN PRINCIPLES
+
+No travel map.
+
+All runs are selected from Hub Board.
+
+Contracts are round-based sequences.
+
+Board is reactive via Hooks.
+
+Rival escalates via Vengeance Clock + Heat.
+
+Relationships are hidden but mechanically active.
+
+Boss Traits define build direction.
+
+Fail-forward model.
+
+Fully modular.
+
+2️⃣ HUB BOARD SYSTEM
+Board Structure Per Visit
+
+1 Main Contract (if unlocked)
+
+3 Side Contracts
+
+Rival Contract replaces 1 Side slot when triggered
+
+Minimum 2 contracts must resolve active Hooks.
+
+Side contracts expire on departure.
+Main persists.
+
+Contract Preview Data
+
+Each contract displays:
+
+Boss Traits (1–2 keywords)
+
+Round Count
+
+Risk Tags
+
+Reward Tags
+
+Trial Availability
+
+3️⃣ HOOK SYSTEM
+
+Hooks are generated after:
+
+Combat outcomes
+
+Retreat
+
+Defeat
+
+Vow changes
+
+Rival activity
+
+Examples:
+
+injury_major
+
+bond_fracture
+
+trust_drop
+
+vow_created
+
+vow_broken
+
+rival_targets
+
+grief_active
+
+low_supplies
+
+Each hub visit must service ≥2 hooks.
+
+Unresolved hooks escalate (max level 3).
+
+4️⃣ RIVAL ESCALATION MODEL
+Rival Core State
+
+hateLevel (1–5)
+
+vengeanceClock (0–6)
+
+rivalHeat (0–100)
+
+targetTeammateId
+
+intrusionLevel (0–3)
+
+Trigger Rule
+
+If vengeanceClock ≥ 6:
+
+Spawn Rival Contract
+
+Reset vengeanceClock to 3
+
+Intrusion Levels
+
+0 – Dormant
+1 – Minor Disruption
+2 – Active Sabotage
+3 – Direct Assault
+
+Rival Intrusion modifies next round.
+
+Rival Contract Types
+
+Intercept
+
+Bait
+
+Rescue
+
+Ignored Rival Contract:
+
+vengeanceClock +2
+
+intrusionLevel++
+
+targetTeammate stress increase
+
+5️⃣ ROUND-BASED CONTRACT SYSTEM
+Contract Classes
+Short (5 Rounds)
+
+3 Combat
+1 Event
+1 Boss
+
+Standard (7 Rounds)
+
+4 Combat
+1 Event
+1 Rest
+1 Boss
+
+Power (6 Rounds)
+
+3 Combat
+2 Trial Opportunities
+1 Boss
+
+Recovery (5–6 Rounds)
+
+2–3 Combat
+2 Rest
+1 Event
+1 Boss/Mini-Boss
+
+Rival (7 Rounds)
+
+4 Combat
+1 Event
+1 Rival Intrusion
+1 Rest
+1 Boss
+
+6️⃣ TRIAL SYSTEM
+
+Trials appear before select rounds.
+
+Accept → harder round + enhanced reward
+Decline → normal round
+
+Trial Reward Bundles
+
+Upgrade Bundle
+
+Rare Bundle
+
+Economy Bundle
+
+Recovery Bundle
+
+Trial Modifier Library (15)
+
+Reinforced
+Frenzy
+Thick Hide
+Blood Price
+Attrition
+Overtime
+Marked
+Sunder
+Swarm
+Counterstance
+Hexed
+Cleanse Ward
+No Retreat
+Shattered Supplies
+Executioner
+
+Trials affect only that round.
+
+7️⃣ ROUND REWARD TABLES
+Combat
+
+Small gold
+Supply chance
+20% card reward chance
+
+Elite
+
+Medium gold
+Upgrade material
+Rare chance
+
+Event
+
+Hook resolution / relationship change
+
+Rest
+
+Heal OR stress relief OR minor injury downgrade
+
+Boss
+
+Major gold
+Guaranteed upgrade
+Rare card chance
+Renown increase
+
+8️⃣ RETREAT SYSTEM
+
+Allowed between rounds unless restricted by Trial.
+
+Reward scaling by progress:
+
+1–2 rounds: 20%
+3–4 rounds: 40–50%
+5–6 rounds: 60–70%
+Pre-boss: 75–80%
+
+Retreat always generates ≥1 hook.
+
+9️⃣ BOSS TRAIT SYSTEM (MECHANICAL)
+
+Boss Traits are not cosmetic.
+They alter:
+
+Enemy behavior
+
+Round modifiers
+
+Reward weighting
+
+Shop weighting
+
+Contract risk score
+
+Boss Trait Library (12)
+
+Armor Wall
+Bleed Punisher
+Poison Bloom
+Summoner
+Dispel
+Tempo Tax
+Execute
+Counterattack
+Shielder
+Stun
+Swarm
+Endurance
+
+Trait Mechanical Impact Examples
+
+Armor Wall
+
+Enemies start with Armor
+
+Shop weighting increases Armor-pierce tools
+
+Bleed Punisher
+
+Boss gains bonus when afflicted with bleed
+
+Shop weights non-bleed builds
+
+Summoner
+
+Adds spawn periodically
+
+AoE cards weighted in shop
+
+Tempo Tax
+
+Card cost manipulation
+
+Shop weights cost-reduction tools
+
+Execute
+
+Boss deals bonus damage to low HP
+
+Defensive upgrades weighted
+
+🔟 SHOP COUNTER WEIGHTING
+
+When contract selected:
+
+Shop stock weighting:
+
+50% normal pool
+30% counters for Boss Traits
+20% party-condition tools
+
+Ensures build direction matters.
+
+11️⃣ RELATIONSHIP INTEGRATION
+
+Hidden stats influence:
+
+Assist chance
+
+Link effects
+
+Friction penalties
+
+Betrayal checks
+
+Rival targeting
+
+Combat actions affect relationship state.
+
+Hub events modify relationship tags.
+
+No meters shown.
+
+12️⃣ FINAL BOSS VARIANT INTEGRATION
+
+Phase 3 behavior selected by:
+
+If rivalHeat ≥ 70 → RIVAL ENTRY
+Else if Loyalty low → BETRAYAL CHECK
+Else → UNITY TEST
+
+Boss variants reference relationship + rival systems.
+
+13️⃣ FAIL-FORWARD MODEL
+
+Success → full reward
+Retreat → partial reward + hooks
+Defeat → heavy hooks + escalation
+
+No default permadeath.
+Permanent Scars optional system.
+
+14️⃣ BALANCE SAFEGUARDS
+
+Standard contracts always include 1 Rest.
+
+Recovery contracts contain 0 Elite.
+
+Trials affect only one round.
+
+Rival intrusion modifies next round only.
+
+Hooks capped at escalation level 3.
+
+Boss traits always previewed.
+
+15️⃣ EXPANDABILITY
+
+Supports:
+
+Additional Boss Traits
+
+Additional Trial Modifiers
+
+Multiple Rivals
+
+Faction layers
+
+Act modifiers
+
+Hard Mode (permadeath)
+
+Multi-phase bosses
+
+No system rewrite required.
+
+✅ FINAL LOCK SUMMARY
+
+You now have:
+
+✔ Reactive Hub Board
+✔ Hook-driven contract generation
+✔ Rival escalation engine
+✔ Round-based contracts (no map)
+✔ Trial risk/reward system
+✔ Reward tables
+✔ Boss trait mechanical depth
+✔ Shop counter-weighting
+✔ Fail-forward structure
+✔ Final boss integration
+✔ Fully modular expansion path
