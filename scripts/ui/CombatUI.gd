@@ -398,8 +398,7 @@ func _on_victory() -> void:
 	_log("=== VICTORY! All enemies defeated! ===")
 	_update_all_ui()
 
-	GameState.change_meter("RENOWN", 2)
-	GameState.add_gold(50)
+	# Rewards/meters are applied by MissionManager from missions.json.
 	MissionManager.complete_mission("M01")
 
 	end_turn_btn.text = "CONTINUE →"
