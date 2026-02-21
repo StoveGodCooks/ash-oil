@@ -1,0 +1,67 @@
+name: Ash & Oil CI
+
+on:
+  push:
+    branches: [ master, main ]
+  pull_request:
+    branches: [ master, main ]
+
+jobs:
+  validate-data:
+    name: Data Integrity Checks
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Run data validation suite
+        run: python -X utf8 tests/validate_data.py
+
+  lint-gdscript:
+    name: GDScript Lint
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install gdtoolkit
+        run: pip install gdtoolkit==4.*
+
+      - name: Lint all GDScript files
+        run: |
+          echo "Linting GDScript files..."
+          find . -name "*.gd" -not -path "./.git/*" | while read f; do
+            echo "  Checking: $f"
+            gdlint "$f" || exit 1
+          done
+          echo "All GDScript files passed lint."
+
+  validate-json:
+    name: JSON Syntax Check
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Validate all JSON files
+        run: |
+          echo "Checking JSON syntax..."
+          for f in data/*.json; do
+            echo "  Checking: $f"
+            python -c "import json,sys; json.load(open('$f'))" || exit 1
+            echo "    OK"
+          done
+          echo "All JSON files are valid."

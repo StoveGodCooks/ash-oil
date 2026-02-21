@@ -264,23 +264,34 @@ func _update_hand_ui() -> void:
 
 func _get_card_desc(data: Dictionary) -> String:
 	var type = data.get("type", "")
+	var eff  = data.get("effect", "")
 	match type:
 		"attack":
 			var dmg = data.get("damage", 0)
-			var eff = data.get("effect", "none")
-			var s = "⚔ %d dmg" % dmg
-			if "poison" in eff:
-				s += " + poison"
+			var s = "%d dmg" % dmg
+			if "poison" in eff: s += "+poison"
 			return s
 		"defense":
-			return "🛡 +%d armor" % data.get("armor", 0)
+			return "+%d armor" % data.get("armor", 0)
 		"support":
 			var heal = data.get("heal", 0)
-			if heal > 0:
-				return "💚 heal %d HP" % heal
-			return "✨ " + data.get("effect", "")
+			if heal > 0: return "heal %d HP" % heal
+			return eff
+		"reaction":
+			var dmg = data.get("damage", 0)
+			var armor = data.get("armor", 0)
+			if dmg > 0: return "react %d dmg" % dmg
+			return "+%d armor" % armor
+		"area":
+			var dmg = data.get("damage", 0)
+			if "poison" in eff: return "AoE poison"
+			return "AoE %d dmg" % dmg
+		"evasion":
+			return "dodge / evade"
+		"effect":
+			return eff.replace("_", " ")
 		_:
-			return data.get("effect", type)
+			return eff if eff != "" else type
 
 func _on_card_pressed(card_idx: int) -> void:
 	if combat_over or card_idx >= hand.size():
@@ -322,6 +333,60 @@ func _on_card_pressed(card_idx: int) -> void:
 			if heal > 0:
 				champion_hp = min(champion_max_hp, champion_hp + heal)
 				_log("Champion healed %d HP (%d/%d)" % [heal, champion_hp, champion_max_hp])
+			elif effect == "resource_regen":
+				stamina = min(3, stamina + 1)
+				_log("Stamina restored +1 (%d/3)" % stamina)
+			elif effect == "card_draw":
+				_draw_card()
+				_log("Drew a card from effect.")
+
+		"reaction":
+			var dmg = card_data.get("damage", 0)
+			var armor = card_data.get("armor", 0)
+			if dmg > 0:
+				var target = _get_first_alive_enemy()
+				if target >= 0:
+					_deal_damage_to_enemy(target, dmg)
+			if armor > 0:
+				champion_armor += armor
+				_log("Champion gained %d armor (total: %d)" % [armor, champion_armor])
+
+		"area":
+			var dmg = card_data.get("damage", 0)
+			for i in range(enemies.size()):
+				if enemies[i]["hp"] > 0:
+					if "poison" in effect:
+						var stacks = _parse_effect_stacks(effect)
+						enemies[i]["poison"] += stacks
+						_log("%s poisoned (%d stacks)" % [enemies[i]["name"], enemies[i]["poison"]])
+					elif dmg > 0:
+						_deal_damage_to_enemy(i, dmg)
+
+		"evasion":
+			# Dodge: negate next enemy attack this turn by granting temp armor
+			champion_armor += 3
+			_log("Evasion! +3 temp armor to absorb next hit.")
+			if effect == "evasion_team":
+				lt_armor += 2
+				_log("%s also gains +2 armor." % lt_name)
+
+		"effect":
+			match effect:
+				"reflect_damage":
+					champion_armor += 2
+					_log("Curse of Thorns active: +2 armor, reflects on hit.")
+				"fear":
+					# Reduce all enemy damage by 1 for this turn via a status flag
+					for i in range(enemies.size()):
+						if enemies[i]["hp"] > 0:
+							enemies[i]["damage"] = max(0, enemies[i].get("damage", 0) - 1)
+					_log("Intimidate! All enemy damage reduced by 1 this turn.")
+				"morale_boost_all":
+					champion_hp = min(champion_max_hp, champion_hp + 3)
+					lt_hp = min(lt_max_hp, lt_hp + 3)
+					_log("Morale Boost! Champion and %s each heal 3 HP." % lt_name)
+				_:
+					_log("Effect: %s applied." % effect)
 
 	discard_pile.append(hand[card_idx])
 	hand.remove_at(card_idx)

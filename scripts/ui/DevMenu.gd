@@ -63,6 +63,15 @@ func _build_ui() -> void:
 
 	vbox.add_child(_sep())
 
+	# ── Unit Tests ──
+	_section(vbox, "UNIT TESTS")
+	var test_row = HBoxContainer.new()
+	test_row.add_theme_constant_override("separation", 8)
+	vbox.add_child(test_row)
+	test_row.add_child(_btn("RUN ALL TESTS", Color(0.05, 0.3, 0.05), func(): _run_tests()))
+
+	vbox.add_child(_sep())
+
 	# ── Unlock All Missions ──
 	_section(vbox, "UNLOCK MISSIONS")
 	var unlock_row = HBoxContainer.new()
@@ -146,6 +155,20 @@ func _go_deck() -> void:
 func _unlock_range(prefix: String, from: int, to: int) -> void:
 	for i in range(from, to + 1):
 		GameState.unlock_mission("%s%02d" % [prefix, i])
+
+func _run_tests() -> void:
+	var runner = load("res://tests/unit/test_game_logic.gd").new()
+	add_child(runner)
+	var output = runner.run_all()
+	runner.queue_free()
+
+	# Show results in a popup
+	var popup = AcceptDialog.new()
+	popup.title = "Unit Test Results"
+	popup.dialog_text = output
+	popup.min_size = Vector2(600, 500)
+	add_child(popup)
+	popup.popup_centered()
 
 func _unlock_sides() -> void:
 	for sid in ["S01","S02","S03","S04","S05","S06","S07","S08","S09","S10","S11","S12","S13","S14","S15"]:
