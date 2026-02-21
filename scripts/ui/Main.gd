@@ -71,9 +71,11 @@ func _ready() -> void:
 
 func _on_start_pressed() -> void:
 	GameState.reset()
+	GameState.current_deck = CardManager.get_starter_deck()
 	print("--- NEW GAME STARTED ---")
 	print("Gold: %d | Deck: %d cards" % [GameState.gold, GameState.current_deck.size()])
 	print("Available missions: ", GameState.unlocked_missions)
+	get_tree().change_scene_to_file("res://scenes/CombatScreen.tscn")
 
 func _on_continue_pressed() -> void:
 	if SaveManager.load_game(1):

@@ -20,6 +20,7 @@ config/icon="res://icon.svg"
 GameState="*res://scripts/autoload/GameState.gd"
 SaveManager="*res://scripts/autoload/SaveManager.gd"
 MissionManager="*res://scripts/autoload/MissionManager.gd"
+CardManager="*res://scripts/autoload/CardManager.gd"
 
 [physics]
 
