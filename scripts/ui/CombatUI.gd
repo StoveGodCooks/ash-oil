@@ -32,6 +32,7 @@ var lt_label: Label
 var hand_container: HBoxContainer
 var end_turn_btn: Button
 var enemy_labels: Array = []
+var _log_lines: Array = []
 
 func _ready() -> void:
 	_init_state()
@@ -536,7 +537,6 @@ func _update_all_ui() -> void:
 
 	_update_hand_ui()
 
-var _log_lines: Array = []
 func _log(msg: String) -> void:
 	_log_lines.append(msg)
 	if _log_lines.size() > 6:

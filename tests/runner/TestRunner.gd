@@ -3,6 +3,8 @@ extends Node
 ## Finds every test_*.gd in tests/unit/ and tests/integration/,
 ## runs all methods starting with "test_", calls setup()/teardown() around each.
 
+signal tests_complete(report: String)
+
 const TEST_DIRS = [
 	"res://tests/unit/",
 	"res://tests/integration/",
@@ -13,8 +15,6 @@ var total_failed:  int = 0
 var total_skipped: int = 0
 var total_suites:  int = 0
 var report_lines:  Array = []
-
-signal tests_complete(report: String)
 
 # ── Public API ─────────────────────────────────────────────────────────────
 func run_all() -> String:
