@@ -49,7 +49,7 @@ func _ready() -> void:
 	continue_btn = Button.new()
 	continue_btn.text = "CONTINUE"
 	continue_btn.custom_minimum_size = Vector2(200, 50)
-	continue_btn.disabled = not SaveManager.save_exists(1)
+	continue_btn.disabled = not SaveManager.save_exists(0)
 	continue_btn.pressed.connect(_on_continue_pressed)
 	vbox.add_child(continue_btn)
 
@@ -60,7 +60,7 @@ func _ready() -> void:
 
 	# Version
 	var ver = Label.new()
-	ver.text = "v0.1 - Phase 1 Complete"
+	ver.text = "v0.3 - Phase 3: Hub System"
 	ver.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	ver.add_theme_font_size_override("font_size", 11)
 	vbox.add_child(ver)
@@ -72,14 +72,16 @@ func _ready() -> void:
 func _on_start_pressed() -> void:
 	GameState.reset()
 	GameState.current_deck = CardManager.get_starter_deck()
+	GameState.current_mission_id = "M01"
 	print("--- NEW GAME STARTED ---")
 	print("Gold: %d | Deck: %d cards" % [GameState.gold, GameState.current_deck.size()])
 	print("Available missions: ", GameState.unlocked_missions)
-	get_tree().change_scene_to_file("res://scenes/CombatScreen.tscn")
+	get_tree().change_scene_to_file("res://scenes/MainHub.tscn")
 
 func _on_continue_pressed() -> void:
-	if SaveManager.load_game(1):
+	if SaveManager.load_game(0):
 		print("--- GAME LOADED ---")
 		print("RENOWN: %d | HEAT: %d | Gold: %d" % [GameState.RENOWN, GameState.HEAT, GameState.gold])
+		get_tree().change_scene_to_file("res://scenes/MainHub.tscn")
 	else:
 		print("No save file found!")

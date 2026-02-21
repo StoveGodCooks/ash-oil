@@ -396,9 +396,7 @@ func _on_victory() -> void:
 	_log("=== VICTORY! All enemies defeated! ===")
 	_update_all_ui()
 
-	GameState.change_meter("RENOWN", 2)
-	GameState.add_gold(50)
-	MissionManager.complete_mission("M01")
+	MissionManager.complete_mission(GameState.current_mission_id, "victory")
 
 	end_turn_btn.text = "CONTINUE →"
 	end_turn_btn.disabled = false
@@ -419,10 +417,11 @@ func _on_retreat() -> void:
 	if combat_over:
 		return
 	_log("Retreating from combat...")
-	get_tree().change_scene_to_file("res://scenes/Main.tscn")
+	MissionManager.complete_mission(GameState.current_mission_id, "retreat")
+	get_tree().change_scene_to_file("res://scenes/MainHub.tscn")
 
 func _on_continue_after_combat() -> void:
-	get_tree().change_scene_to_file("res://scenes/Main.tscn")
+	get_tree().change_scene_to_file("res://scenes/MainHub.tscn")
 
 func _on_back_to_menu() -> void:
 	get_tree().change_scene_to_file("res://scenes/Main.tscn")
