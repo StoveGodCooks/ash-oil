@@ -1,0 +1,262 @@
+{
+  "quintus": {
+    "id": "quintus",
+    "name": "Quintus",
+    "hp": 20,
+    "max_hp": 20,
+    "armor": 4,
+    "damage": 4,
+    "poison": 0,
+    "type": "champion"
+  },
+  "warrior_a": {
+    "id": "warrior_a",
+    "name": "Warrior A",
+    "hp": 12,
+    "max_hp": 12,
+    "armor": 0,
+    "damage": 2,
+    "poison": 0,
+    "type": "grunt"
+  },
+  "warrior_b": {
+    "id": "warrior_b",
+    "name": "Warrior B",
+    "hp": 12,
+    "max_hp": 12,
+    "armor": 0,
+    "damage": 2,
+    "poison": 0,
+    "type": "grunt"
+  },
+  "broker_guard": {
+    "id": "broker_guard",
+    "name": "Broker Guard",
+    "hp": 14,
+    "max_hp": 14,
+    "armor": 1,
+    "damage": 3,
+    "poison": 0,
+    "type": "grunt"
+  },
+  "ambush_knife": {
+    "id": "ambush_knife",
+    "name": "Knife Man",
+    "hp": 10,
+    "max_hp": 10,
+    "armor": 0,
+    "damage": 4,
+    "poison": 0,
+    "type": "grunt"
+  },
+  "ambush_knife_2": {
+    "id": "ambush_knife_2",
+    "name": "Knife Man",
+    "hp": 10,
+    "max_hp": 10,
+    "armor": 0,
+    "damage": 4,
+    "poison": 0,
+    "type": "grunt"
+  },
+  "old_champion": {
+    "id": "old_champion",
+    "name": "Vergus the Old",
+    "hp": 28,
+    "max_hp": 28,
+    "armor": 3,
+    "damage": 5,
+    "poison": 0,
+    "type": "champion"
+  },
+  "lanista_guard_a": {
+    "id": "lanista_guard_a",
+    "name": "Gate Guard",
+    "hp": 18,
+    "max_hp": 18,
+    "armor": 3,
+    "damage": 3,
+    "poison": 0,
+    "type": "elite"
+  },
+  "lanista_guard_b": {
+    "id": "lanista_guard_b",
+    "name": "Gate Guard",
+    "hp": 18,
+    "max_hp": 18,
+    "armor": 3,
+    "damage": 3,
+    "poison": 0,
+    "type": "elite"
+  },
+  "cult_acolyte": {
+    "id": "cult_acolyte",
+    "name": "Cult Acolyte",
+    "hp": 11,
+    "max_hp": 11,
+    "armor": 0,
+    "damage": 2,
+    "poison": 1,
+    "type": "grunt"
+  },
+  "cult_zealot": {
+    "id": "cult_zealot",
+    "name": "Cult Zealot",
+    "hp": 16,
+    "max_hp": 16,
+    "armor": 1,
+    "damage": 3,
+    "poison": 1,
+    "type": "elite"
+  },
+  "state_agent": {
+    "id": "state_agent",
+    "name": "State Agent",
+    "hp": 15,
+    "max_hp": 15,
+    "armor": 2,
+    "damage": 3,
+    "poison": 0,
+    "type": "elite"
+  },
+  "state_soldier": {
+    "id": "state_soldier",
+    "name": "State Soldier",
+    "hp": 14,
+    "max_hp": 14,
+    "armor": 2,
+    "damage": 3,
+    "poison": 0,
+    "type": "grunt"
+  },
+  "dock_thug": {
+    "id": "dock_thug",
+    "name": "Dock Thug",
+    "hp": 13,
+    "max_hp": 13,
+    "armor": 0,
+    "damage": 3,
+    "poison": 0,
+    "type": "grunt"
+  },
+  "dock_thug_2": {
+    "id": "dock_thug_2",
+    "name": "Dock Thug",
+    "hp": 13,
+    "max_hp": 13,
+    "armor": 0,
+    "damage": 3,
+    "poison": 0,
+    "type": "grunt"
+  },
+  "shadow_enforcer": {
+    "id": "shadow_enforcer",
+    "name": "Shadow Enforcer",
+    "hp": 22,
+    "max_hp": 22,
+    "armor": 2,
+    "damage": 5,
+    "poison": 2,
+    "type": "elite"
+  },
+  "shadow_grunt": {
+    "id": "shadow_grunt",
+    "name": "Shadow Grunt",
+    "hp": 12,
+    "max_hp": 12,
+    "armor": 0,
+    "damage": 3,
+    "poison": 1,
+    "type": "grunt"
+  },
+  "varro_decoy": {
+    "id": "varro_decoy",
+    "name": "Varro's Decoy",
+    "hp": 16,
+    "max_hp": 16,
+    "armor": 1,
+    "damage": 3,
+    "poison": 0,
+    "type": "elite"
+  },
+  "varro_scout": {
+    "id": "varro_scout",
+    "name": "Varro's Scout",
+    "hp": 10,
+    "max_hp": 10,
+    "armor": 0,
+    "damage": 4,
+    "poison": 0,
+    "type": "grunt"
+  },
+  "reckoning_boss": {
+    "id": "reckoning_boss",
+    "name": "The Collector",
+    "hp": 35,
+    "max_hp": 35,
+    "armor": 5,
+    "damage": 6,
+    "poison": 0,
+    "type": "boss"
+  },
+  "reckoning_enforcer": {
+    "id": "reckoning_enforcer",
+    "name": "Debt Enforcer",
+    "hp": 20,
+    "max_hp": 20,
+    "armor": 2,
+    "damage": 4,
+    "poison": 0,
+    "type": "elite"
+  },
+  "alley_thug": {
+    "id": "alley_thug",
+    "name": "Alley Thug",
+    "hp": 9,
+    "max_hp": 9,
+    "armor": 0,
+    "damage": 2,
+    "poison": 0,
+    "type": "grunt"
+  },
+  "arena_rookie": {
+    "id": "arena_rookie",
+    "name": "Arena Rookie",
+    "hp": 10,
+    "max_hp": 10,
+    "armor": 1,
+    "damage": 2,
+    "poison": 0,
+    "type": "grunt"
+  },
+  "arena_vet": {
+    "id": "arena_vet",
+    "name": "Arena Veteran",
+    "hp": 22,
+    "max_hp": 22,
+    "armor": 2,
+    "damage": 4,
+    "poison": 0,
+    "type": "elite"
+  },
+  "pilgrim_bandit": {
+    "id": "pilgrim_bandit",
+    "name": "Ridge Bandit",
+    "hp": 11,
+    "max_hp": 11,
+    "armor": 0,
+    "damage": 3,
+    "poison": 0,
+    "type": "grunt"
+  },
+  "pilgrim_bandit_2": {
+    "id": "pilgrim_bandit_2",
+    "name": "Ridge Bandit",
+    "hp": 11,
+    "max_hp": 11,
+    "armor": 0,
+    "damage": 3,
+    "poison": 0,
+    "type": "grunt"
+  }
+}

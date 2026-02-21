@@ -47,14 +47,18 @@ func _init_state() -> void:
 	lt_max_hp = 25
 	lt_armor = 2
 
-	# M01 enemies
-	enemies = [
-		{"name": "Quintus",   "hp": 20, "max_hp": 20, "armor": 0, "damage": 4, "poison": 0},
-		{"name": "Warrior A",  "hp": 12, "max_hp": 12, "armor": 0, "damage": 2, "poison": 0},
-		{"name": "Warrior B",  "hp": 12, "max_hp": 12, "armor": 0, "damage": 2, "poison": 0},
-	]
+	# Load enemies from current mission
+	var mid = GameState.current_mission_id
+	if mid == "":
+		mid = "M01"
+	enemies = CardManager.get_mission_enemies(mid)
+	if enemies.is_empty():
+		# Fallback so combat never crashes
+		enemies = [
+			{"name": "Grunt", "hp": 12, "max_hp": 12, "armor": 0, "damage": 2, "poison": 0}
+		]
 
-	deck = CardManager.get_starter_deck().duplicate()
+	deck = GameState.current_deck.duplicate()
 	deck.shuffle()
 	hand = []
 	discard_pile = []
@@ -79,8 +83,14 @@ func _build_ui() -> void:
 	title_bar.custom_minimum_size = Vector2(0, 40)
 	main_vbox.add_child(title_bar)
 
+	var mid = GameState.current_mission_id
+	if mid == "":
+		mid = "M01"
+	var m_data = MissionManager.get_mission(mid)
+	var m_name = m_data.get("name", mid).to_upper()
+	var m_loc  = m_data.get("location", "Unknown")
 	var mission_label = Label.new()
-	mission_label.text = "  M01: THE TOKEN — Arena Fight"
+	mission_label.text = "  %s: %s — %s" % [mid, m_name, m_loc]
 	mission_label.add_theme_font_size_override("font_size", 14)
 	title_bar.add_child(mission_label)
 
