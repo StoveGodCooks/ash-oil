@@ -58,9 +58,17 @@ func _ready() -> void:
 	sp2.custom_minimum_size = Vector2(0, 20)
 	vbox.add_child(sp2)
 
+	# Dev Mode button
+	var dev_btn = Button.new()
+	dev_btn.text = "⚙ DEV MODE"
+	dev_btn.custom_minimum_size = Vector2(200, 36)
+	dev_btn.add_theme_color_override("font_color", Color(0.4, 1.0, 0.4))
+	dev_btn.pressed.connect(func(): get_tree().change_scene_to_file("res://scenes/DevMenu.tscn"))
+	vbox.add_child(dev_btn)
+
 	# Version
 	var ver = Label.new()
-	ver.text = "v0.3 - Phase 3: Hub System"
+	ver.text = "v0.4 - Phase 4: Mission Integration"
 	ver.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	ver.add_theme_font_size_override("font_size", 11)
 	vbox.add_child(ver)
