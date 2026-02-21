@@ -197,7 +197,7 @@ func _build_ui() -> void:
 	log_label = Label.new()
 	log_label.text = "Combat begins..."
 	log_label.add_theme_font_size_override("font_size", 11)
-	log_label.autowrap_mode = TextServer.AUTOWRAP_WORD_ARBITRARY
+	log_label.autowrap_mode = TextServer.AUTOWRAP_WORD
 	log_label.custom_minimum_size = Vector2(0, 60)
 	main_vbox.add_child(log_label)
 
