@@ -1,0 +1,10 @@
+{
+  "Marcus":  {"name": "Marcus the Veteran",  "trait": "Disciplined", "trait_desc": "+1 starting hand size",          "hp": 25, "armor": 2, "speed": 5, "cards": ["card_037","card_038","card_039"], "unlock_mission": "M01"},
+  "Livia":   {"name": "Livia the Cultist",   "trait": "Blessed",     "trait_desc": "+2 Mana at start of each mission","hp": 20, "armor": 0, "speed": 6, "cards": ["card_040","card_041","card_042"], "unlock_mission": "M04"},
+  "Titus":   {"name": "Titus the Noble",     "trait": "Connected",   "trait_desc": "Shop prices -10%",               "hp": 22, "armor": 1, "speed": 5, "cards": ["card_043","card_044","card_045"], "unlock_mission": "M06"},
+  "Kara":    {"name": "Kara the Beast Hunter","trait": "Tracker",    "trait_desc": "Reveal top enemy card each turn", "hp": 23, "armor": 1, "speed": 7, "cards": ["card_046","card_047","card_048"], "unlock_mission": "M09"},
+  "Decimus": {"name": "Decimus the Assassin","trait": "Toxic",       "trait_desc": "All Poison effects +1 stack",     "hp": 21, "armor": 0, "speed": 8, "cards": ["card_049","card_050","card_051"], "unlock_mission": "M12"},
+  "Julia":   {"name": "Julia the Friend",    "trait": "Hope",        "trait_desc": "Heal +5 HP after victories",      "hp": 20, "armor": 0, "speed": 5, "cards": ["card_052","card_053","card_054"], "unlock_mission": "M02"},
+  "Corvus":  {"name": "Corvus the Smuggler", "trait": "Black Market","trait_desc": "Unlock illegal gear earlier",     "hp": 21, "armor": 1, "speed": 7, "cards": ["card_055","card_056","card_057"], "unlock_mission": "M11"},
+  "Thane":   {"name": "Thane the Gladiator", "trait": "Arena Fav",   "trait_desc": "Crowd bonuses in arena fights",   "hp": 26, "armor": 2, "speed": 6, "cards": ["card_058","card_059","card_060"], "unlock_mission": "M14"}
+}
