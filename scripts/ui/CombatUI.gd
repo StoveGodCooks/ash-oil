@@ -8,18 +8,26 @@ var champion_hp: int = 30
 var champion_max_hp: int = 30
 var champion_armor: int = 0
 
-var lt_name: String = "Marcus"
-var lt_hp: int = 25
-var lt_max_hp: int = 25
-var lt_armor: int = 2
-
+var active_lts: Array = []  # Active lieutenants from GameState
 var enemies: Array = []
 var hand: Array = []
 var deck: Array = []
 var discard_pile: Array = []
 
-var stamina: int = 3
-var mana: int = 0
+# ============ RESOURCES (SHARED POOLS) ============
+var resources: Dictionary = {
+	"stamina": 5,
+	"stamina_max": 5,
+	"mana": 0,
+	"mana_max": 10,
+	"mana_regen": 2
+}
+
+# ============ TARGETING & ACTOR SYSTEM ============
+var selected_target_idx: int = -1  # Currently selected enemy (-1 = none)
+var current_actor: String = "champion"  # Who's acting next
+var active_synergies: Dictionary = {}  # {"poison": 2, "bleed": 1, ...}
+
 var turn: int = 1
 var combat_over: bool = false
 var player_won: bool = false
@@ -30,10 +38,12 @@ var stamina_label: Label
 var mana_label: Label
 var turn_label: Label
 var champion_label: Label
-var lt_label: Label
+var lt_labels: Dictionary = {}  # {lt_name: label}
 var hand_container: HBoxContainer
 var end_turn_btn: Button
-var enemy_labels: Array = []
+var enemy_buttons: Array = []  # Clickable enemy selection buttons
+var enemy_labels: Array = []  # Display labels
+var actor_selector_hbox: HBoxContainer  # For actor selection UI
 
 func _ready() -> void:
 	_init_state()
@@ -44,10 +54,11 @@ func _init_state() -> void:
 	champion_hp = 30
 	champion_max_hp = 30
 	champion_armor = 0
-	lt_name = "Marcus"
-	lt_hp = 25
-	lt_max_hp = 25
-	lt_armor = 2
+
+	# Load active lieutenants from GameState
+	active_lts = GameState.active_lieutenants.duplicate()
+	if active_lts.is_empty():
+		active_lts = ["Marcus"]  # Default fallback
 
 	# M01 enemies
 	enemies = [
@@ -56,12 +67,21 @@ func _init_state() -> void:
 		{"name": "Warrior B",  "hp": 12, "max_hp": 12, "armor": 0, "damage": 2, "poison": 0},
 	]
 
+	# Initialize deck from starter deck (shared pool for all actors)
 	deck = CardManager.get_starter_deck().duplicate()
 	deck.shuffle()
 	hand = []
 	discard_pile = []
-	stamina = 3
-	mana = 0
+
+	# Initialize resource pools
+	resources["stamina"] = 5
+	resources["stamina_max"] = 5
+	resources["mana"] = 0
+	resources["mana_max"] = 10
+
+	selected_target_idx = -1
+	current_actor = "champion"
+	active_synergies.clear()
 	turn = 1
 	combat_over = false
 
@@ -97,63 +117,79 @@ func _build_ui() -> void:
 
 	# Enemy zone
 	var enemy_panel = PanelContainer.new()
-	enemy_panel.custom_minimum_size = Vector2(0, 120)
+	enemy_panel.custom_minimum_size = Vector2(0, 140)
 	main_vbox.add_child(enemy_panel)
+
+	var enemy_vbox = VBoxContainer.new()
+	enemy_panel.add_child(enemy_vbox)
+
+	var target_label = Label.new()
+	target_label.text = "← Click enemy to target →"
+	target_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	target_label.add_theme_font_size_override("font_size", 11)
+	target_label.modulate = Color(0.8, 0.8, 0.5)
+	enemy_vbox.add_child(target_label)
 
 	var enemy_hbox = HBoxContainer.new()
 	enemy_hbox.alignment = BoxContainer.ALIGNMENT_CENTER
-	enemy_panel.add_child(enemy_hbox)
+	enemy_hbox.add_theme_constant_override("separation", 8)
+	enemy_vbox.add_child(enemy_hbox)
 
 	for i in range(enemies.size()):
-		var e_container = VBoxContainer.new()
-		e_container.custom_minimum_size = Vector2(180, 100)
-		e_container.alignment = BoxContainer.ALIGNMENT_CENTER
-		enemy_hbox.add_child(e_container)
+		var e_btn = Button.new()
+		e_btn.custom_minimum_size = Vector2(160, 90)
+		e_btn.pressed.connect(_on_enemy_selected.bind(i))
+		enemy_hbox.add_child(e_btn)
+		enemy_buttons.append(e_btn)
 
 		var e_label = Label.new()
 		e_label.text = _get_enemy_display(i)
 		e_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-		e_label.add_theme_font_size_override("font_size", 13)
-		e_container.add_child(e_label)
+		e_label.add_theme_font_size_override("font_size", 12)
 		enemy_labels.append(e_label)
 
 	# Player zone
 	var player_panel = PanelContainer.new()
-	player_panel.custom_minimum_size = Vector2(0, 80)
+	player_panel.custom_minimum_size = Vector2(0, 100)
 	main_vbox.add_child(player_panel)
 
 	var player_hbox = HBoxContainer.new()
 	player_hbox.alignment = BoxContainer.ALIGNMENT_CENTER
+	player_hbox.add_theme_constant_override("separation", 12)
 	player_panel.add_child(player_hbox)
 
 	champion_label = Label.new()
 	champion_label.text = _get_champion_display()
-	champion_label.add_theme_font_size_override("font_size", 13)
-	champion_label.custom_minimum_size = Vector2(220, 0)
+	champion_label.add_theme_font_size_override("font_size", 12)
+	champion_label.custom_minimum_size = Vector2(180, 0)
 	player_hbox.add_child(champion_label)
 
-	lt_label = Label.new()
-	lt_label.text = _get_lt_display()
-	lt_label.add_theme_font_size_override("font_size", 13)
-	lt_label.custom_minimum_size = Vector2(220, 0)
-	player_hbox.add_child(lt_label)
+	# Show all active lieutenants
+	for lt_name in active_lts:
+		var lt_label_new = Label.new()
+		lt_label_new.text = _get_lt_display(lt_name)
+		lt_label_new.add_theme_font_size_override("font_size", 12)
+		lt_label_new.custom_minimum_size = Vector2(180, 0)
+		player_hbox.add_child(lt_label_new)
+		lt_labels[lt_name] = lt_label_new
 
-	# Resources
+	# Resources (shared pool)
 	var res_hbox = HBoxContainer.new()
-	res_hbox.custom_minimum_size = Vector2(0, 35)
+	res_hbox.custom_minimum_size = Vector2(0, 40)
 	res_hbox.alignment = BoxContainer.ALIGNMENT_CENTER
+	res_hbox.add_theme_constant_override("separation", 20)
 	main_vbox.add_child(res_hbox)
 
 	stamina_label = Label.new()
-	stamina_label.text = "Stamina: 3/3"
-	stamina_label.add_theme_font_size_override("font_size", 14)
-	stamina_label.custom_minimum_size = Vector2(160, 0)
+	stamina_label.text = "Stamina: 5/5"
+	stamina_label.add_theme_font_size_override("font_size", 13)
+	stamina_label.custom_minimum_size = Vector2(140, 0)
 	res_hbox.add_child(stamina_label)
 
 	mana_label = Label.new()
-	mana_label.text = "Mana: 0"
-	mana_label.add_theme_font_size_override("font_size", 14)
-	mana_label.custom_minimum_size = Vector2(100, 0)
+	mana_label.text = "Mana: 0/10"
+	mana_label.add_theme_font_size_override("font_size", 13)
+	mana_label.custom_minimum_size = Vector2(120, 0)
 	res_hbox.add_child(mana_label)
 
 	# Hand zone label
@@ -206,10 +242,19 @@ func _build_ui() -> void:
 func _start_turn() -> void:
 	if combat_over:
 		return
-	stamina = 3
+
+	# Restore shared resources
+	resources["stamina"] = resources["stamina_max"]  # Restore to 5
+	resources["mana"] = min(resources["mana"] + resources["mana_regen"], resources["mana_max"])
+
 	_draw_cards(3)
 	_update_all_ui()
-	_log("--- Turn %d --- Draw 3 cards. Stamina restored." % turn)
+	_log("--- Turn %d --- Draw 3 cards. Stamina: %d | Mana: +%d → %d" % [
+		turn,
+		resources["stamina"],
+		resources["mana_regen"],
+		resources["mana"]
+	])
 
 func _draw_cards(n: int) -> void:
 	for i in range(n):
@@ -225,6 +270,18 @@ func _draw_cards(n: int) -> void:
 		if not deck.is_empty():
 			hand.append(deck.pop_front())
 
+func _on_enemy_selected(idx: int) -> void:
+	"""Handle enemy selection for targeting"""
+	if idx < 0 or idx >= enemies.size():
+		return
+	if enemies[idx]["hp"] <= 0:
+		_log("Target is already defeated!")
+		return
+
+	selected_target_idx = idx
+	_log("Selected target: %s" % enemies[idx]["name"])
+	_update_all_ui()
+
 func _update_hand_ui() -> void:
 	for child in hand_container.get_children():
 		child.queue_free()
@@ -236,7 +293,7 @@ func _update_hand_ui() -> void:
 			continue
 
 		var cost = card_data.get("cost", 1)
-		var can_play = (cost <= stamina)
+		var can_play = (cost <= resources["stamina"])
 
 		var btn = Button.new()
 		btn.custom_minimum_size = Vector2(130, 80)
@@ -284,25 +341,32 @@ func _on_card_pressed(card_idx: int) -> void:
 		return
 
 	var cost = card_data.get("cost", 1)
-	if cost > stamina:
-		_log("Not enough stamina! (need %d, have %d)" % [cost, stamina])
+	if cost > resources["stamina"]:
+		_log("Not enough stamina! (need %d, have %d)" % [cost, resources["stamina"]])
 		return
 
-	stamina -= cost
+	# Consume stamina from shared pool
+	resources["stamina"] -= cost
 
 	var type = card_data.get("type", "attack")
 	var effect = card_data.get("effect", "none")
+	var target_idx = selected_target_idx
 
 	match type:
 		"attack":
 			var dmg = card_data.get("damage", 0)
-			var target = _get_first_alive_enemy()
-			if target >= 0:
-				_deal_damage_to_enemy(target, dmg)
+			# Use selected target, or default to first alive
+			if target_idx < 0:
+				target_idx = _get_first_alive_enemy()
+			if target_idx >= 0:
+				_deal_damage_to_enemy(target_idx, dmg, current_actor)
+				# Apply synergy multiplier
+				if "synergy_type" in card_data:
+					_apply_synergy(card_data)
 				if "poison" in effect:
 					var stacks = _parse_effect_stacks(effect)
-					enemies[target]["poison"] += stacks
-					_log("%s poisoned (%d stacks)" % [enemies[target]["name"], enemies[target]["poison"]])
+					enemies[target_idx]["poison"] += stacks
+					_log("%s poisoned (%d stacks)" % [enemies[target_idx]["name"], enemies[target_idx]["poison"]])
 
 		"defense":
 			var armor = card_data.get("armor", 0)
@@ -333,15 +397,34 @@ func _get_first_alive_enemy() -> int:
 			return i
 	return -1
 
-func _deal_damage_to_enemy(idx: int, amount: int) -> void:
+func _deal_damage_to_enemy(idx: int, amount: int, actor: String = "champion") -> void:
 	if idx < 0 or idx >= enemies.size():
 		return
 	var enemy = enemies[idx]
-	var absorbed = min(enemy.get("armor", 0), amount)
+
+	# Apply synergy multiplier
+	var synergy_mult = _get_synergy_multiplier(enemy)
+	var final_damage = int(amount * synergy_mult)
+
+	var absorbed = min(enemy.get("armor", 0), final_damage)
 	enemy["armor"] = max(0, enemy.get("armor", 0) - absorbed)
-	var actual = amount - absorbed
+	var actual = final_damage - absorbed
 	enemy["hp"] = max(0, enemy["hp"] - actual)
 	_log("Hit %s for %d dmg (%d armor) → %d/%d HP" % [enemy["name"], actual, absorbed, enemy["hp"], enemy["max_hp"]])
+
+func _apply_synergy(card: Dictionary) -> void:
+	"""Track synergy types for damage multipliers"""
+	var synergy_type = card.get("synergy_type", "none")
+	if synergy_type != "none":
+		active_synergies[synergy_type] = active_synergies.get(synergy_type, 0) + 1
+
+func _get_synergy_multiplier(enemy: Dictionary) -> float:
+	"""Get damage multiplier based on active synergies"""
+	var mult = 1.0
+	# Poison synergy: each stack adds 10% damage
+	if active_synergies.get("poison", 0) > 0:
+		mult += (active_synergies["poison"] * 0.1)
+	return mult
 
 func _on_end_turn() -> void:
 	if combat_over:
@@ -420,13 +503,14 @@ func _on_retreat() -> void:
 	if combat_over:
 		return
 	_log("Retreating from combat...")
-	get_tree().change_scene_to_file("res://scenes/Main.tscn")
+	MissionManager.complete_mission(GameState.current_mission_id, "retreat")
+	get_tree().change_scene_to_file("res://scenes/MainHub.tscn")
 
 func _on_continue_after_combat() -> void:
-	get_tree().change_scene_to_file("res://scenes/Main.tscn")
+	get_tree().change_scene_to_file("res://scenes/MainHub.tscn")
 
 func _on_back_to_menu() -> void:
-	get_tree().change_scene_to_file("res://scenes/Main.tscn")
+	get_tree().change_scene_to_file("res://scenes/MainHub.tscn")
 
 func _get_enemy_display(i: int) -> String:
 	var e = enemies[i]
@@ -440,7 +524,13 @@ func _get_enemy_display(i: int) -> String:
 func _get_champion_display() -> String:
 	return "CHAMPION\n❤ %d/%d  🛡 %d" % [champion_hp, champion_max_hp, champion_armor]
 
-func _get_lt_display() -> String:
+func _get_lt_display(lt_name: String) -> String:
+	"""Get display string for a lieutenant"""
+	var lt_data = GameState.lieutenants.get(lt_name, {})
+	var lt_hp = lt_data.get("hp", 25)
+	var lt_max_hp = lt_data.get("max_hp", 25)
+	var lt_armor = lt_data.get("armor", 2)
+
 	if lt_hp <= 0:
 		return "%s [DOWN]" % lt_name
 	return "%s\n❤ %d/%d  🛡 %d" % [lt_name, lt_hp, lt_max_hp, lt_armor]
@@ -449,17 +539,34 @@ func _update_all_ui() -> void:
 	if turn_label:
 		turn_label.text = "Turn %d" % turn
 	if stamina_label:
-		stamina_label.text = "Stamina: %d/3" % stamina
+		stamina_label.text = "Stamina: %d/%d" % [resources["stamina"], resources["stamina_max"]]
 	if mana_label:
-		mana_label.text = "Mana: %d" % mana
+		mana_label.text = "Mana: %d/%d" % [resources["mana"], resources["mana_max"]]
 
-	for i in range(min(enemy_labels.size(), enemies.size())):
+	# Update enemy buttons and labels
+	for i in range(min(enemy_buttons.size(), enemies.size())):
+		var btn = enemy_buttons[i]
+		var e = enemies[i]
+
+		# Show/hide button based on enemy state
+		btn.visible = (e["hp"] > 0)
+
+		# Highlight selected target
+		if i == selected_target_idx and e["hp"] > 0:
+			btn.modulate = Color(1.0, 1.0, 0.7)  # Gold highlight
+		else:
+			btn.modulate = Color(1.0, 1.0, 1.0)  # Normal
+
+		# Update enemy label
 		enemy_labels[i].text = _get_enemy_display(i)
 
 	if champion_label:
 		champion_label.text = _get_champion_display()
-	if lt_label:
-		lt_label.text = _get_lt_display()
+
+	# Update all lieutenant labels
+	for lt_name in active_lts:
+		if lt_name in lt_labels:
+			lt_labels[lt_name].text = _get_lt_display(lt_name)
 
 	_update_hand_ui()
 
