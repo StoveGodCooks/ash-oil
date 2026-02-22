@@ -53,14 +53,16 @@ func _ready() -> void:
 	# Center container
 	var vbox = VBoxContainer.new()
 	vbox.set_anchors_preset(Control.PRESET_CENTER)
+	vbox.grow_horizontal = Control.GROW_DIRECTION_BOTH
+	vbox.grow_vertical = Control.GROW_DIRECTION_BOTH
 	vbox.custom_minimum_size = Vector2(300, 400)
-	vbox.position -= vbox.custom_minimum_size / 2
 	vbox.alignment = BoxContainer.ALIGNMENT_CENTER
 	add_child(vbox)
 
 	# Title banner
 	var banner = PanelContainer.new()
-	banner.custom_minimum_size = Vector2(320, 140)
+	banner.custom_minimum_size = Vector2(300, 140)
+	banner.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	banner.add_theme_stylebox_override("panel", _panel_style(CLR_PANEL))
 	vbox.add_child(banner)
 
