@@ -2,444 +2,717 @@ extends Control
 ## Full combat screen with UI built programmatically
 
 const LOG_AUTOWRAP_MODE: TextServer.AutowrapMode = TextServer.AutowrapMode.AUTOWRAP_WORD
-
-# ── Parchment & Wax palette ──
-const CLR_BG      = Color(0.08, 0.065, 0.050)
-const CLR_PANEL   = Color(0.14, 0.110, 0.080)
-const CLR_BORDER  = Color(0.42, 0.320, 0.160)
-const CLR_ACCENT  = Color(0.86, 0.700, 0.360)
-const CLR_TEXT    = Color(0.90, 0.840, 0.680)
-const CLR_MUTED   = Color(0.58, 0.520, 0.400)
-const CLR_BTN     = Color(0.20, 0.160, 0.115)
-const CLR_DANGER  = Color(0.26, 0.095, 0.090)
-const CLR_STONE   = Color(0.18, 0.155, 0.120)
-
-const TEX_BANNER = "res://assets/ui/roman/banner.png"
-const TEX_SEAL   = "res://assets/ui/roman/seal.png"
+const MAX_HAND_SIZE: int = 8
+const BASE_TURN_DRAW: int = 3
+const HAND_FAN_MAX_DEGREES: float = 5.0
+const CARD_HOVER_LIFT_PX: float = 20.0
+const CARD_HOVER_TIME: float = 0.15
+const CARD_PLAY_MOVE_TIME: float = 0.35
+const CARD_PLAY_PULSE_TIME: float = 0.10
+const HAND_REFLOW_TIME: float = 0.20
+const HAND_REFLOW_SHIFT: float = 112.0
+const CARD_DISPLAY_SCRIPT = preload("res://scripts/ui/CardDisplay.gd")
+const ENEMY_SLOT_COUNT: int = 5
 
 # ============ COMBAT STATE ============
 var champion_hp: int = 30
 var champion_max_hp: int = 30
 var champion_armor: int = 0
 
-var active_lts: Array = []  # Active lieutenants from GameState
+var lt_name: String = "Marcus"
+var lt_hp: int = 25
+var lt_max_hp: int = 25
+var lt_armor: int = 2
+
 var enemies: Array = []
 var hand: Array = []
 var deck: Array = []
 var discard_pile: Array = []
 
-# ============ RESOURCES (SHARED POOLS) ============
-var resources: Dictionary = {
-	"stamina": 5,
-	"stamina_max": 5,
-	"mana": 0,
-	"mana_max": 10,
-	"mana_regen": 2
-}
-
-# ============ TARGETING & ACTOR SYSTEM ============
-var selected_target_idx: int = -1  # Currently selected enemy (-1 = none)
-var current_actor: String = "champion"  # Who's acting next
-var active_synergies: Dictionary = {}  # {"poison": 2, "bleed": 1, ...}
-
+var stamina: int = 3
+var mana: int = 0
 var turn: int = 1
 var combat_over: bool = false
 var player_won: bool = false
-
-# ============ STATUS EFFECTS ============
-var status_effects: Dictionary = {
-	"player": {},   # e.g. {"armor_bonus": 2, "regen": 1}
-	"enemy":  {}    # e.g. {"poison": 3, "stun": 1}
-}
+var current_mission_id: String = "M01"
+var current_mission_data: Dictionary = {}
+var opening_draw_bonus: int = 0
+var gear_flat_damage_bonus: int = 0
+var gear_draw_per_turn_bonus: int = 0
+var gear_opening_draw_bonus: int = 0
+var gear_start_mana_bonus: int = 0
+var gear_first_turn_stamina_bonus: int = 0
+var max_stamina_per_turn: int = 3
 
 # ============ UI REFERENCES ============
 var log_label: Label
+var health_label: Label
 var stamina_label: Label
 var mana_label: Label
-var arena_label: Label
+var turn_label: Label
 var champion_label: Label
-var lt_labels: Dictionary = {}  # {lt_name: label}
-var hand_container: Control
-var hovered_card_idx: int = -1
+var lt_label: Label
+var hand_container: HBoxContainer
+var play_target_marker: Control
 var end_turn_btn: Button
-var enemy_buttons: Array = []  # Clickable enemy selection buttons
-var enemy_labels: Array = []  # Display labels
-var enemy_status_row: HBoxContainer
-var player_status_row: HBoxContainer
-
-# ── Card Preview Panel ──
-var card_preview: PanelContainer
-var preview_art_rect: ColorRect
-var preview_name_label: Label
-var preview_cost_label: Label
-var preview_stats_label: Label
-var preview_effect_label: Label
+var enemy_labels: Array = []
+var is_play_animating: bool = false
+var enemy_card_slots: Array = []
+var enemy_card_slot_labels: Array = []
+var debug_status_label: Label
+var enemy_target_reticle_label: Label
+var enemy_portrait_panel_ref: Control
+var player_portrait_panel_ref: Control
+var hover_tooltip_panel: PanelContainer
+var hover_tooltip_label: Label
+var player_hp_bar: ProgressBar
+var player_stats_panel_ref: Control
+var last_ui_champion_hp: int = 30
+var animation_speed: float = 1.0
+var skip_enemy_animation: bool = false
+var turn_log_panel: PanelContainer
+var turn_log_label: Label
+var turn_log_collapsed: bool = false
 
 func _ready() -> void:
+	set_process_unhandled_input(true)
 	_init_state()
 	_build_ui()
 	_start_turn()
-	_fade_in(self, 0.0)
 
 func _init_state() -> void:
 	champion_hp = 30
 	champion_max_hp = 30
 	champion_armor = 0
+	gear_flat_damage_bonus = 0
+	gear_draw_per_turn_bonus = 0
+	gear_opening_draw_bonus = 0
+	gear_start_mana_bonus = 0
+	gear_first_turn_stamina_bonus = 0
+	max_stamina_per_turn = 3
+	_init_lieutenant_state()
+	_resolve_mission_context()
 
-	# Load active lieutenants from GameState
-	active_lts = GameState.active_lieutenants.duplicate()
-	if active_lts.is_empty():
-		active_lts = ["Marcus"]  # Default fallback
+	enemies = CardManager.get_mission_enemies(current_mission_id)
+	if enemies.is_empty():
+		enemies = [{"name": "Grunt", "hp": 12, "max_hp": 12, "armor": 0, "damage": 2, "poison": 0}]
 
-	# M01 enemies
-	enemies = [
-		{"name": "Quintus",   "hp": 20, "max_hp": 20, "armor": 0, "damage": 4, "poison": 0},
-		{"name": "Warrior A",  "hp": 12, "max_hp": 12, "armor": 0, "damage": 2, "poison": 0},
-		{"name": "Warrior B",  "hp": 12, "max_hp": 12, "armor": 0, "damage": 2, "poison": 0},
-	]
-
-	# Initialize deck from starter deck (shared pool for all actors)
-	deck = CardManager.get_starter_deck().duplicate()
+	deck = GameState.current_deck.duplicate()
+	if deck.is_empty():
+		deck = CardManager.get_starter_deck().duplicate()
 	deck.shuffle()
 	hand = []
 	discard_pile = []
-
-	# Initialize resource pools
-	resources["stamina"] = 5
-	resources["stamina_max"] = 5
-	resources["mana"] = 0
-	resources["mana_max"] = 10
-
-	selected_target_idx = -1
-	current_actor = "champion"
-	active_synergies.clear()
+	stamina = max_stamina_per_turn
+	mana = 0
 	turn = 1
 	combat_over = false
+	last_ui_champion_hp = champion_hp
+	_apply_equipped_gear_bonuses()
 
 func _build_ui() -> void:
-	# ── Background ──
 	var bg = ColorRect.new()
-	bg.color = CLR_BG
+	bg.color = Color(0.08, 0.06, 0.05, 1)
 	bg.set_anchors_preset(Control.PRESET_FULL_RECT)
 	add_child(bg)
 
-	var vignette = ColorRect.new()
-	vignette.color = Color(0, 0, 0, 0.20)
-	vignette.set_anchors_preset(Control.PRESET_FULL_RECT)
-	add_child(vignette)
-
-	# ── Main VBox (full screen, top to bottom) ──
 	var main_vbox = VBoxContainer.new()
 	main_vbox.set_anchors_preset(Control.PRESET_FULL_RECT)
-	main_vbox.add_theme_constant_override("separation", 4)
+	main_vbox.add_theme_constant_override("separation", 0)
 	add_child(main_vbox)
 
-	# ── Stone header bar (44px) with mission name ──
-	var stone_bar = ColorRect.new()
-	stone_bar.color = CLR_STONE
-	stone_bar.custom_minimum_size = Vector2(0, 44)
-	stone_bar.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	main_vbox.add_child(stone_bar)
+	# HEADER BAR (4%)
+	var header_zone = PanelContainer.new()
+	header_zone.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	header_zone.size_flags_stretch_ratio = 4.0
+	main_vbox.add_child(header_zone)
 
-	var mid = GameState.current_mission_id
-	if mid == "":
-		mid = "M01"
-	var mdata = MissionManager.get_mission(mid)
-	var mname = mdata.get("name", mid)
+	var header_margin = MarginContainer.new()
+	header_margin.set_anchors_preset(Control.PRESET_FULL_RECT)
+	header_margin.add_theme_constant_override("margin_left", 12)
+	header_margin.add_theme_constant_override("margin_top", 4)
+	header_margin.add_theme_constant_override("margin_right", 12)
+	header_margin.add_theme_constant_override("margin_bottom", 4)
+	header_zone.add_child(header_margin)
 
-	var header_label = Label.new()
-	header_label.text = "%s: %s" % [_format_mission_id(mid), mname]
-	header_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	header_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-	header_label.add_theme_font_size_override("font_size", 13)
-	header_label.add_theme_color_override("font_color", CLR_ACCENT)
-	header_label.set_anchors_preset(Control.PRESET_TOP_WIDE)
-	header_label.custom_minimum_size = Vector2(0, 44)
-	add_child(header_label)
+	var title_bar = HBoxContainer.new()
+	title_bar.custom_minimum_size = Vector2(0, 36)
+	header_margin.add_child(title_bar)
 
-	# ── Enemy zone (north, fixed 140px) ──
-	var enemy_panel = PanelContainer.new()
-	enemy_panel.custom_minimum_size = Vector2(0, 140)
-	enemy_panel.add_theme_stylebox_override("panel", _panel_style())
-	main_vbox.add_child(enemy_panel)
+	var m_name = current_mission_data.get("name", current_mission_id).to_upper()
+	var m_loc = current_mission_data.get("location", "Unknown")
+	var mission_label = Label.new()
+	mission_label.text = "%s: %s — %s" % [current_mission_id, m_name, m_loc]
+	mission_label.add_theme_font_size_override("font_size", 16)
+	title_bar.add_child(mission_label)
 
-	var enemy_vbox = VBoxContainer.new()
-	enemy_panel.add_child(enemy_vbox)
+	var header_spacer = Control.new()
+	header_spacer.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	title_bar.add_child(header_spacer)
 
-	var target_lbl = Label.new()
-	target_lbl.text = "← select enemy to target →"
-	target_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	target_lbl.add_theme_font_size_override("font_size", 10)
-	target_lbl.add_theme_color_override("font_color", CLR_MUTED)
-	enemy_vbox.add_child(target_lbl)
+	turn_label = Label.new()
+	turn_label.text = "Turn 1"
+	turn_label.add_theme_font_size_override("font_size", 16)
+	title_bar.add_child(turn_label)
 
-	var enemy_hbox = HBoxContainer.new()
-	enemy_hbox.alignment = BoxContainer.ALIGNMENT_CENTER
-	enemy_hbox.add_theme_constant_override("separation", 8)
-	enemy_vbox.add_child(enemy_hbox)
+	# ENEMY ZONE (30%)
+	var enemy_zone = PanelContainer.new()
+	enemy_zone.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	enemy_zone.size_flags_stretch_ratio = 30.0
+	main_vbox.add_child(enemy_zone)
 
+	var enemy_bg = ColorRect.new()
+	enemy_bg.set_anchors_preset(Control.PRESET_FULL_RECT)
+	enemy_bg.color = Color(0.16, 0.11, 0.10, 0.42)
+	enemy_zone.add_child(enemy_bg)
+
+	var enemy_margin = MarginContainer.new()
+	enemy_margin.set_anchors_preset(Control.PRESET_FULL_RECT)
+	enemy_margin.add_theme_constant_override("margin_left", 12)
+	enemy_margin.add_theme_constant_override("margin_top", 8)
+	enemy_margin.add_theme_constant_override("margin_right", 12)
+	enemy_margin.add_theme_constant_override("margin_bottom", 8)
+	enemy_zone.add_child(enemy_margin)
+
+	var enemy_row = HBoxContainer.new()
+	enemy_row.add_theme_constant_override("separation", 14)
+	enemy_margin.add_child(enemy_row)
+
+	var enemy_portrait = PanelContainer.new()
+	enemy_portrait.custom_minimum_size = Vector2(132, 188)
+	enemy_row.add_child(enemy_portrait)
+	enemy_portrait_panel_ref = enemy_portrait
+
+	var portrait_vbox = VBoxContainer.new()
+	portrait_vbox.alignment = BoxContainer.ALIGNMENT_CENTER
+	enemy_portrait.add_child(portrait_vbox)
+
+	var enemy_portrait_img = ColorRect.new()
+	enemy_portrait_img.custom_minimum_size = Vector2(112, 150)
+	enemy_portrait_img.color = Color(0.23, 0.15, 0.12, 0.9)
+	portrait_vbox.add_child(enemy_portrait_img)
+
+	var portrait_name = Label.new()
+	portrait_name.text = enemies[0]["name"] if not enemies.is_empty() else "Enemy"
+	portrait_name.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	portrait_name.add_theme_font_size_override("font_size", 14)
+	portrait_vbox.add_child(portrait_name)
+
+	var enemy_stats = PanelContainer.new()
+	enemy_stats.custom_minimum_size = Vector2(300, 188)
+	enemy_row.add_child(enemy_stats)
+
+	var enemy_stats_vbox = VBoxContainer.new()
+	enemy_stats_vbox.add_theme_constant_override("separation", 8)
+	enemy_stats.add_child(enemy_stats_vbox)
+
+	enemy_labels.clear()
 	for i in range(enemies.size()):
-		var e_btn = Button.new()
-		e_btn.custom_minimum_size = Vector2(160, 90)
-		e_btn.text = _get_enemy_display(i)
-		e_btn.add_theme_stylebox_override("normal",  _btn_style(CLR_PANEL))
-		e_btn.add_theme_stylebox_override("hover",   _btn_style(CLR_PANEL.lightened(0.10)))
-		e_btn.add_theme_stylebox_override("pressed", _btn_style(CLR_PANEL.darkened(0.10)))
-		e_btn.add_theme_color_override("font_color", CLR_TEXT)
-		e_btn.pressed.connect(_on_enemy_selected.bind(i))
-		enemy_hbox.add_child(e_btn)
-		enemy_buttons.append(e_btn)
-		enemy_labels.append(e_btn)
+		var e_label = Label.new()
+		e_label.text = _get_enemy_display(i)
+		e_label.add_theme_font_size_override("font_size", 15)
+		e_label.mouse_filter = Control.MOUSE_FILTER_STOP
+		e_label.mouse_default_cursor_shape = Control.CURSOR_HELP
+		e_label.tooltip_text = _enemy_stat_tooltip(i)
+		e_label.mouse_entered.connect(_on_enemy_stat_hover_entered.bind(e_label, i))
+		e_label.mouse_exited.connect(_on_enemy_stat_hover_exited)
+		enemy_stats_vbox.add_child(e_label)
+		enemy_labels.append(e_label)
 
-	# ── Arena divider bar ──
-	var arena_panel = PanelContainer.new()
-	arena_panel.custom_minimum_size = Vector2(0, 34)
-	var div_style = StyleBoxFlat.new()
-	div_style.bg_color = CLR_STONE
-	div_style.border_width_bottom = 1
-	div_style.border_color = CLR_BORDER
-	arena_panel.add_theme_stylebox_override("panel", div_style)
-	main_vbox.add_child(arena_panel)
+	var enemy_cards_panel = PanelContainer.new()
+	enemy_cards_panel.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	enemy_cards_panel.custom_minimum_size = Vector2(580, 188)
+	enemy_row.add_child(enemy_cards_panel)
 
-	var div_center = CenterContainer.new()
-	div_center.set_anchors_preset(Control.PRESET_FULL_RECT)
-	arena_panel.add_child(div_center)
+	var enemy_cards_vbox = VBoxContainer.new()
+	enemy_cards_vbox.add_theme_constant_override("separation", 8)
+	enemy_cards_panel.add_child(enemy_cards_vbox)
 
-	arena_label = Label.new()
-	arena_label.text = "══  ARENA  •  Turn 1  ══"
-	arena_label.add_theme_font_size_override("font_size", 10)
-	arena_label.add_theme_color_override("font_color", CLR_MUTED)
-	div_center.add_child(arena_label)
+	var enemy_cards_title = Label.new()
+	enemy_cards_title.text = "ENEMY CARDS"
+	enemy_cards_title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	enemy_cards_title.add_theme_font_size_override("font_size", 12)
+	enemy_cards_vbox.add_child(enemy_cards_title)
 
-	# ── Battlefield (center, SIZE_EXPAND_FILL) ──
-	var battlefield = Control.new()
-	battlefield.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	battlefield.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	main_vbox.add_child(battlefield)
-	_build_battlefield(battlefield)
+	var slot_row = HBoxContainer.new()
+	slot_row.alignment = BoxContainer.ALIGNMENT_CENTER
+	slot_row.add_theme_constant_override("separation", 15)
+	enemy_cards_vbox.add_child(slot_row)
 
-	# ── Player zone (compact 72px) ──
-	var player_panel = PanelContainer.new()
-	player_panel.custom_minimum_size = Vector2(0, 72)
-	player_panel.add_theme_stylebox_override("panel", _panel_style())
-	main_vbox.add_child(player_panel)
+	enemy_card_slots.clear()
+	enemy_card_slot_labels.clear()
+	for i in range(ENEMY_SLOT_COUNT):
+		var slot = PanelContainer.new()
+		slot.custom_minimum_size = Vector2(100, 140)
+		slot_row.add_child(slot)
+		enemy_card_slots.append(slot)
 
-	var player_hbox = HBoxContainer.new()
-	player_hbox.alignment = BoxContainer.ALIGNMENT_CENTER
-	player_hbox.add_theme_constant_override("separation", 16)
-	player_panel.add_child(player_hbox)
+		var slot_label = Label.new()
+		slot_label.text = "?"
+		slot_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		slot_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+		slot_label.custom_minimum_size = Vector2(100, 140)
+		slot_label.add_theme_font_size_override("font_size", 24)
+		slot.add_child(slot_label)
+		enemy_card_slot_labels.append(slot_label)
 
-	champion_label = Label.new()
-	champion_label.text = _get_champion_display()
-	champion_label.add_theme_font_size_override("font_size", 11)
-	champion_label.custom_minimum_size = Vector2(150, 0)
-	player_hbox.add_child(champion_label)
+	var target_panel = PanelContainer.new()
+	target_panel.custom_minimum_size = Vector2(120, 188)
+	enemy_row.add_child(target_panel)
 
-	var pills_vbox = VBoxContainer.new()
-	pills_vbox.add_theme_constant_override("separation", 4)
-	player_hbox.add_child(pills_vbox)
+	var target_vbox = VBoxContainer.new()
+	target_vbox.alignment = BoxContainer.ALIGNMENT_CENTER
+	target_panel.add_child(target_vbox)
 
-	var stamina_pill = _make_pill("Stamina: 5/5", CLR_ACCENT)
-	stamina_label = stamina_pill.get_meta("label")
-	pills_vbox.add_child(stamina_pill)
+	var target_title = Label.new()
+	target_title.text = "TARGET"
+	target_title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	target_title.add_theme_font_size_override("font_size", 12)
+	target_vbox.add_child(target_title)
 
-	var mana_pill = _make_pill("Mana: 0/10", CLR_TEXT)
-	mana_label = mana_pill.get_meta("label")
-	pills_vbox.add_child(mana_pill)
+	var target_reticle = Label.new()
+	target_reticle.text = "◉"
+	target_reticle.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	target_reticle.add_theme_font_size_override("font_size", 42)
+	target_vbox.add_child(target_reticle)
+	enemy_target_reticle_label = target_reticle
 
-	for lt_name in active_lts:
-		var lt_label_new = Label.new()
-		lt_label_new.text = _get_lt_display(lt_name)
-		lt_label_new.add_theme_font_size_override("font_size", 11)
-		lt_label_new.custom_minimum_size = Vector2(130, 0)
-		player_hbox.add_child(lt_label_new)
-		lt_labels[lt_name] = lt_label_new
+	# BATTLEFIELD / EFFECT LANE (32%)
+	var middle_zone = PanelContainer.new()
+	middle_zone.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	middle_zone.size_flags_stretch_ratio = 32.0
+	main_vbox.add_child(middle_zone)
 
-	# ── Hand container (south, fixed min-height) ──
-	hand_container = Control.new()
-	hand_container.custom_minimum_size = Vector2(0, 200)
-	hand_container.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	main_vbox.add_child(hand_container)
+	var middle_bg = ColorRect.new()
+	middle_bg.set_anchors_preset(Control.PRESET_FULL_RECT)
+	middle_bg.color = Color(0.10, 0.10, 0.10, 0.55)
+	middle_zone.add_child(middle_bg)
 
-	# ── Action buttons — anchored bottom-right ──
-	var action_row = HBoxContainer.new()
-	action_row.add_theme_constant_override("separation", 10)
-	action_row.set_anchors_preset(Control.PRESET_BOTTOM_RIGHT)
-	action_row.grow_horizontal = Control.GROW_DIRECTION_BEGIN
-	action_row.grow_vertical = Control.GROW_DIRECTION_BEGIN
-	add_child(action_row)
+	var middle_margin = MarginContainer.new()
+	middle_margin.set_anchors_preset(Control.PRESET_FULL_RECT)
+	middle_margin.add_theme_constant_override("margin_left", 12)
+	middle_margin.add_theme_constant_override("margin_top", 10)
+	middle_margin.add_theme_constant_override("margin_right", 12)
+	middle_margin.add_theme_constant_override("margin_bottom", 10)
+	middle_zone.add_child(middle_margin)
 
-	end_turn_btn = Button.new()
-	end_turn_btn.text = "END TURN"
-	end_turn_btn.custom_minimum_size = Vector2(130, 44)
-	end_turn_btn.add_theme_stylebox_override("normal",  _btn_style(CLR_BTN))
-	end_turn_btn.add_theme_stylebox_override("hover",   _btn_style(CLR_BTN.lightened(0.18)))
-	end_turn_btn.add_theme_stylebox_override("pressed", _btn_style(CLR_BTN.darkened(0.18)))
-	end_turn_btn.add_theme_color_override("font_color", CLR_ACCENT)
-	end_turn_btn.pressed.connect(_on_end_turn)
-	action_row.add_child(end_turn_btn)
+	var middle_vbox = VBoxContainer.new()
+	middle_vbox.add_theme_constant_override("separation", 10)
+	middle_margin.add_child(middle_vbox)
 
-	var retreat_btn = Button.new()
-	retreat_btn.text = "RETREAT"
-	retreat_btn.custom_minimum_size = Vector2(100, 44)
-	retreat_btn.add_theme_stylebox_override("normal",  _btn_style(CLR_DANGER))
-	retreat_btn.add_theme_stylebox_override("hover",   _btn_style(CLR_DANGER.lightened(0.18)))
-	retreat_btn.add_theme_stylebox_override("pressed", _btn_style(CLR_DANGER.darkened(0.18)))
-	retreat_btn.add_theme_color_override("font_color", CLR_TEXT)
-	retreat_btn.pressed.connect(_on_retreat)
-	action_row.add_child(retreat_btn)
+	var effect_title = Label.new()
+	effect_title.text = "Battlefield / Effect Lane"
+	effect_title.add_theme_font_size_override("font_size", 13)
+	middle_vbox.add_child(effect_title)
 
-	# ── Combat log — anchored bottom-left ──
-	var log_panel = PanelContainer.new()
-	log_panel.custom_minimum_size = Vector2(240, 88)
-	log_panel.set_anchors_preset(Control.PRESET_BOTTOM_LEFT)
-	log_panel.grow_horizontal = Control.GROW_DIRECTION_END
-	log_panel.grow_vertical = Control.GROW_DIRECTION_BEGIN
-	var log_style = StyleBoxFlat.new()
-	log_style.bg_color = Color(0.06, 0.05, 0.04, 0.88)
-	log_style.border_width_right = 1
-	log_style.border_width_top = 1
-	log_style.border_color = CLR_BORDER
-	log_style.corner_radius_top_right = 6
-	log_panel.add_theme_stylebox_override("panel", log_style)
-	add_child(log_panel)
+	var battlefield_center = CenterContainer.new()
+	battlefield_center.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	middle_vbox.add_child(battlefield_center)
 
-	var log_margin = MarginContainer.new()
-	log_margin.add_theme_constant_override("margin_left", 8)
-	log_margin.add_theme_constant_override("margin_right", 8)
-	log_margin.add_theme_constant_override("margin_top", 6)
-	log_margin.add_theme_constant_override("margin_bottom", 6)
-	log_panel.add_child(log_margin)
+	play_target_marker = PanelContainer.new()
+	play_target_marker.custom_minimum_size = Vector2(320, 120)
+	battlefield_center.add_child(play_target_marker)
+
+	var target_label = Label.new()
+	target_label.text = "Play Target"
+	target_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	target_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	target_label.custom_minimum_size = Vector2(320, 120)
+	target_label.add_theme_font_size_override("font_size", 30)
+	play_target_marker.add_child(target_label)
 
 	log_label = Label.new()
 	log_label.text = "Combat begins..."
-	log_label.add_theme_font_size_override("font_size", 9)
-	log_label.add_theme_color_override("font_color", CLR_MUTED)
+	log_label.add_theme_font_size_override("font_size", 13)
 	log_label.autowrap_mode = LOG_AUTOWRAP_MODE
-	log_margin.add_child(log_label)
+	log_label.custom_minimum_size = Vector2(0, 72)
+	middle_vbox.add_child(log_label)
 
-	_build_card_preview()
+	# PLAYER ZONE (30%)
+	var player_zone = PanelContainer.new()
+	player_zone.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	player_zone.size_flags_stretch_ratio = 30.0
+	main_vbox.add_child(player_zone)
 
-func _build_battlefield(bf: Control) -> void:
-	# Top half: enemy territory (slightly cooler shade)
-	var enemy_bg = ColorRect.new()
-	enemy_bg.color = Color(0.10, 0.085, 0.068, 1.0)
-	enemy_bg.anchor_left = 0.0;  enemy_bg.anchor_right = 1.0
-	enemy_bg.anchor_top = 0.0;   enemy_bg.anchor_bottom = 0.5
-	enemy_bg.offset_left = 0;    enemy_bg.offset_right = 0
-	enemy_bg.offset_top = 0;     enemy_bg.offset_bottom = 0
-	enemy_bg.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	bf.add_child(enemy_bg)
-
-	# Bottom half: player territory (warmer shade)
 	var player_bg = ColorRect.new()
-	player_bg.color = Color(0.08, 0.065, 0.050, 1.0)
-	player_bg.anchor_left = 0.0;  player_bg.anchor_right = 1.0
-	player_bg.anchor_top = 0.5;   player_bg.anchor_bottom = 1.0
-	player_bg.offset_left = 0;    player_bg.offset_right = 0
-	player_bg.offset_top = 0;     player_bg.offset_bottom = 0
-	player_bg.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	bf.add_child(player_bg)
+	player_bg.set_anchors_preset(Control.PRESET_FULL_RECT)
+	player_bg.color = Color(0.12, 0.10, 0.10, 0.60)
+	player_zone.add_child(player_bg)
 
-	# Gold center dividing line (3px)
-	var line = ColorRect.new()
-	line.color = CLR_BORDER
-	line.anchor_left = 0.0;  line.anchor_right = 1.0
-	line.anchor_top = 0.5;   line.anchor_bottom = 0.5
-	line.offset_left = 0;    line.offset_right = 0
-	line.offset_top = -1;    line.offset_bottom = 2
-	line.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	bf.add_child(line)
+	var player_margin = MarginContainer.new()
+	player_margin.set_anchors_preset(Control.PRESET_FULL_RECT)
+	player_margin.add_theme_constant_override("margin_left", 12)
+	player_margin.add_theme_constant_override("margin_top", 8)
+	player_margin.add_theme_constant_override("margin_right", 12)
+	player_margin.add_theme_constant_override("margin_bottom", 8)
+	player_zone.add_child(player_margin)
 
-	# Enemy status badges (just above center line)
-	enemy_status_row = HBoxContainer.new()
-	enemy_status_row.alignment = BoxContainer.ALIGNMENT_CENTER
-	enemy_status_row.add_theme_constant_override("separation", 6)
-	enemy_status_row.anchor_left = 0.0;  enemy_status_row.anchor_right = 1.0
-	enemy_status_row.anchor_top = 0.5;   enemy_status_row.anchor_bottom = 0.5
-	enemy_status_row.offset_left = 0;    enemy_status_row.offset_right = 0
-	enemy_status_row.offset_top = -28;   enemy_status_row.offset_bottom = -6
-	bf.add_child(enemy_status_row)
+	var player_zone_vbox = VBoxContainer.new()
+	player_zone_vbox.add_theme_constant_override("separation", 8)
+	player_margin.add_child(player_zone_vbox)
 
-	# Player status badges (just below center line)
-	player_status_row = HBoxContainer.new()
-	player_status_row.alignment = BoxContainer.ALIGNMENT_CENTER
-	player_status_row.add_theme_constant_override("separation", 6)
-	player_status_row.anchor_left = 0.0;  player_status_row.anchor_right = 1.0
-	player_status_row.anchor_top = 0.5;   player_status_row.anchor_bottom = 0.5
-	player_status_row.offset_left = 0;    player_status_row.offset_right = 0
-	player_status_row.offset_top = 6;     player_status_row.offset_bottom = 28
-	bf.add_child(player_status_row)
+	var player_row = HBoxContainer.new()
+	player_row.add_theme_constant_override("separation", 12)
+	player_row.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	player_zone_vbox.add_child(player_row)
 
-func _update_status_ui() -> void:
-	if enemy_status_row == null or player_status_row == null:
-		return
-	for child in enemy_status_row.get_children():
-		child.queue_free()
-	for child in player_status_row.get_children():
-		child.queue_free()
-	_populate_status_row(enemy_status_row,  status_effects.get("enemy", {}))
-	_populate_status_row(player_status_row, status_effects.get("player", {}))
+	# LEFT: Portrait (120x180)
+	var portrait_panel = PanelContainer.new()
+	portrait_panel.custom_minimum_size = Vector2(120, 188)
+	player_row.add_child(portrait_panel)
+	player_portrait_panel_ref = portrait_panel
 
-func _populate_status_row(row: HBoxContainer, effects: Dictionary) -> void:
-	var icons  = {"poison": "☠", "stun": "⚡", "bleed": "🩸",
-				  "armor_bonus": "🛡", "regen": "💚", "shield": "🔵"}
-	var colors = {"poison":     Color(0.55, 0.10, 0.10),
-				  "stun":       Color(0.85, 0.75, 0.10),
-				  "bleed":      Color(0.65, 0.10, 0.10),
-				  "armor_bonus":CLR_ACCENT,
-				  "regen":      Color(0.20, 0.65, 0.30),
-				  "shield":     Color(0.20, 0.45, 0.85)}
-	for key in effects.keys():
-		var val: int = effects[key]
-		if val <= 0:
+	var player_portrait_vbox = VBoxContainer.new()
+	player_portrait_vbox.alignment = BoxContainer.ALIGNMENT_CENTER
+	player_portrait_vbox.add_theme_constant_override("separation", 4)
+	portrait_panel.add_child(player_portrait_vbox)
+
+	var player_portrait_img = ColorRect.new()
+	player_portrait_img.custom_minimum_size = Vector2(100, 132)
+	player_portrait_img.color = Color(0.22, 0.16, 0.12, 0.95)
+	player_portrait_vbox.add_child(player_portrait_img)
+
+	champion_label = Label.new()
+	champion_label.text = "CHAMPION"
+	champion_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	champion_label.add_theme_font_size_override("font_size", 13)
+	player_portrait_vbox.add_child(champion_label)
+
+	# CENTER-LEFT: Stats
+	var resource_panel = PanelContainer.new()
+	resource_panel.custom_minimum_size = Vector2(270, 188)
+	player_row.add_child(resource_panel)
+	player_stats_panel_ref = resource_panel
+
+	var res_vbox = VBoxContainer.new()
+	res_vbox.add_theme_constant_override("separation", 8)
+	resource_panel.add_child(res_vbox)
+
+	var res_title = Label.new()
+	res_title.text = "YOUR STATS"
+	res_title.add_theme_font_size_override("font_size", 12)
+	res_vbox.add_child(res_title)
+
+	health_label = Label.new()
+	health_label.text = "Health: %d/%d" % [champion_hp, champion_max_hp]
+	health_label.add_theme_font_size_override("font_size", 16)
+	res_vbox.add_child(health_label)
+
+	player_hp_bar = ProgressBar.new()
+	player_hp_bar.min_value = 0
+	player_hp_bar.max_value = champion_max_hp
+	player_hp_bar.value = champion_hp
+	player_hp_bar.custom_minimum_size = Vector2(240, 16)
+	player_hp_bar.show_percentage = false
+	res_vbox.add_child(player_hp_bar)
+
+	var armor_label = Label.new()
+	armor_label.text = "Armor tracked in card readout"
+	armor_label.add_theme_font_size_override("font_size", 12)
+	armor_label.add_theme_color_override("font_color", Color(0.74, 0.84, 1.0))
+	res_vbox.add_child(armor_label)
+
+	mana_label = Label.new()
+	mana_label.text = "Mana: %d/3" % mana
+	mana_label.add_theme_font_size_override("font_size", 14)
+	res_vbox.add_child(mana_label)
+
+	stamina_label = Label.new()
+	stamina_label.text = "Stamina: %d/%d" % [stamina, max_stamina_per_turn]
+	stamina_label.add_theme_font_size_override("font_size", 14)
+	res_vbox.add_child(stamina_label)
+
+	lt_label = Label.new()
+	lt_label.text = _get_lt_display()
+	lt_label.add_theme_font_size_override("font_size", 11)
+	res_vbox.add_child(lt_label)
+
+	# CENTER-RIGHT: Hand cards
+	var hand_panel = PanelContainer.new()
+	hand_panel.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	hand_panel.custom_minimum_size = Vector2(560, 188)
+	player_row.add_child(hand_panel)
+
+	var hand_vbox = VBoxContainer.new()
+	hand_vbox.add_theme_constant_override("separation", 6)
+	hand_panel.add_child(hand_vbox)
+
+	var hand_title = Label.new()
+	hand_title.text = "YOUR HAND"
+	hand_title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	hand_title.add_theme_font_size_override("font_size", 12)
+	hand_vbox.add_child(hand_title)
+
+	var scroll = ScrollContainer.new()
+	scroll.custom_minimum_size = Vector2(0, 152)
+	scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	scroll.vertical_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	hand_vbox.add_child(scroll)
+
+	hand_container = HBoxContainer.new()
+	hand_container.add_theme_constant_override("separation", -12)
+	scroll.add_child(hand_container)
+
+	# RIGHT: Actions
+	var action_panel = PanelContainer.new()
+	action_panel.custom_minimum_size = Vector2(190, 188)
+	player_row.add_child(action_panel)
+
+	var action_vbox = VBoxContainer.new()
+	action_vbox.add_theme_constant_override("separation", 8)
+	action_panel.add_child(action_vbox)
+
+	var action_title = Label.new()
+	action_title.text = "ACTIONS"
+	action_title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	action_title.add_theme_font_size_override("font_size", 12)
+	action_vbox.add_child(action_title)
+
+	end_turn_btn = Button.new()
+	end_turn_btn.text = "END TURN"
+	end_turn_btn.custom_minimum_size = Vector2(0, 60)
+	end_turn_btn.pressed.connect(_on_end_turn)
+	action_vbox.add_child(end_turn_btn)
+
+	var retreat_btn = Button.new()
+	retreat_btn.text = "RETREAT"
+	retreat_btn.custom_minimum_size = Vector2(0, 54)
+	retreat_btn.modulate = Color(1.0, 0.86, 0.86)
+	retreat_btn.pressed.connect(_on_retreat)
+	action_vbox.add_child(retreat_btn)
+
+	# DEBUG / STATUS BAR (4%) — visible only in debug builds.
+	var debug_zone = PanelContainer.new()
+	debug_zone.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	debug_zone.size_flags_stretch_ratio = 4.0
+	debug_zone.visible = OS.is_debug_build()
+	main_vbox.add_child(debug_zone)
+
+	debug_status_label = Label.new()
+	debug_status_label.text = "Debug status bar"
+	debug_status_label.add_theme_font_size_override("font_size", 12)
+	debug_status_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
+	debug_zone.add_child(debug_status_label)
+
+	# Hover tooltip panel (fades in/out near hovered card)
+	hover_tooltip_panel = PanelContainer.new()
+	hover_tooltip_panel.visible = false
+	hover_tooltip_panel.modulate = Color(1.0, 1.0, 1.0, 0.0)
+	hover_tooltip_panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	hover_tooltip_panel.z_index = 250
+	add_child(hover_tooltip_panel)
+
+	hover_tooltip_label = Label.new()
+	hover_tooltip_label.autowrap_mode = LOG_AUTOWRAP_MODE
+	hover_tooltip_label.add_theme_font_size_override("font_size", 12)
+	hover_tooltip_label.custom_minimum_size = Vector2(280, 84)
+	hover_tooltip_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
+	hover_tooltip_label.vertical_alignment = VERTICAL_ALIGNMENT_TOP
+	hover_tooltip_panel.add_child(hover_tooltip_label)
+
+	turn_log_panel = PanelContainer.new()
+	turn_log_panel.anchor_left = 0.0
+	turn_log_panel.anchor_right = 0.0
+	turn_log_panel.anchor_top = 1.0
+	turn_log_panel.anchor_bottom = 1.0
+	turn_log_panel.offset_left = 10
+	turn_log_panel.offset_right = 360
+	turn_log_panel.offset_top = -180
+	turn_log_panel.offset_bottom = -10
+	turn_log_panel.z_index = 180
+	add_child(turn_log_panel)
+
+	var turn_log_vbox = VBoxContainer.new()
+	turn_log_vbox.set_anchors_preset(Control.PRESET_FULL_RECT)
+	turn_log_panel.add_child(turn_log_vbox)
+
+	var turn_log_toggle = Button.new()
+	turn_log_toggle.text = "TURN LOG  \\/"
+	turn_log_toggle.custom_minimum_size = Vector2(0, 28)
+	turn_log_toggle.pressed.connect(_toggle_turn_log)
+	turn_log_vbox.add_child(turn_log_toggle)
+
+	turn_log_label = Label.new()
+	turn_log_label.autowrap_mode = LOG_AUTOWRAP_MODE
+	turn_log_label.add_theme_font_size_override("font_size", 12)
+	turn_log_label.custom_minimum_size = Vector2(0, 130)
+	turn_log_vbox.add_child(turn_log_label)
+	_refresh_turn_log()
+
+	_set_enemy_card_slot_state(-1, "empty")
+
+func _set_enemy_card_slot_state(active_slot: int, state: String) -> void:
+	for i in range(enemy_card_slot_labels.size()):
+		var lbl := enemy_card_slot_labels[i] as Label
+		var panel := enemy_card_slots[i] as PanelContainer
+		if lbl == null or panel == null:
 			continue
-		var col = colors.get(key, CLR_MUTED)
-		var badge = _make_status_badge("%s %d" % [icons.get(key, "?"), val], col)
-		row.add_child(badge)
+		lbl.text = "?"
+		lbl.modulate = Color(0.65, 0.65, 0.65, 0.9)
+		panel.modulate = Color(0.35, 0.30, 0.24, 0.95)
+		lbl.scale = Vector2.ONE
+		lbl.rotation_degrees = 0.0
+		lbl.position = Vector2.ZERO
+		if i == active_slot:
+			match state:
+				"facedown":
+					lbl.text = "🂠"
+					lbl.modulate = Color(0.90, 0.85, 0.72, 1.0)
+					panel.modulate = Color(0.55, 0.44, 0.28, 1.0)
+				"active":
+					lbl.text = "!"
+					lbl.modulate = Color(1.0, 0.92, 0.60, 1.0)
+					panel.modulate = Color(0.75, 0.52, 0.30, 1.0)
+				"persistent":
+					lbl.text = "•"
+					lbl.modulate = Color(0.88, 0.80, 0.62, 1.0)
+					panel.modulate = Color(0.56, 0.44, 0.31, 1.0)
+				"known":
+					lbl.text = "?"
+					lbl.modulate = Color(0.85, 0.82, 0.75, 0.6)
+					panel.modulate = Color(0.46, 0.40, 0.34, 0.9)
+				_:
+					pass
 
-func _make_status_badge(text: String, color: Color) -> PanelContainer:
-	var panel = PanelContainer.new()
-	var style = StyleBoxFlat.new()
-	style.bg_color = Color(color.r, color.g, color.b, 0.25)
-	style.border_color = color
-	style.set_border_width_all(1)
-	style.corner_radius_top_left    = 4
-	style.corner_radius_top_right   = 4
-	style.corner_radius_bottom_left = 4
-	style.corner_radius_bottom_right = 4
-	style.content_margin_left  = 5
-	style.content_margin_right = 5
-	style.content_margin_top   = 2
-	style.content_margin_bottom = 2
-	panel.add_theme_stylebox_override("panel", style)
-	var lbl = Label.new()
-	lbl.text = text
-	lbl.add_theme_font_size_override("font_size", 9)
-	lbl.add_theme_color_override("font_color", color.lightened(0.35))
-	panel.add_child(lbl)
-	return panel
+func _animate_enemy_slot_breath(duration_sec: float = 1.0) -> void:
+	if skip_enemy_animation:
+		return
+	var dur := _scaled_time(duration_sec)
+	var tw = create_tween()
+	tw.set_parallel(true)
+	for panel in enemy_card_slots:
+		var slot_panel := panel as PanelContainer
+		if slot_panel == null:
+			continue
+		tw.tween_property(slot_panel, "scale", Vector2(1.03, 1.03), dur * 0.5).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+		tw.tween_property(slot_panel, "scale", Vector2.ONE, dur * 0.5).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	await tw.finished
+
+func _animate_enemy_card_appear(slot_idx: int) -> void:
+	if slot_idx < 0 or slot_idx >= enemy_card_slot_labels.size():
+		return
+	_set_enemy_card_slot_state(slot_idx, "facedown")
+	var lbl := enemy_card_slot_labels[slot_idx] as Label
+	var panel := enemy_card_slots[slot_idx] as PanelContainer
+	if lbl == null or panel == null:
+		return
+	lbl.position.y = -72
+	lbl.rotation_degrees = 20.0
+	lbl.scale = Vector2(1.0, 1.0)
+	if skip_enemy_animation:
+		lbl.position.y = 0.0
+		lbl.rotation_degrees = 0.0
+		return
+	var appear_dur := _scaled_time(0.40)
+	var tw = create_tween()
+	tw.set_parallel(true)
+	tw.tween_property(lbl, "position:y", 0.0, appear_dur).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
+	tw.tween_property(lbl, "rotation_degrees", 0.0, appear_dur).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
+	tw.tween_property(panel, "modulate", Color(0.80, 0.68, 0.40, 1.0), _scaled_time(0.12)).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+	tw.tween_property(panel, "modulate", Color(0.55, 0.44, 0.28, 1.0), _scaled_time(0.20)).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN)
+	DisplayServer.beep()
+	await tw.finished
+
+func _animate_enemy_card_flip(slot_idx: int) -> void:
+	if slot_idx < 0 or slot_idx >= enemy_card_slot_labels.size():
+		return
+	var lbl := enemy_card_slot_labels[slot_idx] as Label
+	if lbl == null:
+		return
+	if skip_enemy_animation:
+		lbl.text = "⚔"
+		lbl.modulate = Color(1.0, 0.92, 0.60, 1.0)
+		return
+	var tw = create_tween()
+	tw.tween_property(lbl, "scale:x", 0.05, _scaled_time(0.10)).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN)
+	await tw.finished
+	lbl.text = "⚔"
+	lbl.modulate = Color(1.0, 0.92, 0.60, 1.0)
+	var tw2 = create_tween()
+	tw2.tween_property(lbl, "scale:x", 1.0, _scaled_time(0.10)).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
+	DisplayServer.beep()
+	await tw2.finished
+
+func _animate_enemy_card_to_battlefield(slot_idx: int, should_persist: bool) -> void:
+	if slot_idx < 0 or slot_idx >= enemy_card_slot_labels.size():
+		return
+	var source_lbl := enemy_card_slot_labels[slot_idx] as Label
+	if source_lbl == null:
+		return
+	var ghost = Label.new()
+	ghost.text = source_lbl.text
+	ghost.add_theme_font_size_override("font_size", 36)
+	ghost.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	ghost.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	ghost.custom_minimum_size = Vector2(100, 140)
+	ghost.z_index = 80
+	add_child(ghost)
+	ghost.global_position = source_lbl.get_global_rect().position
+	if skip_enemy_animation:
+		if should_persist:
+			_set_enemy_card_slot_state(slot_idx, "persistent")
+		else:
+			_set_enemy_card_slot_state(slot_idx, "empty")
+		ghost.queue_free()
+		return
+
+	var target_center = play_target_marker.get_global_rect().get_center()
+	var target_pos = target_center - Vector2(50, 70)
+	var tw = create_tween()
+	tw.set_parallel(true)
+	tw.tween_property(ghost, "global_position", target_pos, _scaled_time(0.30)).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
+	tw.tween_property(ghost, "scale", Vector2(1.25, 1.25), _scaled_time(0.30)).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
+	await tw.finished
+
+	if should_persist:
+		_set_enemy_card_slot_state(slot_idx, "persistent")
+	else:
+		var fade = create_tween()
+		fade.tween_property(ghost, "modulate:a", 0.0, _scaled_time(0.20)).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN)
+		await fade.finished
+		_set_enemy_card_slot_state(slot_idx, "empty")
+	ghost.queue_free()
+
+func _set_enemy_target_highlight(active: bool, valid: bool = true) -> void:
+	if enemy_target_reticle_label:
+		if active:
+			enemy_target_reticle_label.modulate = Color(1.0, 0.85, 0.45, 1.0) if valid else Color(0.60, 0.60, 0.60, 0.90)
+			enemy_target_reticle_label.mouse_default_cursor_shape = Control.CURSOR_CROSS if valid else Control.CURSOR_FORBIDDEN
+			var pulse = create_tween()
+			pulse.tween_property(enemy_target_reticle_label, "scale", Vector2(1.10, 1.10), 0.20).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+			pulse.tween_property(enemy_target_reticle_label, "scale", Vector2.ONE, 0.20).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN)
+		else:
+			enemy_target_reticle_label.modulate = Color(1, 1, 1, 1)
+			enemy_target_reticle_label.scale = Vector2.ONE
+			enemy_target_reticle_label.mouse_default_cursor_shape = Control.CURSOR_ARROW
+	for lbl in enemy_labels:
+		var enemy_lbl := lbl as Label
+		if enemy_lbl:
+			if active:
+				enemy_lbl.modulate = Color(1.0, 0.90, 0.75, 1.0) if valid else Color(0.62, 0.62, 0.62, 0.95)
+			else:
+				enemy_lbl.modulate = Color(1, 1, 1, 1)
 
 func _start_turn() -> void:
 	if combat_over:
 		return
-
-	# Restore shared resources
-	resources["stamina"] = resources["stamina_max"]  # Restore to 5
-	resources["mana"] = min(resources["mana"] + resources["mana_regen"], resources["mana_max"])
-
-	_draw_cards(3)
+	_set_enemy_card_slot_state(-1, "empty")
+	stamina = max_stamina_per_turn
+	if turn == 1 and gear_first_turn_stamina_bonus > 0:
+		stamina += gear_first_turn_stamina_bonus
+	var draw_count = BASE_TURN_DRAW
+	draw_count += gear_draw_per_turn_bonus
+	if turn == 1 and opening_draw_bonus > 0:
+		draw_count += opening_draw_bonus
+	if turn == 1 and gear_opening_draw_bonus > 0:
+		draw_count += gear_opening_draw_bonus
+	_draw_cards(draw_count)
 	_update_all_ui()
-	_log("--- Turn %d --- Draw 3 cards. Stamina: %d | Mana: +%d → %d" % [
-		turn,
-		resources["stamina"],
-		resources["mana_regen"],
-		resources["mana"]
-	])
+	_log("--- Turn %d --- Draw %d cards. Stamina restored." % [turn, draw_count])
 
 func _draw_cards(n: int) -> void:
 	for i in range(n):
-		if hand.size() >= 8:
+		if hand.size() >= MAX_HAND_SIZE:
 			break
 		if deck.is_empty():
 			if discard_pile.is_empty():
@@ -450,18 +723,6 @@ func _draw_cards(n: int) -> void:
 			_log("Deck reshuffled!")
 		if not deck.is_empty():
 			hand.append(deck.pop_front())
-
-func _on_enemy_selected(idx: int) -> void:
-	"""Handle enemy selection for targeting"""
-	if idx < 0 or idx >= enemies.size():
-		return
-	if enemies[idx]["hp"] <= 0:
-		_log("Target is already defeated!")
-		return
-
-	selected_target_idx = idx
-	_log("Selected target: %s" % enemies[idx]["name"])
-	_update_all_ui()
 
 func _update_hand_ui() -> void:
 	for child in hand_container.get_children():
@@ -474,30 +735,27 @@ func _update_hand_ui() -> void:
 			continue
 
 		var cost = card_data.get("cost", 1)
-		var can_play = (cost <= resources["stamina"])
+		var can_play = (cost <= stamina)
 
-		# Load CardDisplay scene — add_child FIRST so @onready vars are initialized
-		var card_display = load("res://scenes/CardDisplay.tscn").instantiate()
-		card_display.set_card_size(Vector2(120, 180))
-		card_display.pivot_offset = Vector2(60, 90)
-
-		# Set up signals
-		card_display.card_pressed.connect(func():
-			if can_play and not combat_over:
-				_on_card_pressed(i)
-		)
-		card_display.mouse_entered.connect(func(): _on_card_hover(i, card_data))
-		card_display.mouse_exited.connect(func(): _on_card_unhover(i))
-
-		# Dim if not affordable or combat over
+		var card_view: Control = CARD_DISPLAY_SCRIPT.new()
+		card_view.custom_minimum_size = Vector2(124, 186)
+		card_view.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
+		card_view.call("set_card_size", Vector2(124, 186))
+		card_view.call("set_card", card_id)
+		card_view.tooltip_text = "%s\nCost: %d\n%s" % [card_data.get("name", "?"), cost, _get_card_desc(card_data)]
+		card_view.set_meta("can_play", can_play)
+		card_view.set_meta("hover_tip", "%s\nCost: %d\n%s" % [card_data.get("name", "?"), cost, _get_card_desc(card_data)])
 		if not can_play or combat_over:
-			card_display.modulate = Color(0.5, 0.5, 0.5, 1.0)
+			card_view.modulate = Color(0.72, 0.72, 0.72, 0.9)
 
-		hand_container.add_child(card_display)
-		# set_card() AFTER add_child so @onready refs are valid
-		card_display.set_card(card_id)
+		card_view.get_signal_connection_list("mouse_entered")
+		card_view.mouse_entered.connect(_on_card_hover_entered.bind(card_view))
+		card_view.mouse_exited.connect(_on_card_hover_exited.bind(card_view))
+		card_view.connect("card_pressed", _on_card_pressed.bind(i, card_view))
 
-	_layout_hand(true)
+		hand_container.add_child(card_view)
+
+	_apply_hand_fan()
 
 func _get_card_desc(data: Dictionary) -> String:
 	var type = data.get("type", "")
@@ -505,7 +763,8 @@ func _get_card_desc(data: Dictionary) -> String:
 		"attack":
 			var dmg = data.get("damage", 0)
 			var eff = data.get("effect", "none")
-			var s = "⚔ %d dmg" % dmg
+			var total_dmg = int(dmg) + gear_flat_damage_bonus
+			var s = "⚔ %d dmg" % total_dmg
 			if "poison" in eff:
 				s += " + poison"
 			return s
@@ -519,8 +778,224 @@ func _get_card_desc(data: Dictionary) -> String:
 		_:
 			return data.get("effect", type)
 
-func _on_card_pressed(card_idx: int) -> void:
-	if combat_over or card_idx >= hand.size():
+func _apply_hand_fan() -> void:
+	var card_count = hand_container.get_child_count()
+	if card_count == 0:
+		return
+
+	var mid = float(card_count - 1) * 0.5
+	for i in range(card_count):
+		var card := hand_container.get_child(i) as Control
+		if card == null:
+			continue
+		var rot = 0.0
+		if card_count > 1:
+			rot = ((float(i) - mid) / mid) * HAND_FAN_MAX_DEGREES
+		card.set_meta("base_rot", rot)
+		card.pivot_offset = Vector2(card.size.x * 0.5, card.size.y)
+		card.rotation_degrees = rot
+		card.position.y = 0.0
+		card.scale = Vector2.ONE
+
+func _on_card_hover_entered(card_btn: Control) -> void:
+	if card_btn == null:
+		return
+	var can_play := bool(card_btn.get_meta("can_play", true))
+	if card_btn.has_method("set_hovered"):
+		card_btn.call("set_hovered", true)
+	card_btn.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
+	_set_enemy_target_highlight(true, can_play)
+	_show_hover_tooltip(card_btn, str(card_btn.get_meta("hover_tip", card_btn.tooltip_text)))
+	card_btn.z_index = 10
+	card_btn.pivot_offset = Vector2(card_btn.size.x * 0.5, card_btn.size.y)
+	var tween = create_tween()
+	tween.set_parallel(true)
+	tween.tween_property(card_btn, "position:y", -CARD_HOVER_LIFT_PX, CARD_HOVER_TIME).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+	tween.tween_property(card_btn, "scale", Vector2(1.15, 1.15), CARD_HOVER_TIME).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	tween.tween_property(card_btn, "rotation_degrees", 0.0, CARD_HOVER_TIME).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+
+func _on_card_hover_exited(card_btn: Control) -> void:
+	if card_btn == null:
+		return
+	if card_btn.has_method("set_hovered"):
+		card_btn.call("set_hovered", false)
+	_set_enemy_target_highlight(false, true)
+	_hide_hover_tooltip()
+	var base_rot = float(card_btn.get_meta("base_rot", 0.0))
+	card_btn.z_index = 0
+	var tween = create_tween()
+	tween.set_parallel(true)
+	tween.tween_property(card_btn, "position:y", 0.0, CARD_HOVER_TIME).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+	tween.tween_property(card_btn, "scale", Vector2.ONE, CARD_HOVER_TIME).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+	tween.tween_property(card_btn, "rotation_degrees", base_rot, CARD_HOVER_TIME).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+
+func _show_hover_tooltip(card_btn: Control, text: String) -> void:
+	if hover_tooltip_panel == null or hover_tooltip_label == null:
+		return
+	hover_tooltip_label.text = text
+	var card_rect := card_btn.get_global_rect()
+	var pos := Vector2(card_rect.position.x + 14.0, card_rect.position.y - 96.0)
+	var viewport_size := get_viewport_rect().size
+	pos.x = clamp(pos.x, 8.0, viewport_size.x - 300.0)
+	pos.y = clamp(pos.y, 8.0, viewport_size.y - 100.0)
+	hover_tooltip_panel.global_position = pos
+	hover_tooltip_panel.visible = true
+	var tw = create_tween()
+	tw.tween_property(hover_tooltip_panel, "modulate:a", 1.0, 0.15).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+
+func _hide_hover_tooltip() -> void:
+	if hover_tooltip_panel == null:
+		return
+	var tw = create_tween()
+	tw.tween_property(hover_tooltip_panel, "modulate:a", 0.0, 0.15).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN)
+	await tw.finished
+	hover_tooltip_panel.visible = false
+
+func _animate_hand_reflow(removed_idx: int) -> void:
+	var moved := false
+	var tw: Tween = null
+	for i in range(hand_container.get_child_count()):
+		if i <= removed_idx:
+			continue
+		var card := hand_container.get_child(i) as Control
+		if card == null:
+			continue
+		if tw == null:
+			tw = create_tween()
+			tw.set_parallel(true)
+		moved = true
+		tw.tween_property(card, "position:x", card.position.x - HAND_REFLOW_SHIFT, HAND_REFLOW_TIME).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
+	if moved and tw != null:
+		await tw.finished
+
+func _toggle_turn_log() -> void:
+	turn_log_collapsed = not turn_log_collapsed
+	if turn_log_label:
+		turn_log_label.visible = not turn_log_collapsed
+	if turn_log_panel:
+		turn_log_panel.offset_top = -56 if turn_log_collapsed else -180
+
+func _refresh_turn_log() -> void:
+	if turn_log_label == null:
+		return
+	var start_idx: int = maxi(0, _log_lines.size() - 5)
+	var lines: Array = []
+	for i in range(start_idx, _log_lines.size()):
+		lines.append("T%d • %s" % [turn, _log_lines[i]])
+	turn_log_label.text = "\n".join(lines)
+
+func _enemy_stat_tooltip(idx: int) -> String:
+	if idx < 0 or idx >= enemies.size():
+		return ""
+	var e = enemies[idx]
+	return "%s\nHP: %d/%d\nArmor: %d\nDamage: %d\nPoison: %d\nVeteran Warrior" % [
+		e.get("name", "Enemy"),
+		e.get("hp", 0),
+		e.get("max_hp", 0),
+		e.get("armor", 0),
+		e.get("damage", 0),
+		e.get("poison", 0)
+	]
+
+func _on_enemy_stat_hover_entered(target_control: Control, enemy_idx: int) -> void:
+	if target_control == null:
+		return
+	_show_hover_tooltip(target_control, _enemy_stat_tooltip(enemy_idx))
+
+func _on_enemy_stat_hover_exited() -> void:
+	_hide_hover_tooltip()
+
+func _scaled_time(base_time: float) -> float:
+	if skip_enemy_animation:
+		return 0.0
+	return max(0.01, base_time / max(0.5, animation_speed))
+
+func _play_card_shortcut(slot_idx: int) -> void:
+	if slot_idx < 0 or slot_idx >= hand.size():
+		return
+	if slot_idx >= hand_container.get_child_count():
+		return
+	var card_btn := hand_container.get_child(slot_idx) as Control
+	if card_btn == null:
+		return
+	_on_card_pressed(slot_idx, card_btn)
+
+func _unhandled_input(event: InputEvent) -> void:
+	if not (event is InputEventKey):
+		return
+	var key_event := event as InputEventKey
+	if not key_event.pressed or key_event.echo:
+		return
+	match key_event.keycode:
+		KEY_1:
+			_play_card_shortcut(0)
+		KEY_2:
+			_play_card_shortcut(1)
+		KEY_3:
+			_play_card_shortcut(2)
+		KEY_4:
+			_play_card_shortcut(3)
+		KEY_5:
+			_play_card_shortcut(4)
+		KEY_T:
+			_on_end_turn()
+		KEY_R:
+			_on_retreat()
+		KEY_ESCAPE:
+			_set_enemy_target_highlight(false, true)
+			_hide_hover_tooltip()
+		KEY_SPACE:
+			skip_enemy_animation = true
+		KEY_MINUS:
+			animation_speed = clamp(animation_speed - 0.25, 0.5, 2.0)
+			_log("Animation speed: %.2fx" % animation_speed)
+		KEY_EQUAL:
+			animation_speed = clamp(animation_speed + 0.25, 0.5, 2.0)
+			_log("Animation speed: %.2fx" % animation_speed)
+
+func _animate_play_card(card_btn: Control) -> void:
+	if card_btn == null:
+		return
+
+	var ghost = card_btn.duplicate()
+	ghost.custom_minimum_size = card_btn.size
+	ghost.size = card_btn.size
+	ghost.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	ghost.modulate = card_btn.modulate
+	ghost.rotation_degrees = card_btn.rotation_degrees
+	ghost.scale = card_btn.scale
+	ghost.z_index = 40
+	add_child(ghost)
+	ghost.global_position = card_btn.get_global_rect().position
+
+	card_btn.visible = false
+
+	var target_center = play_target_marker.get_global_rect().get_center()
+	var target_pos = target_center - (ghost.size * 0.5)
+
+	var tween = create_tween()
+	tween.set_parallel(true)
+	tween.tween_property(ghost, "global_position", target_pos, CARD_PLAY_MOVE_TIME).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
+	tween.tween_property(ghost, "rotation_degrees", 0.0, CARD_PLAY_MOVE_TIME).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
+	tween.tween_property(ghost, "scale", Vector2.ONE, CARD_PLAY_MOVE_TIME).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
+	await tween.finished
+
+	var pulse = create_tween()
+	pulse.tween_property(ghost, "scale", Vector2(1.12, 1.12), CARD_PLAY_PULSE_TIME * 0.5).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+	pulse.tween_property(ghost, "scale", Vector2.ONE, CARD_PLAY_PULSE_TIME * 0.5).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN)
+	await pulse.finished
+	var flare = create_tween()
+	flare.tween_property(ghost, "modulate", Color(1.0, 0.90, 0.60, 1.0), 0.10).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+	flare.tween_property(ghost, "modulate", Color(1.0, 1.0, 1.0, 0.0), 0.10).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN)
+	await flare.finished
+	_play_card_sfx()
+	ghost.queue_free()
+
+func _play_card_sfx() -> void:
+	DisplayServer.beep()
+
+func _on_card_pressed(card_idx: int, card_btn: Control) -> void:
+	if combat_over or card_idx >= hand.size() or is_play_animating:
 		return
 
 	var card_id = hand[card_idx]
@@ -529,49 +1004,98 @@ func _on_card_pressed(card_idx: int) -> void:
 		return
 
 	var cost = card_data.get("cost", 1)
-	if cost > resources["stamina"]:
-		_log("Not enough stamina! (need %d, have %d)" % [cost, resources["stamina"]])
+	if cost > stamina:
+		_set_enemy_target_highlight(true, false)
+		if card_btn.has_method("show_unplayable"):
+			card_btn.call("show_unplayable")
+		card_btn.tooltip_text = "Insufficient Stamina\nNeed %d / Have %d" % [cost, stamina]
+		_log("Not enough stamina! (need %d, have %d)" % [cost, stamina])
 		return
 
-	# Consume stamina from shared pool
-	resources["stamina"] -= cost
+	is_play_animating = true
+	end_turn_btn.disabled = true
+	_hide_hover_tooltip()
+	if card_btn.has_method("set_selected"):
+		card_btn.call("set_selected", true)
+	if card_btn.has_method("pulse_cost"):
+		card_btn.call("pulse_cost")
+	await _animate_play_card(card_btn)
+	await _animate_hand_reflow(card_idx)
+
+	stamina -= cost
 
 	var type = card_data.get("type", "attack")
 	var effect = card_data.get("effect", "none")
-	var target_idx = selected_target_idx
 
 	match type:
 		"attack":
-			var dmg = card_data.get("damage", 0)
-			# Use selected target, or default to first alive
-			if target_idx < 0:
-				target_idx = _get_first_alive_enemy()
-			if target_idx >= 0:
-				_deal_damage_to_enemy(target_idx, dmg, current_actor)
-				# Apply synergy multiplier
-				if "synergy_type" in card_data:
-					_apply_synergy(card_data)
+			var dmg = int(card_data.get("damage", 0)) + gear_flat_damage_bonus
+			var target = _get_priority_enemy()
+			if target >= 0:
+				_deal_damage_to_enemy(target, dmg)
+				_spawn_float_text("-%d" % dmg, Color(1.0, 0.26, 0.26, 1.0), _enemy_float_origin(target), 28)
 				if "poison" in effect:
 					var stacks = _parse_effect_stacks(effect)
-					enemies[target_idx]["poison"] += stacks
-					_log("%s poisoned (%d stacks)" % [enemies[target_idx]["name"], enemies[target_idx]["poison"]])
+					enemies[target]["poison"] += stacks
+					_log("%s poisoned (%d stacks)" % [enemies[target]["name"], enemies[target]["poison"]])
 
 		"defense":
 			var armor = card_data.get("armor", 0)
 			champion_armor += armor
+			_spawn_float_text("+%d Armor" % armor, Color(0.45, 0.76, 1.0, 1.0), _player_float_origin(), 22)
 			_log("Champion gained %d armor (total: %d)" % [armor, champion_armor])
 
 		"support":
 			var heal = card_data.get("heal", 0)
 			if heal > 0:
 				champion_hp = min(champion_max_hp, champion_hp + heal)
+				_spawn_float_text("+%d" % heal, Color(0.20, 1.0, 0.45, 1.0), _player_float_origin(), 28)
 				_log("Champion healed %d HP (%d/%d)" % [heal, champion_hp, champion_max_hp])
+			_apply_support_effect(effect)
+
+		"reaction":
+			var react_dmg = int(card_data.get("damage", 0)) + gear_flat_damage_bonus
+			var react_armor = card_data.get("armor", 0)
+			if react_dmg > 0:
+				var react_target = _get_priority_enemy()
+				if react_target >= 0:
+					_deal_damage_to_enemy(react_target, react_dmg)
+			if react_armor > 0:
+				champion_armor += react_armor
+				_log("Champion gained %d armor (total: %d)" % [react_armor, champion_armor])
+
+		"area":
+			var area_dmg = int(card_data.get("damage", 0)) + gear_flat_damage_bonus
+			for i in range(enemies.size()):
+				if enemies[i]["hp"] <= 0:
+					continue
+				if "poison" in effect:
+					var aoe_stacks = _parse_effect_stacks(effect)
+					enemies[i]["poison"] += aoe_stacks
+					_log("%s poisoned (%d stacks)" % [enemies[i]["name"], enemies[i]["poison"]])
+				elif area_dmg > 0:
+					_deal_damage_to_enemy(i, area_dmg)
+
+		"evasion":
+			champion_armor += 3
+			_log("Evasion! +3 temp armor to absorb incoming hits.")
+			if effect == "evasion_team":
+				lt_armor += 2
+				_log("%s also gains +2 armor." % lt_name)
+
+		"effect":
+			_apply_global_effect(effect)
 
 	discard_pile.append(hand[card_idx])
 	hand.remove_at(card_idx)
 
+	is_play_animating = false
+	if card_btn.has_method("set_selected"):
+		card_btn.call("set_selected", false)
 	_update_all_ui()
 	_check_victory()
+	if not combat_over:
+		end_turn_btn.disabled = false
 
 func _parse_effect_stacks(effect: String) -> int:
 	var parts = effect.split("_")
@@ -585,40 +1109,68 @@ func _get_first_alive_enemy() -> int:
 			return i
 	return -1
 
-func _deal_damage_to_enemy(idx: int, amount: int, _actor: String = "champion") -> void:
+func _get_priority_enemy() -> int:
+	var idx = -1
+	var lowest_hp = 999999
+	for i in range(enemies.size()):
+		if enemies[i]["hp"] <= 0:
+			continue
+		var hp = int(enemies[i].get("hp", 0))
+		if hp < lowest_hp:
+			lowest_hp = hp
+			idx = i
+	return idx
+
+func _apply_support_effect(effect: String) -> void:
+	match effect:
+		"resource_regen":
+			stamina = min(max_stamina_per_turn, stamina + 1)
+			_log("Stamina restored +1 (%d/%d)" % [stamina, max_stamina_per_turn])
+		"card_draw":
+			_draw_cards(1)
+			_log("Drew 1 card from effect.")
+		_:
+			pass
+
+func _apply_global_effect(effect: String) -> void:
+	match effect:
+		"reflect_damage":
+			champion_armor += 2
+			_log("Curse of Thorns active: +2 armor.")
+		"fear":
+			for i in range(enemies.size()):
+				if enemies[i]["hp"] > 0:
+					enemies[i]["damage"] = max(0, enemies[i].get("damage", 0) - 1)
+			_log("Intimidate! Enemy damage reduced by 1 this turn.")
+		"morale_boost_all":
+			champion_hp = min(champion_max_hp, champion_hp + 3)
+			lt_hp = min(lt_max_hp, lt_hp + 3)
+			_log("Morale Boost! Champion and %s heal 3 HP." % lt_name)
+		_:
+			_log("Effect: %s applied." % effect)
+
+func _deal_damage_to_enemy(idx: int, amount: int) -> void:
 	if idx < 0 or idx >= enemies.size():
 		return
 	var enemy = enemies[idx]
-
-	# Apply synergy multiplier
-	var synergy_mult = _get_synergy_multiplier(enemy)
-	var final_damage = int(amount * synergy_mult)
-
-	var absorbed = min(enemy.get("armor", 0), final_damage)
+	var absorbed = min(enemy.get("armor", 0), amount)
 	enemy["armor"] = max(0, enemy.get("armor", 0) - absorbed)
-	var actual = final_damage - absorbed
+	var actual = amount - absorbed
 	enemy["hp"] = max(0, enemy["hp"] - actual)
 	_log("Hit %s for %d dmg (%d armor) → %d/%d HP" % [enemy["name"], actual, absorbed, enemy["hp"], enemy["max_hp"]])
-
-func _apply_synergy(card: Dictionary) -> void:
-	"""Track synergy types for damage multipliers"""
-	var synergy_type = card.get("synergy_type", "none")
-	if synergy_type != "none":
-		active_synergies[synergy_type] = active_synergies.get(synergy_type, 0) + 1
-
-func _get_synergy_multiplier(_enemy: Dictionary) -> float:
-	"""Get damage multiplier based on active synergies"""
-	var mult = 1.0
-	# Poison synergy: each stack adds 10% damage
-	if active_synergies.get("poison", 0) > 0:
-		mult += (active_synergies["poison"] * 0.1)
-	return mult
+	if idx >= 0 and idx < enemy_labels.size():
+		var enemy_lbl := enemy_labels[idx] as Label
+		if enemy_lbl:
+			var recoil = create_tween()
+			recoil.tween_property(enemy_lbl, "position:x", 8.0, 0.08).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+			recoil.tween_property(enemy_lbl, "position:x", 0.0, 0.12).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN)
 
 func _on_end_turn() -> void:
-	if combat_over:
+	if combat_over or is_play_animating:
 		return
 
 	end_turn_btn.disabled = true
+	await _animate_enemy_slot_breath(1.0)
 
 	# Process poison on enemies
 	for i in range(enemies.size()):
@@ -634,16 +1186,39 @@ func _on_end_turn() -> void:
 		return
 
 	_log("--- ENEMY TURN ---")
+	if enemy_portrait_panel_ref:
+		var flash = create_tween()
+		flash.tween_property(enemy_portrait_panel_ref, "modulate", Color(1.0, 0.72, 0.72, 1.0), 0.12).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+		flash.tween_property(enemy_portrait_panel_ref, "modulate", Color(1.0, 1.0, 1.0, 1.0), 0.18).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN)
+	if not skip_enemy_animation:
+		await get_tree().create_timer(_scaled_time(0.55)).timeout
+	var slot_idx = 0
 	for i in range(enemies.size()):
 		var enemy = enemies[i]
 		if enemy["hp"] <= 0:
 			continue
-		var dmg = enemy.get("damage", 2)
+		var active_slot = min(slot_idx, ENEMY_SLOT_COUNT - 1)
+		var incoming = int(enemy.get("damage", 2))
+		_set_enemy_card_slot_state(active_slot, "known")
+		var tele_lbl := enemy_card_slot_labels[active_slot] as Label
+		if tele_lbl:
+			tele_lbl.text = "⚔%d" % incoming
+		if not skip_enemy_animation:
+			await get_tree().create_timer(_scaled_time(0.30)).timeout
+		await _animate_enemy_card_appear(active_slot)
+		await _animate_enemy_card_flip(active_slot)
+		_set_enemy_card_slot_state(active_slot, "active")
+		var dmg = incoming
 		var absorbed = min(champion_armor, dmg)
 		champion_armor = max(0, champion_armor - absorbed)
 		var actual = dmg - absorbed
 		champion_hp = max(0, champion_hp - actual)
+		_spawn_float_text("-%d" % actual, Color(1.0, 0.24, 0.24, 1.0), _player_float_origin(), 28)
 		_log("%s attacks! %d dmg (-%d armor) → Champion: %d/%d HP" % [enemy["name"], actual, absorbed, champion_hp, champion_max_hp])
+		await _animate_enemy_card_to_battlefield(active_slot, true)
+		if not skip_enemy_animation:
+			await get_tree().create_timer(_scaled_time(0.45)).timeout
+		slot_idx += 1
 
 		if champion_hp <= 0:
 			_on_defeat()
@@ -652,6 +1227,7 @@ func _on_end_turn() -> void:
 	turn += 1
 	_start_turn()
 	end_turn_btn.disabled = false
+	skip_enemy_animation = false
 
 func _check_victory() -> void:
 	var all_dead = true
@@ -669,8 +1245,7 @@ func _on_victory() -> void:
 	_log("=== VICTORY! All enemies defeated! ===")
 	_update_all_ui()
 
-	# Rewards/meters are applied by MissionManager from missions.json.
-	MissionManager.complete_mission(GameState.current_mission_id)
+	MissionManager.complete_mission(current_mission_id, "victory")
 
 	end_turn_btn.text = "CONTINUE →"
 	end_turn_btn.disabled = false
@@ -681,6 +1256,7 @@ func _on_defeat() -> void:
 	combat_over = true
 	player_won = false
 	_log("=== DEFEAT! Champion has fallen! ===")
+	MissionManager.complete_mission(current_mission_id, "defeat")
 	_update_all_ui()
 	end_turn_btn.text = "BACK TO MENU"
 	end_turn_btn.disabled = false
@@ -691,14 +1267,14 @@ func _on_retreat() -> void:
 	if combat_over:
 		return
 	_log("Retreating from combat...")
-	MissionManager.complete_mission(GameState.current_mission_id, "retreat")
+	MissionManager.complete_mission(current_mission_id, "retreat")
 	get_tree().change_scene_to_file("res://scenes/MainHub.tscn")
 
 func _on_continue_after_combat() -> void:
 	get_tree().change_scene_to_file("res://scenes/MainHub.tscn")
 
 func _on_back_to_menu() -> void:
-	get_tree().change_scene_to_file("res://scenes/MainHub.tscn")
+	get_tree().change_scene_to_file("res://scenes/Main.tscn")
 
 func _get_enemy_display(i: int) -> String:
 	var e = enemies[i]
@@ -707,408 +1283,162 @@ func _get_enemy_display(i: int) -> String:
 	var poison_str = ""
 	if e.get("poison", 0) > 0:
 		poison_str = "\n☠ Poison: %d" % e["poison"]
-	return "%s\n❤ %d/%d  🛡%d%s" % [e["name"], e["hp"], e["max_hp"], e.get("armor", 0), poison_str]
+	return "%s\nHP %d/%d  ARM %d%s\nVeteran Warrior" % [e["name"], e["hp"], e["max_hp"], e.get("armor", 0), poison_str]
 
 func _get_champion_display() -> String:
-	return "CHAMPION\n❤ %d/%d  🛡 %d" % [champion_hp, champion_max_hp, champion_armor]
+	return "CHAMPION\nHP %d/%d  ARM %d\nWarrior Stance" % [champion_hp, champion_max_hp, champion_armor]
 
-func _get_lt_display(lt_name: String) -> String:
-	"""Get display string for a lieutenant"""
-	var lt_data = CardManager.get_lieutenant(lt_name)
-	var lt_hp = lt_data.get("hp", 25)
-	var lt_max_hp = lt_data.get("hp", 25)
-	var lt_armor = lt_data.get("armor", 2)
+func _get_lt_display() -> String:
 	if lt_hp <= 0:
 		return "%s [DOWN]" % lt_name
 	return "%s\n❤ %d/%d  🛡 %d" % [lt_name, lt_hp, lt_max_hp, lt_armor]
 
 func _update_all_ui() -> void:
-	if arena_label:
-		arena_label.text = "══  ARENA  •  Turn %d  ══" % turn
+	var hp_before := last_ui_champion_hp
+	if turn_label:
+		turn_label.text = "Turn %d" % turn
+	if health_label:
+		health_label.text = "Health: %d/%d" % [champion_hp, champion_max_hp]
+	if player_hp_bar:
+		player_hp_bar.max_value = champion_max_hp
+		var hp_tw = create_tween()
+		hp_tw.tween_property(player_hp_bar, "value", champion_hp, 0.30).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
 	if stamina_label:
-		stamina_label.text = "Stamina: %d/%d" % [resources["stamina"], resources["stamina_max"]]
+		stamina_label.text = "Stamina: %d/%d" % [stamina, max_stamina_per_turn]
 	if mana_label:
-		mana_label.text = "Mana: %d/%d" % [resources["mana"], resources["mana_max"]]
+		mana_label.text = "Mana: %d/3" % mana
 
-	# Update enemy buttons and labels
-	for i in range(min(enemy_buttons.size(), enemies.size())):
-		var btn = enemy_buttons[i]
-		var e = enemies[i]
-
-		# Show/hide button based on enemy state
-		btn.visible = (e["hp"] > 0)
-
-		# Highlight selected target
-		if i == selected_target_idx and e["hp"] > 0:
-			btn.modulate = Color(1.0, 1.0, 0.7)  # Gold highlight
-		else:
-			btn.modulate = Color(1.0, 1.0, 1.0)  # Normal
-
-		# Update enemy label
+	for i in range(min(enemy_labels.size(), enemies.size())):
 		enemy_labels[i].text = _get_enemy_display(i)
+		enemy_labels[i].tooltip_text = _enemy_stat_tooltip(i)
 
 	if champion_label:
 		champion_label.text = _get_champion_display()
+	if lt_label:
+		lt_label.text = _get_lt_display()
+	if debug_status_label and debug_status_label.visible:
+		debug_status_label.text = "Turn %d | Hand %d | Deck %d | Discard %d | Anim %.2fx" % [turn, hand.size(), deck.size(), discard_pile.size(), animation_speed]
 
-	# Update all lieutenant labels
-	for lt_name in active_lts:
-		if lt_name in lt_labels:
-			lt_labels[lt_name].text = _get_lt_display(lt_name)
+	if player_stats_panel_ref and hp_before != champion_hp:
+		var flash_col := Color(1.0, 0.70, 0.70, 1.0) if champion_hp < hp_before else Color(0.70, 1.0, 0.75, 1.0)
+		var flash = create_tween()
+		flash.tween_property(player_stats_panel_ref, "modulate", flash_col, 0.08).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+		flash.tween_property(player_stats_panel_ref, "modulate", Color(1.0, 1.0, 1.0, 1.0), 0.15).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN)
+	last_ui_champion_hp = champion_hp
 
 	_update_hand_ui()
-	_update_status_ui()
 
-# ──────────────────────────────────────────────
-# CARD PREVIEW PANEL (hover to inspect)
-# ──────────────────────────────────────────────
-func _build_card_preview() -> void:
-	card_preview = PanelContainer.new()
-	card_preview.custom_minimum_size = Vector2(180, 250)
-	card_preview.visible = false
+func _player_float_origin() -> Vector2:
+	if player_portrait_panel_ref:
+		return player_portrait_panel_ref.get_global_rect().get_center()
+	if champion_label:
+		return champion_label.get_global_rect().get_center()
+	return play_target_marker.get_global_rect().get_center()
 
-	# Stone-and-gold card frame (Roman style)
-	var style = StyleBoxFlat.new()
-	style.bg_color = Color(0.12, 0.11, 0.10)
-	style.border_width_left   = 2
-	style.border_width_right  = 2
-	style.border_width_top    = 2
-	style.border_width_bottom = 2
-	style.border_color = CLR_BORDER
-	style.corner_radius_top_left     = 10
-	style.corner_radius_top_right    = 10
-	style.corner_radius_bottom_left  = 10
-	style.corner_radius_bottom_right = 10
-	card_preview.add_theme_stylebox_override("panel", style)
+func _enemy_float_origin(enemy_idx: int) -> Vector2:
+	if enemy_idx >= 0 and enemy_idx < enemy_labels.size():
+		var enemy_lbl := enemy_labels[enemy_idx] as Label
+		if enemy_lbl:
+			return enemy_lbl.get_global_rect().get_center()
+	if enemy_portrait_panel_ref:
+		return enemy_portrait_panel_ref.get_global_rect().get_center()
+	return play_target_marker.get_global_rect().get_center()
 
-	# Wax seal
-	var seal_row = CenterContainer.new()
-	seal_row.set_anchors_preset(Control.PRESET_TOP_WIDE)
-	seal_row.custom_minimum_size = Vector2(0, 26)
-	card_preview.add_child(seal_row)
+func _spawn_float_text(text: String, color: Color, origin: Vector2, font_px: int) -> void:
+	var fx = Label.new()
+	fx.text = text
+	fx.add_theme_font_size_override("font_size", font_px)
+	fx.add_theme_color_override("font_color", color)
+	fx.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	fx.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	fx.custom_minimum_size = Vector2(220, 36)
+	fx.z_index = 200
+	add_child(fx)
+	fx.global_position = origin - Vector2(110, 18)
+	var tw = create_tween()
+	tw.set_parallel(true)
+	tw.tween_property(fx, "global_position:y", fx.global_position.y - 48.0, 0.50).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+	tw.tween_property(fx, "modulate:a", 0.0, 0.50).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN)
+	await tw.finished
+	fx.queue_free()
 
-	var seal = _make_texture(TEX_SEAL, Vector2(26, 26))
-	seal_row.add_child(seal)
+func _init_lieutenant_state() -> void:
+	var active = GameState.active_lieutenants
+	lt_name = "Marcus"
+	if not active.is_empty():
+		lt_name = str(active[0])
 
-	var margin = MarginContainer.new()
-	margin.add_theme_constant_override("margin_left", 6)
-	margin.add_theme_constant_override("margin_right", 6)
-	margin.add_theme_constant_override("margin_top", 14)
-	margin.add_theme_constant_override("margin_bottom", 6)
-	card_preview.add_child(margin)
+	var lt_data = CardManager.get_lieutenant(lt_name)
+	lt_hp = int(lt_data.get("hp", 25))
+	lt_max_hp = lt_hp
+	lt_armor = int(lt_data.get("armor", 2))
+	opening_draw_bonus = 1 if str(lt_data.get("trait", "")) == "Disciplined" else 0
 
-	var inner_vbox = VBoxContainer.new()
-	inner_vbox.add_theme_constant_override("separation", 6)
-	margin.add_child(inner_vbox)
+func _resolve_mission_context() -> void:
+	current_mission_id = GameState.current_mission_id
+	if current_mission_id == "":
+		var available = MissionManager.get_available_missions()
+		current_mission_id = "M01" if available.is_empty() else str(available[0])
+		GameState.current_mission_id = current_mission_id
 
-	# ── Art placeholder ──
-	var art_panel = PanelContainer.new()
-	art_panel.custom_minimum_size = Vector2(168, 115)
-	var art_style = StyleBoxFlat.new()
-	art_style.bg_color = Color(0.16, 0.14, 0.12)
-	art_style.border_width_left = 1
-	art_style.border_width_right = 1
-	art_style.border_width_top = 1
-	art_style.border_width_bottom = 1
-	art_style.border_color = CLR_BORDER
-	art_style.corner_radius_top_left = 8
-	art_style.corner_radius_top_right = 8
-	art_style.corner_radius_bottom_left = 8
-	art_style.corner_radius_bottom_right = 8
-	art_panel.add_theme_stylebox_override("panel", art_style)
-	inner_vbox.add_child(art_panel)
+	current_mission_data = MissionManager.get_mission(current_mission_id)
+	if current_mission_data.is_empty():
+		current_mission_id = "M01"
+		GameState.current_mission_id = current_mission_id
+		current_mission_data = MissionManager.get_mission(current_mission_id)
 
-	var art_center = CenterContainer.new()
-	art_center.set_anchors_preset(Control.PRESET_FULL_RECT)
-	art_panel.add_child(art_center)
-
-	preview_art_rect = ColorRect.new()
-	preview_art_rect.custom_minimum_size = Vector2(160, 104)
-	preview_art_rect.color = Color(0.22, 0.18, 0.12)
-	art_center.add_child(preview_art_rect)
-
-	# Art placeholder label
-	var art_lbl = Label.new()
-	art_lbl.text = "[ ART ]"
-	art_lbl.add_theme_font_size_override("font_size", 11)
-	art_lbl.add_theme_color_override("font_color", Color(0.4, 0.35, 0.25))
-	art_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	art_lbl.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-	art_lbl.set_anchors_preset(Control.PRESET_FULL_RECT)
-	preview_art_rect.add_child(art_lbl)
-
-	# ── Text block ──
-	var text_panel = PanelContainer.new()
-	var text_style = StyleBoxFlat.new()
-	text_style.bg_color = Color(0.10, 0.09, 0.08)
-	text_style.border_width_left = 1
-	text_style.border_width_right = 1
-	text_style.border_width_top = 1
-	text_style.border_width_bottom = 2
-	text_style.border_color = CLR_BORDER
-	text_style.corner_radius_top_left = 6
-	text_style.corner_radius_top_right = 6
-	text_style.corner_radius_bottom_left = 8
-	text_style.corner_radius_bottom_right = 8
-	text_panel.add_theme_stylebox_override("panel", text_style)
-	inner_vbox.add_child(text_panel)
-
-	var text_margin = MarginContainer.new()
-	text_margin.add_theme_constant_override("margin_left", 8)
-	text_margin.add_theme_constant_override("margin_right", 8)
-	text_margin.add_theme_constant_override("margin_top", 6)
-	text_margin.add_theme_constant_override("margin_bottom", 6)
-	text_panel.add_child(text_margin)
-
-	var text_vbox = VBoxContainer.new()
-	text_vbox.add_theme_constant_override("separation", 2)
-	text_margin.add_child(text_vbox)
-
-	preview_name_label = Label.new()
-	preview_name_label.add_theme_font_size_override("font_size", 12)
-	preview_name_label.add_theme_color_override("font_color", Color(0.92, 0.86, 0.70))
-	text_vbox.add_child(preview_name_label)
-
-	preview_cost_label = Label.new()
-	preview_cost_label.add_theme_font_size_override("font_size", 10)
-	preview_cost_label.add_theme_color_override("font_color", Color(0.75, 0.68, 0.45))
-	text_vbox.add_child(preview_cost_label)
-
-	var divider = HSeparator.new()
-	divider.add_theme_color_override("color", Color(0.45, 0.35, 0.18))
-	text_vbox.add_child(divider)
-
-	preview_stats_label = Label.new()
-	preview_stats_label.add_theme_font_size_override("font_size", 11)
-	preview_stats_label.add_theme_color_override("font_color", Color(0.85, 0.80, 0.62))
-	text_vbox.add_child(preview_stats_label)
-
-	preview_effect_label = Label.new()
-	preview_effect_label.add_theme_font_size_override("font_size", 10)
-	preview_effect_label.add_theme_color_override("font_color", Color(0.65, 0.62, 0.50))
-	preview_effect_label.autowrap_mode = TextServer.AUTOWRAP_WORD
-	text_vbox.add_child(preview_effect_label)
-
-	# Position near player hand (bottom-right) like a real card game
-	card_preview.set_anchors_preset(Control.PRESET_TOP_LEFT)
-	card_preview.size = card_preview.custom_minimum_size
-	card_preview.position = Vector2(0, 0)
-	add_child(card_preview)
-
-func _show_card_preview(card_data: Dictionary) -> void:
-	if card_preview == null or card_data.is_empty():
+func _apply_equipped_gear_bonuses() -> void:
+	var equipped: Dictionary = GameState.equipped_gear
+	if equipped.is_empty():
 		return
 
-	var faction = card_data.get("faction", "NEUTRAL")
-	# Art placeholder tinted by faction
-	match faction:
-		"AEGIS":    preview_art_rect.color = Color(0.12, 0.18, 0.30)
-		"SPECTER":  preview_art_rect.color = Color(0.18, 0.10, 0.28)
-		"ECLIPSE":  preview_art_rect.color = Color(0.30, 0.20, 0.06)
-		_:          preview_art_rect.color = Color(0.22, 0.18, 0.12)
+	var applied_names: Array = []
+	for slot in ["weapon", "armor", "accessory"]:
+		var gear_id: String = str(equipped.get(slot, ""))
+		if gear_id == "":
+			continue
+		var gear: Dictionary = CardManager.get_gear(gear_id)
+		if gear.is_empty():
+			continue
+		applied_names.append(str(gear.get("name", gear_id)))
 
-	preview_name_label.text = card_data.get("name", "Unknown")
-	preview_cost_label.text = "Cost: %d ★   Faction: %s" % [card_data.get("cost", 0), faction]
-	preview_stats_label.text = _get_card_desc(card_data)
+		champion_max_hp += int(gear.get("hp", 0))
+		champion_hp = min(champion_max_hp, champion_hp + int(gear.get("hp", 0)))
+		champion_armor += int(gear.get("armor", 0))
+		gear_flat_damage_bonus += int(gear.get("damage", 0))
+		gear_draw_per_turn_bonus += int(maxi(0, int(gear.get("speed", 0))))
 
-	var effect = card_data.get("effect", "none")
-	if effect == "none" or effect == "":
-		preview_effect_label.text = ""
-	else:
-		preview_effect_label.text = "Effect: %s" % effect
+		var effect: String = str(gear.get("effect", "none"))
+		match effect:
+			"draw_start":
+				gear_opening_draw_bonus += 1
+			"start_armor":
+				champion_armor += 2
+			"start_mana":
+				gear_start_mana_bonus += 1
+			"start_stamina":
+				gear_first_turn_stamina_bonus += 1
+			"stamina_regen_boost":
+				max_stamina_per_turn += 1
+			"draw_bonus":
+				gear_draw_per_turn_bonus += 1
+			_:
+				pass
 
-	# Reposition near bottom-right and keep on-screen
-	var vp = get_viewport_rect().size
-	var pad = Vector2(16, 200)
-	var pos = Vector2(vp.x - card_preview.size.x - pad.x, vp.y - card_preview.size.y - pad.y)
-	pos.x = max(16, pos.x)
-	pos.y = max(16, pos.y)
-	card_preview.position = pos
-
-	card_preview.visible = true
-
-func _hide_card_preview() -> void:
-	if card_preview:
-		card_preview.visible = false
-
-func _on_card_hover(idx: int, card_data: Dictionary) -> void:
-	hovered_card_idx = idx
-	_layout_hand(true)
-	_show_card_preview(card_data)
-
-func _on_card_unhover(idx: int) -> void:
-	if hovered_card_idx == idx:
-		hovered_card_idx = -1
-	_layout_hand(true)
-	_hide_card_preview()
-
-func _layout_hand(animated: bool) -> void:
-	if hand_container == null:
-		return
-
-	var cards = hand_container.get_children()
-	var count = cards.size()
-	if count == 0:
-		return
-
-	var area = hand_container.size
-	if area.x <= 0:
-		area.x = 600
-	if area.y <= 0:
-		area.y = 140
-
-	var center_x = area.x * 0.5
-	var base_y = area.y - 24
-	var radius = 320.0
-	var max_angle = 18.0
-	var spread = 8.0
-	var total = min(max_angle, (count - 1) * spread)
-	var step = 0.0
-	if count > 1:
-		step = total / float(count - 1)
-
-	for i in range(count):
-		var card = cards[i]
-		var angle = -total * 0.5 + step * i
-		var rad = deg_to_rad(angle)
-		var x = center_x + sin(rad) * radius
-		var y = base_y - (1.0 - cos(rad)) * radius
-
-		var lift = 0.0
-		var scl = Vector2(1, 1)
-		if i == hovered_card_idx:
-			lift = -22.0
-			scl = Vector2(1.12, 1.12)
-			card.z_index = 10
-		else:
-			card.z_index = 0
-
-		var pos = Vector2(x, y + lift) - card.custom_minimum_size * 0.5
-
-		if card.has_meta("tween"):
-			var old = card.get_meta("tween")
-			if old:
-				old.kill()
-
-		if animated:
-			var t = create_tween().set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_SPRING)
-			card.set_meta("tween", t)
-			t.tween_property(card, "position", pos, 0.22)
-			t.parallel().tween_property(card, "rotation", rad, 0.22)
-			t.parallel().tween_property(card, "scale", scl, 0.22)
-		else:
-			card.position = pos
-			card.rotation = rad
-			card.scale = scl
-
-# ──────────────────────────────────────────────
-
-func _panel_style() -> StyleBoxFlat:
-	var s = StyleBoxFlat.new()
-	s.bg_color = CLR_PANEL
-	s.border_width_left   = 1
-	s.border_width_right  = 1
-	s.border_width_top    = 1
-	s.border_width_bottom = 2
-	s.border_color = CLR_BORDER
-	s.corner_radius_top_left     = 5
-	s.corner_radius_top_right    = 5
-	s.corner_radius_bottom_left  = 5
-	s.corner_radius_bottom_right = 5
-	s.shadow_color = Color(0, 0, 0, 0.35)
-	s.shadow_size  = 3
-	return s
-
-func _btn_style(color: Color) -> StyleBoxFlat:
-	var s = StyleBoxFlat.new()
-	s.bg_color = color
-	s.border_width_left   = 1
-	s.border_width_right  = 1
-	s.border_width_top    = 1
-	s.border_width_bottom = 2
-	s.border_color = CLR_BORDER
-	s.corner_radius_top_left     = 4
-	s.corner_radius_top_right    = 4
-	s.corner_radius_bottom_left  = 4
-	s.corner_radius_bottom_right = 4
-	s.content_margin_left   = 10
-	s.content_margin_right  = 10
-	s.content_margin_top    = 4
-	s.content_margin_bottom = 4
-	s.shadow_color = Color(0, 0, 0, 0.35)
-	s.shadow_size  = 3
-	return s
-
-func _format_mission_id(id: String) -> String:
-	if id.length() < 2:
-		return id
-	var prefix = id.substr(0, 1)
-	var num = int(id.substr(1))
-	var roman = _roman(num)
-	return "%s %s" % [prefix, roman]
-
-func _roman(n: int) -> String:
-	if n <= 0:
-		return "N"
-	var vals = [1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1]
-	var syms = ["M","CM","D","CD","C","XC","L","XL","X","IX","V","IV","I"]
-	var out = ""
-	var i = 0
-	while n > 0 and i < vals.size():
-		while n >= vals[i]:
-			out += syms[i]
-			n -= vals[i]
-		i += 1
-	return out
-
-func _make_pill(text: String, color: Color) -> PanelContainer:
-	var panel = PanelContainer.new()
-	var style = StyleBoxFlat.new()
-	style.bg_color = Color(color.r, color.g, color.b, 0.18)
-	style.border_width_left = 1
-	style.border_width_right = 1
-	style.border_width_top = 1
-	style.border_width_bottom = 1
-	style.border_color = Color(color.r, color.g, color.b, 0.55)
-	style.corner_radius_top_left = 12
-	style.corner_radius_top_right = 12
-	style.corner_radius_bottom_left = 12
-	style.corner_radius_bottom_right = 12
-	panel.add_theme_stylebox_override("panel", style)
-
-	var margin = MarginContainer.new()
-	margin.add_theme_constant_override("margin_left", 10)
-	margin.add_theme_constant_override("margin_right", 10)
-	margin.add_theme_constant_override("margin_top", 4)
-	margin.add_theme_constant_override("margin_bottom", 4)
-	panel.add_child(margin)
-
-	var label = Label.new()
-	label.text = text
-	label.add_theme_font_size_override("font_size", 12)
-	label.add_theme_color_override("font_color", CLR_TEXT)
-	margin.add_child(label)
-	panel.set_meta("label", label)
-	return panel
-
-func _make_texture(path: String, tex_size: Vector2) -> TextureRect:
-	var tex = TextureRect.new()
-	tex.texture = load(path)
-	tex.custom_minimum_size = tex_size
-	tex.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-	tex.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-	tex.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	return tex
-
-func _fade_in(node: CanvasItem, delay: float) -> void:
-	node.modulate = Color(1, 1, 1, 0)
-	var tween = create_tween()
-	tween.tween_property(node, "modulate:a", 1.0, 0.35).set_delay(delay)
+	mana = gear_start_mana_bonus
+	stamina = max_stamina_per_turn
+	if turn == 1 and gear_first_turn_stamina_bonus > 0:
+		stamina += gear_first_turn_stamina_bonus
+	if not applied_names.is_empty():
+		_log("Gear active: %s" % ", ".join(applied_names))
 
 var _log_lines: Array = []
 func _log(msg: String) -> void:
 	_log_lines.append(msg)
-	if _log_lines.size() > 6:
+	if _log_lines.size() > 10:
 		_log_lines.pop_front()
 	if log_label:
-		log_label.text = "\n".join(_log_lines)
+		var start_idx: int = maxi(0, _log_lines.size() - 3)
+		log_label.text = "\n".join(_log_lines.slice(start_idx, _log_lines.size()))
+	_refresh_turn_log()
 	print("[COMBAT] " + msg)

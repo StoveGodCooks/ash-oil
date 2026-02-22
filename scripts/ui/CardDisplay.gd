@@ -27,6 +27,24 @@ const FACTION_COLOR: Dictionary = {
 	"ECLIPSE": Color(0.35, 0.18, 0.04, 0.90),
 	"NEUTRAL": Color(0.12, 0.10, 0.08, 0.90),
 }
+const TYPE_ICON: Dictionary = {
+	"attack": "⚔",
+	"defense": "🛡",
+	"support": "✚",
+	"reaction": "↺",
+	"area": "◉",
+	"evasion": "🜁",
+	"effect": "✦",
+}
+const TYPE_COLOR: Dictionary = {
+	"attack": Color(0.95, 0.28, 0.28, 0.95),
+	"defense": Color(0.40, 0.74, 1.0, 0.95),
+	"support": Color(0.35, 0.95, 0.55, 0.95),
+	"reaction": Color(0.95, 0.82, 0.36, 0.95),
+	"area": Color(0.96, 0.45, 0.18, 0.95),
+	"evasion": Color(0.72, 0.88, 1.0, 0.95),
+	"effect": Color(0.86, 0.62, 1.0, 0.95),
+}
 
 var current_card_id: String = ""
 
@@ -37,6 +55,11 @@ var _name_label:    Label
 var _cost_label:    Label
 var _stats_label:   Label
 var _effect_label:  Label
+var _type_icon:     Label
+var _hover_glow:    ColorRect
+var _unplayable_x:  Label
+var _frame_overlay: TextureRect
+var _rarity_frame:  PanelContainer
 
 func _ready() -> void:
 	custom_minimum_size = Vector2(120, 180)
@@ -86,15 +109,49 @@ func _build_card() -> void:
 	_faction_glyph.mouse_filter  = MOUSE_FILTER_IGNORE
 	add_child(_faction_glyph)
 
+	_type_icon = Label.new()
+	_type_icon.text = "⚔"
+	_type_icon.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_type_icon.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	_type_icon.add_theme_font_size_override("font_size", 30)
+	_type_icon.add_theme_color_override("font_color", Color(1.0, 1.0, 1.0, 0.92))
+	_type_icon.anchor_left = 0.0; _type_icon.anchor_right = 1.0
+	_type_icon.anchor_top = 0.0; _type_icon.anchor_bottom = 0.58
+	_type_icon.offset_top = 18
+	_type_icon.offset_bottom = 0
+	_type_icon.mouse_filter = MOUSE_FILTER_IGNORE
+	add_child(_type_icon)
+
 	# 5 — Frame PNG overlay (on top of colour layers)
-	var frame_tex = TextureRect.new()
+	_frame_overlay = TextureRect.new()
 	if ResourceLoader.exists(FRAME_PATH):
-		frame_tex.texture = ResourceLoader.load(FRAME_PATH)
-	frame_tex.set_anchors_preset(Control.PRESET_FULL_RECT)
-	frame_tex.expand_mode  = TextureRect.EXPAND_IGNORE_SIZE
-	frame_tex.stretch_mode = TextureRect.STRETCH_SCALE
-	frame_tex.mouse_filter = MOUSE_FILTER_IGNORE
-	add_child(frame_tex)
+		_frame_overlay.texture = ResourceLoader.load(FRAME_PATH)
+	_frame_overlay.set_anchors_preset(Control.PRESET_FULL_RECT)
+	_frame_overlay.expand_mode  = TextureRect.EXPAND_IGNORE_SIZE
+	_frame_overlay.stretch_mode = TextureRect.STRETCH_SCALE
+	_frame_overlay.mouse_filter = MOUSE_FILTER_IGNORE
+	add_child(_frame_overlay)
+
+	_rarity_frame = PanelContainer.new()
+	_rarity_frame.set_anchors_preset(Control.PRESET_FULL_RECT)
+	_rarity_frame.mouse_filter = MOUSE_FILTER_IGNORE
+	add_child(_rarity_frame)
+	_apply_rarity_style("common")
+
+	# Hover glow (soft gold aura)
+	_hover_glow = ColorRect.new()
+	_hover_glow.color = Color(0.98, 0.84, 0.42, 0.0)
+	_hover_glow.anchor_left = 0.0
+	_hover_glow.anchor_right = 1.0
+	_hover_glow.anchor_top = 0.0
+	_hover_glow.anchor_bottom = 1.0
+	_hover_glow.offset_left = -20
+	_hover_glow.offset_right = 20
+	_hover_glow.offset_top = -20
+	_hover_glow.offset_bottom = 20
+	_hover_glow.mouse_filter = MOUSE_FILTER_IGNORE
+	add_child(_hover_glow)
+	move_child(_hover_glow, 0)
 
 	# 6 — Name ribbon (horizontal band at ~58% height)
 	var ribbon = PanelContainer.new()
@@ -121,9 +178,10 @@ func _build_card() -> void:
 
 	_name_label = Label.new()
 	_name_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	_name_label.add_theme_font_size_override("font_size", 10)
+	_name_label.add_theme_font_size_override("font_size", 11)
 	_name_label.add_theme_color_override("font_color", CLR_ACCENT)
 	_name_label.text = "Card Name"
+	_name_label.autowrap_mode = TextServer.AUTOWRAP_WORD
 	rib_margin.add_child(_name_label)
 
 	# 7 — Cost badge (top-left corner)
@@ -149,7 +207,7 @@ func _build_card() -> void:
 	_cost_label = Label.new()
 	_cost_label.text = "0"
 	_cost_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	_cost_label.add_theme_font_size_override("font_size", 11)
+	_cost_label.add_theme_font_size_override("font_size", 12)
 	_cost_label.add_theme_color_override("font_color", CLR_ACCENT)
 	cost_badge.add_child(_cost_label)
 
@@ -164,7 +222,7 @@ func _build_card() -> void:
 	add_child(stats_area)
 
 	_stats_label = Label.new()
-	_stats_label.add_theme_font_size_override("font_size", 9)
+	_stats_label.add_theme_font_size_override("font_size", 10)
 	_stats_label.add_theme_color_override("font_color", CLR_TEXT)
 	_stats_label.text = ""
 	stats_area.add_child(_stats_label)
@@ -174,11 +232,22 @@ func _build_card() -> void:
 	stats_area.add_child(sep)
 
 	_effect_label = Label.new()
-	_effect_label.add_theme_font_size_override("font_size", 8)
+	_effect_label.add_theme_font_size_override("font_size", 10)
 	_effect_label.add_theme_color_override("font_color", CLR_MUTED)
 	_effect_label.autowrap_mode = TextServer.AUTOWRAP_WORD
 	_effect_label.text = ""
 	stats_area.add_child(_effect_label)
+
+	_unplayable_x = Label.new()
+	_unplayable_x.text = "✖"
+	_unplayable_x.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_unplayable_x.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	_unplayable_x.add_theme_font_size_override("font_size", 54)
+	_unplayable_x.add_theme_color_override("font_color", Color(0.92, 0.18, 0.18, 0.92))
+	_unplayable_x.set_anchors_preset(Control.PRESET_FULL_RECT)
+	_unplayable_x.visible = false
+	_unplayable_x.mouse_filter = MOUSE_FILTER_IGNORE
+	add_child(_unplayable_x)
 
 func set_card(card_id: String) -> void:
 	if card_id.is_empty():
@@ -189,6 +258,7 @@ func set_card(card_id: String) -> void:
 
 	current_card_id = card_id
 	var faction = card.get("faction", "NEUTRAL")
+	var card_type = str(card.get("type", "attack"))
 
 	if _faction_bg:
 		_faction_bg.color = FACTION_COLOR.get(faction, FACTION_COLOR["NEUTRAL"])
@@ -198,6 +268,9 @@ func set_card(card_id: String) -> void:
 		_name_label.text = card.get("name", "Unknown")
 	if _cost_label:
 		_cost_label.text = str(card.get("cost", 0))
+	if _type_icon:
+		_type_icon.text = TYPE_ICON.get(card_type, "⚔")
+		_type_icon.add_theme_color_override("font_color", TYPE_COLOR.get(card_type, Color(1, 1, 1, 0.92)))
 
 	var dmg   = card.get("damage", 0)
 	var armor = card.get("armor", 0)
@@ -212,9 +285,69 @@ func set_card(card_id: String) -> void:
 	var effect = card.get("effect", "")
 	if _effect_label:
 		_effect_label.text = "" if (effect == "" or effect == "none") else effect
+	_apply_rarity_style(_rarity_tier(card))
 
 func set_card_size(card_size: Vector2) -> void:
 	custom_minimum_size = card_size
+
+func set_hovered(active: bool) -> void:
+	if _hover_glow == null:
+		return
+	var tw = create_tween()
+	tw.tween_property(_hover_glow, "color:a", 0.28 if active else 0.0, 0.15).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+
+func set_selected(active: bool) -> void:
+	if _frame_overlay == null:
+		return
+	_frame_overlay.modulate = Color(1.20, 1.10, 0.80, 1.0) if active else Color(1.0, 1.0, 1.0, 1.0)
+
+func pulse_cost() -> void:
+	if _cost_label == null:
+		return
+	var tw = create_tween()
+	tw.tween_property(_cost_label, "scale", Vector2(1.18, 1.18), 0.06).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	tw.tween_property(_cost_label, "scale", Vector2.ONE, 0.08).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN)
+
+func show_unplayable() -> void:
+	if _unplayable_x == null:
+		return
+	_unplayable_x.visible = true
+	_unplayable_x.modulate.a = 1.0
+	var tw = create_tween()
+	tw.tween_property(_unplayable_x, "modulate:a", 0.0, 0.20).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN)
+	await tw.finished
+	_unplayable_x.visible = false
+
+func _rarity_tier(card: Dictionary) -> String:
+	var raw = str(card.get("rarity", "")).to_lower()
+	if raw in ["common", "rare", "legendary"]:
+		return raw
+	var power_idx = int(card.get("power_index", 0))
+	if power_idx >= 8:
+		return "legendary"
+	if power_idx >= 5:
+		return "rare"
+	return "common"
+
+func _apply_rarity_style(tier: String) -> void:
+	if _rarity_frame == null:
+		return
+	var border_col := Color(0.65, 0.65, 0.65, 0.85)
+	match tier:
+		"rare":
+			border_col = Color(0.96, 0.78, 0.34, 0.92)
+		"legendary":
+			border_col = Color(0.94, 0.28, 0.28, 0.95)
+		_:
+			border_col = Color(0.70, 0.70, 0.70, 0.86)
+	var style := StyleBoxFlat.new()
+	style.bg_color = Color(0, 0, 0, 0)
+	style.border_color = border_col
+	style.border_width_left = 2
+	style.border_width_top = 2
+	style.border_width_right = 2
+	style.border_width_bottom = 2
+	_rarity_frame.add_theme_stylebox_override("panel", style)
 
 func _on_gui_input(event: InputEvent) -> void:
 	if event is InputEventMouseButton and event.pressed:

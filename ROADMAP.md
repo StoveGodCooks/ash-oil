@@ -1,8 +1,8 @@
 # Ash & Oil — Development Roadmap
 
-**Current Version:** v0.5 — Phase 5: Gear System & Card Art + Sprint 2 UX Overhaul
+**Current Version:** v0.5.1 — Phase 5: Gear System, Card Art, Combat Clarity Polish
 **Last Updated:** February 22, 2026
-**Status:** Gear system live, card redesign complete (faction glyphs), full parchment & wax UI restyle, north/south combat layout
+**Status:** Gear system live, card redesign complete (faction glyphs), full parchment & wax UI restyle, combat clarity/QOL polish pass live
 
 ---
 
@@ -90,6 +90,28 @@
   - [x] Built entirely in _ready() — CardDisplay.tscn is now 5 lines (no parse errors)
 - [x] **Card animation improvements** — Spring easing on fan tween (0.22s TRANS_SPRING, bouncy settle)
 
+### Phase 5c: Combat Clarity & UX Polish ✅
+- [x] 4/30/32/30/4 combat viewport structure (header/enemy/battlefield/player/debug)
+- [x] Enemy intent slots (5) with state flow: empty/facedown/known/active/persistent
+- [x] Player hand fan + hover lift/scale polish (20px lift, 1.15 scale, 150ms)
+- [x] Card play timing polish (350ms move + impact pulse + glow flare)
+- [x] Custom hover tooltip panel (fade in/out + viewport clamping)
+- [x] Valid/invalid targeting reticle states (gold pulse vs gray/forbidden)
+- [x] Floating combat text for damage/heal/armor + enemy recoil feedback
+- [x] Enemy action readability (telegraph `⚔N` before resolve, staged pacing)
+- [x] Turn log panel (collapsible, recent 3-5 actions visible)
+- [x] Keyboard shortcuts:
+  - [x] `1-5` play hand cards
+  - [x] `T` end turn
+  - [x] `R` retreat
+  - [x] `Esc` clear targeting/hover panel
+  - [x] `Space` skip enemy animation
+  - [x] `-` / `=` adjust animation speed (0.5x–2.0x)
+- [x] Card face clarity update:
+  - [x] Type icon (30px, color-coded)
+  - [x] Rarity border glow (common/rare/legendary)
+  - [x] Readability-adjusted title/cost/effect text sizing
+
 ### Testing & CI ✅
 - [x] TestBase framework (15+ assertion types)
 - [x] Unit test suites (test_gamestate, test_cardmanager, test_missionmanager, test_savemanager, test_combat_logic, test_game_logic)
@@ -118,7 +140,8 @@
 - [ ] Gear stat application in combat (read `equipped_gear` on combat start)
 - [ ] Gear drops on mission complete (rarity rates: 90% common, 9% rare, 1% epic)
 - [ ] Character portrait art (save to `res://assets/characters/[hero_id].png`)
-- [ ] Test suite stamina fix (tests expect stamina=3, actual is stamina=5)
+- [ ] Combat accessibility options panel (high contrast / colorblind / text scale)
+- [ ] Undo last card play (pre-end-turn only)
 
 ### Phase 7: NPC Relationship System
 **Focus:** Relationship tracking, loyalty-based story gates
@@ -164,7 +187,8 @@
 
 - [ ] Sound design (SFX for cards, combat, UI)
 - [ ] Music system (dynamic tracks per location/mission)
-- [ ] Animation tweens (card plays, damage numbers, transitions)
+- [x] Core combat tweens pass (card plays, damage numbers, targeting states)
+- [ ] Tween pooling/object pooling for floating numbers
 - [ ] Particle effects (special abilities, explosions)
 - [ ] Mobile optimization (touch controls, responsive UI)
 - [ ] Performance profiling (target 60 FPS, optimize draw calls)
@@ -208,6 +232,10 @@
 - [x] Card face redesign (faction glyphs, frame overlay, clean stats area)
 - [x] Battlefield arena zone (floor + status effect badges)
 - [x] Card animation enhancement (spring easing on fan tween)
+- [x] Enemy/player/battlefield rebalanced zone layout (30/32/30)
+- [x] Enemy intent slots + targeting readability states
+- [x] Turn-log panel + keyboard shortcuts + animation speed controls
+- [x] Card face readability pass (type icon + rarity glow + tooltip polish)
 
 ### Next Phase (Phase 6: Content & Balance)
 - [ ] Apply equipped gear bonuses to combat (HP, armor, damage)
@@ -215,7 +243,8 @@
 - [ ] Dynamic mission enemies (read from missions.json instead of hardcoded)
 - [ ] Card effect resolver (poison, stun, bleed, counter, heal)
 - [ ] Character portrait art for heroes
-- [ ] Fix test suite stamina expectations (3→5)
+- [ ] Undo last card play (before End Turn only)
+- [ ] Accessibility settings (contrast/colorblind/text scale)
 
 ---
 
@@ -271,10 +300,10 @@
 
 - **Gear stats not applied to combat** — `equipped_gear` is set in MainHub but CombatUI._init_state() doesn't read bonuses yet (Phase 6 task)
 - **No character portrait art** — CardDisplay uses faction glyphs as placeholder; ready to swap in real art when available
-- **Mission enemies hardcoded** — CombatUI._init_state() uses hardcoded enemy list, missions.json "enemies" field unused (Phase 6 task)
+- **Fallback enemy list remains** — Combat uses mission enemies first, but still has single-enemy fallback for safety when mission data is missing
 - **Card effects not resolved** — Effect strings ("poison_1", "stun_2") display but don't execute (Phase 6 task)
-- **Test suite stamina mismatch** — `test_combat_logic.gd` expects stamina=3, actual is stamina=5 (Phase 6 task)
-- **CombatUI exceeds 1000 lines** — gdlint `max-file-lines` warning (non-blocking, refactor later)
+- **Accessibility options not exposed** — speed controls exist via hotkeys, but no settings UI for text scale/color modes yet
+- **CombatUI exceeds 1000 lines** — now includes UX systems; split into components (HUD/Hand/EnemyIntent/Log) is recommended
 
 ---
 
