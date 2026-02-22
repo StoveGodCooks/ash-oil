@@ -14,6 +14,9 @@ const CLR_BTN     = Color(0.20, 0.160, 0.115)
 const CLR_DANGER  = Color(0.26, 0.095, 0.090)
 const CLR_STONE   = Color(0.18, 0.155, 0.120)
 
+const TEX_BANNER = "res://assets/ui/roman/banner.png"
+const TEX_SEAL   = "res://assets/ui/roman/seal.png"
+
 # ============ COMBAT STATE ============
 var champion_hp: int = 30
 var champion_max_hp: int = 30
@@ -50,7 +53,8 @@ var mana_label: Label
 var turn_label: Label
 var champion_label: Label
 var lt_labels: Dictionary = {}  # {lt_name: label}
-var hand_container: HBoxContainer
+var hand_container: Control
+var hovered_card_idx: int = -1
 var end_turn_btn: Button
 var enemy_buttons: Array = []  # Clickable enemy selection buttons
 var enemy_labels: Array = []  # Display labels
@@ -131,6 +135,11 @@ func _build_ui() -> void:
 	var title_panel = PanelContainer.new()
 	title_panel.add_theme_stylebox_override("panel", _panel_style())
 	main_vbox.add_child(title_panel)
+
+	var banner_tex = _make_texture(TEX_BANNER, Vector2(520, 48))
+	banner_tex.set_anchors_preset(Control.PRESET_TOP_WIDE)
+	banner_tex.position = Vector2(0, 2)
+	title_panel.add_child(banner_tex)
 
 	var title_margin = MarginContainer.new()
 	title_margin.add_theme_constant_override("margin_left", 10)
@@ -251,21 +260,22 @@ func _build_ui() -> void:
 	mana_label = mana_pill.get_meta("label")
 	res_hbox.add_child(mana_pill)
 
+	# Spacer to push hand/action/log toward the bottom
+	var hand_spacer = Control.new()
+	hand_spacer.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	main_vbox.add_child(hand_spacer)
+
 	# Hand zone label
 	var hand_title = Label.new()
 	hand_title.text = "Hand:"
 	hand_title.add_theme_font_size_override("font_size", 12)
 	main_vbox.add_child(hand_title)
 
-	# Hand container (scroll)
-	var scroll = ScrollContainer.new()
-	scroll.custom_minimum_size = Vector2(0, 68)
-	scroll.vertical_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
-	main_vbox.add_child(scroll)
-
-	hand_container = HBoxContainer.new()
-	hand_container.add_theme_constant_override("separation", 6)
-	scroll.add_child(hand_container)
+	# Hand area (custom layout for fanned cards)
+	hand_container = Control.new()
+	hand_container.custom_minimum_size = Vector2(0, 200)
+	hand_container.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	main_vbox.add_child(hand_container)
 
 	# Action buttons
 	var action_hbox = HBoxContainer.new()
@@ -366,29 +376,27 @@ func _update_hand_ui() -> void:
 		var cost = card_data.get("cost", 1)
 		var can_play = (cost <= resources["stamina"])
 
-		var btn = Button.new()
-		btn.custom_minimum_size = Vector2(90, 56)
-		# Compact label: cost + name only
-		btn.text = "%d★  %s" % [cost, card_data.get("name", "?")]
-		btn.disabled = not can_play or combat_over
-		btn.pressed.connect(_on_card_pressed.bind(i))
-		btn.mouse_entered.connect(_show_card_preview.bind(card_data))
-		btn.mouse_exited.connect(_hide_card_preview)
+		# Load CardDisplay scene
+		var card_display = load("res://scenes/CardDisplay.tscn").instantiate()
+		card_display.set_card(card_id)
+		card_display.set_card_size(Vector2(120, 180))
+		card_display.pivot_offset = card_display.custom_minimum_size / 2.0
 
-		# Faction tint on the button
-		var faction = card_data.get("faction", "NEUTRAL")
-		if faction == "AEGIS":
-			btn.modulate = Color(0.8, 0.9, 1.0)
-		elif faction == "SPECTER":
-			btn.modulate = Color(0.9, 0.7, 1.0)
-		elif faction == "ECLIPSE":
-			btn.modulate = Color(1.0, 0.9, 0.7)
+		# Set up signals
+		card_display.card_pressed.connect(func():
+			if can_play and not combat_over:
+				_on_card_pressed(i)
+		)
+		card_display.mouse_entered.connect(func(): _on_card_hover(i, card_data))
+		card_display.mouse_exited.connect(func(): _on_card_unhover(i))
 
-		# Dim if not affordable
-		if not can_play:
-			btn.modulate = btn.modulate * Color(0.5, 0.5, 0.5, 1.0)
+		# Dim if not affordable or combat over
+		if not can_play or combat_over:
+			card_display.modulate = Color(0.5, 0.5, 0.5, 1.0)
 
-		hand_container.add_child(btn)
+		hand_container.add_child(card_display)
+
+	_layout_hand(true)
 
 func _get_card_desc(data: Dictionary) -> String:
 	var type = data.get("type", "")
@@ -653,32 +661,68 @@ func _update_all_ui() -> void:
 # ──────────────────────────────────────────────
 func _build_card_preview() -> void:
 	card_preview = PanelContainer.new()
-	card_preview.custom_minimum_size = Vector2(160, 230)
+	card_preview.custom_minimum_size = Vector2(180, 250)
 	card_preview.visible = false
 
-	# Parchment-style panel background
+	# Stone-and-gold card frame (Roman style)
 	var style = StyleBoxFlat.new()
-	style.bg_color = Color(0.14, 0.11, 0.08)
+	style.bg_color = Color(0.12, 0.11, 0.10)
 	style.border_width_left   = 2
 	style.border_width_right  = 2
 	style.border_width_top    = 2
 	style.border_width_bottom = 2
-	style.border_color = Color(0.50, 0.38, 0.18)
-	style.corner_radius_top_left     = 6
-	style.corner_radius_top_right    = 6
-	style.corner_radius_bottom_left  = 6
-	style.corner_radius_bottom_right = 6
+	style.border_color = CLR_BORDER
+	style.corner_radius_top_left     = 10
+	style.corner_radius_top_right    = 10
+	style.corner_radius_bottom_left  = 10
+	style.corner_radius_bottom_right = 10
 	card_preview.add_theme_stylebox_override("panel", style)
 
+	# Wax seal
+	var seal_row = CenterContainer.new()
+	seal_row.set_anchors_preset(Control.PRESET_TOP_WIDE)
+	seal_row.custom_minimum_size = Vector2(0, 26)
+	card_preview.add_child(seal_row)
+
+	var seal = _make_texture(TEX_SEAL, Vector2(26, 26))
+	seal_row.add_child(seal)
+
+	var margin = MarginContainer.new()
+	margin.add_theme_constant_override("margin_left", 6)
+	margin.add_theme_constant_override("margin_right", 6)
+	margin.add_theme_constant_override("margin_top", 14)
+	margin.add_theme_constant_override("margin_bottom", 6)
+	card_preview.add_child(margin)
+
 	var inner_vbox = VBoxContainer.new()
-	inner_vbox.add_theme_constant_override("separation", 4)
-	card_preview.add_child(inner_vbox)
+	inner_vbox.add_theme_constant_override("separation", 6)
+	margin.add_child(inner_vbox)
 
 	# ── Art placeholder ──
+	var art_panel = PanelContainer.new()
+	art_panel.custom_minimum_size = Vector2(168, 115)
+	var art_style = StyleBoxFlat.new()
+	art_style.bg_color = Color(0.16, 0.14, 0.12)
+	art_style.border_width_left = 1
+	art_style.border_width_right = 1
+	art_style.border_width_top = 1
+	art_style.border_width_bottom = 1
+	art_style.border_color = CLR_BORDER
+	art_style.corner_radius_top_left = 8
+	art_style.corner_radius_top_right = 8
+	art_style.corner_radius_bottom_left = 8
+	art_style.corner_radius_bottom_right = 8
+	art_panel.add_theme_stylebox_override("panel", art_style)
+	inner_vbox.add_child(art_panel)
+
+	var art_center = CenterContainer.new()
+	art_center.set_anchors_preset(Control.PRESET_FULL_RECT)
+	art_panel.add_child(art_center)
+
 	preview_art_rect = ColorRect.new()
-	preview_art_rect.custom_minimum_size = Vector2(156, 110)
+	preview_art_rect.custom_minimum_size = Vector2(160, 104)
 	preview_art_rect.color = Color(0.22, 0.18, 0.12)
-	inner_vbox.add_child(preview_art_rect)
+	art_center.add_child(preview_art_rect)
 
 	# Art placeholder label
 	var art_lbl = Label.new()
@@ -691,11 +735,27 @@ func _build_card_preview() -> void:
 	preview_art_rect.add_child(art_lbl)
 
 	# ── Text block ──
+	var text_panel = PanelContainer.new()
+	var text_style = StyleBoxFlat.new()
+	text_style.bg_color = Color(0.10, 0.09, 0.08)
+	text_style.border_width_left = 1
+	text_style.border_width_right = 1
+	text_style.border_width_top = 1
+	text_style.border_width_bottom = 2
+	text_style.border_color = CLR_BORDER
+	text_style.corner_radius_top_left = 6
+	text_style.corner_radius_top_right = 6
+	text_style.corner_radius_bottom_left = 8
+	text_style.corner_radius_bottom_right = 8
+	text_panel.add_theme_stylebox_override("panel", text_style)
+	inner_vbox.add_child(text_panel)
+
 	var text_margin = MarginContainer.new()
-	text_margin.add_theme_constant_override("margin_left", 6)
-	text_margin.add_theme_constant_override("margin_right", 6)
-	text_margin.add_theme_constant_override("margin_bottom", 4)
-	inner_vbox.add_child(text_margin)
+	text_margin.add_theme_constant_override("margin_left", 8)
+	text_margin.add_theme_constant_override("margin_right", 8)
+	text_margin.add_theme_constant_override("margin_top", 6)
+	text_margin.add_theme_constant_override("margin_bottom", 6)
+	text_panel.add_child(text_margin)
 
 	var text_vbox = VBoxContainer.new()
 	text_vbox.add_theme_constant_override("separation", 2)
@@ -726,9 +786,10 @@ func _build_card_preview() -> void:
 	preview_effect_label.autowrap_mode = TextServer.AUTOWRAP_WORD
 	text_vbox.add_child(preview_effect_label)
 
-	# Anchor to top-right of the screen so it never overlaps the hand
-	card_preview.set_anchors_preset(Control.PRESET_TOP_RIGHT)
-	card_preview.position = Vector2(-172, 8)
+	# Position near player hand (bottom-right) like a real card game
+	card_preview.set_anchors_preset(Control.PRESET_TOP_LEFT)
+	card_preview.size = card_preview.custom_minimum_size
+	card_preview.position = Vector2(0, 0)
 	add_child(card_preview)
 
 func _show_card_preview(card_data: Dictionary) -> void:
@@ -753,11 +814,89 @@ func _show_card_preview(card_data: Dictionary) -> void:
 	else:
 		preview_effect_label.text = "Effect: %s" % effect
 
+	# Reposition near bottom-right and keep on-screen
+	var vp = get_viewport_rect().size
+	var pad = Vector2(16, 200)
+	var pos = Vector2(vp.x - card_preview.size.x - pad.x, vp.y - card_preview.size.y - pad.y)
+	pos.x = max(16, pos.x)
+	pos.y = max(16, pos.y)
+	card_preview.position = pos
+
 	card_preview.visible = true
 
 func _hide_card_preview() -> void:
 	if card_preview:
 		card_preview.visible = false
+
+func _on_card_hover(idx: int, card_data: Dictionary) -> void:
+	hovered_card_idx = idx
+	_layout_hand(true)
+	_show_card_preview(card_data)
+
+func _on_card_unhover(idx: int) -> void:
+	if hovered_card_idx == idx:
+		hovered_card_idx = -1
+	_layout_hand(true)
+	_hide_card_preview()
+
+func _layout_hand(animated: bool) -> void:
+	if hand_container == null:
+		return
+
+	var cards = hand_container.get_children()
+	var count = cards.size()
+	if count == 0:
+		return
+
+	var area = hand_container.size
+	if area.x <= 0:
+		area.x = 600
+	if area.y <= 0:
+		area.y = 140
+
+	var center_x = area.x * 0.5
+	var base_y = area.y - 24
+	var radius = 320.0
+	var max_angle = 18.0
+	var spread = 8.0
+	var total = min(max_angle, (count - 1) * spread)
+	var step = 0.0
+	if count > 1:
+		step = total / float(count - 1)
+
+	for i in range(count):
+		var card = cards[i]
+		var angle = -total * 0.5 + step * i
+		var rad = deg_to_rad(angle)
+		var x = center_x + sin(rad) * radius
+		var y = base_y - (1.0 - cos(rad)) * radius
+
+		var lift = 0.0
+		var scl = Vector2(1, 1)
+		if i == hovered_card_idx:
+			lift = -22.0
+			scl = Vector2(1.12, 1.12)
+			card.z_index = 10
+		else:
+			card.z_index = 0
+
+		var pos = Vector2(x, y + lift) - card.custom_minimum_size * 0.5
+
+		if card.has_meta("tween"):
+			var old = card.get_meta("tween")
+			if old:
+				old.kill()
+
+		if animated:
+			var t = create_tween()
+			card.set_meta("tween", t)
+			t.tween_property(card, "position", pos, 0.18).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+			t.tween_property(card, "rotation", rad, 0.18).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+			t.tween_property(card, "scale", scl, 0.18).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+		else:
+			card.position = pos
+			card.rotation = rad
+			card.scale = scl
 
 # ──────────────────────────────────────────────
 
@@ -848,6 +987,15 @@ func _make_pill(text: String, color: Color) -> PanelContainer:
 	margin.add_child(label)
 	panel.set_meta("label", label)
 	return panel
+
+func _make_texture(path: String, tex_size: Vector2) -> TextureRect:
+	var tex = TextureRect.new()
+	tex.texture = load(path)
+	tex.custom_minimum_size = tex_size
+	tex.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	tex.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	tex.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	return tex
 
 func _fade_in(node: CanvasItem, delay: float) -> void:
 	node.modulate = Color(1, 1, 1, 0)
