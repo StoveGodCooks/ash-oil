@@ -45,6 +45,14 @@ var enemy_buttons: Array = []  # Clickable enemy selection buttons
 var enemy_labels: Array = []  # Display labels
 var actor_selector_hbox: HBoxContainer  # For actor selection UI
 
+# ── Card Preview Panel ──
+var card_preview: PanelContainer
+var preview_art_rect: ColorRect
+var preview_name_label: Label
+var preview_cost_label: Label
+var preview_stats_label: Label
+var preview_effect_label: Label
+
 func _ready() -> void:
 	_init_state()
 	_build_ui()
@@ -196,7 +204,7 @@ func _build_ui() -> void:
 
 	# Hand container (scroll)
 	var scroll = ScrollContainer.new()
-	scroll.custom_minimum_size = Vector2(0, 100)
+	scroll.custom_minimum_size = Vector2(0, 68)
 	scroll.vertical_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
 	main_vbox.add_child(scroll)
 
@@ -234,6 +242,8 @@ func _build_ui() -> void:
 	log_label.autowrap_mode = LOG_AUTOWRAP_MODE
 	log_label.custom_minimum_size = Vector2(0, 60)
 	main_vbox.add_child(log_label)
+
+	_build_card_preview()
 
 func _start_turn() -> void:
 	if combat_over:
@@ -292,11 +302,15 @@ func _update_hand_ui() -> void:
 		var can_play = (cost <= resources["stamina"])
 
 		var btn = Button.new()
-		btn.custom_minimum_size = Vector2(130, 80)
-		btn.text = "[%d★] %s\n%s" % [cost, card_data.get("name", "?"), _get_card_desc(card_data)]
+		btn.custom_minimum_size = Vector2(90, 56)
+		# Compact label: cost + name only
+		btn.text = "%d★  %s" % [cost, card_data.get("name", "?")]
 		btn.disabled = not can_play or combat_over
 		btn.pressed.connect(_on_card_pressed.bind(i))
+		btn.mouse_entered.connect(_show_card_preview.bind(card_data))
+		btn.mouse_exited.connect(_hide_card_preview)
 
+		# Faction tint on the button
 		var faction = card_data.get("faction", "NEUTRAL")
 		if faction == "AEGIS":
 			btn.modulate = Color(0.8, 0.9, 1.0)
@@ -304,6 +318,10 @@ func _update_hand_ui() -> void:
 			btn.modulate = Color(0.9, 0.7, 1.0)
 		elif faction == "ECLIPSE":
 			btn.modulate = Color(1.0, 0.9, 0.7)
+
+		# Dim if not affordable
+		if not can_play:
+			btn.modulate = btn.modulate * Color(0.5, 0.5, 0.5, 1.0)
 
 		hand_container.add_child(btn)
 
@@ -526,7 +544,6 @@ func _get_lt_display(lt_name: String) -> String:
 	var lt_hp = lt_data.get("hp", 25)
 	var lt_max_hp = lt_data.get("hp", 25)
 	var lt_armor = lt_data.get("armor", 2)
-
 	if lt_hp <= 0:
 		return "%s [DOWN]" % lt_name
 	return "%s\n❤ %d/%d  🛡 %d" % [lt_name, lt_hp, lt_max_hp, lt_armor]
@@ -565,6 +582,119 @@ func _update_all_ui() -> void:
 			lt_labels[lt_name].text = _get_lt_display(lt_name)
 
 	_update_hand_ui()
+
+# ──────────────────────────────────────────────
+# CARD PREVIEW PANEL (hover to inspect)
+# ──────────────────────────────────────────────
+func _build_card_preview() -> void:
+	card_preview = PanelContainer.new()
+	card_preview.custom_minimum_size = Vector2(160, 230)
+	card_preview.visible = false
+
+	# Parchment-style panel background
+	var style = StyleBoxFlat.new()
+	style.bg_color = Color(0.14, 0.11, 0.08)
+	style.border_width_left   = 2
+	style.border_width_right  = 2
+	style.border_width_top    = 2
+	style.border_width_bottom = 2
+	style.border_color = Color(0.50, 0.38, 0.18)
+	style.corner_radius_top_left     = 6
+	style.corner_radius_top_right    = 6
+	style.corner_radius_bottom_left  = 6
+	style.corner_radius_bottom_right = 6
+	card_preview.add_theme_stylebox_override("panel", style)
+
+	var inner_vbox = VBoxContainer.new()
+	inner_vbox.add_theme_constant_override("separation", 4)
+	card_preview.add_child(inner_vbox)
+
+	# ── Art placeholder ──
+	preview_art_rect = ColorRect.new()
+	preview_art_rect.custom_minimum_size = Vector2(156, 110)
+	preview_art_rect.color = Color(0.22, 0.18, 0.12)
+	inner_vbox.add_child(preview_art_rect)
+
+	# Art placeholder label
+	var art_lbl = Label.new()
+	art_lbl.text = "[ ART ]"
+	art_lbl.add_theme_font_size_override("font_size", 11)
+	art_lbl.add_theme_color_override("font_color", Color(0.4, 0.35, 0.25))
+	art_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	art_lbl.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	art_lbl.set_anchors_preset(Control.PRESET_FULL_RECT)
+	preview_art_rect.add_child(art_lbl)
+
+	# ── Text block ──
+	var text_margin = MarginContainer.new()
+	text_margin.add_theme_constant_override("margin_left", 6)
+	text_margin.add_theme_constant_override("margin_right", 6)
+	text_margin.add_theme_constant_override("margin_bottom", 4)
+	inner_vbox.add_child(text_margin)
+
+	var text_vbox = VBoxContainer.new()
+	text_vbox.add_theme_constant_override("separation", 2)
+	text_margin.add_child(text_vbox)
+
+	preview_name_label = Label.new()
+	preview_name_label.add_theme_font_size_override("font_size", 12)
+	preview_name_label.add_theme_color_override("font_color", Color(0.92, 0.86, 0.70))
+	text_vbox.add_child(preview_name_label)
+
+	preview_cost_label = Label.new()
+	preview_cost_label.add_theme_font_size_override("font_size", 10)
+	preview_cost_label.add_theme_color_override("font_color", Color(0.75, 0.68, 0.45))
+	text_vbox.add_child(preview_cost_label)
+
+	var divider = HSeparator.new()
+	divider.add_theme_color_override("color", Color(0.45, 0.35, 0.18))
+	text_vbox.add_child(divider)
+
+	preview_stats_label = Label.new()
+	preview_stats_label.add_theme_font_size_override("font_size", 11)
+	preview_stats_label.add_theme_color_override("font_color", Color(0.85, 0.80, 0.62))
+	text_vbox.add_child(preview_stats_label)
+
+	preview_effect_label = Label.new()
+	preview_effect_label.add_theme_font_size_override("font_size", 10)
+	preview_effect_label.add_theme_color_override("font_color", Color(0.65, 0.62, 0.50))
+	preview_effect_label.autowrap_mode = TextServer.AUTOWRAP_WORD
+	text_vbox.add_child(preview_effect_label)
+
+	# Anchor to top-right of the screen so it never overlaps the hand
+	card_preview.set_anchors_preset(Control.PRESET_TOP_RIGHT)
+	card_preview.position = Vector2(-172, 8)
+	add_child(card_preview)
+
+func _show_card_preview(card_data: Dictionary) -> void:
+	if card_preview == null or card_data.is_empty():
+		return
+
+	var faction = card_data.get("faction", "NEUTRAL")
+	# Art placeholder tinted by faction
+	match faction:
+		"AEGIS":    preview_art_rect.color = Color(0.12, 0.18, 0.30)
+		"SPECTER":  preview_art_rect.color = Color(0.18, 0.10, 0.28)
+		"ECLIPSE":  preview_art_rect.color = Color(0.30, 0.20, 0.06)
+		_:          preview_art_rect.color = Color(0.22, 0.18, 0.12)
+
+	preview_name_label.text = card_data.get("name", "Unknown")
+	preview_cost_label.text = "Cost: %d ★   Faction: %s" % [card_data.get("cost", 0), faction]
+	preview_stats_label.text = _get_card_desc(card_data)
+
+	var effect = card_data.get("effect", "none")
+	if effect == "none" or effect == "":
+		preview_effect_label.text = ""
+	else:
+		preview_effect_label.text = "Effect: %s" % effect
+
+	card_preview.visible = true
+
+func _hide_card_preview() -> void:
+	if card_preview:
+		card_preview.visible = false
+
+# ──────────────────────────────────────────────
 
 var _log_lines: Array = []
 func _log(msg: String) -> void:
