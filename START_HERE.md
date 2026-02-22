@@ -135,7 +135,7 @@ git commit -m "chore: update START_HERE.md with Phase 6 completion status"
 
 # 📍 CURRENT STATUS
 
-**Last Patch:** a172f84 — chore_sync_start_here_final_checklist_with_phase9_status
+**Last Patch:** dc62d05 — feat_phase8_gear_hardening_rng_drops_tests_docs
 
 **Current Phase:** Phase 8 ✅ COMPLETE | Phase 9 🔲 PENDING
 
@@ -160,7 +160,7 @@ git commit -m "chore: update START_HERE.md with Phase 6 completion status"
 - ✅ MissionBriefer cancel flow + hide on missing hooks
 - ✅ Narrative hook meter_impact set to display-only (no double meter application)
 
-**Last Commit:** a172f84 — chore_sync_start_here_final_checklist_with_phase9_status
+**Last Commit:** dc62d05 — feat_phase8_gear_hardening_rng_drops_tests_docs
 
 ## What's Done This Session
 
