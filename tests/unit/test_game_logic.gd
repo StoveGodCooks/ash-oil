@@ -1,49 +1,11 @@
-extends Node
+extends "res://tests/runner/TestBase.gd"
 ## In-game unit tests for Ash & Oil core logic.
 ## Run via DevMenu "Run Tests" button or headlessly.
 ## No external test framework needed.
 
-var passed: int = 0
-var failed: int = 0
-var results: Array = []
-
-# ── Assert helpers ─────────────────────────────────────────────────────────
-func assert_eq(label: String, got, expected) -> void:
-	if got == expected:
-		passed += 1
-		results.append("[PASS] %s" % label)
-	else:
-		failed += 1
-		results.append("[FAIL] %s — expected %s, got %s" % [label, str(expected), str(got)])
-
-func assert_true(label: String, value: bool) -> void:
-	if value:
-		passed += 1
-		results.append("[PASS] %s" % label)
-	else:
-		failed += 1
-		results.append("[FAIL] %s — expected true, got false" % label)
-
-func assert_false(label: String, value: bool) -> void:
-	if not value:
-		passed += 1
-		results.append("[PASS] %s" % label)
-	else:
-		failed += 1
-		results.append("[FAIL] %s — expected false, got true" % label)
-
-func assert_gt(label: String, value, min_val) -> void:
-	if value > min_val:
-		passed += 1
-		results.append("[PASS] %s" % label)
-	else:
-		failed += 1
-		results.append("[FAIL] %s — %s not > %s" % [label, str(value), str(min_val)])
-
 # ── Test Suites ────────────────────────────────────────────────────────────
 
 func test_gamestate_meters() -> void:
-	results.append("\n-- GameState: Meter Clamping --")
 	GameState.reset()
 
 	# RENOWN clamps at 20
@@ -80,7 +42,6 @@ func test_gamestate_meters() -> void:
 
 
 func test_gamestate_gold() -> void:
-	results.append("\n-- GameState: Gold --")
 	GameState.reset()
 
 	GameState.add_gold(100)
@@ -96,7 +57,6 @@ func test_gamestate_gold() -> void:
 
 
 func test_gamestate_deck() -> void:
-	results.append("\n-- GameState: Deck --")
 	GameState.reset()
 
 	# Add cards up to 30
@@ -112,7 +72,6 @@ func test_gamestate_deck() -> void:
 
 
 func test_gamestate_missions() -> void:
-	results.append("\n-- GameState: Mission Progression --")
 	GameState.reset()
 
 	assert_true("M01 unlocked at start", "M01" in GameState.unlocked_missions)
@@ -129,7 +88,6 @@ func test_gamestate_missions() -> void:
 
 
 func test_gamestate_lieutenants() -> void:
-	results.append("\n-- GameState: Lieutenant Loyalty --")
 	GameState.reset()
 
 	GameState.change_loyalty("Marcus", 5)
@@ -150,8 +108,6 @@ func test_gamestate_lieutenants() -> void:
 
 
 func test_card_manager() -> void:
-	results.append("\n-- CardManager: Data Loading --")
-
 	assert_gt("87 cards loaded", CardManager.cards_data.size(), 80)
 	assert_eq("Exactly 8 lieutenants loaded", CardManager.lieutenants_data.size(), 8)
 	assert_gt("Enemy templates loaded", CardManager.enemy_templates.size(), 0)
@@ -172,8 +128,6 @@ func test_card_manager() -> void:
 
 
 func test_mission_manager() -> void:
-	results.append("\n-- MissionManager: Mission Data --")
-
 	var m01 = MissionManager.get_mission("M01")
 	assert_false("M01 found in missions data", m01.is_empty())
 	assert_eq("M01 name correct", m01.get("name"), "The Token")
@@ -196,7 +150,6 @@ func test_mission_manager() -> void:
 
 
 func test_enemy_loading() -> void:
-	results.append("\n-- CardManager: Enemy Loading --")
 	GameState.reset()
 
 	var enemies = CardManager.get_mission_enemies("M01")
@@ -214,35 +167,3 @@ func test_enemy_loading() -> void:
 	var enemies2 = CardManager.get_mission_enemies("M01")
 	assert_eq("Enemies are independent copies", enemies2[0].get("hp"), enemies2[0].get("max_hp"))
 
-
-# ── Runner ─────────────────────────────────────────────────────────────────
-func run_all() -> String:
-	passed = 0
-	failed = 0
-	results = []
-
-	results.append("=" .repeat(50))
-	results.append("  ASH & OIL - IN-GAME UNIT TESTS")
-	results.append("=" .repeat(50))
-
-	test_gamestate_meters()
-	test_gamestate_gold()
-	test_gamestate_deck()
-	test_gamestate_missions()
-	test_gamestate_lieutenants()
-	test_card_manager()
-	test_mission_manager()
-	test_enemy_loading()
-
-	results.append("\n" + "=" .repeat(50))
-	results.append("  RESULTS: %d passed | %d failed" % [passed, failed])
-	results.append("=" .repeat(50))
-
-	# Print to output console
-	for r in results:
-		print(r)
-
-	# Restore clean state
-	GameState.reset()
-
-	return "\n".join(results)

@@ -32,6 +32,10 @@ var lt_label: Label
 var hand_container: HBoxContainer
 var end_turn_btn: Button
 var enemy_labels: Array = []
+var enemy_buttons: Array = []
+var selected_target: int = -1
+var selected_executor: String = "Champion"
+var executor_buttons: Dictionary = {}
 var _log_lines: Array = []
 
 func _ready() -> void:
@@ -67,6 +71,8 @@ func _init_state() -> void:
 	mana = 0
 	turn = 1
 	combat_over = false
+	selected_target = _get_first_alive_enemy()
+	selected_executor = "Champion"
 
 func _build_ui() -> void:
 	var bg = ColorRect.new()
@@ -119,21 +125,26 @@ func _build_ui() -> void:
 		e_container.alignment = BoxContainer.ALIGNMENT_CENTER
 		enemy_hbox.add_child(e_container)
 
-		var e_label = Label.new()
-		e_label.text = _get_enemy_display(i)
-		e_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-		e_label.add_theme_font_size_override("font_size", 13)
-		e_container.add_child(e_label)
-		enemy_labels.append(e_label)
+		var e_btn = Button.new()
+		e_btn.text = _get_enemy_display(i)
+		e_btn.custom_minimum_size = Vector2(170, 90)
+		e_btn.add_theme_font_size_override("font_size", 13)
+		e_btn.pressed.connect(_on_enemy_pressed.bind(i))
+		e_container.add_child(e_btn)
+		enemy_buttons.append(e_btn)
 
 	# Player zone
 	var player_panel = PanelContainer.new()
 	player_panel.custom_minimum_size = Vector2(0, 80)
 	main_vbox.add_child(player_panel)
 
+	var player_vbox = VBoxContainer.new()
+	player_vbox.set_anchors_preset(Control.PRESET_FULL_RECT)
+	player_panel.add_child(player_vbox)
+
 	var player_hbox = HBoxContainer.new()
 	player_hbox.alignment = BoxContainer.ALIGNMENT_CENTER
-	player_panel.add_child(player_hbox)
+	player_vbox.add_child(player_hbox)
 
 	champion_label = Label.new()
 	champion_label.text = _get_champion_display()
@@ -146,6 +157,18 @@ func _build_ui() -> void:
 	lt_label.add_theme_font_size_override("font_size", 13)
 	lt_label.custom_minimum_size = Vector2(220, 0)
 	player_hbox.add_child(lt_label)
+
+	var exec_hbox = HBoxContainer.new()
+	exec_hbox.alignment = BoxContainer.ALIGNMENT_CENTER
+	exec_hbox.add_theme_constant_override("separation", 8)
+	player_vbox.add_child(exec_hbox)
+
+	executor_buttons.clear()
+	executor_buttons["Champion"] = _make_executor_button("Champion")
+	exec_hbox.add_child(executor_buttons["Champion"])
+
+	executor_buttons[lt_name] = _make_executor_button(lt_name)
+	exec_hbox.add_child(executor_buttons[lt_name])
 
 	# Resources
 	var res_hbox = HBoxContainer.new()
@@ -316,9 +339,9 @@ func _on_card_pressed(card_idx: int) -> void:
 	match type:
 		"attack":
 			var dmg = card_data.get("damage", 0)
-			var target = _get_first_alive_enemy()
+			var target = _get_selected_or_first_alive_enemy()
 			if target >= 0:
-				_deal_damage_to_enemy(target, dmg)
+				_deal_damage_to_enemy(target, dmg, selected_executor)
 				if "poison" in effect:
 					var stacks = _parse_effect_stacks(effect)
 					enemies[target]["poison"] += stacks
@@ -338,19 +361,19 @@ func _on_card_pressed(card_idx: int) -> void:
 				stamina = min(3, stamina + 1)
 				_log("Stamina restored +1 (%d/3)" % stamina)
 			elif effect == "card_draw":
-				_draw_card()
+				_draw_cards (1)
 				_log("Drew a card from effect.")
 
 		"reaction":
 			var dmg = card_data.get("damage", 0)
 			var armor = card_data.get("armor", 0)
 			if dmg > 0:
-				var target = _get_first_alive_enemy()
+				var target = _get_selected_or_first_alive_enemy()
 				if target >= 0:
-					_deal_damage_to_enemy(target, dmg)
+					_deal_damage_to_enemy(target, dmg, selected_executor)
 			if armor > 0:
 				champion_armor += armor
-				_log("Champion gained %d armor (total: %d)" % [armor, champion_armor])
+				_log("%s gained %d armor (total: %d)" % [selected_executor, armor, champion_armor])
 
 		"area":
 			var dmg = card_data.get("damage", 0)
@@ -361,7 +384,7 @@ func _on_card_pressed(card_idx: int) -> void:
 						enemies[i]["poison"] += stacks
 						_log("%s poisoned (%d stacks)" % [enemies[i]["name"], enemies[i]["poison"]])
 					elif dmg > 0:
-						_deal_damage_to_enemy(i, dmg)
+						_deal_damage_to_enemy(i, dmg, selected_executor)
 
 		"evasion":
 			# Dodge: negate next enemy attack this turn by granting temp armor
@@ -407,7 +430,18 @@ func _get_first_alive_enemy() -> int:
 			return i
 	return -1
 
-func _deal_damage_to_enemy(idx: int, amount: int) -> void:
+func _get_selected_or_first_alive_enemy() -> int:
+	if selected_target >= 0 and selected_target < enemies.size():
+		if enemies[selected_target]["hp"] > 0:
+			return selected_target
+	return _get_first_alive_enemy()
+
+func _on_enemy_pressed(idx: int) -> void:
+	selected_target = idx
+	_log("Target selected: %s" % enemies[idx].get("name", "Unknown"))
+	_update_all_ui()
+
+func _deal_damage_to_enemy(idx: int, amount: int, attacker: String = "Champion") -> void:
 	if idx < 0 or idx >= enemies.size():
 		return
 	var enemy = enemies[idx]
@@ -415,7 +449,7 @@ func _deal_damage_to_enemy(idx: int, amount: int) -> void:
 	enemy["armor"] = max(0, enemy.get("armor", 0) - absorbed)
 	var actual = amount - absorbed
 	enemy["hp"] = max(0, enemy["hp"] - actual)
-	_log("Hit %s for %d dmg (%d armor) → %d/%d HP" % [enemy["name"], actual, absorbed, enemy["hp"], enemy["max_hp"]])
+	_log("%s hit %s for %d dmg (%d armor) → %d/%d HP" % [attacker, enemy["name"], actual, absorbed, enemy["hp"], enemy["max_hp"]])
 
 func _on_end_turn() -> void:
 	if combat_over:
@@ -527,8 +561,13 @@ func _update_all_ui() -> void:
 	if mana_label:
 		mana_label.text = "Mana: %d" % mana
 
-	for i in range(min(enemy_labels.size(), enemies.size())):
-		enemy_labels[i].text = _get_enemy_display(i)
+	for i in range(min(enemy_buttons.size(), enemies.size())):
+		enemy_buttons[i].text = _get_enemy_display(i)
+		var is_selected = (i == selected_target and enemies[i]["hp"] > 0)
+		enemy_buttons[i].disabled = enemies[i]["hp"] <= 0
+		enemy_buttons[i].modulate = Color(1.0, 0.9, 0.6) if is_selected else Color(1, 1, 1)
+
+	_update_executor_ui()
 
 	if champion_label:
 		champion_label.text = _get_champion_display()
@@ -544,3 +583,22 @@ func _log(msg: String) -> void:
 	if log_label:
 		log_label.text = "\n".join(_log_lines)
 	print("[COMBAT] " + msg)
+
+func _make_executor_button(label: String) -> Button:
+	var btn = Button.new()
+	btn.text = label
+	btn.custom_minimum_size = Vector2(140, 28)
+	btn.pressed.connect(_on_executor_pressed.bind(label))
+	return btn
+
+func _on_executor_pressed(label: String) -> void:
+	selected_executor = label
+	_log("Executor selected: %s" % label)
+	_update_all_ui()
+
+func _update_executor_ui() -> void:
+	for key in executor_buttons:
+		var btn = executor_buttons[key]
+		var is_selected = (key == selected_executor)
+		btn.disabled = combat_over
+		btn.modulate = Color(0.7, 1.0, 0.7) if is_selected else Color(1, 1, 1)

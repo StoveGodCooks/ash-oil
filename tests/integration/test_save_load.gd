@@ -119,7 +119,8 @@ func test_continue_from_saved_game_is_correct_state() -> void:
 	## Simulate: play → save → quit → continue
 	GameState.change_meter("RENOWN", 5)
 	GameState.add_gold(200)
-	GameState.complete_mission("M01", "victory")
+	GameState.complete_mission("M01")
+	GameState.unlock_mission("M02")
 	SaveManager.save_game(0)
 
 	# Simulate "quit"
