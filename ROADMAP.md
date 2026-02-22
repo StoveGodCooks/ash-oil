@@ -1,8 +1,8 @@
 # Ash & Oil — Development Roadmap
 
-**Current Version:** v0.4 — Phase 4: Mission Integration & UI Polish
-**Last Updated:** February 21, 2026
-**Status:** Core gameplay loop complete, testing infrastructure in place
+**Current Version:** v0.5 — Phase 5: Gear System & Card Art
+**Last Updated:** February 22, 2026
+**Status:** Gear system live, card frame art integrated, full parchment & wax UI restyle complete
 
 ---
 
@@ -44,6 +44,30 @@
 - [x] CombatUI enhancements (display improvements)
 - [x] Headless test runner (RunTests.gd for CI)
 
+### Phase 5: Gear System & Card Art ✅
+- [x] Gear system design (24 pieces, 3 slots: weapon/armor/accessory, 3 rarities)
+- [x] `data/gear.json` — all 24 gear pieces with stats, effects, faction synergies
+- [x] `GameState.gd` — `equipped_gear` dict, `gear_inventory` array, equip/add functions
+- [x] `CardManager.gd` — `gear_data` dict, `get_gear()` loader
+- [x] MainHub gear loadout section — cycle ◀/▶ through owned gear per slot
+- [x] Shop gear section — all 24 pieces listed by slot+rarity with BUY/OWNED buttons
+- [x] DevMenu gear grants — Grant Common/Rare/Epic/All sets for testing
+- [x] Free starting gear on New Game (Iron Gladius, Leather Vest, Iron Ring)
+- [x] **Full parchment & wax UI restyle** — consistent palette across all screens
+  - [x] Main.gd — stone bars, aged gold borders, 3 styled entry buttons
+  - [x] MainHub.gd — gradient bg, styled mission cards, gear loadout
+  - [x] CombatUI.gd — parchment combat panels, gold END TURN/RETREAT buttons
+  - [x] ShopUI.gd — FORUM MARKET header, stone top bar, gold borders
+- [x] **Card hover preview system** — 180×250 portrait panel (name, art, stats, effect)
+  - [x] Faction-tinted art placeholder (AEGIS=blue, SPECTER=purple, ECLIPSE=amber)
+  - [x] Small compact cards in hand (120×180), hover shows full portrait
+- [x] **CardDisplay scene** — reusable card component with ornate bronze frame
+  - [x] `assets/cards/frame_front.png` — ornate Roman-style card frame
+  - [x] `assets/cards/frame_back.png` — eagle + "TACTICI LEGIONIS" back design
+  - [x] `scenes/CardDisplay.tscn` — layered frame + portrait + stats panel
+  - [x] `scripts/ui/CardDisplay.gd` — `set_card(id)`, `set_card_size()`, placeholder portraits
+  - [x] Integrated into CombatUI hand display (add_child before set_card pattern)
+
 ### Testing & CI ✅
 - [x] TestBase framework (15+ assertion types)
 - [x] Unit test suites (test_gamestate, test_cardmanager, test_missionmanager, test_savemanager, test_combat_logic, test_game_logic)
@@ -60,7 +84,7 @@
 
 ## 📋 NEXT PHASES (Upcoming)
 
-### Phase 5: Content & Balance Tuning
+### Phase 6: Content & Balance Tuning
 **Focus:** Balance missions, card costs, enemy encounters
 
 - [ ] Mission difficulty scaling (Act 1 → Act 3)
@@ -69,8 +93,12 @@
 - [ ] Lieutenant ability cards (signature card effects per lieutenant)
 - [ ] Starter deck optimization (current: 10–20 cards)
 - [ ] Shop pricing adjustments (test economy flow)
+- [ ] Gear stat application in combat (read `equipped_gear` on combat start)
+- [ ] Gear drops on mission complete (rarity rates: 90% common, 9% rare, 1% epic)
+- [ ] Character portrait art (save to `res://assets/characters/[hero_id].png`)
+- [ ] Test suite stamina fix (tests expect stamina=3, actual is stamina=5)
 
-### Phase 6: NPC Relationship System
+### Phase 7: NPC Relationship System
 **Focus:** Relationship tracking, loyalty-based story gates
 
 - [ ] NPC data structure (Lanista, Varro, Rhesus, Iona, Moth)
@@ -80,7 +108,7 @@
 - [ ] Faction alignment (Cult, State, Syndicate)
 - [ ] Faction-locked missions (only accessible if aligned)
 
-### Phase 7: Advanced Combat Features
+### Phase 8: Advanced Combat Features
 **Focus:** New card mechanics, special effects, environmental factors
 
 - [ ] Poison stacking mechanics refinement
@@ -90,7 +118,7 @@
 - [ ] Environmental hazards (mission-specific arena effects)
 - [ ] Boss encounters (unique enemy AI with special moves)
 
-### Phase 8: Story & Narrative
+### Phase 9: Story & Narrative
 **Focus:** Story hooks, branching narrative, multiple endings
 
 - [ ] Hook system (create story flags from missions)
@@ -100,7 +128,7 @@
 - [ ] Character arcs (5+ lieutenant-specific story branches)
 - [ ] Journal system (track completed missions, story progression)
 
-### Phase 9: Progression & Upgrades
+### Phase 10: Progression & Upgrades
 **Focus:** Between-mission advancement, character upgrades
 
 - [ ] Skill trees (upgradeable lieutenant abilities)
@@ -109,7 +137,7 @@
 - [ ] Gold sinks (lieutenant training, equipment upgrades)
 - [ ] Prestige/New Game+ mode (carry over unlocks)
 
-### Phase 10: Polish & Optimization
+### Phase 11: Polish & Optimization
 **Focus:** Visual polish, audio, performance
 
 - [ ] Sound design (SFX for cards, combat, UI)
@@ -119,7 +147,7 @@
 - [ ] Mobile optimization (touch controls, responsive UI)
 - [ ] Performance profiling (target 60 FPS, optimize draw calls)
 
-### Phase 11: Accessibility & Localization
+### Phase 12: Accessibility & Localization
 **Focus:** Accessibility features, multi-language support
 
 - [ ] Font scaling options
@@ -128,7 +156,7 @@
 - [ ] Subtitle system (voice narration prep)
 - [ ] Language pack system (EN, FR, ES, DE base)
 
-### Phase 12: Launch Prep & Distribution
+### Phase 13: Launch Prep & Distribution
 **Focus:** Release, packaging, documentation
 
 - [ ] Final balance pass (playtest, adjust difficulty curves)
@@ -139,21 +167,24 @@
 
 ---
 
-## 🎯 Current Sprint (Sprint 1)
+## 🎯 Current Sprint (Sprint 2)
 
 ### Objectives
-1. **Validate current state** — All tests pass, CI green
-2. **Branch cleanup** — ✅ COMPLETE (removed master, Codex branches)
-3. **Documentation** — ✅ COMPLETE (PROJECT_AUDIT.md, memory files)
-4. **Ready for PRs** — Establish workflow for main → staged → release
-5. **Prepare Phase 5** — Identify balance issues, create tuning tasks
+1. **Gear system live** — ✅ COMPLETE (24 pieces, shop, DevMenu grants, equip UI)
+2. **Card art system** — ✅ COMPLETE (ornate frame asset, CardDisplay scene, hover preview)
+3. **Full UI restyle** — ✅ COMPLETE (parchment & wax palette across all screens)
+4. **Next up** — Wire gear stats into combat, add character portrait art, mission gear drops
 
 ### Tasks
-- [ ] Run full test suite (local + GitHub Actions)
-- [ ] Verify all JSON data integrity
-- [ ] Get approval on roadmap priorities
-- [ ] Create Phase 5 task board
-- [ ] Tag v0.4 release
+- [x] Gear data + GameState integration
+- [x] Shop gear section + DevMenu grants
+- [x] Parchment & wax restyle (Main, MainHub, CombatUI, ShopUI)
+- [x] CardDisplay scene with ornate frame and placeholder portraits
+- [x] Card hover preview panel in CombatUI
+- [ ] Apply equipped gear bonuses to combat (HP, armor, damage)
+- [ ] Mission gear drop rewards (rarity rates from gear_system_complete.md)
+- [ ] Character portrait art for at least 1 hero
+- [ ] Fix test suite stamina expectations (3→5)
 
 ---
 
@@ -193,20 +224,24 @@
 
 ## 🚀 Release Milestones
 
-- **v0.4** (Current) — Core gameplay complete, test infrastructure
-- **v0.5** — Phase 5 balance pass, content tuning
-- **v0.6** — Phase 6 NPC system, relationship tracking
-- **v0.7** — Phase 7 advanced combat, special effects
-- **v0.8** — Phase 8 story content, narrative branching
-- **v0.9** — Phase 9 progression system, upgrades
-- **v1.0** — Phase 10 polish, optimization, launch ready
-- **v1.1+** — Post-launch content, DLC, community feedback iterations
+- **v0.4** — Core gameplay complete, test infrastructure
+- **v0.5** (Current) — Gear system, card art frame, full UI restyle
+- **v0.6** — Phase 6 balance pass, gear in combat, portrait art, content tuning
+- **v0.7** — Phase 7 NPC system, relationship tracking
+- **v0.8** — Phase 8 advanced combat, special effects
+- **v0.9** — Phase 9 story content, narrative branching
+- **v1.0** — Phase 10 progression system, upgrades
+- **v1.1** — Phase 11 polish, optimization, launch ready
+- **v1.2+** — Post-launch content, DLC, community feedback iterations
 
 ---
 
 ## ⚠️ Known Issues & Technical Debt
 
-- None currently documented. Add findings from playtesting and balance passes.
+- **Test suite stamina mismatch** — `test_combat_logic.gd` expects stamina=3, actual is stamina=5
+- **Gear stats not applied to combat** — `equipped_gear` is set but CombatUI doesn't read bonuses yet
+- **No character portrait art** — CardDisplay uses faction-colored placeholder until portraits are created
+- **CombatUI exceeds 1000 lines** — gdlint `max-file-lines` warning (non-blocking, refactor later)
 
 ---
 
