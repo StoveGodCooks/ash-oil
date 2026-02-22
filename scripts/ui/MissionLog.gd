@@ -3,12 +3,22 @@ extends ScrollContainer
 ## Shows chronological list of completed missions with story outcomes
 ## Each entry shows: monologue, meter deltas, faction encounters, phase markers
 
-@onready var log_container: VBoxContainer = %LogContainer
-
 var mission_entries: Array = []
+var log_container: VBoxContainer
 
 func _ready() -> void:
+	_build_ui()
 	# Initial build from saved missions
+	_rebuild_log()
+
+func _build_ui() -> void:
+	log_container = VBoxContainer.new()
+	log_container.add_theme_constant_override("separation", UITheme.PAD_SM)
+	log_container.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	log_container.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	add_child(log_container)
+
+func refresh() -> void:
 	_rebuild_log()
 
 func _rebuild_log() -> void:
@@ -20,6 +30,12 @@ func _rebuild_log() -> void:
 
 	# Rebuild from completed missions
 	var completed = GameState.completed_missions
+	if completed.is_empty():
+		var none := Label.new()
+		none.text = "No missions completed yet."
+		UITheme.style_body(none, UITheme.FONT_BODY, true)
+		log_container.add_child(none)
+		return
 	for mission_id in completed:
 		add_entry(mission_id)
 
@@ -36,14 +52,14 @@ func add_entry(mission_id: String) -> void:
 
 	# Mission entry
 	var entry_panel = PanelContainer.new()
+	entry_panel.add_theme_stylebox_override("panel", UITheme.make_panel_style())
 	var entry_vbox = VBoxContainer.new()
+	entry_vbox.add_theme_constant_override("separation", 2)
 
 	# Mission title + number
 	var title = Label.new()
-	var mission_num = mission_id.substr(1) if "M" in mission_id else "?"
 	title.text = "[%s] %s" % [mission_id, hook.get("title", "Unknown")]
-	title.add_theme_font_size_override("font_size", 11)
-	title.add_theme_color_override("font_color", Color.GOLD)
+	UITheme.style_header(title, UITheme.FONT_SECONDARY, true)
 	entry_vbox.add_child(title)
 
 	# Monologue / reflection
@@ -51,9 +67,8 @@ func add_entry(mission_id: String) -> void:
 	if not monologue.is_empty():
 		var mono_label = Label.new()
 		mono_label.text = "  \"%s\"" % monologue
-		mono_label.add_theme_font_size_override("font_size", 9)
-		mono_label.add_theme_color_override("font_color", Color.GRAY)
-		mono_label.autowrap_mode = TextServer.AUTOWRAP_WORD
+		UITheme.style_body(mono_label, UITheme.FONT_FINE, true)
+		mono_label.autowrap_mode = TextServer.AutowrapMode.AUTOWRAP_WORD
 		entry_vbox.add_child(mono_label)
 
 	# Meter deltas
@@ -66,8 +81,7 @@ func add_entry(mission_id: String) -> void:
 			var sign = "+" if val >= 0 else ""
 			meter_text += "%s %s%d  " % [meter, sign, val]
 		meters_label.text = meter_text.trim_suffix("  ")
-		meters_label.add_theme_font_size_override("font_size", 8)
-		meters_label.add_theme_color_override("font_color", Color.GRAY)
+		UITheme.style_body(meters_label, UITheme.FONT_FINE, true)
 		entry_vbox.add_child(meters_label)
 
 	# Who hunts / helps
@@ -81,8 +95,7 @@ func add_entry(mission_id: String) -> void:
 		if not who_helps.is_empty():
 			relations_text += "Allied: " + ", ".join(who_helps)
 		relations_label.text = relations_text.trim_suffix("  ")
-		relations_label.add_theme_font_size_override("font_size", 8)
-		relations_label.add_theme_color_override("font_color", Color.LIGHT_GRAY)
+		UITheme.style_body(relations_label, UITheme.FONT_FINE, true)
 		entry_vbox.add_child(relations_label)
 
 	entry_panel.add_child(entry_vbox)
@@ -92,10 +105,10 @@ func add_entry(mission_id: String) -> void:
 
 func _create_phase_separator(phase: String) -> PanelContainer:
 	var separator = PanelContainer.new()
+	separator.add_theme_stylebox_override("panel", UITheme.make_panel_style(true))
 	var label = Label.new()
 	label.text = "─── ACT: %s ───" % phase
-	label.add_theme_font_size_override("font_size", 10)
-	label.add_theme_color_override("font_color", Color.GOLD)
+	UITheme.style_header(label, UITheme.FONT_SECONDARY, true)
 	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	separator.add_child(label)
 	return separator

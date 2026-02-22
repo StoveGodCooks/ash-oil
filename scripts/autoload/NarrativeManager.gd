@@ -69,18 +69,18 @@ func _apply_mission_hook(_mission_id: String, hook: Dictionary) -> void:
 
 	# Update threat level (who's hunting Cassian now)
 	var who_hunts = hook.get("who_hunts", [])
+	var normalized_threats: Array[String] = []
 	if who_hunts is Array:
-		GameState.threat_level = Array[String](who_hunts)
+		for entry in who_hunts:
+			if typeof(entry) == TYPE_STRING:
+				normalized_threats.append(entry)
 	elif typeof(who_hunts) == TYPE_STRING and not who_hunts.is_empty():
-		GameState.threat_level = Array[String]([who_hunts])
-	else:
-		GameState.threat_level = Array[String]([])
+		normalized_threats.append(who_hunts)
+	GameState.threat_level = normalized_threats
 
-	# Apply meter impacts
-	var meter_impact = hook.get("meter_impact", {})
-	for meter_name in meter_impact.keys():
-		var amount = meter_impact[meter_name]
-		GameState.change_meter(meter_name, amount)
+	# Apply meter impacts (narrative meters -> game meters)
+	# Note: gameplay meters are applied by MissionManager via missions.json meter_changes.
+	# Narrative meter_impact is currently display-only for briefing/log UI.
 
 	# Unlock related lieutenants
 	var who_helps = hook.get("who_helps", [])

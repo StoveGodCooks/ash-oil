@@ -96,7 +96,7 @@ git commit -m "chore: update START_HERE.md with Phase 6 completion status"
 **Ash & Oil** — Story-driven turn-based card game about a gladiator learning to say "No."
 
 **Engine:** Godot 4.6 (GL Compatibility)
-**Status:** v0.6.0 — Phase 6 complete, Phase 7 pending
+**Status:** v0.6.0 — Phase 7 complete, Phase 8 pending
 **⚠️ WORK LOCATION:** `C:\Users\beebo\Desktop\ash-oil` (NOT OneDrive version)
 
 ## Story
@@ -135,9 +135,9 @@ git commit -m "chore: update START_HERE.md with Phase 6 completion status"
 
 # 📍 CURRENT STATUS
 
-**Last Patch:** [See below in HANDOFF section]
+**Last Patch:** (uncommitted) — feat: Phase 7 story UI integration
 
-**Current Phase:** Phase 6 ✅ COMPLETE | Phase 7 🔲 PENDING
+**Current Phase:** Phase 7 ✅ COMPLETE | Phase 8 🔲 PENDING
 
 ## Phase 5: Card Art & Combat Clarity (COMPLETE)
 - ✅ Card face redesign (faction glyphs, frame overlay)
@@ -153,35 +153,33 @@ git commit -m "chore: update START_HERE.md with Phase 6 completion status"
 - ✅ Wired UI components: MissionBriefer, MetersPanel, CharacterStatePanel, MissionLog
 - ✅ Integration testing complete (all tests passing)
 
+## Phase 7: Story UI Integration (COMPLETE)
+- ✅ Integrated MetersPanel into MainHub (canonical meter mapping)
+- ✅ Integrated CharacterStatePanel into MainHub (programmatic UI)
+- ✅ Added MissionLog modal + footer access
+- ✅ MissionBriefer cancel flow + hide on missing hooks
+- ✅ Narrative hook meter_impact set to display-only (no double meter application)
+
 **Last Commit:** a84c10f — feat: Phase 6 narrative hooks system
 
 ## What's Done This Session
 
-**Phase 6 Implementation:**
-- All narrative hooks system complete (story integration, character arcs, meter impacts)
-- All UI components wired (briefing, metrics display, character state, mission log)
-- All narrative events trigger correctly (Cassian monologues, story beats, phase transitions)
+**Phase 7 Implementation:**
+- Wired MetersPanel into MainHub with legacy meter mapping fix
+- Added programmatic CharacterStatePanel and integrated into MainHub
+- Added MissionLog modal with footer access button
+- Added MissionBriefer cancel flow + safe hide on missing hooks
+- NarrativeManager meter_impact is display-only (no double application)
 
-**Documentation & Infrastructure:**
-- Created START_HERE.md (single unified reference for all AI sessions)
-- Added comprehensive quality audit checklists (Test Coverage, Blind Spot, QoL, Code Health, Performance, Architecture)
-- Added Glossary (11 key terms defined)
-- Added File Navigation (organized by system category)
-
-**Why:** Phase 6 unblocks full narrative flow. Infrastructure enables smooth multi-AI handoffs.
-
-**Tests:** All tests passing (165+ assertions)
+**Tests:** `godot --headless --path C:\Users\beebo\Desktop\ash-oil -s res://tests/runner/RunTests.gd` (ALL TESTS PASSED, 624 assertions)
+**Lint:** `gdlint .` (fails with pre-existing violations; 120 issues)
+**Data validation:** `python tests/validate_data.py` (pass)
 
 **Blockers:** None
 
 **Next Steps:**
-1. Implement Phase 7: Story UI Integration
-   - Integrate MissionBriefer into mission selection
-   - Add MetersPanel to MainHub header
-   - Add CharacterStatePanel to hub status
-   - Add MissionLog journal access
-   - Full end-to-end testing
-2. Phase 8: Gear System in Combat (apply gear bonuses to actual combat stats)
+1. Phase 8: Gear System in Combat (apply gear bonuses to actual combat stats)
+2. Run lint + data validation (`gdlint .`, `python tests/validate_data.py`)
 
 ---
 
@@ -196,7 +194,7 @@ git commit -m "chore: update START_HERE.md with Phase 6 completion status"
 ```
 cd C:\Users\beebo\Desktop\ash-oil
 git status  # See what's on this branch
-godot --headless -s res://tests/TestRunner.gd  # Run tests (must pass)
+godot --headless -s res://tests/runner/RunTests.gd  # Run tests (must pass)
 ```
 
 ## While You Work
@@ -209,7 +207,7 @@ godot --headless -s res://tests/TestRunner.gd  # Run tests (must pass)
 
 ```bash
 # 1. Make sure tests pass
-godot --headless -s res://tests/TestRunner.gd
+godot --headless -s res://tests/runner/RunTests.gd
 
 # 2. Make sure lint passes
 gdlint .
@@ -228,12 +226,11 @@ python tests/validate_data.py
 git add .
 
 # Commit with phase reference
-git commit -m "feat: Phase 6 narrative hooks system
+git commit -m "feat: Phase 7 story UI integration
 
-- Create data/hooks.json with 20 mission hooks + 3 story beats
-- Extend GameState with story_phase, threat_level, refusals_made
-- Create NarrativeManager singleton for narrative coordination
-- All tests passing (150+ assertions)"
+- Integrate MetersPanel + CharacterStatePanel into MainHub
+- Add MissionLog modal access + MissionBriefer cancel flow
+- All tests passing (624 assertions)"
 
 # Push
 git push origin main
@@ -249,15 +246,16 @@ git push origin main
 Update `ROADMAP.md` to mark completed tasks:
 
 ```markdown
-## Phase 6: Narrative Hooks ✅
-- [x] Create data/hooks.json
-- [x] Extend GameState with narrative properties
-- [x] Create NarrativeManager singleton
+## Phase 7: Story UI Integration ✅
+- [x] Integrate MissionBriefer into mission selection
+- [x] Add MetersPanel to MainHub header
+- [x] Add CharacterStatePanel to hub status
+- [x] Add MissionLog journal access
 ```
 
 Then commit:
 ```bash
-git commit -m "chore: update ROADMAP.md after Phase 6 patch"
+git commit -m "chore: update ROADMAP.md after Phase 7 patch"
 git push origin main
 ```
 
@@ -324,7 +322,7 @@ ash-oil/
 │   ├── lieutenants.json         ← 8 recruitable allies
 │   ├── enemy_templates.json     ← 45+ enemies
 │   ├── gear.json                ← 24 gear pieces
-│   └── hooks.json               ← PHASE 6: Narrative hooks (TODO)
+│   └── hooks.json               ← Narrative hooks (story data)
 │
 ├── scripts/
 │   ├── autoload/                ← Singletons (always loaded)
@@ -332,17 +330,17 @@ ash-oil/
 │   │   ├── SaveManager.gd       ← Save/load JSON
 │   │   ├── MissionManager.gd    ← Mission rewards + completion
 │   │   ├── CardManager.gd       ← Data loader
-│   │   └── NarrativeManager.gd  ← PHASE 6: Story coordination (TODO)
+│   │   └── NarrativeManager.gd  ← Story coordination
 │   │
 │   └── ui/                      ← UI components (programmatic)
 │       ├── Main.gd              ← Landing page
 │       ├── MainHub.gd           ← Central hub
 │       ├── CombatUI.gd          ← Combat arena
 │       ├── CardDisplay.gd       ← Card component
-│       ├── MissionBriefer.gd    ← PHASE 6: Mission briefing (TODO)
-│       ├── MetersPanel.gd       ← PHASE 6: Meter display (TODO)
-│       ├── CharacterStatePanel.gd ← PHASE 6: Phase/threats/allies (TODO)
-│       └── MissionLog.gd        ← PHASE 6: Journal (TODO)
+│       ├── MissionBriefer.gd    ← Mission briefing
+│       ├── MetersPanel.gd       ← Meter display
+│       ├── CharacterStatePanel.gd ← Phase/threats/allies
+│       └── MissionLog.gd        ← Journal
 │
 ├── scenes/
 │   ├── Main.tscn
@@ -350,7 +348,7 @@ ash-oil/
 │   └── [other scenes]
 │
 └── tests/
-    ├── TestRunner.gd            ← Run with: godot --headless -s res://tests/TestRunner.gd
+    ├── runner/RunTests.gd       ← Run with: godot --headless -s res://tests/runner/RunTests.gd
     ├── unit/                    ← 5+ unit test files
     └── integration/             ← 2+ integration test files
 ```
@@ -368,7 +366,7 @@ ash-oil/
 | `scripts/autoload/GameState.gd` | Central state: meters, inventory, progress |
 | `scripts/autoload/MissionManager.gd` | Mission completion logic + rewards |
 | `scripts/ui/CombatUI.gd` | Battle arena (where most gameplay happens) |
-| `tests/TestRunner.gd` | Run: `godot --headless -s res://tests/TestRunner.gd` |
+| `tests/runner/RunTests.gd` | Run: `godot --headless -s res://tests/runner/RunTests.gd` |
 | `ROADMAP.md` | Project status + what's done |
 | `START_HERE.md` | This file (all-in-one guide) |
 
@@ -380,14 +378,14 @@ ash-oil/
 
 | Metric | Value |
 |--------|-------|
-| **Version** | v0.5.1 |
-| **Phases Complete** | 5/8+ |
+| **Version** | v0.6.0 |
+| **Phases Complete** | 7/8+ |
 | **Missions** | 20 main + 5 side |
 | **Cards** | 87+ |
 | **Lieutenants** | 8 |
 | **Enemies** | 45+ |
 | **Gear** | 24 pieces |
-| **Test Assertions** | 150+ |
+| **Test Assertions** | 624 |
 | **Test Coverage** | ~75% |
 | **Code Files** | 20+ |
 | **Data Files** | 6 (cards, missions, lieutenants, enemies, gear, hooks) |
@@ -399,7 +397,7 @@ ash-oil/
 # ✅ QUICK CHECKLIST
 
 **Before pushing:**
-- [ ] Tests pass locally (`godot --headless -s res://tests/TestRunner.gd`)
+- [ ] Tests pass locally (`godot --headless -s res://tests/runner/RunTests.gd`)
 - [ ] Lint passes (`gdlint .`)
 - [ ] Data valid (`python tests/validate_data.py`)
 - [ ] Commit message includes phase reference
@@ -724,7 +722,7 @@ Story Data:
 ## Tests
 ```
 Test Files:
-  tests/TestRunner.gd                    ← Main test runner (headless: godot --headless -s res://tests/TestRunner.gd)
+  tests/runner/RunTests.gd               ← Main test runner (headless: godot --headless -s res://tests/runner/RunTests.gd)
   tests/unit/                            ← Unit tests for singletons (GameState, MissionManager, etc.)
   tests/integration/                     ← Integration tests for full flows (mission complete, save/load, etc.)
   tests/validate_data.py                 ← Data validation script (python tests/validate_data.py)
@@ -759,7 +757,7 @@ Configuration:
 
 ## Run Tests
 ```bash
-godot --headless -s res://tests/TestRunner.gd
+godot --headless -s res://tests/runner/RunTests.gd
 ```
 
 ## Run Lint Check
@@ -793,7 +791,7 @@ git log --oneline -10  # Last 10 commits
 ## Add a New Mission
 1. Edit `data/missions.json`
 2. Add mission object with: id, name, description, enemies, meter_changes, rewards
-3. Edit `data/hooks.json` (Phase 6) to add narrative context
+3. Edit `data/hooks.json` to add narrative context
 4. Update MissionManager if special logic needed
 5. Tests pass? Commit it.
 
@@ -803,7 +801,8 @@ git log --oneline -10  # Last 10 commits
 
 # ⚠️ KNOWN ISSUES & BLOCKERS
 
-**Current:** None
+**Current:**
+- `gdlint .` reports pre-existing violations (120 issues) across multiple files
 
 If you find an issue:
 1. Log it with: `❌ [Priority] Issue Title`
@@ -816,31 +815,22 @@ If you find an issue:
 
 # 🎯 NEXT STEPS (What to Work On)
 
-**RECOMMENDED: Phase 6 Narrative Hooks**
+**RECOMMENDED: Phase 8 Gear System in Combat**
 
-**Why:** Brings story to life, unblocks Phase 7 UI integration
+**Why:** Apply `equipped_gear` bonuses to actual combat stats (currently only stored).
 
 **Tasks:**
-1. Create `data/hooks.json` with narrative data (20 missions, 3 story beats, 8 character arcs)
-2. Extend `GameState.gd` with: `story_phase`, `threat_level`, `refusals_made`, `costs_paid`, `completed_story_beats`
-3. Create `NarrativeManager.gd` singleton to handle mission completion → hook application
-4. Wire `MissionBriefer`, `MetersPanel`, `CharacterStatePanel`, `MissionLog` into MainHub
-5. Test: Mission complete → hook applies → meters update → UI refreshes
-6. Update ROADMAP.md
-7. Push
+1. Apply gear bonuses to player/lieutenant combat stats at combat start
+2. Verify gear effects persist through combat turns
+3. Add/update tests for gear stat application
+4. Update ROADMAP.md
+5. Push
 
 **Estimated scope:** Medium (2-3 hour patch)
 
-**Files to create:**
-- `data/hooks.json` (new)
-- `scripts/autoload/NarrativeManager.gd` (new)
-
-**Files to modify:**
-- `scripts/autoload/GameState.gd` (add narrative properties)
-- `scripts/ui/MissionBriefer.gd` (wire hook data)
-- `scripts/ui/MetersPanel.gd` (wire hook data)
-- `scripts/ui/CharacterStatePanel.gd` (wire hook data)
-- `scripts/ui/MissionLog.gd` (wire hook data)
+**Likely files to modify:**
+- `scripts/ui/CombatUI.gd`
+- `scripts/autoload/GameState.gd`
 
 ---
 
@@ -871,14 +861,14 @@ If you find an issue:
 **You just read START_HERE.md. Check these before starting:**
 
 - [ ] I understand what Ash & Oil is (story + mechanics)
-- [ ] I know the current status (Phase 5 done, Phase 6 pending)
+- [ ] I know the current status (Phase 7 done, Phase 8 pending)
 - [ ] I know my workflow (code → test → commit → push → ROADMAP.md update)
 - [ ] I know the rules (tests first, no bandages, push immediately)
-- [ ] I know how to run tests (`godot --headless -s res://tests/TestRunner.gd`)
-- [ ] I know my next task (Phase 6 narrative hooks)
+- [ ] I know how to run tests (`godot --headless -s res://tests/runner/RunTests.gd`)
+- [ ] I know my next task (Phase 8 gear system in combat)
 - [ ] I understand this is the ONLY doc I need
 
-**Ready? Start with Phase 6 implementation.**
+**Ready? Start with Phase 8 implementation.**
 
 ---
 

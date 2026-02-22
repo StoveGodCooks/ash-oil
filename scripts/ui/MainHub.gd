@@ -4,15 +4,23 @@ extends Control
 const TEX_CREST := "res://assets/ui/roman/crest.png"
 const TEX_BANNER := "res://assets/ui/roman/banner.png"
 const TEX_SEAL := "res://assets/ui/roman/seal.png"
+const MISSION_BRIEFER_SCRIPT := preload("res://scripts/ui/MissionBriefer.gd")
+const METERS_PANEL_SCRIPT := preload("res://scripts/ui/MetersPanel.gd")
+const CHARACTER_STATE_PANEL_SCRIPT := preload("res://scripts/ui/CharacterStatePanel.gd")
+const MISSION_LOG_SCRIPT := preload("res://scripts/ui/MissionLog.gd")
 
 var header_stats: Label
-var meters_label: Label
+var meters_panel: HBoxContainer
+var character_state_panel: PanelContainer
 var squad_label: Label
 var gear_label: Label
 var mission_list: VBoxContainer
 var mission_detail: Label
 var deploy_btn: Button
 var selected_mission_id: String = ""
+var mission_briefer: PanelContainer
+var mission_log_panel: PanelContainer
+var mission_log: ScrollContainer
 
 func _ready() -> void:
 	_build_ui()
@@ -39,6 +47,18 @@ func _build_ui() -> void:
 	page.add_child(_build_header())
 	page.add_child(_build_body())
 	page.add_child(_build_footer())
+
+	mission_briefer = MISSION_BRIEFER_SCRIPT.new()
+	mission_briefer.set_anchors_preset(Control.PRESET_CENTER)
+	mission_briefer.offset_left = -220
+	mission_briefer.offset_right = 220
+	mission_briefer.offset_top = -260
+	mission_briefer.offset_bottom = 260
+	mission_briefer.z_index = 200
+	add_child(mission_briefer)
+
+	mission_log_panel = _build_mission_log_panel()
+	add_child(mission_log_panel)
 
 func _build_header() -> Control:
 	var panel := PanelContainer.new()
@@ -111,10 +131,13 @@ func _build_left() -> Control:
 	UITheme.style_header(meters_title, UITheme.FONT_SUBHEADER, true)
 	meters_box.add_child(meters_title)
 
-	meters_label = Label.new()
-	meters_label.autowrap_mode = TextServer.AutowrapMode.AUTOWRAP_WORD
-	UITheme.style_body(meters_label, UITheme.FONT_BODY)
-	meters_box.add_child(meters_label)
+	meters_panel = METERS_PANEL_SCRIPT.new()
+	meters_panel.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	meters_box.add_child(meters_panel)
+
+	character_state_panel = CHARACTER_STATE_PANEL_SCRIPT.new()
+	character_state_panel.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	col.add_child(character_state_panel)
 
 	var squad_panel := PanelContainer.new()
 	squad_panel.size_flags_vertical = Control.SIZE_EXPAND_FILL
@@ -211,6 +234,11 @@ func _build_footer() -> Control:
 	deck_btn.pressed.connect(func() -> void: get_tree().change_scene_to_file("res://scenes/DeckBuilder.tscn"))
 	row.add_child(deck_btn)
 
+	var log_btn := Button.new()
+	UITheme.style_button(log_btn, "MISSION LOG", 60)
+	log_btn.pressed.connect(_on_log_pressed)
+	row.add_child(log_btn)
+
 	var save_btn := Button.new()
 	UITheme.style_button(save_btn, "SAVE GAME", 60)
 	save_btn.pressed.connect(_on_save_pressed)
@@ -232,9 +260,10 @@ func _refresh() -> void:
 		GameState.gold, GameState.current_deck.size(), GameState.completed_missions.size()
 	]
 
-	meters_label.text = "Renown %d/20\nHeat %d/15\nPiety %d/10\nFavor %d/10\nDebt %d\nDread %d/10" % [
-		GameState.RENOWN, GameState.HEAT, GameState.PIETY, GameState.FAVOR, GameState.DEBT, GameState.DREAD
-	]
+	if meters_panel != null:
+		meters_panel.refresh()
+	if character_state_panel != null:
+		character_state_panel.refresh()
 	squad_label.text = _squad_text()
 	gear_label.text = _gear_text()
 	_refresh_missions()
@@ -278,12 +307,32 @@ func _on_mission_selected(mission_id: String) -> void:
 func _on_deploy_pressed() -> void:
 	if selected_mission_id == "":
 		return
-	if MissionManager.start_mission(selected_mission_id):
-		get_tree().change_scene_to_file("res://scenes/CombatScreen.tscn")
+	var hook = NarrativeManager.get_mission_hook(selected_mission_id)
+	if hook.is_empty() or mission_briefer == null:
+		if MissionManager.start_mission(selected_mission_id):
+			get_tree().change_scene_to_file("res://scenes/CombatScreen.tscn")
+		return
+
+	mission_briefer.set_ready_callback(func() -> void:
+		if MissionManager.start_mission(selected_mission_id):
+			get_tree().change_scene_to_file("res://scenes/CombatScreen.tscn")
+	)
+	mission_briefer.set_mission(selected_mission_id)
 
 func _on_save_pressed() -> void:
 	SaveManager.save_game(0)
 	header_stats.text = "Saved. " + header_stats.text
+
+func _on_log_pressed() -> void:
+	if mission_log_panel == null:
+		return
+	mission_log_panel.visible = true
+	if mission_log != null:
+		mission_log.refresh()
+
+func _on_log_close_pressed() -> void:
+	if mission_log_panel != null:
+		mission_log_panel.visible = false
 
 func _squad_text() -> String:
 	var lines: Array[String] = []
@@ -313,3 +362,42 @@ func _make_texture(path: String, tex_size: Vector2) -> TextureRect:
 	tex.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 	tex.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	return tex
+
+func _build_mission_log_panel() -> PanelContainer:
+	var panel := PanelContainer.new()
+	panel.add_theme_stylebox_override("panel", UITheme.make_panel_style(true))
+	panel.set_anchors_preset(Control.PRESET_CENTER)
+	panel.offset_left = -320
+	panel.offset_right = 320
+	panel.offset_top = -260
+	panel.offset_bottom = 260
+	panel.z_index = 190
+	panel.visible = false
+
+	var box := VBoxContainer.new()
+	box.add_theme_constant_override("separation", UITheme.PAD_SM)
+	panel.add_child(box)
+
+	var header := HBoxContainer.new()
+	header.add_theme_constant_override("separation", UITheme.PAD_SM)
+	box.add_child(header)
+
+	var title := Label.new()
+	title.text = "MISSION LOG"
+	UITheme.style_header(title, UITheme.FONT_SUBHEADER, true)
+	title.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	header.add_child(title)
+
+	var close_btn := Button.new()
+	UITheme.style_button(close_btn, "CLOSE", 48)
+	close_btn.pressed.connect(_on_log_close_pressed)
+	header.add_child(close_btn)
+	header.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+
+	mission_log = MISSION_LOG_SCRIPT.new()
+	mission_log.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	mission_log.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	mission_log.custom_minimum_size = Vector2(600, 380)
+	box.add_child(mission_log)
+
+	return panel

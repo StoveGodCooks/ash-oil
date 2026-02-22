@@ -3,15 +3,47 @@ extends PanelContainer
 ## Shows Cassian's narrative phase, active threats, allied lieutenants, refusals counter
 ## Displays "pressure" from the narrative
 
-@onready var phase_label: Label = %PhaseLabel
-@onready var threats_label: Label = %ThreatsLabel
-@onready var allies_container: VBoxContainer = %AlliesContainer
-@onready var refusals_label: Label = %RefusalsLabel
-@onready var momentum_label: Label = %MomentumLabel
+var phase_label: Label
+var threats_label: Label
+var allies_container: VBoxContainer
+var refusals_label: Label
+var momentum_label: Label
 
 func _ready() -> void:
+	add_theme_stylebox_override("panel", UITheme.make_panel_style())
+	_build_ui()
 	GameState.meter_changed.connect(_on_meter_changed)
 	refresh()
+
+func _build_ui() -> void:
+	var box := VBoxContainer.new()
+	box.add_theme_constant_override("separation", UITheme.PAD_SM)
+	add_child(box)
+
+	var title := Label.new()
+	title.text = "CHARACTER STATE"
+	UITheme.style_header(title, UITheme.FONT_SUBHEADER, true)
+	box.add_child(title)
+
+	phase_label = Label.new()
+	UITheme.style_body(phase_label, UITheme.FONT_BODY)
+	box.add_child(phase_label)
+
+	momentum_label = Label.new()
+	UITheme.style_body(momentum_label, UITheme.FONT_BODY)
+	box.add_child(momentum_label)
+
+	threats_label = Label.new()
+	UITheme.style_body(threats_label, UITheme.FONT_BODY)
+	box.add_child(threats_label)
+
+	refusals_label = Label.new()
+	UITheme.style_body(refusals_label, UITheme.FONT_BODY)
+	box.add_child(refusals_label)
+
+	allies_container = VBoxContainer.new()
+	allies_container.add_theme_constant_override("separation", 2)
+	box.add_child(allies_container)
 
 func refresh() -> void:
 	_update_phase()
@@ -61,7 +93,7 @@ func _update_allies() -> void:
 	# Show recruited lieutenants with loyalty status
 	var title = Label.new()
 	title.text = "ALLIES:"
-	title.add_theme_font_size_override("font_size", 9)
+	UITheme.style_body(title, UITheme.FONT_SECONDARY)
 	allies_container.add_child(title)
 
 	var recruited_count = 0
@@ -73,14 +105,13 @@ func _update_allies() -> void:
 			var loyalty = lt_data["loyalty"]
 			var loyalty_text = "⭐" * max(0, loyalty) if loyalty > 0 else "✗"
 			ally_label.text = "  %s %s" % [lt_name, loyalty_text]
-			ally_label.add_theme_font_size_override("font_size", 8)
+			UITheme.style_body(ally_label, UITheme.FONT_FINE)
 			allies_container.add_child(ally_label)
 
 	if recruited_count == 0:
 		var alone_label = Label.new()
 		alone_label.text = "  (Standing alone)"
-		alone_label.add_theme_font_size_override("font_size", 8)
-		alone_label.add_theme_color_override("font_color", Color.GRAY)
+		UITheme.style_body(alone_label, UITheme.FONT_FINE, true)
 		allies_container.add_child(alone_label)
 
 func _update_refusals() -> void:

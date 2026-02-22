@@ -1,8 +1,8 @@
 # Ash & Oil — Development Roadmap
 
-**Current Version:** v0.5.1 — Phase 5: Gear System, Card Art, Combat Clarity Polish
+**Current Version:** v0.6.0 — Phase 7: Story UI Integration
 **Last Updated:** February 22, 2026
-**Status:** Gear system live, card redesign complete (faction glyphs), full parchment & wax UI restyle, combat clarity/QOL polish pass live
+**Status:** Narrative hooks + story UI integration complete; hub now shows meters, character state, and mission log
 
 ---
 
@@ -112,6 +112,19 @@
   - [x] Rarity border glow (common/rare/legendary)
   - [x] Readability-adjusted title/cost/effect text sizing
 
+### Phase 6: Narrative Hooks System ✅
+- [x] `data/hooks.json` with 20 mission hooks + 3 story beats + character arcs
+- [x] `GameState.gd` narrative properties (story_phase, threat_level, refusals_made, etc.)
+- [x] `NarrativeManager.gd` for mission completion → hook application
+- [x] Narrative event triggers (monologues, story beats, phase transitions)
+
+### Phase 7: Story UI Integration ✅
+- [x] Integrated MetersPanel into MainHub (canonical meter mapping)
+- [x] Integrated CharacterStatePanel into MainHub (programmatic UI)
+- [x] Added MissionLog modal + footer access
+- [x] MissionBriefer cancel flow + safe hide on missing hooks
+- [x] End-to-end tests passing
+
 ### Testing & CI ✅
 - [x] TestBase framework (15+ assertion types)
 - [x] Unit test suites (test_gamestate, test_cardmanager, test_missionmanager, test_savemanager, test_combat_logic, test_game_logic)
@@ -128,7 +141,15 @@
 
 ## 📋 NEXT PHASES (Upcoming)
 
-### Phase 6: Content & Balance Tuning
+### Phase 8: Gear System in Combat
+**Focus:** Apply equipped gear bonuses to actual combat stats
+
+- [ ] Gear stat application in combat (read `equipped_gear` on combat start)
+- [ ] Gear bonuses integrated into damage/armor/HP calculations
+- [ ] Gear drops on mission complete (rarity rates: 90% common, 9% rare, 1% epic)
+- [ ] Tests for gear stat application
+
+### Phase 9: Content & Balance Tuning
 **Focus:** Balance missions, card costs, enemy encounters
 
 - [ ] Mission difficulty scaling (Act 1 → Act 3)
@@ -137,13 +158,11 @@
 - [ ] Lieutenant ability cards (signature card effects per lieutenant)
 - [ ] Starter deck optimization (current: 10–20 cards)
 - [ ] Shop pricing adjustments (test economy flow)
-- [ ] Gear stat application in combat (read `equipped_gear` on combat start)
-- [ ] Gear drops on mission complete (rarity rates: 90% common, 9% rare, 1% epic)
 - [ ] Character portrait art (save to `res://assets/characters/[hero_id].png`)
 - [ ] Combat accessibility options panel (high contrast / colorblind / text scale)
 - [ ] Undo last card play (pre-end-turn only)
 
-### Phase 7: NPC Relationship System
+### Phase 10: NPC Relationship System
 **Focus:** Relationship tracking, loyalty-based story gates
 
 - [ ] NPC data structure (Lanista, Varro, Rhesus, Iona, Moth)
@@ -153,7 +172,7 @@
 - [ ] Faction alignment (Cult, State, Syndicate)
 - [ ] Faction-locked missions (only accessible if aligned)
 
-### Phase 8: Advanced Combat Features
+### Phase 11: Advanced Combat Features
 **Focus:** New card mechanics, special effects, environmental factors
 
 - [ ] Poison stacking mechanics refinement
@@ -163,7 +182,7 @@
 - [ ] Environmental hazards (mission-specific arena effects)
 - [ ] Boss encounters (unique enemy AI with special moves)
 
-### Phase 9: Story & Narrative
+### Phase 12: Story & Narrative
 **Focus:** Story hooks, branching narrative, multiple endings
 
 - [ ] Hook system (create story flags from missions)
@@ -173,7 +192,7 @@
 - [ ] Character arcs (5+ lieutenant-specific story branches)
 - [ ] Journal system (track completed missions, story progression)
 
-### Phase 10: Progression & Upgrades
+### Phase 13: Progression & Upgrades
 **Focus:** Between-mission advancement, character upgrades
 
 - [ ] Skill trees (upgradeable lieutenant abilities)
@@ -182,7 +201,7 @@
 - [ ] Gold sinks (lieutenant training, equipment upgrades)
 - [ ] Prestige/New Game+ mode (carry over unlocks)
 
-### Phase 11: Polish & Optimization
+### Phase 14: Polish & Optimization
 **Focus:** Visual polish, audio, performance
 
 - [ ] Sound design (SFX for cards, combat, UI)
@@ -193,7 +212,7 @@
 - [ ] Mobile optimization (touch controls, responsive UI)
 - [ ] Performance profiling (target 60 FPS, optimize draw calls)
 
-### Phase 12: Accessibility & Localization
+### Phase 15: Accessibility & Localization
 **Focus:** Accessibility features, multi-language support
 
 - [ ] Font scaling options
@@ -202,7 +221,7 @@
 - [ ] Subtitle system (voice narration prep)
 - [ ] Language pack system (EN, FR, ES, DE base)
 
-### Phase 13: Launch Prep & Distribution
+### Phase 16: Launch Prep & Distribution
 **Focus:** Release, packaging, documentation
 
 - [ ] Final balance pass (playtest, adjust difficulty curves)
@@ -237,14 +256,10 @@
 - [x] Turn-log panel + keyboard shortcuts + animation speed controls
 - [x] Card face readability pass (type icon + rarity glow + tooltip polish)
 
-### Next Phase (Phase 6: Content & Balance)
+### Next Phase (Phase 8: Gear System in Combat)
 - [ ] Apply equipped gear bonuses to combat (HP, armor, damage)
-- [ ] Mission gear drop rewards (rarity rates: 90% common, 9% rare, 1% epic)
-- [ ] Dynamic mission enemies (read from missions.json instead of hardcoded)
-- [ ] Card effect resolver (poison, stun, bleed, counter, heal)
-- [ ] Character portrait art for heroes
-- [ ] Undo last card play (before End Turn only)
-- [ ] Accessibility settings (contrast/colorblind/text scale)
+- [ ] Gear drops on mission complete (rarity rates: 90% common, 9% rare, 1% epic)
+- [ ] Tests for gear stat application
 
 ---
 
@@ -276,7 +291,7 @@
 | Missions (Side) | 15 | 50+ |
 | Lieutenants | 8 | 12 |
 | Unique Enemies | 45+ | 100+ |
-| Test Coverage | 150+ assertions | 250+ |
+| Test Coverage | 624 assertions | 250+ |
 | Acts | 4 (implied) | 5 |
 | Endings | 3 planned | 5+ |
 
@@ -285,23 +300,26 @@
 ## 🚀 Release Milestones
 
 - **v0.4** — Core gameplay complete, test infrastructure
-- **v0.5** (Current) — Gear system, card art frame, full UI restyle
-- **v0.6** — Phase 6 balance pass, gear in combat, portrait art, content tuning
-- **v0.7** — Phase 7 NPC system, relationship tracking
-- **v0.8** — Phase 8 advanced combat, special effects
-- **v0.9** — Phase 9 story content, narrative branching
-- **v1.0** — Phase 10 progression system, upgrades
-- **v1.1** — Phase 11 polish, optimization, launch ready
-- **v1.2+** — Post-launch content, DLC, community feedback iterations
+- **v0.5** — Gear system, card art frame, full UI restyle
+- **v0.6** (Current) — Narrative hooks + story UI integration
+- **v0.7** — Phase 8 gear system in combat
+- **v0.8** — Phase 9 content & balance tuning
+- **v0.9** — Phase 10 NPC system, relationship tracking
+- **v1.0** — Phase 11 advanced combat, special effects
+- **v1.1** — Phase 12 story content, narrative branching
+- **v1.2** — Phase 13 progression system, upgrades
+- **v1.3** — Phase 14 polish, optimization
+- **v1.4** — Phase 15 accessibility, localization
+- **v1.5** — Phase 16 launch prep, distribution
 
 ---
 
 ## ⚠️ Known Issues & Technical Debt
 
-- **Gear stats not applied to combat** — `equipped_gear` is set in MainHub but CombatUI._init_state() doesn't read bonuses yet (Phase 6 task)
+- **Gear stats not applied to combat** — `equipped_gear` is set in MainHub but CombatUI._init_state() doesn't read bonuses yet (Phase 8 task)
 - **No character portrait art** — CardDisplay uses faction glyphs as placeholder; ready to swap in real art when available
 - **Fallback enemy list remains** — Combat uses mission enemies first, but still has single-enemy fallback for safety when mission data is missing
-- **Card effects not resolved** — Effect strings ("poison_1", "stun_2") display but don't execute (Phase 6 task)
+- **Card effects not resolved** — Effect strings ("poison_1", "stun_2") display but don't execute (Phase 9 task)
 - **Accessibility options not exposed** — speed controls exist via hotkeys, but no settings UI for text scale/color modes yet
 - **CombatUI exceeds 1000 lines** — now includes UX systems; split into components (HUD/Hand/EnemyIntent/Log) is recommended
 
