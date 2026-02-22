@@ -376,11 +376,10 @@ func _update_hand_ui() -> void:
 		var cost = card_data.get("cost", 1)
 		var can_play = (cost <= resources["stamina"])
 
-		# Load CardDisplay scene
+		# Load CardDisplay scene — add_child FIRST so @onready vars are initialized
 		var card_display = load("res://scenes/CardDisplay.tscn").instantiate()
-		card_display.set_card(card_id)
 		card_display.set_card_size(Vector2(120, 180))
-		card_display.pivot_offset = card_display.custom_minimum_size / 2.0
+		card_display.pivot_offset = Vector2(60, 90)
 
 		# Set up signals
 		card_display.card_pressed.connect(func():
@@ -395,6 +394,8 @@ func _update_hand_ui() -> void:
 			card_display.modulate = Color(0.5, 0.5, 0.5, 1.0)
 
 		hand_container.add_child(card_display)
+		# set_card() AFTER add_child so @onready refs are valid
+		card_display.set_card(card_id)
 
 	_layout_hand(true)
 
