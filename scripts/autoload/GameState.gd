@@ -232,22 +232,28 @@ func from_dict(data: Dictionary) -> void:
 	faction_status     = data.get("faction_status",      faction_status)
 	npc_relationships  = data.get("npc_relationships",   npc_relationships)
 	story_phase        = data.get("story_phase",        "SURVIVAL")
-	var loaded_threat = data.get("threat_level", ["Marcellus"])
-	if loaded_threat is Array:
-		threat_level = Array[String](loaded_threat)
-	elif typeof(loaded_threat) == TYPE_STRING and not loaded_threat.is_empty():
-		threat_level = Array[String]([loaded_threat])
-	else:
-		threat_level = Array[String](["Marcellus"])
+	threat_level = _normalize_string_array(data.get("threat_level", ["Marcellus"]), ["Marcellus"])
 	refusals_made      = data.get("refusals_made",      0)
-	costs_paid         = data.get("costs_paid",         [])
+	costs_paid         = _normalize_string_array(data.get("costs_paid", []), [])
 	narrative_momentum = data.get("narrative_momentum", "On the Run")
-	completed_story_beats = data.get("completed_story_beats", [])
+	completed_story_beats = _normalize_string_array(data.get("completed_story_beats", []), [])
 	current_location   = data.get("current_location",   "Arena City")
 	season             = data.get("season", 1)
 	act                = data.get("act",    1)
 	ending_reached     = data.get("ending_reached", "")
 	game_loaded.emit()
+
+func _normalize_string_array(value, fallback: Array[String]) -> Array[String]:
+	var result: Array[String] = []
+	if value is Array:
+		for entry in value:
+			if typeof(entry) == TYPE_STRING:
+				result.append(entry)
+	elif typeof(value) == TYPE_STRING and not value.is_empty():
+		result.append(value)
+	if result.is_empty():
+		result = fallback.duplicate()
+	return result
 
 func reset() -> void:
 	RENOWN = 0; HEAT = 0; PIETY = 0; FAVOR = 0; DEBT = 0; DREAD = 0

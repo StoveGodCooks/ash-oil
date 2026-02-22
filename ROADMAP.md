@@ -1,8 +1,8 @@
 # Ash & Oil — Development Roadmap
 
-**Current Version:** v0.6.0 — Phase 7: Story UI Integration
+**Current Version:** v0.7.0 — Phase 8: Gear System in Combat
 **Last Updated:** February 22, 2026
-**Status:** Narrative hooks + story UI integration complete; hub now shows meters, character state, and mission log
+**Status:** Gear bonuses now apply in combat with mission-based gear drops and full test coverage
 
 ---
 
@@ -141,13 +141,13 @@
 
 ## 📋 NEXT PHASES (Upcoming)
 
-### Phase 8: Gear System in Combat
+### Phase 8: Gear System in Combat ✅
 **Focus:** Apply equipped gear bonuses to actual combat stats
 
-- [ ] Gear stat application in combat (read `equipped_gear` on combat start)
-- [ ] Gear bonuses integrated into damage/armor/HP calculations
-- [ ] Gear drops on mission complete (rarity rates: 90% common, 9% rare, 1% epic)
-- [ ] Tests for gear stat application
+- [x] Gear stat application in combat (read `equipped_gear` on combat start)
+- [x] Gear bonuses integrated into damage/armor/HP calculations
+- [x] Gear drops on mission complete (rarity rates: 90% common, 9% rare, 1% epic)
+- [x] Tests for gear stat application
 
 ### Phase 9: Content & Balance Tuning
 **Focus:** Balance missions, card costs, enemy encounters
@@ -256,10 +256,11 @@
 - [x] Turn-log panel + keyboard shortcuts + animation speed controls
 - [x] Card face readability pass (type icon + rarity glow + tooltip polish)
 
-### Next Phase (Phase 8: Gear System in Combat)
-- [ ] Apply equipped gear bonuses to combat (HP, armor, damage)
-- [ ] Gear drops on mission complete (rarity rates: 90% common, 9% rare, 1% epic)
-- [ ] Tests for gear stat application
+### Next Phase (Phase 9: Content & Balance Tuning)
+- [ ] Mission difficulty scaling (Act 1 → Act 3)
+- [ ] Enemy encounter rebalancing (damage, armor, HP per mission)
+- [ ] Card cost balancing (verify power_index vs. cost correlation)
+- [ ] Shop pricing adjustments (test economy flow)
 
 ---
 
@@ -291,7 +292,7 @@
 | Missions (Side) | 15 | 50+ |
 | Lieutenants | 8 | 12 |
 | Unique Enemies | 45+ | 100+ |
-| Test Coverage | 624 assertions | 250+ |
+| Test Coverage | 647 assertions | 250+ |
 | Acts | 4 (implied) | 5 |
 | Endings | 3 planned | 5+ |
 
@@ -301,8 +302,8 @@
 
 - **v0.4** — Core gameplay complete, test infrastructure
 - **v0.5** — Gear system, card art frame, full UI restyle
-- **v0.6** (Current) — Narrative hooks + story UI integration
-- **v0.7** — Phase 8 gear system in combat
+- **v0.6** — Narrative hooks + story UI integration
+- **v0.7** (Current) — Phase 8 gear system in combat
 - **v0.8** — Phase 9 content & balance tuning
 - **v0.9** — Phase 10 NPC system, relationship tracking
 - **v1.0** — Phase 11 advanced combat, special effects
@@ -316,7 +317,6 @@
 
 ## ⚠️ Known Issues & Technical Debt
 
-- **Gear stats not applied to combat** — `equipped_gear` is set in MainHub but CombatUI._init_state() doesn't read bonuses yet (Phase 8 task)
 - **No character portrait art** — CardDisplay uses faction glyphs as placeholder; ready to swap in real art when available
 - **Fallback enemy list remains** — Combat uses mission enemies first, but still has single-enemy fallback for safety when mission data is missing
 - **Card effects not resolved** — Effect strings ("poison_1", "stun_2") display but don't execute (Phase 9 task)

@@ -31,6 +31,8 @@ var discard_pile: Array = []
 
 var stamina: int = 3
 var mana: int = 0
+var max_mana: int = 3
+var mana_regen_per_turn: int = 0
 var turn: int = 1
 var combat_over: bool = false
 var player_won: bool = false
@@ -90,6 +92,8 @@ func _init_state() -> void:
 	gear_start_mana_bonus = 0
 	gear_first_turn_stamina_bonus = 0
 	max_stamina_per_turn = 3
+	max_mana = 3
+	mana_regen_per_turn = 0
 	_init_lieutenant_state()
 	_resolve_mission_context()
 
@@ -413,7 +417,7 @@ func _build_ui() -> void:
 	res_vbox.add_child(armor_label)
 
 	mana_label = Label.new()
-	mana_label.text = "Mana: %d/3" % mana
+	mana_label.text = "Mana: %d/%d" % [mana, max_mana]
 	mana_label.add_theme_font_size_override("font_size", 14)
 	res_vbox.add_child(mana_label)
 
@@ -700,6 +704,8 @@ func _start_turn() -> void:
 	stamina = max_stamina_per_turn
 	if turn == 1 and gear_first_turn_stamina_bonus > 0:
 		stamina += gear_first_turn_stamina_bonus
+	if mana_regen_per_turn > 0:
+		mana = min(max_mana, mana + mana_regen_per_turn)
 	var draw_count = BASE_TURN_DRAW
 	draw_count += gear_draw_per_turn_bonus
 	if turn == 1 and opening_draw_bonus > 0:
@@ -763,7 +769,7 @@ func _get_card_desc(data: Dictionary) -> String:
 		"attack":
 			var dmg = data.get("damage", 0)
 			var eff = data.get("effect", "none")
-			var total_dmg = int(dmg) + gear_flat_damage_bonus
+			var total_dmg = _get_total_attack_damage(int(dmg))
 			var s = "⚔ %d dmg" % total_dmg
 			if "poison" in eff:
 				s += " + poison"
@@ -994,6 +1000,9 @@ func _animate_play_card(card_btn: Control) -> void:
 func _play_card_sfx() -> void:
 	DisplayServer.beep()
 
+func _get_total_attack_damage(base_damage: int) -> int:
+	return max(0, base_damage + gear_flat_damage_bonus)
+
 func _on_card_pressed(card_idx: int, card_btn: Control) -> void:
 	if combat_over or card_idx >= hand.size() or is_play_animating:
 		return
@@ -1029,7 +1038,7 @@ func _on_card_pressed(card_idx: int, card_btn: Control) -> void:
 
 	match type:
 		"attack":
-			var dmg = int(card_data.get("damage", 0)) + gear_flat_damage_bonus
+			var dmg = _get_total_attack_damage(int(card_data.get("damage", 0)))
 			var target = _get_priority_enemy()
 			if target >= 0:
 				_deal_damage_to_enemy(target, dmg)
@@ -1054,7 +1063,7 @@ func _on_card_pressed(card_idx: int, card_btn: Control) -> void:
 			_apply_support_effect(effect)
 
 		"reaction":
-			var react_dmg = int(card_data.get("damage", 0)) + gear_flat_damage_bonus
+			var react_dmg = _get_total_attack_damage(int(card_data.get("damage", 0)))
 			var react_armor = card_data.get("armor", 0)
 			if react_dmg > 0:
 				var react_target = _get_priority_enemy()
@@ -1065,7 +1074,7 @@ func _on_card_pressed(card_idx: int, card_btn: Control) -> void:
 				_log("Champion gained %d armor (total: %d)" % [react_armor, champion_armor])
 
 		"area":
-			var area_dmg = int(card_data.get("damage", 0)) + gear_flat_damage_bonus
+			var area_dmg = _get_total_attack_damage(int(card_data.get("damage", 0)))
 			for i in range(enemies.size()):
 				if enemies[i]["hp"] <= 0:
 					continue
@@ -1246,6 +1255,9 @@ func _on_victory() -> void:
 	_update_all_ui()
 
 	MissionManager.complete_mission(current_mission_id, "victory")
+	var reward_text = MissionManager.get_last_reward_text()
+	if reward_text != "":
+		_log(reward_text)
 
 	end_turn_btn.text = "CONTINUE →"
 	end_turn_btn.disabled = false
@@ -1306,7 +1318,7 @@ func _update_all_ui() -> void:
 	if stamina_label:
 		stamina_label.text = "Stamina: %d/%d" % [stamina, max_stamina_per_turn]
 	if mana_label:
-		mana_label.text = "Mana: %d/3" % mana
+		mana_label.text = "Mana: %d/%d" % [mana, max_mana]
 
 	for i in range(min(enemy_labels.size(), enemies.size())):
 		enemy_labels[i].text = _get_enemy_display(i)
@@ -1393,6 +1405,13 @@ func _apply_equipped_gear_bonuses() -> void:
 		return
 
 	var applied_names: Array = []
+	var applied_effects: Array = []
+	var unhandled_effects: Array = []
+	var hp_bonus := 0
+	var armor_bonus := 0
+	var damage_bonus := 0
+	var speed_bonus := 0
+	var start_armor_bonus := 0
 	for slot in ["weapon", "armor", "accessory"]:
 		var gear_id: String = str(equipped.get(slot, ""))
 		if gear_id == "":
@@ -1402,35 +1421,58 @@ func _apply_equipped_gear_bonuses() -> void:
 			continue
 		applied_names.append(str(gear.get("name", gear_id)))
 
-		champion_max_hp += int(gear.get("hp", 0))
-		champion_hp = min(champion_max_hp, champion_hp + int(gear.get("hp", 0)))
-		champion_armor += int(gear.get("armor", 0))
-		gear_flat_damage_bonus += int(gear.get("damage", 0))
-		gear_draw_per_turn_bonus += int(maxi(0, int(gear.get("speed", 0))))
+		hp_bonus += int(gear.get("hp", 0))
+		armor_bonus += int(gear.get("armor", 0))
+		damage_bonus += int(gear.get("damage", 0))
+		speed_bonus += int(gear.get("speed", 0))
 
 		var effect: String = str(gear.get("effect", "none"))
 		match effect:
 			"draw_start":
 				gear_opening_draw_bonus += 1
+				applied_effects.append("draw_start")
 			"start_armor":
-				champion_armor += 2
+				start_armor_bonus += 2
+				applied_effects.append("start_armor")
 			"start_mana":
 				gear_start_mana_bonus += 1
+				applied_effects.append("start_mana")
 			"start_stamina":
 				gear_first_turn_stamina_bonus += 1
+				applied_effects.append("start_stamina")
 			"stamina_regen_boost":
 				max_stamina_per_turn += 1
+				applied_effects.append("stamina_regen_boost")
+			"mana_regen_boost":
+				mana_regen_per_turn += 1
+				applied_effects.append("mana_regen_boost")
 			"draw_bonus":
 				gear_draw_per_turn_bonus += 1
+				applied_effects.append("draw_bonus")
 			_:
-				pass
+				if effect != "none" and effect != "":
+					unhandled_effects.append(effect)
 
-	mana = gear_start_mana_bonus
+	gear_flat_damage_bonus += damage_bonus
+	gear_draw_per_turn_bonus += maxi(0, speed_bonus)
+	champion_max_hp = max(1, champion_max_hp + hp_bonus)
+	champion_hp = clamp(champion_hp + hp_bonus, 1, champion_max_hp)
+	champion_armor += armor_bonus + start_armor_bonus
+
+	mana = min(max_mana, gear_start_mana_bonus)
 	stamina = max_stamina_per_turn
 	if turn == 1 and gear_first_turn_stamina_bonus > 0:
 		stamina += gear_first_turn_stamina_bonus
 	if not applied_names.is_empty():
 		_log("Gear active: %s" % ", ".join(applied_names))
+		var stat_line = "Bonuses: HP %+d, ARM %+d, DMG %+d, SPD %+d" % [
+			hp_bonus, armor_bonus + start_armor_bonus, damage_bonus, maxi(0, speed_bonus)
+		]
+		_log(stat_line)
+	if not applied_effects.is_empty():
+		_log("Gear effects: %s" % ", ".join(applied_effects))
+	if not unhandled_effects.is_empty():
+		_log("Gear effects (not implemented): %s" % ", ".join(unhandled_effects))
 
 var _log_lines: Array = []
 func _log(msg: String) -> void:
