@@ -96,7 +96,7 @@ git commit -m "chore: update START_HERE.md with Phase 6 completion status"
 **Ash & Oil** — Story-driven turn-based card game about a gladiator learning to say "No."
 
 **Engine:** Godot 4.6 (GL Compatibility)
-**Status:** v0.6.0 — Phase 7 complete, Phase 8 pending
+**Status:** v0.7.0 — Phase 8 complete, Phase 9 pending
 **⚠️ WORK LOCATION:** `C:\Users\beebo\Desktop\ash-oil` (NOT OneDrive version)
 
 ## Story
@@ -135,9 +135,9 @@ git commit -m "chore: update START_HERE.md with Phase 6 completion status"
 
 # 📍 CURRENT STATUS
 
-**Last Patch:** afe8ca4 — feat: Phase 7 story UI integration
+**Last Patch:** 37a7382 — feat: Phase 8 gear system in combat
 
-**Current Phase:** Phase 7 ✅ COMPLETE | Phase 8 🔲 PENDING
+**Current Phase:** Phase 8 ✅ COMPLETE | Phase 9 🔲 PENDING
 
 ## Phase 5: Card Art & Combat Clarity (COMPLETE)
 - ✅ Card face redesign (faction glyphs, frame overlay)
@@ -160,26 +160,27 @@ git commit -m "chore: update START_HERE.md with Phase 6 completion status"
 - ✅ MissionBriefer cancel flow + hide on missing hooks
 - ✅ Narrative hook meter_impact set to display-only (no double meter application)
 
-**Last Commit:** afe8ca4 — feat: Phase 7 story UI integration
+**Last Commit:** 37a7382 — feat: Phase 8 gear system in combat
 
 ## What's Done This Session
 
-**Phase 7 Implementation:**
-- Wired MetersPanel into MainHub with legacy meter mapping fix
-- Added programmatic CharacterStatePanel and integrated into MainHub
-- Added MissionLog modal with footer access button
-- Added MissionBriefer cancel flow + safe hide on missing hooks
-- NarrativeManager meter_impact is display-only (no double application)
+**Phase 8 Implementation:**
+- Applied equipped gear bonuses at combat start (stacked into combat stats only)
+- Integrated gear bonuses into damage, armor, and HP calculations
+- Added mission gear drops with 90/9/1 rarity distribution + no-duplicate pool
+- Added tests for gear stats, stacking, drops, and rarity distribution
+- Fixed GameState autoload parse error (restore normalize helper)
 
-**Tests:** `godot --headless --path C:\Users\beebo\Desktop\ash-oil -s res://tests/runner/RunTests.gd` (ALL TESTS PASSED, 624 assertions)
-**Lint:** `gdlint .` (fails with pre-existing violations; 120 issues)
+**Tests:** `godot --headless --path C:\Users\beebo\Desktop\ash-oil -s res://tests/runner/RunTests.gd` (ALL TESTS PASSED, 647 assertions)
+**Lint:** `gdlint .` (not run this phase; previously fails with pre-existing violations)
 **Data validation:** `python tests/validate_data.py` (pass)
 
 **Blockers:** None
 
 **Next Steps:**
-1. Phase 8: Gear System in Combat (apply gear bonuses to actual combat stats)
-2. Run lint + data validation (`gdlint .`, `python tests/validate_data.py`)
+1. Update ROADMAP.md for Phase 8 completion
+2. Run lint (`gdlint .`) if requested (still expected to fail on pre-existing issues)
+3. Commit Phase 8 changes + update START_HERE.md with commit hash
 
 ---
 
@@ -378,14 +379,14 @@ ash-oil/
 
 | Metric | Value |
 |--------|-------|
-| **Version** | v0.6.0 |
-| **Phases Complete** | 7/8+ |
+| **Version** | v0.7.0 |
+| **Phases Complete** | 8/8+ |
 | **Missions** | 20 main + 5 side |
 | **Cards** | 87+ |
 | **Lieutenants** | 8 |
 | **Enemies** | 45+ |
 | **Gear** | 24 pieces |
-| **Test Assertions** | 624 |
+| **Test Assertions** | 647 |
 | **Test Coverage** | ~75% |
 | **Code Files** | 20+ |
 | **Data Files** | 6 (cards, missions, lieutenants, enemies, gear, hooks) |
@@ -815,22 +816,18 @@ If you find an issue:
 
 # 🎯 NEXT STEPS (What to Work On)
 
-**RECOMMENDED: Phase 8 Gear System in Combat**
+**RECOMMENDED: Phase 9 Content & Balance Tuning**
 
-**Why:** Apply `equipped_gear` bonuses to actual combat stats (currently only stored).
+**Why:** Gear progression now impacts combat, so balance pass is needed.
 
 **Tasks:**
-1. Apply gear bonuses to player/lieutenant combat stats at combat start
-2. Verify gear effects persist through combat turns
-3. Add/update tests for gear stat application
-4. Update ROADMAP.md
-5. Push
+1. Mission difficulty scaling (Act 1 → Act 3)
+2. Enemy encounter rebalancing (damage, armor, HP per mission)
+3. Card cost balancing (verify power_index vs. cost correlation)
+4. Shop pricing adjustments (test economy flow)
+5. Update ROADMAP.md
 
-**Estimated scope:** Medium (2-3 hour patch)
-
-**Likely files to modify:**
-- `scripts/ui/CombatUI.gd`
-- `scripts/autoload/GameState.gd`
+**Estimated scope:** Large (multi-patch)
 
 ---
 
