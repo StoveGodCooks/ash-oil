@@ -4,12 +4,14 @@ extends Node
 var cards_data: Dictionary = {}
 var lieutenants_data: Dictionary = {}
 var enemy_templates: Dictionary = {}
+var gear_data: Dictionary = {}
 
 func _ready() -> void:
 	_load_cards()
 	_load_lieutenants()
 	_load_enemy_templates()
-	print("CardManager ready: %d cards, %d lieutenants, %d enemies" % [cards_data.size(), lieutenants_data.size(), enemy_templates.size()])
+	_load_gear()
+	print("CardManager ready: %d cards, %d lieutenants, %d enemies, %d gear" % [cards_data.size(), lieutenants_data.size(), enemy_templates.size(), gear_data.size()])
 
 func _load_cards() -> void:
 	var path = "res://data/cards.json"
@@ -41,6 +43,16 @@ func _load_enemy_templates() -> void:
 	if json.parse(file.get_as_text()) == OK:
 		enemy_templates = json.data
 
+func _load_gear() -> void:
+	var path = "res://data/gear.json"
+	if not FileAccess.file_exists(path):
+		push_error("gear.json not found")
+		return
+	var file = FileAccess.open(path, FileAccess.READ)
+	var json = JSON.new()
+	if json.parse(file.get_as_text()) == OK:
+		gear_data = json.data
+
 func get_enemy(id: String) -> Dictionary:
 	return enemy_templates.get(id, {})
 
@@ -59,6 +71,9 @@ func get_card(id: String) -> Dictionary:
 
 func get_lieutenant(lt_name: String) -> Dictionary:
 	return lieutenants_data.get(lt_name, {})
+
+func get_gear(gear_id: String) -> Dictionary:
+	return gear_data.get(gear_id, {})
 
 func get_starter_deck() -> Array:
 	## A balanced 20-card starter deck for new games

@@ -1,0 +1,34 @@
+{
+  "gear_001": {"id": "gear_001", "name": "Iron Gladius", "slot": "weapon", "rarity": "common", "damage": 1, "armor": 0, "hp": 0, "speed": 0, "effect": "none", "effect_desc": "Pure damage boost", "synergy": "universal", "cost": 50},
+  "gear_002": {"id": "gear_002", "name": "Spiked Club", "slot": "weapon", "rarity": "common", "damage": 1, "armor": 0, "hp": 0, "speed": 0, "effect": "bleeding_chance_25", "effect_desc": "25% chance to apply Bleeding 1", "synergy": "eclipse", "cost": 75},
+  "gear_003": {"id": "gear_003", "name": "Balanced Blade", "slot": "weapon", "rarity": "common", "damage": 0, "armor": 0, "hp": 0, "speed": 1, "effect": "draw_start", "effect_desc": "Draw 1 additional card at start of combat", "synergy": "universal", "cost": 60},
+
+  "gear_004": {"id": "gear_004", "name": "Crimson Fang", "slot": "weapon", "rarity": "rare", "damage": 2, "armor": 0, "hp": 0, "speed": 0, "effect": "bleeding_amplify", "effect_desc": "When you apply Bleeding, apply +1 additional stack", "synergy": "eclipse", "cost": 300},
+  "gear_005": {"id": "gear_005", "name": "Tower Breaker", "slot": "weapon", "rarity": "rare", "damage": 2, "armor": 0, "hp": 0, "speed": 0, "effect": "anti_armor", "effect_desc": "Your attacks deal +3 damage vs enemies with 10+ Armor", "synergy": "aegis_counter", "cost": 300},
+  "gear_006": {"id": "gear_006", "name": "Venomous Dagger", "slot": "weapon", "rarity": "rare", "damage": 1, "armor": 0, "hp": 0, "speed": 1, "effect": "poison_first_attack", "effect_desc": "Your first attack each turn applies Poison 1", "synergy": "specter", "cost": 350},
+
+  "gear_007": {"id": "gear_007", "name": "Eclipse Reaver", "slot": "weapon", "rarity": "epic", "damage": 3, "armor": 0, "hp": 0, "speed": 0, "effect": "execute_damage", "effect_desc": "Your attacks deal +50% damage to enemies below 50% HP", "synergy": "eclipse", "cost": 1000},
+  "gear_008": {"id": "gear_008", "name": "Plague Scythe", "slot": "weapon", "rarity": "epic", "damage": 2, "armor": 0, "hp": 0, "speed": 0, "effect": "poison_weakened", "effect_desc": "Whenever you apply Poison, also apply Weakened 1", "synergy": "specter", "cost": 1000},
+
+  "gear_009": {"id": "gear_009", "name": "Leather Vest", "slot": "armor", "rarity": "common", "damage": 0, "armor": 0, "hp": 3, "speed": 0, "effect": "none", "effect_desc": "Pure HP boost", "synergy": "universal", "cost": 50},
+  "gear_010": {"id": "gear_010", "name": "Iron Chestplate", "slot": "armor", "rarity": "common", "damage": 0, "armor": 2, "hp": 0, "speed": 0, "effect": "start_armor", "effect_desc": "Start each combat with +2 Armor", "synergy": "aegis", "cost": 60},
+  "gear_011": {"id": "gear_011", "name": "Agile Tunic", "slot": "armor", "rarity": "common", "damage": 0, "armor": 0, "hp": 2, "speed": 1, "effect": "none", "effect_desc": "None", "synergy": "eclipse", "cost": 70},
+
+  "gear_012": {"id": "gear_012", "name": "Fortified Plate", "slot": "armor", "rarity": "rare", "damage": 0, "armor": 3, "hp": 5, "speed": 0, "effect": "armor_amplify", "effect_desc": "When you gain Armor, gain +1 additional Armor", "synergy": "aegis", "cost": 350},
+  "gear_013": {"id": "gear_013", "name": "Shadow Cloak", "slot": "armor", "rarity": "rare", "damage": 0, "armor": 0, "hp": 4, "speed": 2, "effect": "dot_resistance", "effect_desc": "Reduce Bleeding and Poison damage taken by 1 (minimum 1)", "synergy": "hybrid", "cost": 300},
+  "gear_014": {"id": "gear_014", "name": "Regenerative Mail", "slot": "armor", "rarity": "rare", "damage": 0, "armor": 0, "hp": 6, "speed": 0, "effect": "sustain_heal", "effect_desc": "At the start of your turn, restore 1 HP if you have no Bleeding or Poison", "synergy": "aegis", "cost": 300},
+
+  "gear_015": {"id": "gear_015", "name": "Aegis Bulwark", "slot": "armor", "rarity": "epic", "damage": 0, "armor": 5, "hp": 8, "speed": 0, "effect": "armor_cap_increase", "effect_desc": "Increase Armor cap from 30 → 40", "synergy": "aegis", "cost": 1200},
+  "gear_016": {"id": "gear_016", "name": "Blood-Soaked Raiment", "slot": "armor", "rarity": "epic", "damage": 0, "armor": 0, "hp": 7, "speed": 0, "effect": "lifesteal", "effect_desc": "When you deal damage with an attack, restore HP equal to 20% of damage dealt", "synergy": "eclipse", "cost": 1000},
+
+  "gear_017": {"id": "gear_017", "name": "Iron Ring", "slot": "accessory", "rarity": "common", "damage": 0, "armor": 0, "hp": 2, "speed": 0, "effect": "none", "effect_desc": "Small HP boost", "synergy": "universal", "cost": 50},
+  "gear_018": {"id": "gear_018", "name": "Lucky Charm", "slot": "accessory", "rarity": "common", "damage": 0, "armor": 0, "hp": 0, "speed": 0, "effect": "start_mana", "effect_desc": "Start each combat with +1 Mana", "synergy": "universal", "cost": 60},
+  "gear_019": {"id": "gear_019", "name": "Stamina Band", "slot": "accessory", "rarity": "common", "damage": 0, "armor": 0, "hp": 0, "speed": 0, "effect": "start_stamina", "effect_desc": "Turn 1: Start with +1 Stamina (4 instead of 5)", "synergy": "universal", "cost": 75},
+
+  "gear_020": {"id": "gear_020", "name": "Energy Talisman", "slot": "accessory", "rarity": "rare", "damage": 0, "armor": 0, "hp": 0, "speed": 0, "effect": "stamina_regen_boost", "effect_desc": "+1 Stamina per turn (base 5 → 6)", "synergy": "universal", "cost": 400},
+  "gear_021": {"id": "gear_021", "name": "Arcane Crystal", "slot": "accessory", "rarity": "rare", "damage": 0, "armor": 0, "hp": 0, "speed": 0, "effect": "mana_regen_boost", "effect_desc": "+1 Mana per turn (regen 2 → 3)", "synergy": "universal", "cost": 400},
+  "gear_022": {"id": "gear_022", "name": "Tactician's Lens", "slot": "accessory", "rarity": "rare", "damage": 0, "armor": 0, "hp": 0, "speed": 0, "effect": "draw_bonus", "effect_desc": "Draw +1 card per turn (1 → 2)", "synergy": "universal", "cost": 400},
+
+  "gear_023": {"id": "gear_023", "name": "Bloodstone Ring", "slot": "accessory", "rarity": "epic", "damage": 0, "armor": 0, "hp": -5, "speed": 0, "effect": "mana_from_damage_taken", "effect_desc": "Gain Mana per 3 damage taken (instead of per 5). Start each combat with -5 HP.", "synergy": "eclipse", "cost": 800},
+  "gear_024": {"id": "gear_024", "name": "Miasma Pendant", "slot": "accessory", "rarity": "epic", "damage": 0, "armor": 0, "hp": 0, "speed": 0, "effect": "miasma_double", "effect_desc": "SPECTER Miasma triggers twice per turn (+2 Poison instead of +1)", "synergy": "specter_only", "cost": 1000}
+}

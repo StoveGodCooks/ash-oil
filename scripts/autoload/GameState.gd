@@ -33,6 +33,14 @@ var gold: int = 0
 var current_deck: Array = []
 var discovered_cards: Array = []
 
+# ============ GEAR ============
+var equipped_gear: Dictionary = {
+	"weapon": "",
+	"armor": "",
+	"accessory": ""
+}
+var gear_inventory: Array = []  # List of gear IDs player owns
+
 # ============ MISSION PROGRESS ============
 var current_mission_id: String = ""
 var completed_missions: Array = []
@@ -174,6 +182,8 @@ func to_dict() -> Dictionary:
 		"season": season,
 		"act": act,
 		"ending_reached": ending_reached,
+		"equipped_gear": equipped_gear,
+		"gear_inventory": gear_inventory,
 	}
 
 func from_dict(data: Dictionary) -> void:
@@ -200,6 +210,8 @@ func from_dict(data: Dictionary) -> void:
 	season             = data.get("season", 1)
 	act                = data.get("act",    1)
 	ending_reached     = data.get("ending_reached", "")
+	equipped_gear      = data.get("equipped_gear",      {"weapon": "", "armor": "", "accessory": ""})
+	gear_inventory     = data.get("gear_inventory",     [])
 	game_loaded.emit()
 
 func reset() -> void:
@@ -211,3 +223,23 @@ func reset() -> void:
 	completed_missions = []; unlocked_missions = ["M01"]
 	current_mission_id = ""; story_flags = {}; active_hooks = []
 	current_location = "Arena City"; season = 1; act = 1; ending_reached = ""
+	equipped_gear = {"weapon": "", "armor": "", "accessory": ""}
+	gear_inventory = []
+
+# ============ GEAR FUNCTIONS ============
+func add_gear(gear_id: String) -> void:
+	if gear_id not in gear_inventory:
+		gear_inventory.append(gear_id)
+
+func equip_gear(slot: String, gear_id: String) -> bool:
+	# Validate slot exists
+	if slot not in equipped_gear:
+		return false
+	# Validate gear is in inventory or empty string
+	if gear_id != "" and gear_id not in gear_inventory:
+		return false
+	equipped_gear[slot] = gear_id
+	return true
+
+func get_equipped_gear(slot: String) -> String:
+	return equipped_gear.get(slot, "")
