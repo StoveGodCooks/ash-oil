@@ -41,6 +41,11 @@ func _build_ui() -> void:
 	gradient.modulate = Color(1, 1, 1, 0.8)
 	add_child(gradient)
 
+	var vignette = ColorRect.new()
+	vignette.color = Color(0, 0, 0, 0.20)
+	vignette.set_anchors_preset(Control.PRESET_FULL_RECT)
+	add_child(vignette)
+
 	var scroll = ScrollContainer.new()
 	scroll.set_anchors_preset(Control.PRESET_FULL_RECT)
 	add_child(scroll)
@@ -59,9 +64,20 @@ func _build_ui() -> void:
 	margin.add_child(main_vbox)
 
 	# ── Title Bar ──
+	var title_panel = PanelContainer.new()
+	title_panel.add_theme_stylebox_override("panel", _make_card_style())
+	main_vbox.add_child(title_panel)
+
+	var title_margin = MarginContainer.new()
+	title_margin.add_theme_constant_override("margin_left", 12)
+	title_margin.add_theme_constant_override("margin_right", 12)
+	title_margin.add_theme_constant_override("margin_top", 10)
+	title_margin.add_theme_constant_override("margin_bottom", 10)
+	title_panel.add_child(title_margin)
+
 	var title_bar = HBoxContainer.new()
 	title_bar.add_theme_constant_override("separation", 16)
-	main_vbox.add_child(title_bar)
+	title_margin.add_child(title_bar)
 
 	var title_box = VBoxContainer.new()
 	title_box.add_theme_constant_override("separation", 2)
@@ -147,14 +163,12 @@ func _build_ui() -> void:
 		row.add_child(info_lbl)
 		gear_slot_labels[slot] = info_lbl
 
-		var prev_btn = Button.new()
-		prev_btn.text = "◀"
+		var prev_btn = _make_button("<", CLR_BTN)
 		prev_btn.custom_minimum_size = Vector2(28, 0)
 		prev_btn.pressed.connect(_on_gear_cycle.bind(slot, -1))
 		row.add_child(prev_btn)
 
-		var next_btn = Button.new()
-		next_btn.text = "▶"
+		var next_btn = _make_button(">", CLR_BTN)
 		next_btn.custom_minimum_size = Vector2(28, 0)
 		next_btn.pressed.connect(_on_gear_cycle.bind(slot, 1))
 		row.add_child(next_btn)
@@ -259,13 +273,23 @@ func _refresh() -> void:
 			btn.pressed.connect(_on_mission_pressed.bind(mission_id))
 			row.add_child(btn)
 
+			var right_col = VBoxContainer.new()
+			right_col.add_theme_constant_override("separation", 2)
+			right_col.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+			row.add_child(right_col)
+
 			var desc = Label.new()
 			desc.text = m.get("description", "")
 			desc.add_theme_font_size_override("font_size", 10)
 			desc.add_theme_color_override("font_color", CLR_MUTED)
 			desc.autowrap_mode = TextServer.AUTOWRAP_WORD
-			desc.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-			row.add_child(desc)
+			right_col.add_child(desc)
+
+			var loc = Label.new()
+			loc.text = "Location: %s" % m.get("location", "Unknown")
+			loc.add_theme_font_size_override("font_size", 9)
+			loc.add_theme_color_override("font_color", CLR_TEXT)
+			right_col.add_child(loc)
 
 # ============ HELPERS ============
 func _make_button(text: String, color: Color) -> Button:
@@ -285,7 +309,7 @@ func _make_style(color: Color) -> StyleBoxFlat:
 	s.border_width_left   = 1
 	s.border_width_right  = 1
 	s.border_width_top    = 1
-	s.border_width_bottom = 1
+	s.border_width_bottom = 2
 	s.border_color = CLR_CARD_EDGE        # Aged gold border on all buttons
 	s.corner_radius_top_left     = 4
 	s.corner_radius_top_right    = 4
@@ -295,6 +319,8 @@ func _make_style(color: Color) -> StyleBoxFlat:
 	s.content_margin_right  = 12
 	s.content_margin_top    = 6
 	s.content_margin_bottom = 6
+	s.shadow_color = Color(0, 0, 0, 0.35)
+	s.shadow_size  = 3
 	return s
 
 func _make_section_card(parent: Control, title: String) -> VBoxContainer:
@@ -318,6 +344,10 @@ func _make_section_card(parent: Control, title: String) -> VBoxContainer:
 	label.add_theme_font_size_override("font_size", 12)
 	label.add_theme_color_override("font_color", CLR_ACCENT)
 	vbox.add_child(label)
+
+	var sep = HSeparator.new()
+	sep.add_theme_color_override("color", CLR_CARD_EDGE)
+	vbox.add_child(sep)
 	return vbox
 
 func _make_card_style() -> StyleBoxFlat:

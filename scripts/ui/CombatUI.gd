@@ -109,18 +109,41 @@ func _build_ui() -> void:
 	bg.set_anchors_preset(Control.PRESET_FULL_RECT)
 	add_child(bg)
 
+	var vignette = ColorRect.new()
+	vignette.color = Color(0, 0, 0, 0.20)
+	vignette.set_anchors_preset(Control.PRESET_FULL_RECT)
+	add_child(vignette)
+
 	var main_vbox = VBoxContainer.new()
 	main_vbox.set_anchors_preset(Control.PRESET_FULL_RECT)
 	main_vbox.add_theme_constant_override("separation", 8)
 	add_child(main_vbox)
 
 	# Title bar
+	var title_panel = PanelContainer.new()
+	title_panel.add_theme_stylebox_override("panel", _panel_style())
+	main_vbox.add_child(title_panel)
+
+	var title_margin = MarginContainer.new()
+	title_margin.add_theme_constant_override("margin_left", 10)
+	title_margin.add_theme_constant_override("margin_right", 10)
+	title_margin.add_theme_constant_override("margin_top", 6)
+	title_margin.add_theme_constant_override("margin_bottom", 6)
+	title_panel.add_child(title_margin)
+
 	var title_bar = HBoxContainer.new()
-	title_bar.custom_minimum_size = Vector2(0, 40)
-	main_vbox.add_child(title_bar)
+	title_bar.custom_minimum_size = Vector2(0, 36)
+	title_margin.add_child(title_bar)
+
+	var mid = GameState.current_mission_id
+	if mid == "":
+		mid = "M01"
+	var mdata = MissionManager.get_mission(mid)
+	var mname = mdata.get("name", mid)
+	var mloc = mdata.get("location", "Unknown")
 
 	var mission_label = Label.new()
-	mission_label.text = "  M01: THE TOKEN — Arena Fight"
+	mission_label.text = "%s: %s — %s" % [mid, mname, mloc]
 	mission_label.add_theme_font_size_override("font_size", 14)
 	mission_label.add_theme_color_override("font_color", CLR_ACCENT)
 	title_bar.add_child(mission_label)
@@ -131,7 +154,8 @@ func _build_ui() -> void:
 
 	turn_label = Label.new()
 	turn_label.text = "Turn 1"
-	turn_label.add_theme_font_size_override("font_size", 14)
+	turn_label.add_theme_font_size_override("font_size", 13)
+	turn_label.add_theme_color_override("font_color", CLR_TEXT)
 	title_bar.add_child(turn_label)
 
 	# Enemy zone
@@ -159,6 +183,10 @@ func _build_ui() -> void:
 		var e_btn = Button.new()
 		e_btn.custom_minimum_size = Vector2(160, 90)
 		e_btn.text = _get_enemy_display(i)
+		e_btn.add_theme_stylebox_override("normal",  _btn_style(CLR_PANEL))
+		e_btn.add_theme_stylebox_override("hover",   _btn_style(CLR_PANEL.lightened(0.10)))
+		e_btn.add_theme_stylebox_override("pressed", _btn_style(CLR_PANEL.darkened(0.10)))
+		e_btn.add_theme_color_override("font_color", CLR_TEXT)
 		e_btn.pressed.connect(_on_enemy_selected.bind(i))
 		enemy_hbox.add_child(e_btn)
 		enemy_buttons.append(e_btn)
@@ -197,19 +225,13 @@ func _build_ui() -> void:
 	res_hbox.add_theme_constant_override("separation", 20)
 	main_vbox.add_child(res_hbox)
 
-	stamina_label = Label.new()
-	stamina_label.text = "Stamina: 5/5"
-	stamina_label.add_theme_font_size_override("font_size", 13)
-	stamina_label.add_theme_color_override("font_color", CLR_TEXT)
-	stamina_label.custom_minimum_size = Vector2(140, 0)
-	res_hbox.add_child(stamina_label)
+	var stamina_pill = _make_pill("Stamina: 5/5", CLR_ACCENT)
+	stamina_label = stamina_pill.get_meta("label")
+	res_hbox.add_child(stamina_pill)
 
-	mana_label = Label.new()
-	mana_label.text = "Mana: 0/10"
-	mana_label.add_theme_font_size_override("font_size", 13)
-	mana_label.add_theme_color_override("font_color", CLR_TEXT)
-	mana_label.custom_minimum_size = Vector2(120, 0)
-	res_hbox.add_child(mana_label)
+	var mana_pill = _make_pill("Mana: 0/10", CLR_TEXT)
+	mana_label = mana_pill.get_meta("label")
+	res_hbox.add_child(mana_pill)
 
 	# Hand zone label
 	var hand_title = Label.new()
@@ -743,7 +765,7 @@ func _btn_style(color: Color) -> StyleBoxFlat:
 	s.border_width_left   = 1
 	s.border_width_right  = 1
 	s.border_width_top    = 1
-	s.border_width_bottom = 1
+	s.border_width_bottom = 2
 	s.border_color = CLR_BORDER
 	s.corner_radius_top_left     = 4
 	s.corner_radius_top_right    = 4
@@ -753,7 +775,39 @@ func _btn_style(color: Color) -> StyleBoxFlat:
 	s.content_margin_right  = 10
 	s.content_margin_top    = 4
 	s.content_margin_bottom = 4
+	s.shadow_color = Color(0, 0, 0, 0.35)
+	s.shadow_size  = 3
 	return s
+
+func _make_pill(text: String, color: Color) -> PanelContainer:
+	var panel = PanelContainer.new()
+	var style = StyleBoxFlat.new()
+	style.bg_color = Color(color.r, color.g, color.b, 0.18)
+	style.border_width_left = 1
+	style.border_width_right = 1
+	style.border_width_top = 1
+	style.border_width_bottom = 1
+	style.border_color = Color(color.r, color.g, color.b, 0.55)
+	style.corner_radius_top_left = 12
+	style.corner_radius_top_right = 12
+	style.corner_radius_bottom_left = 12
+	style.corner_radius_bottom_right = 12
+	panel.add_theme_stylebox_override("panel", style)
+
+	var margin = MarginContainer.new()
+	margin.add_theme_constant_override("margin_left", 10)
+	margin.add_theme_constant_override("margin_right", 10)
+	margin.add_theme_constant_override("margin_top", 4)
+	margin.add_theme_constant_override("margin_bottom", 4)
+	panel.add_child(margin)
+
+	var label = Label.new()
+	label.text = text
+	label.add_theme_font_size_override("font_size", 12)
+	label.add_theme_color_override("font_color", CLR_TEXT)
+	margin.add_child(label)
+	panel.set_meta("label", label)
+	return panel
 
 var _log_lines: Array = []
 func _log(msg: String) -> void:

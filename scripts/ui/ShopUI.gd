@@ -38,6 +38,11 @@ func _build_ui() -> void:
 	bg.set_anchors_preset(Control.PRESET_FULL_RECT)
 	add_child(bg)
 
+	var vignette = ColorRect.new()
+	vignette.color = Color(0, 0, 0, 0.20)
+	vignette.set_anchors_preset(Control.PRESET_FULL_RECT)
+	add_child(vignette)
+
 	var scroll = ScrollContainer.new()
 	scroll.set_anchors_preset(Control.PRESET_FULL_RECT)
 	add_child(scroll)
@@ -47,26 +52,42 @@ func _build_ui() -> void:
 	vbox.add_theme_constant_override("separation", 10)
 	scroll.add_child(vbox)
 
-	# Title
+	# Title panel
+	var title_panel = PanelContainer.new()
+	title_panel.add_theme_stylebox_override("panel", _make_style(CLR_PANEL))
+	vbox.add_child(title_panel)
+
+	var title_margin = MarginContainer.new()
+	title_margin.add_theme_constant_override("margin_left", 12)
+	title_margin.add_theme_constant_override("margin_right", 12)
+	title_margin.add_theme_constant_override("margin_top", 8)
+	title_margin.add_theme_constant_override("margin_bottom", 8)
+	title_panel.add_child(title_margin)
+
+	var title_row = HBoxContainer.new()
+	title_row.add_theme_constant_override("separation", 10)
+	title_margin.add_child(title_row)
+
 	var title = Label.new()
 	title.text = "CARD MARKET"
 	title.add_theme_font_size_override("font_size", 22)
 	title.add_theme_color_override("font_color", CLR_ACCENT)
-	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	vbox.add_child(title)
+	title_row.add_child(title)
 
-	# Gold display
-	gold_label = Label.new()
-	gold_label.add_theme_font_size_override("font_size", 14)
-	gold_label.add_theme_color_override("font_color", CLR_ACCENT)
-	vbox.add_child(gold_label)
-	_refresh_gold()
+	var title_spacer = Control.new()
+	title_spacer.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	title_row.add_child(title_spacer)
+
+	var gold_pill = _make_pill("Gold: 0", CLR_ACCENT)
+	gold_label = gold_pill.get_meta("label")
+	title_row.add_child(gold_pill)
 
 	# Message label
 	msg_label = Label.new()
 	msg_label.add_theme_font_size_override("font_size", 12)
 	msg_label.add_theme_color_override("font_color", CLR_MUTED)
 	vbox.add_child(msg_label)
+	_refresh_gold()
 
 	var sep = HSeparator.new()
 	sep.add_theme_color_override("color", CLR_BORDER)
@@ -280,7 +301,7 @@ func _make_style(color: Color) -> StyleBoxFlat:
 	s.border_width_left = 1
 	s.border_width_top = 1
 	s.border_width_right = 1
-	s.border_width_bottom = 1
+	s.border_width_bottom = 2
 	s.corner_radius_top_left = 4
 	s.corner_radius_top_right = 4
 	s.corner_radius_bottom_left = 4
@@ -289,4 +310,36 @@ func _make_style(color: Color) -> StyleBoxFlat:
 	s.content_margin_right = 12
 	s.content_margin_top = 4
 	s.content_margin_bottom = 4
+	s.shadow_size = 3
+	s.shadow_color = Color(0, 0, 0, 0.35)
 	return s
+
+func _make_pill(text: String, color: Color) -> PanelContainer:
+	var panel = PanelContainer.new()
+	var style = StyleBoxFlat.new()
+	style.bg_color = Color(color.r, color.g, color.b, 0.18)
+	style.border_width_left = 1
+	style.border_width_right = 1
+	style.border_width_top = 1
+	style.border_width_bottom = 1
+	style.border_color = Color(color.r, color.g, color.b, 0.55)
+	style.corner_radius_top_left = 12
+	style.corner_radius_top_right = 12
+	style.corner_radius_bottom_left = 12
+	style.corner_radius_bottom_right = 12
+	panel.add_theme_stylebox_override("panel", style)
+
+	var margin = MarginContainer.new()
+	margin.add_theme_constant_override("margin_left", 10)
+	margin.add_theme_constant_override("margin_right", 10)
+	margin.add_theme_constant_override("margin_top", 4)
+	margin.add_theme_constant_override("margin_bottom", 4)
+	panel.add_child(margin)
+
+	var label = Label.new()
+	label.text = text
+	label.add_theme_font_size_override("font_size", 12)
+	label.add_theme_color_override("font_color", CLR_TEXT)
+	margin.add_child(label)
+	panel.set_meta("label", label)
+	return panel

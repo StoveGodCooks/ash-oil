@@ -16,11 +16,22 @@ var start_btn: Button
 var continue_btn: Button
 
 func _ready() -> void:
-	# Dark background
+	# Background layers
 	var bg = ColorRect.new()
 	bg.color = CLR_BG
 	bg.set_anchors_preset(Control.PRESET_FULL_RECT)
 	add_child(bg)
+
+	var bg_top = ColorRect.new()
+	bg_top.color = CLR_PANEL
+	bg_top.set_anchors_preset(Control.PRESET_TOP_WIDE)
+	bg_top.custom_minimum_size = Vector2(0, 180)
+	add_child(bg_top)
+
+	var vignette = ColorRect.new()
+	vignette.color = Color(0, 0, 0, 0.25)
+	vignette.set_anchors_preset(Control.PRESET_FULL_RECT)
+	add_child(vignette)
 
 	# Center container
 	var vbox = VBoxContainer.new()
@@ -30,13 +41,24 @@ func _ready() -> void:
 	vbox.alignment = BoxContainer.ALIGNMENT_CENTER
 	add_child(vbox)
 
+	# Title banner
+	var banner = PanelContainer.new()
+	banner.custom_minimum_size = Vector2(300, 90)
+	banner.add_theme_stylebox_override("panel", _panel_style(CLR_PANEL))
+	vbox.add_child(banner)
+
+	var banner_v = VBoxContainer.new()
+	banner_v.alignment = BoxContainer.ALIGNMENT_CENTER
+	banner_v.set_anchors_preset(Control.PRESET_FULL_RECT)
+	banner.add_child(banner_v)
+
 	# Title
 	var title = Label.new()
 	title.text = "ASH & OIL"
 	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	title.add_theme_font_size_override("font_size", 48)
 	title.add_theme_color_override("font_color", CLR_ACCENT)
-	vbox.add_child(title)
+	banner_v.add_child(title)
 
 	# Subtitle
 	var sub = Label.new()
@@ -44,7 +66,7 @@ func _ready() -> void:
 	sub.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	sub.add_theme_font_size_override("font_size", 16)
 	sub.add_theme_color_override("font_color", CLR_TEXT)
-	vbox.add_child(sub)
+	banner_v.add_child(sub)
 
 	# Spacer
 	var sp1 = Control.new()
@@ -130,7 +152,7 @@ func _make_style(color: Color) -> StyleBoxFlat:
 	s.border_width_left = 1
 	s.border_width_top = 1
 	s.border_width_right = 1
-	s.border_width_bottom = 1
+	s.border_width_bottom = 2
 	s.corner_radius_top_left = 6
 	s.corner_radius_top_right = 6
 	s.corner_radius_bottom_left = 6
@@ -139,4 +161,26 @@ func _make_style(color: Color) -> StyleBoxFlat:
 	s.content_margin_right = 14
 	s.content_margin_top = 6
 	s.content_margin_bottom = 6
+	s.shadow_size = 4
+	s.shadow_color = Color(0, 0, 0, 0.35)
+	return s
+
+func _panel_style(color: Color) -> StyleBoxFlat:
+	var s = StyleBoxFlat.new()
+	s.bg_color = color
+	s.border_color = CLR_BORDER
+	s.border_width_left = 1
+	s.border_width_top = 1
+	s.border_width_right = 1
+	s.border_width_bottom = 2
+	s.corner_radius_top_left = 8
+	s.corner_radius_top_right = 8
+	s.corner_radius_bottom_left = 8
+	s.corner_radius_bottom_right = 8
+	s.content_margin_left = 10
+	s.content_margin_right = 10
+	s.content_margin_top = 8
+	s.content_margin_bottom = 8
+	s.shadow_size = 6
+	s.shadow_color = Color(0, 0, 0, 0.35)
 	return s
