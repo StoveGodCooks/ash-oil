@@ -2,7 +2,7 @@
 
 **Current Version:** v0.7.0 — Phase 8: Gear System in Combat
 **Last Updated:** February 22, 2026
-**Status:** Gear bonuses now apply in combat with mission-based gear drops and full test coverage
+**Status:** Gear bonuses apply in combat with seeded mission-based drops, expanded validation tests, and reward text verification
 
 ---
 
@@ -148,6 +148,8 @@
 - [x] Gear bonuses integrated into damage/armor/HP calculations
 - [x] Gear drops on mission complete (rarity rates: 90% common, 9% rare, 1% epic)
 - [x] Tests for gear stat application
+- [x] RNG consistency hardening for gear drops (seeded MissionManager RNG for rarity + item selection)
+- [x] Added targeted tests for +2 damage, +1 armor mitigation, +3 HP, no double-counting, and reward text display
 
 ### Phase 9: Content & Balance Tuning
 **Focus:** Balance missions, card costs, enemy encounters
@@ -292,7 +294,7 @@
 | Missions (Side) | 15 | 50+ |
 | Lieutenants | 8 | 12 |
 | Unique Enemies | 45+ | 100+ |
-| Test Coverage | 647 assertions | 250+ |
+| Test Coverage | 662 assertions | 250+ |
 | Acts | 4 (implied) | 5 |
 | Endings | 3 planned | 5+ |
 

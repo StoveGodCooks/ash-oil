@@ -101,16 +101,21 @@ func _roll_gear_drop() -> String:
 	var target_rarity := roll_gear_rarity()
 
 	var candidates: Array = []
+	var unowned_any_rarity: Array = []
 	for gear_id in CardManager.gear_data.keys():
 		if GameState.has_gear(gear_id):
 			continue
+		unowned_any_rarity.append(gear_id)
 		var gear: Dictionary = CardManager.get_gear(gear_id)
 		if str(gear.get("rarity", "")).to_lower() == target_rarity:
 			candidates.append(gear_id)
 
 	if candidates.is_empty():
-		return ""
-	var pick_idx: int = randi() % candidates.size()
+		# Keep fallback-gold behavior for true "owned everything" state only.
+		if unowned_any_rarity.is_empty():
+			return ""
+		candidates = unowned_any_rarity
+	var pick_idx: int = gear_rng.randi_range(0, candidates.size() - 1)
 	return str(candidates[pick_idx])
 
 func roll_gear_rarity() -> String:
@@ -174,8 +179,8 @@ func get_drop_chance_for_act(act: int) -> float:
 func _gear_fallback_gold(_mission: Dictionary) -> int:
 	return 100
 
-func set_gear_rng_seed(seed: int) -> void:
-	gear_rng.seed = seed
+func set_gear_rng_seed(rng_seed: int) -> void:
+	gear_rng.seed = rng_seed
 
 func get_last_reward_text() -> String:
 	if last_reward.is_empty():

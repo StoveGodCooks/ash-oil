@@ -135,7 +135,7 @@ git commit -m "chore: update START_HERE.md with Phase 6 completion status"
 
 # 📍 CURRENT STATUS
 
-**Last Patch:** 37a7382 — feat: Phase 8 gear system in combat
+**Last Patch:** a172f84 — chore_sync_start_here_final_checklist_with_phase9_status
 
 **Current Phase:** Phase 8 ✅ COMPLETE | Phase 9 🔲 PENDING
 
@@ -160,27 +160,28 @@ git commit -m "chore: update START_HERE.md with Phase 6 completion status"
 - ✅ MissionBriefer cancel flow + hide on missing hooks
 - ✅ Narrative hook meter_impact set to display-only (no double meter application)
 
-**Last Commit:** 37a7382 — feat: Phase 8 gear system in combat
+**Last Commit:** a172f84 — chore_sync_start_here_final_checklist_with_phase9_status
 
 ## What's Done This Session
 
-**Phase 8 Implementation:**
-- Applied equipped gear bonuses at combat start (stacked into combat stats only)
-- Integrated gear bonuses into damage, armor, and HP calculations
-- Added mission gear drops with 90/9/1 rarity distribution + no-duplicate pool
-- Added tests for gear stats, stacking, drops, and rarity distribution
-- Fixed GameState autoload parse error (restore normalize helper)
+**Phase 8 Gear Hardening:**
+- Kept gear bonuses integrated into existing combat stat formulas (damage/armor/HP)
+- Fixed mission gear drop RNG to use seeded mission RNG consistently (no global RNG drift)
+- Improved drop behavior when rolled rarity is exhausted: fallback to other unowned gear before fallback gold
+- Added targeted tests for +2 damage, +1 armor reduction, +3 HP, anti-double-counting, reward text visibility, and empirical drop-rate checks
+- Fixed `MissionManager` shadowed-identifier warning (`seed` parameter rename)
 
-**Tests:** `godot --headless --path C:\Users\beebo\Desktop\ash-oil -s res://tests/runner/RunTests.gd` (ALL TESTS PASSED, 647 assertions)
+**Tests:** `godot --headless --path C:\Users\beebo\Desktop\ash-oil -s res://tests/runner/RunTests.gd` (ALL TESTS PASSED, 662 assertions)
 **Lint:** `gdlint .` (not run this phase; previously fails with pre-existing violations)
 **Data validation:** `python tests/validate_data.py` (pass)
 
 **Blockers:** None
 
 **Next Steps:**
-1. Update ROADMAP.md for Phase 8 completion
-2. Run lint (`gdlint .`) if requested (still expected to fail on pre-existing issues)
-3. Commit Phase 8 changes + update START_HERE.md with commit hash
+1. Phase 9 mission difficulty scaling (Act 1 -> Act 3)
+2. Enemy encounter rebalancing (damage/armor/HP curves)
+3. Card cost and shop economy tuning pass
+4. Run lint (`gdlint .`) if requested (still expected to fail on pre-existing issues)
 
 ---
 
@@ -386,7 +387,7 @@ ash-oil/
 | **Lieutenants** | 8 |
 | **Enemies** | 45+ |
 | **Gear** | 24 pieces |
-| **Test Assertions** | 647 |
+| **Test Assertions** | 662 |
 | **Test Coverage** | ~75% |
 | **Code Files** | 20+ |
 | **Data Files** | 6 (cards, missions, lieutenants, enemies, gear, hooks) |
