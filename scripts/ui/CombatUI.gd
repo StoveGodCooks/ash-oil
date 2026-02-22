@@ -478,7 +478,7 @@ func _on_victory() -> void:
 	_update_all_ui()
 
 	# Rewards/meters are applied by MissionManager from missions.json.
-	MissionManager.complete_mission("M01")
+	MissionManager.complete_mission(GameState.current_mission_id)
 
 	end_turn_btn.text = "CONTINUE →"
 	end_turn_btn.disabled = false

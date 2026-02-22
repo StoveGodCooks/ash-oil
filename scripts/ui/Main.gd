@@ -58,9 +58,16 @@ func _ready() -> void:
 	sp2.custom_minimum_size = Vector2(0, 20)
 	vbox.add_child(sp2)
 
+	# Dev Mode button
+	var dev_btn = Button.new()
+	dev_btn.text = "DEV MODE"
+	dev_btn.custom_minimum_size = Vector2(200, 40)
+	dev_btn.pressed.connect(_on_dev_pressed)
+	vbox.add_child(dev_btn)
+
 	# Version
 	var ver = Label.new()
-	ver.text = "v0.1 - Phase 1 Complete"
+	ver.text = "v0.4 - Phase 4 Complete"
 	ver.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	ver.add_theme_font_size_override("font_size", 11)
 	vbox.add_child(ver)
@@ -72,10 +79,14 @@ func _ready() -> void:
 func _on_start_pressed() -> void:
 	GameState.reset()
 	GameState.current_deck = CardManager.get_starter_deck()
+	GameState.current_mission_id = "M01"
 	print("--- NEW GAME STARTED ---")
 	print("Gold: %d | Deck: %d cards" % [GameState.gold, GameState.current_deck.size()])
 	print("Available missions: ", GameState.unlocked_missions)
-	get_tree().change_scene_to_file("res://scenes/CombatScreen.tscn")
+	get_tree().change_scene_to_file("res://scenes/MainHub.tscn")
+
+func _on_dev_pressed() -> void:
+	get_tree().change_scene_to_file("res://scenes/DevMenu.tscn")
 
 func _on_continue_pressed() -> void:
 	if SaveManager.load_game(1):
