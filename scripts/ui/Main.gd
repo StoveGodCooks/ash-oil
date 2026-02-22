@@ -11,6 +11,8 @@ const CLR_MUTED   = Color(0.58, 0.520, 0.400)
 const CLR_BTN     = Color(0.20, 0.160, 0.115)
 const CLR_BTN_ALT = Color(0.14, 0.220, 0.150)
 const CLR_DANGER  = Color(0.26, 0.095, 0.090)
+const CLR_STONE   = Color(0.18, 0.155, 0.120)
+const CLR_SEAL    = Color(0.36, 0.12, 0.10)
 
 var start_btn: Button
 var continue_btn: Button
@@ -21,6 +23,18 @@ func _ready() -> void:
 	bg.color = CLR_BG
 	bg.set_anchors_preset(Control.PRESET_FULL_RECT)
 	add_child(bg)
+
+	var stone_top = ColorRect.new()
+	stone_top.color = CLR_STONE
+	stone_top.set_anchors_preset(Control.PRESET_TOP_WIDE)
+	stone_top.custom_minimum_size = Vector2(0, 70)
+	add_child(stone_top)
+
+	var stone_bottom = ColorRect.new()
+	stone_bottom.color = CLR_STONE
+	stone_bottom.set_anchors_preset(Control.PRESET_BOTTOM_WIDE)
+	stone_bottom.custom_minimum_size = Vector2(0, 70)
+	add_child(stone_bottom)
 
 	var bg_top = ColorRect.new()
 	bg_top.color = CLR_PANEL
@@ -52,9 +66,17 @@ func _ready() -> void:
 	banner_v.set_anchors_preset(Control.PRESET_FULL_RECT)
 	banner.add_child(banner_v)
 
+	# Crest line
+	var crest = Label.new()
+	crest.text = "◈  LAUREL CREST  ◈"
+	crest.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	crest.add_theme_font_size_override("font_size", 10)
+	crest.add_theme_color_override("font_color", CLR_MUTED)
+	banner_v.add_child(crest)
+
 	# Title
 	var title = Label.new()
-	title.text = "ASH & OIL"
+	title.text = "ASH  &  OIL"
 	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	title.add_theme_font_size_override("font_size", 48)
 	title.add_theme_color_override("font_color", CLR_ACCENT)
@@ -62,9 +84,9 @@ func _ready() -> void:
 
 	# Subtitle
 	var sub = Label.new()
-	sub.text = "A Tactical Card Game"
+	sub.text = "GLADIATOR CONTRACTS & BLOOD DEBTS"
 	sub.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	sub.add_theme_font_size_override("font_size", 16)
+	sub.add_theme_font_size_override("font_size", 14)
 	sub.add_theme_color_override("font_color", CLR_TEXT)
 	banner_v.add_child(sub)
 
@@ -74,13 +96,13 @@ func _ready() -> void:
 	vbox.add_child(sp1)
 
 	# New Game button
-	start_btn = _make_button("NEW GAME", CLR_BTN)
+	start_btn = _make_button("ENTER THE ARENA", CLR_BTN)
 	start_btn.custom_minimum_size = Vector2(200, 50)
 	start_btn.pressed.connect(_on_start_pressed)
 	vbox.add_child(start_btn)
 
 	# Continue button
-	continue_btn = _make_button("CONTINUE", CLR_BTN_ALT)
+	continue_btn = _make_button("RESUME CONTRACT", CLR_BTN_ALT)
 	continue_btn.custom_minimum_size = Vector2(200, 50)
 	continue_btn.disabled = not SaveManager.save_exists(1)
 	continue_btn.pressed.connect(_on_continue_pressed)

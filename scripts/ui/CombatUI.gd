@@ -12,6 +12,7 @@ const CLR_TEXT    = Color(0.90, 0.840, 0.680)
 const CLR_MUTED   = Color(0.58, 0.520, 0.400)
 const CLR_BTN     = Color(0.20, 0.160, 0.115)
 const CLR_DANGER  = Color(0.26, 0.095, 0.090)
+const CLR_STONE   = Color(0.18, 0.155, 0.120)
 
 # ============ COMBAT STATE ============
 var champion_hp: int = 30
@@ -109,6 +110,12 @@ func _build_ui() -> void:
 	bg.set_anchors_preset(Control.PRESET_FULL_RECT)
 	add_child(bg)
 
+	var stone_top = ColorRect.new()
+	stone_top.color = CLR_STONE
+	stone_top.set_anchors_preset(Control.PRESET_TOP_WIDE)
+	stone_top.custom_minimum_size = Vector2(0, 56)
+	add_child(stone_top)
+
 	var vignette = ColorRect.new()
 	vignette.color = Color(0, 0, 0, 0.20)
 	vignette.set_anchors_preset(Control.PRESET_FULL_RECT)
@@ -142,11 +149,21 @@ func _build_ui() -> void:
 	var mname = mdata.get("name", mid)
 	var mloc = mdata.get("location", "Unknown")
 
+	var title_left = VBoxContainer.new()
+	title_left.add_theme_constant_override("separation", 2)
+	title_bar.add_child(title_left)
+
 	var mission_label = Label.new()
 	mission_label.text = "%s: %s — %s" % [mid, mname, mloc]
 	mission_label.add_theme_font_size_override("font_size", 14)
 	mission_label.add_theme_color_override("font_color", CLR_ACCENT)
-	title_bar.add_child(mission_label)
+	title_left.add_child(mission_label)
+
+	var crest = Label.new()
+	crest.text = "◈  ARENA OF THE ANCIENTS  ◈"
+	crest.add_theme_font_size_override("font_size", 10)
+	crest.add_theme_color_override("font_color", CLR_MUTED)
+	title_left.add_child(crest)
 
 	var spacer = Control.new()
 	spacer.size_flags_horizontal = Control.SIZE_EXPAND_FILL

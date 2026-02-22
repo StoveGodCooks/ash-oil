@@ -13,6 +13,8 @@ const CLR_BTN      = Color(0.20, 0.160, 0.115)   # Dark leather button
 const CLR_BTN_ALT  = Color(0.14, 0.220, 0.150)   # Muted forest green
 const CLR_BTN_WARN = Color(0.28, 0.200, 0.090)   # Amber warning
 const CLR_BTN_DANGER= Color(0.26, 0.095, 0.090)  # Dark blood red
+const CLR_STONE    = Color(0.18, 0.155, 0.120)   # Stone banding
+const CLR_SEAL     = Color(0.36, 0.12, 0.10)     # Wax seal red
 
 # ============ UI REFS ============
 var gold_label: Label
@@ -34,6 +36,12 @@ func _build_ui() -> void:
 	bg.color = CLR_BG
 	bg.set_anchors_preset(Control.PRESET_FULL_RECT)
 	add_child(bg)
+
+	var stone_top = ColorRect.new()
+	stone_top.color = CLR_STONE
+	stone_top.set_anchors_preset(Control.PRESET_TOP_WIDE)
+	stone_top.custom_minimum_size = Vector2(0, 60)
+	add_child(stone_top)
 
 	var gradient = TextureRect.new()
 	gradient.set_anchors_preset(Control.PRESET_FULL_RECT)
@@ -88,6 +96,12 @@ func _build_ui() -> void:
 	title.add_theme_font_size_override("font_size", 26)
 	title.add_theme_color_override("font_color", CLR_ACCENT)
 	title_box.add_child(title)
+
+	var crest = Label.new()
+	crest.text = "◈  LAUREL OF THE ARENA  ◈"
+	crest.add_theme_font_size_override("font_size", 10)
+	crest.add_theme_color_override("font_color", CLR_MUTED)
+	title_box.add_child(crest)
 
 	var subtitle = Label.new()
 	subtitle.text = "Home Base — Contracts, Squad, and Supplies"
@@ -268,6 +282,18 @@ func _refresh() -> void:
 			row.add_theme_constant_override("separation", 10)
 			card_margin.add_child(row)
 
+			var left = VBoxContainer.new()
+			left.add_theme_constant_override("separation", 6)
+			row.add_child(left)
+
+			var id_pill = _make_pill(mission_id, CLR_ACCENT)
+			left.add_child(id_pill)
+
+			var seal = PanelContainer.new()
+			seal.custom_minimum_size = Vector2(26, 26)
+			seal.add_theme_stylebox_override("panel", _seal_style())
+			left.add_child(seal)
+
 			var btn = _make_button("[%s] %s" % [mission_id, m.get("name", "Unknown")], Color(0.18, 0.26, 0.32))
 			btn.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 			btn.pressed.connect(_on_mission_pressed.bind(mission_id))
@@ -395,6 +421,22 @@ func _make_pill(text: String, color: Color) -> PanelContainer:
 	margin.add_child(label)
 	panel.set_meta("label", label)
 	return panel
+
+func _seal_style() -> StyleBoxFlat:
+	var s = StyleBoxFlat.new()
+	s.bg_color = CLR_SEAL
+	s.border_color = CLR_BORDER
+	s.border_width_left = 1
+	s.border_width_top = 1
+	s.border_width_right = 1
+	s.border_width_bottom = 1
+	s.corner_radius_top_left = 13
+	s.corner_radius_top_right = 13
+	s.corner_radius_bottom_left = 13
+	s.corner_radius_bottom_right = 13
+	s.shadow_color = Color(0, 0, 0, 0.35)
+	s.shadow_size = 3
+	return s
 
 func _make_gradient() -> Texture2D:
 	var grad = Gradient.new()

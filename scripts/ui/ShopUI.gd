@@ -10,6 +10,8 @@ const CLR_TEXT   = Color(0.90, 0.840, 0.680)
 const CLR_MUTED  = Color(0.58, 0.520, 0.400)
 const CLR_BUY    = Color(0.14, 0.220, 0.150)
 const CLR_DANGER = Color(0.26, 0.095, 0.090)
+const CLR_STONE  = Color(0.18, 0.155, 0.120)
+const CLR_SEAL   = Color(0.36, 0.12, 0.10)
 
 var shop_pool: Array = []
 var card_rows: VBoxContainer
@@ -37,6 +39,12 @@ func _build_ui() -> void:
 	bg.color = CLR_BG
 	bg.set_anchors_preset(Control.PRESET_FULL_RECT)
 	add_child(bg)
+
+	var stone_top = ColorRect.new()
+	stone_top.color = CLR_STONE
+	stone_top.set_anchors_preset(Control.PRESET_TOP_WIDE)
+	stone_top.custom_minimum_size = Vector2(0, 56)
+	add_child(stone_top)
 
 	var vignette = ColorRect.new()
 	vignette.color = Color(0, 0, 0, 0.20)
@@ -69,10 +77,16 @@ func _build_ui() -> void:
 	title_margin.add_child(title_row)
 
 	var title = Label.new()
-	title.text = "CARD MARKET"
+	title.text = "FORUM MARKET"
 	title.add_theme_font_size_override("font_size", 22)
 	title.add_theme_color_override("font_color", CLR_ACCENT)
 	title_row.add_child(title)
+
+	var crest = Label.new()
+	crest.text = "◈  MERCHANTS OF THE ARENA  ◈"
+	crest.add_theme_font_size_override("font_size", 10)
+	crest.add_theme_color_override("font_color", CLR_MUTED)
+	title_row.add_child(crest)
 
 	var title_spacer = Control.new()
 	title_spacer.size_flags_horizontal = Control.SIZE_EXPAND_FILL
@@ -110,6 +124,11 @@ func _build_ui() -> void:
 	gear_title.add_theme_color_override("font_color", CLR_ACCENT)
 	gear_title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	vbox.add_child(gear_title)
+
+	var gear_seal = PanelContainer.new()
+	gear_seal.custom_minimum_size = Vector2(24, 24)
+	gear_seal.add_theme_stylebox_override("panel", _seal_style())
+	vbox.add_child(gear_seal)
 
 	gear_rows = VBoxContainer.new()
 	gear_rows.add_theme_constant_override("separation", 6)
@@ -343,3 +362,19 @@ func _make_pill(text: String, color: Color) -> PanelContainer:
 	margin.add_child(label)
 	panel.set_meta("label", label)
 	return panel
+
+func _seal_style() -> StyleBoxFlat:
+	var s = StyleBoxFlat.new()
+	s.bg_color = CLR_SEAL
+	s.border_color = CLR_BORDER
+	s.border_width_left = 1
+	s.border_width_top = 1
+	s.border_width_right = 1
+	s.border_width_bottom = 1
+	s.corner_radius_top_left = 12
+	s.corner_radius_top_right = 12
+	s.corner_radius_bottom_left = 12
+	s.corner_radius_bottom_right = 12
+	s.shadow_size = 3
+	s.shadow_color = Color(0, 0, 0, 0.35)
+	return s
