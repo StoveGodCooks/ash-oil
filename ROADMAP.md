@@ -1,8 +1,8 @@
 # Ash & Oil — Development Roadmap
 
-**Current Version:** v0.5 — Phase 5: Gear System & Card Art
+**Current Version:** v0.5 — Phase 5: Gear System & Card Art + Sprint 2 UX Overhaul
 **Last Updated:** February 22, 2026
-**Status:** Gear system live, card frame art integrated, full parchment & wax UI restyle complete
+**Status:** Gear system live, card redesign complete (faction glyphs), full parchment & wax UI restyle, north/south combat layout
 
 ---
 
@@ -67,6 +67,28 @@
   - [x] `scenes/CardDisplay.tscn` — layered frame + portrait + stats panel
   - [x] `scripts/ui/CardDisplay.gd` — `set_card(id)`, `set_card_size()`, placeholder portraits
   - [x] Integrated into CombatUI hand display (add_child before set_card pattern)
+
+### Phase 5b: Sprint 2 UX Overhaul ✅
+- [x] **Landing page centering** — Fixed Main.gd VBox anchor (grow_direction_both, removed position hack)
+- [x] **Combat north/south table layout** — Restructured CombatUI._build_ui():
+  - [x] Enemy zone locked to north (140px fixed)
+  - [x] Arena divider bar with turn counter ("══  ARENA  •  Turn X  ══")
+  - [x] Empty battlefield center (SIZE_EXPAND_FILL) with arena floor zones
+  - [x] Gold center dividing line + two-tone background (cooler enemy side, warmer player side)
+  - [x] Status effect badge rows (☠ poison, ⚡ stun, 🛡 armor, 💚 regen, etc.)
+  - [x] Player zone compact (72px, HP + stamina/mana pills)
+  - [x] Player hand anchored to south (200px minimum)
+  - [x] Combat log anchored bottom-left, action buttons anchored bottom-right
+- [x] **Card face redesign** — Complete CardDisplay visual refresh:
+  - [x] Faction glyph watermarks (Ω=AEGIS, ☽=SPECTER, ✦=ECLIPSE, ⚔=NEUTRAL)
+  - [x] Faction-colored zone (top 58%, deep faction colors)
+  - [x] Frame PNG overlay on top (no longer buried beneath stats panel)
+  - [x] Name ribbon band (CLR_STONE background, CLR_ACCENT text)
+  - [x] Cost badge (top-left corner, bold)
+  - [x] Clean stats + effect area (bottom 40%)
+  - [x] Drop shadow (5/8px offset, black 50%)
+  - [x] Built entirely in _ready() — CardDisplay.tscn is now 5 lines (no parse errors)
+- [x] **Card animation improvements** — Spring easing on fan tween (0.22s TRANS_SPRING, bouncy settle)
 
 ### Testing & CI ✅
 - [x] TestBase framework (15+ assertion types)
@@ -167,23 +189,32 @@
 
 ---
 
-## 🎯 Current Sprint (Sprint 2)
+## 🎯 Current Sprint (Sprint 2) — COMPLETE ✅
 
-### Objectives
+### Completed Objectives
 1. **Gear system live** — ✅ COMPLETE (24 pieces, shop, DevMenu grants, equip UI)
-2. **Card art system** — ✅ COMPLETE (ornate frame asset, CardDisplay scene, hover preview)
+2. **Card art system** — ✅ COMPLETE (ornate frame asset, CardDisplay redesign, hover preview)
 3. **Full UI restyle** — ✅ COMPLETE (parchment & wax palette across all screens)
-4. **Next up** — Wire gear stats into combat, add character portrait art, mission gear drops
+4. **Combat layout overhaul** — ✅ COMPLETE (north/south table, battlefield zone, status effects)
 
-### Tasks
+### Completed Tasks
 - [x] Gear data + GameState integration
 - [x] Shop gear section + DevMenu grants
 - [x] Parchment & wax restyle (Main, MainHub, CombatUI, ShopUI)
 - [x] CardDisplay scene with ornate frame and placeholder portraits
 - [x] Card hover preview panel in CombatUI
+- [x] Landing page header centering (Main.gd)
+- [x] Combat north/south table layout (enemy north, player south, log/buttons anchored)
+- [x] Card face redesign (faction glyphs, frame overlay, clean stats area)
+- [x] Battlefield arena zone (floor + status effect badges)
+- [x] Card animation enhancement (spring easing on fan tween)
+
+### Next Phase (Phase 6: Content & Balance)
 - [ ] Apply equipped gear bonuses to combat (HP, armor, damage)
-- [ ] Mission gear drop rewards (rarity rates from gear_system_complete.md)
-- [ ] Character portrait art for at least 1 hero
+- [ ] Mission gear drop rewards (rarity rates: 90% common, 9% rare, 1% epic)
+- [ ] Dynamic mission enemies (read from missions.json instead of hardcoded)
+- [ ] Card effect resolver (poison, stun, bleed, counter, heal)
+- [ ] Character portrait art for heroes
 - [ ] Fix test suite stamina expectations (3→5)
 
 ---
@@ -238,9 +269,11 @@
 
 ## ⚠️ Known Issues & Technical Debt
 
-- **Test suite stamina mismatch** — `test_combat_logic.gd` expects stamina=3, actual is stamina=5
-- **Gear stats not applied to combat** — `equipped_gear` is set but CombatUI doesn't read bonuses yet
-- **No character portrait art** — CardDisplay uses faction-colored placeholder until portraits are created
+- **Gear stats not applied to combat** — `equipped_gear` is set in MainHub but CombatUI._init_state() doesn't read bonuses yet (Phase 6 task)
+- **No character portrait art** — CardDisplay uses faction glyphs as placeholder; ready to swap in real art when available
+- **Mission enemies hardcoded** — CombatUI._init_state() uses hardcoded enemy list, missions.json "enemies" field unused (Phase 6 task)
+- **Card effects not resolved** — Effect strings ("poison_1", "stun_2") display but don't execute (Phase 6 task)
+- **Test suite stamina mismatch** — `test_combat_logic.gd` expects stamina=3, actual is stamina=5 (Phase 6 task)
 - **CombatUI exceeds 1000 lines** — gdlint `max-file-lines` warning (non-blocking, refactor later)
 
 ---
