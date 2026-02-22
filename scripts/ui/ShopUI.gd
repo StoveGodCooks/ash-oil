@@ -1,6 +1,16 @@
 extends Control
 ## Card shop — buy cards using gold
 
+# ── Parchment & Wax palette ──
+const CLR_BG     = Color(0.08, 0.065, 0.050)
+const CLR_PANEL  = Color(0.14, 0.110, 0.080)
+const CLR_BORDER = Color(0.42, 0.320, 0.160)
+const CLR_ACCENT = Color(0.86, 0.700, 0.360)
+const CLR_TEXT   = Color(0.90, 0.840, 0.680)
+const CLR_MUTED  = Color(0.58, 0.520, 0.400)
+const CLR_BUY    = Color(0.14, 0.220, 0.150)
+const CLR_DANGER = Color(0.26, 0.095, 0.090)
+
 var shop_pool: Array = []
 var card_rows: VBoxContainer
 var gear_rows: VBoxContainer
@@ -24,7 +34,7 @@ func _generate_shop_pool() -> void:
 
 func _build_ui() -> void:
 	var bg = ColorRect.new()
-	bg.color = Color(0.07, 0.07, 0.09)
+	bg.color = CLR_BG
 	bg.set_anchors_preset(Control.PRESET_FULL_RECT)
 	add_child(bg)
 
@@ -41,24 +51,25 @@ func _build_ui() -> void:
 	var title = Label.new()
 	title.text = "CARD MARKET"
 	title.add_theme_font_size_override("font_size", 22)
-	title.add_theme_color_override("font_color", Color(0.9, 0.75, 0.4))
+	title.add_theme_color_override("font_color", CLR_ACCENT)
 	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	vbox.add_child(title)
 
 	# Gold display
 	gold_label = Label.new()
 	gold_label.add_theme_font_size_override("font_size", 14)
-	gold_label.add_theme_color_override("font_color", Color(1.0, 0.85, 0.3))
+	gold_label.add_theme_color_override("font_color", CLR_ACCENT)
 	vbox.add_child(gold_label)
 	_refresh_gold()
 
 	# Message label
 	msg_label = Label.new()
 	msg_label.add_theme_font_size_override("font_size", 12)
-	msg_label.add_theme_color_override("font_color", Color(0.5, 0.9, 0.5))
+	msg_label.add_theme_color_override("font_color", CLR_MUTED)
 	vbox.add_child(msg_label)
 
 	var sep = HSeparator.new()
+	sep.add_theme_color_override("color", CLR_BORDER)
 	vbox.add_child(sep)
 
 	# Card rows
@@ -68,13 +79,14 @@ func _build_ui() -> void:
 	_build_card_rows()
 
 	var sep2 = HSeparator.new()
+	sep2.add_theme_color_override("color", CLR_BORDER)
 	vbox.add_child(sep2)
 
 	# Gear section header
 	var gear_title = Label.new()
 	gear_title.text = "GEAR FOR SALE"
 	gear_title.add_theme_font_size_override("font_size", 18)
-	gear_title.add_theme_color_override("font_color", Color(0.9, 0.75, 0.4))
+	gear_title.add_theme_color_override("font_color", CLR_ACCENT)
 	gear_title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	vbox.add_child(gear_title)
 
@@ -84,10 +96,11 @@ func _build_ui() -> void:
 	_build_gear_rows()
 
 	var sep3 = HSeparator.new()
+	sep3.add_theme_color_override("color", CLR_BORDER)
 	vbox.add_child(sep3)
 
 	# Back button
-	var back_btn = _make_button("← BACK TO HUB", Color(0.25, 0.1, 0.1))
+	var back_btn = _make_button("← BACK TO HUB", CLR_DANGER)
 	back_btn.pressed.connect(func(): get_tree().change_scene_to_file("res://scenes/MainHub.tscn"))
 	vbox.add_child(back_btn)
 
@@ -98,7 +111,7 @@ func _build_card_rows() -> void:
 	if shop_pool.is_empty():
 		var empty = Label.new()
 		empty.text = "Nothing for sale right now."
-		empty.add_theme_color_override("font_color", Color(0.5, 0.5, 0.5))
+		empty.add_theme_color_override("font_color", CLR_MUTED)
 		card_rows.add_child(empty)
 		return
 
@@ -131,7 +144,7 @@ func _build_card_rows() -> void:
 		info.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		row.add_child(info)
 
-		var buy_btn = _make_button("BUY %dg" % price, Color(0.1, 0.3, 0.1))
+		var buy_btn = _make_button("BUY %dg" % price, CLR_BUY)
 		buy_btn.pressed.connect(_on_buy.bind(card_id, price))
 		if GameState.gold < price or GameState.current_deck.size() >= 30:
 			buy_btn.disabled = true
@@ -166,7 +179,7 @@ func _make_button(text: String, color: Color) -> Button:
 	var btn = Button.new()
 	btn.text = text
 	btn.add_theme_font_size_override("font_size", 12)
-	btn.add_theme_color_override("font_color", Color.WHITE)
+	btn.add_theme_color_override("font_color", CLR_TEXT)
 	btn.add_theme_stylebox_override("normal", _make_style(color))
 	btn.add_theme_stylebox_override("hover", _make_style(color.lightened(0.15)))
 	btn.add_theme_stylebox_override("pressed", _make_style(color.darkened(0.15)))
@@ -191,7 +204,7 @@ func _build_gear_rows() -> void:
 	if sorted_ids.is_empty():
 		var empty = Label.new()
 		empty.text = "No gear available."
-		empty.add_theme_color_override("font_color", Color(0.5, 0.5, 0.5))
+		empty.add_theme_color_override("font_color", CLR_MUTED)
 		gear_rows.add_child(empty)
 		return
 
@@ -229,10 +242,10 @@ func _build_gear_rows() -> void:
 
 		var buy_btn: Button
 		if owned:
-			buy_btn = _make_button("OWNED", Color(0.15, 0.15, 0.15))
+			buy_btn = _make_button("OWNED", CLR_PANEL)
 			buy_btn.disabled = true
 		else:
-			buy_btn = _make_button("BUY %dg" % price, Color(0.1, 0.25, 0.35))
+			buy_btn = _make_button("BUY %dg" % price, CLR_BUY)
 			buy_btn.disabled = GameState.gold < price
 			buy_btn.pressed.connect(_on_buy_gear.bind(gear_id, price))
 		row.add_child(buy_btn)
@@ -263,6 +276,11 @@ func _gear_rarity_color(rarity: String) -> Color:
 func _make_style(color: Color) -> StyleBoxFlat:
 	var s = StyleBoxFlat.new()
 	s.bg_color = color
+	s.border_color = CLR_BORDER
+	s.border_width_left = 1
+	s.border_width_top = 1
+	s.border_width_right = 1
+	s.border_width_bottom = 1
 	s.corner_radius_top_left = 4
 	s.corner_radius_top_right = 4
 	s.corner_radius_bottom_left = 4

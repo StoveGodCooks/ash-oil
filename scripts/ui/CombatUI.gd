@@ -3,6 +3,16 @@ extends Control
 
 const LOG_AUTOWRAP_MODE: TextServer.AutowrapMode = TextServer.AutowrapMode.AUTOWRAP_WORD
 
+# ── Parchment & Wax palette ──
+const CLR_BG      = Color(0.08, 0.065, 0.050)
+const CLR_PANEL   = Color(0.14, 0.110, 0.080)
+const CLR_BORDER  = Color(0.42, 0.320, 0.160)
+const CLR_ACCENT  = Color(0.86, 0.700, 0.360)
+const CLR_TEXT    = Color(0.90, 0.840, 0.680)
+const CLR_MUTED   = Color(0.58, 0.520, 0.400)
+const CLR_BTN     = Color(0.20, 0.160, 0.115)
+const CLR_DANGER  = Color(0.26, 0.095, 0.090)
+
 # ============ COMBAT STATE ============
 var champion_hp: int = 30
 var champion_max_hp: int = 30
@@ -95,7 +105,7 @@ func _init_state() -> void:
 
 func _build_ui() -> void:
 	var bg = ColorRect.new()
-	bg.color = Color(0.08, 0.06, 0.05, 1)
+	bg.color = CLR_BG
 	bg.set_anchors_preset(Control.PRESET_FULL_RECT)
 	add_child(bg)
 
@@ -112,6 +122,7 @@ func _build_ui() -> void:
 	var mission_label = Label.new()
 	mission_label.text = "  M01: THE TOKEN — Arena Fight"
 	mission_label.add_theme_font_size_override("font_size", 14)
+	mission_label.add_theme_color_override("font_color", CLR_ACCENT)
 	title_bar.add_child(mission_label)
 
 	var spacer = Control.new()
@@ -126,6 +137,7 @@ func _build_ui() -> void:
 	# Enemy zone
 	var enemy_panel = PanelContainer.new()
 	enemy_panel.custom_minimum_size = Vector2(0, 140)
+	enemy_panel.add_theme_stylebox_override("panel", _panel_style())
 	main_vbox.add_child(enemy_panel)
 
 	var enemy_vbox = VBoxContainer.new()
@@ -135,7 +147,7 @@ func _build_ui() -> void:
 	target_label.text = "← Click enemy to target →"
 	target_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	target_label.add_theme_font_size_override("font_size", 11)
-	target_label.modulate = Color(0.8, 0.8, 0.5)
+	target_label.add_theme_color_override("font_color", CLR_MUTED)
 	enemy_vbox.add_child(target_label)
 
 	var enemy_hbox = HBoxContainer.new()
@@ -155,6 +167,7 @@ func _build_ui() -> void:
 	# Player zone
 	var player_panel = PanelContainer.new()
 	player_panel.custom_minimum_size = Vector2(0, 100)
+	player_panel.add_theme_stylebox_override("panel", _panel_style())
 	main_vbox.add_child(player_panel)
 
 	var player_hbox = HBoxContainer.new()
@@ -187,12 +200,14 @@ func _build_ui() -> void:
 	stamina_label = Label.new()
 	stamina_label.text = "Stamina: 5/5"
 	stamina_label.add_theme_font_size_override("font_size", 13)
+	stamina_label.add_theme_color_override("font_color", CLR_TEXT)
 	stamina_label.custom_minimum_size = Vector2(140, 0)
 	res_hbox.add_child(stamina_label)
 
 	mana_label = Label.new()
 	mana_label.text = "Mana: 0/10"
 	mana_label.add_theme_font_size_override("font_size", 13)
+	mana_label.add_theme_color_override("font_color", CLR_TEXT)
 	mana_label.custom_minimum_size = Vector2(120, 0)
 	res_hbox.add_child(mana_label)
 
@@ -221,12 +236,20 @@ func _build_ui() -> void:
 	end_turn_btn = Button.new()
 	end_turn_btn.text = "END TURN"
 	end_turn_btn.custom_minimum_size = Vector2(160, 45)
+	end_turn_btn.add_theme_stylebox_override("normal",  _btn_style(CLR_BTN))
+	end_turn_btn.add_theme_stylebox_override("hover",   _btn_style(CLR_BTN.lightened(0.18)))
+	end_turn_btn.add_theme_stylebox_override("pressed", _btn_style(CLR_BTN.darkened(0.18)))
+	end_turn_btn.add_theme_color_override("font_color", CLR_ACCENT)
 	end_turn_btn.pressed.connect(_on_end_turn)
 	action_hbox.add_child(end_turn_btn)
 
 	var retreat_btn = Button.new()
 	retreat_btn.text = "RETREAT"
 	retreat_btn.custom_minimum_size = Vector2(120, 45)
+	retreat_btn.add_theme_stylebox_override("normal",  _btn_style(CLR_DANGER))
+	retreat_btn.add_theme_stylebox_override("hover",   _btn_style(CLR_DANGER.lightened(0.18)))
+	retreat_btn.add_theme_stylebox_override("pressed", _btn_style(CLR_DANGER.darkened(0.18)))
+	retreat_btn.add_theme_color_override("font_color", CLR_TEXT)
 	retreat_btn.pressed.connect(_on_retreat)
 	action_hbox.add_child(retreat_btn)
 
@@ -234,11 +257,13 @@ func _build_ui() -> void:
 	var log_title = Label.new()
 	log_title.text = "Combat Log:"
 	log_title.add_theme_font_size_override("font_size", 11)
+	log_title.add_theme_color_override("font_color", CLR_ACCENT)
 	main_vbox.add_child(log_title)
 
 	log_label = Label.new()
 	log_label.text = "Combat begins..."
 	log_label.add_theme_font_size_override("font_size", 11)
+	log_label.add_theme_color_override("font_color", CLR_TEXT)
 	log_label.autowrap_mode = LOG_AUTOWRAP_MODE
 	log_label.custom_minimum_size = Vector2(0, 60)
 	main_vbox.add_child(log_label)
@@ -695,6 +720,40 @@ func _hide_card_preview() -> void:
 		card_preview.visible = false
 
 # ──────────────────────────────────────────────
+
+func _panel_style() -> StyleBoxFlat:
+	var s = StyleBoxFlat.new()
+	s.bg_color = CLR_PANEL
+	s.border_width_left   = 1
+	s.border_width_right  = 1
+	s.border_width_top    = 1
+	s.border_width_bottom = 2
+	s.border_color = CLR_BORDER
+	s.corner_radius_top_left     = 5
+	s.corner_radius_top_right    = 5
+	s.corner_radius_bottom_left  = 5
+	s.corner_radius_bottom_right = 5
+	s.shadow_color = Color(0, 0, 0, 0.35)
+	s.shadow_size  = 3
+	return s
+
+func _btn_style(color: Color) -> StyleBoxFlat:
+	var s = StyleBoxFlat.new()
+	s.bg_color = color
+	s.border_width_left   = 1
+	s.border_width_right  = 1
+	s.border_width_top    = 1
+	s.border_width_bottom = 1
+	s.border_color = CLR_BORDER
+	s.corner_radius_top_left     = 4
+	s.corner_radius_top_right    = 4
+	s.corner_radius_bottom_left  = 4
+	s.corner_radius_bottom_right = 4
+	s.content_margin_left   = 10
+	s.content_margin_right  = 10
+	s.content_margin_top    = 4
+	s.content_margin_bottom = 4
+	return s
 
 var _log_lines: Array = []
 func _log(msg: String) -> void:

@@ -1,18 +1,18 @@
 extends Control
 ## Central hub screen — mission select, shops, meters, lieutenants
 
-# ============ THEME ============
-const CLR_BG = Color(0.06, 0.055, 0.06)
-const CLR_BG_TOP = Color(0.10, 0.08, 0.07)
-const CLR_ACCENT = Color(0.86, 0.70, 0.36)
-const CLR_TEXT = Color(0.88, 0.88, 0.88)
-const CLR_MUTED = Color(0.62, 0.62, 0.62)
-const CLR_CARD = Color(0.12, 0.12, 0.14)
-const CLR_CARD_EDGE = Color(0.20, 0.18, 0.14)
-const CLR_BTN = Color(0.20, 0.24, 0.30)
-const CLR_BTN_ALT = Color(0.18, 0.28, 0.22)
-const CLR_BTN_WARN = Color(0.30, 0.22, 0.12)
-const CLR_BTN_DANGER = Color(0.28, 0.12, 0.12)
+# ============ THEME — Parchment & Wax ============
+const CLR_BG       = Color(0.08, 0.065, 0.050)   # Near-black warm brown
+const CLR_BG_TOP   = Color(0.13, 0.100, 0.075)   # Slightly lighter top
+const CLR_ACCENT   = Color(0.86, 0.700, 0.360)   # Aged gold (titles, highlights)
+const CLR_TEXT     = Color(0.90, 0.840, 0.680)   # Parchment cream
+const CLR_MUTED    = Color(0.58, 0.520, 0.400)   # Warm grey-brown
+const CLR_CARD     = Color(0.14, 0.110, 0.080)   # Dark parchment panel
+const CLR_CARD_EDGE= Color(0.42, 0.320, 0.160)   # Aged gold border
+const CLR_BTN      = Color(0.20, 0.160, 0.115)   # Dark leather button
+const CLR_BTN_ALT  = Color(0.14, 0.220, 0.150)   # Muted forest green
+const CLR_BTN_WARN = Color(0.28, 0.200, 0.090)   # Amber warning
+const CLR_BTN_DANGER= Color(0.26, 0.095, 0.090)  # Dark blood red
 
 # ============ UI REFS ============
 var gold_label: Label
@@ -272,28 +272,28 @@ func _make_button(text: String, color: Color) -> Button:
 	var btn = Button.new()
 	btn.text = text
 	btn.add_theme_font_size_override("font_size", 13)
-	btn.add_theme_color_override("font_color", Color.WHITE)
-	btn.add_theme_stylebox_override("normal", _make_style(color))
-	btn.add_theme_stylebox_override("hover", _make_style(color.lightened(0.15)))
-	btn.add_theme_stylebox_override("pressed", _make_style(color.darkened(0.15)))
+	btn.add_theme_color_override("font_color", CLR_TEXT)
+	btn.add_theme_stylebox_override("normal",  _make_style(color))
+	btn.add_theme_stylebox_override("hover",   _make_style(color.lightened(0.18)))
+	btn.add_theme_stylebox_override("pressed", _make_style(color.darkened(0.18)))
 	btn.custom_minimum_size = Vector2(0, 38)
 	return btn
 
 func _make_style(color: Color) -> StyleBoxFlat:
 	var s = StyleBoxFlat.new()
 	s.bg_color = color
-	s.border_width_left = 1
-	s.border_width_right = 1
-	s.border_width_top = 1
+	s.border_width_left   = 1
+	s.border_width_right  = 1
+	s.border_width_top    = 1
 	s.border_width_bottom = 1
-	s.border_color = Color(0.35, 0.32, 0.26)
-	s.corner_radius_top_left = 4
-	s.corner_radius_top_right = 4
-	s.corner_radius_bottom_left = 4
+	s.border_color = CLR_CARD_EDGE        # Aged gold border on all buttons
+	s.corner_radius_top_left     = 4
+	s.corner_radius_top_right    = 4
+	s.corner_radius_bottom_left  = 4
 	s.corner_radius_bottom_right = 4
-	s.content_margin_left = 12
-	s.content_margin_right = 12
-	s.content_margin_top = 6
+	s.content_margin_left   = 12
+	s.content_margin_right  = 12
+	s.content_margin_top    = 6
 	s.content_margin_bottom = 6
 	return s
 
@@ -323,15 +323,17 @@ func _make_section_card(parent: Control, title: String) -> VBoxContainer:
 func _make_card_style() -> StyleBoxFlat:
 	var s = StyleBoxFlat.new()
 	s.bg_color = CLR_CARD
-	s.border_width_left = 1
-	s.border_width_right = 1
-	s.border_width_top = 1
-	s.border_width_bottom = 1
+	s.border_width_left   = 1
+	s.border_width_right  = 1
+	s.border_width_top    = 1
+	s.border_width_bottom = 2           # Slightly heavier base gives weight
 	s.border_color = CLR_CARD_EDGE
-	s.corner_radius_top_left = 6
-	s.corner_radius_top_right = 6
-	s.corner_radius_bottom_left = 6
+	s.corner_radius_top_left     = 6
+	s.corner_radius_top_right    = 6
+	s.corner_radius_bottom_left  = 6
 	s.corner_radius_bottom_right = 6
+	s.shadow_color = Color(0, 0, 0, 0.4)
+	s.shadow_size  = 4
 	return s
 
 func _make_pill(text: String, color: Color) -> PanelContainer:
