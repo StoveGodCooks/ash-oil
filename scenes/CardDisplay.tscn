@@ -32,12 +32,14 @@ texture = ExtResource("2")
 expand_mode = 1
 stretch_mode = 1
 
-[node name="PortraitRect" type="Control" parent="."]
+[node name="PortraitRect" type="TextureRect" parent="."]
 layout_mode = 0
 offset_left = 20.0
 offset_top = 18.0
 offset_right = 160.0
 offset_bottom = 168.0
+expand_mode = 1
+stretch_mode = 5
 
 [node name="PortraitTint" type="ColorRect" parent="."]
 layout_mode = 0

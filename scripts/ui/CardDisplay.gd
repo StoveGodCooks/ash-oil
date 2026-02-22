@@ -49,7 +49,9 @@ func set_card(card_id: String) -> void:
 	var portrait_path = "res://assets/characters/%s.png" % hero_name.to_lower()
 
 	# Try to load real portrait, fall back to placeholder
-	var portrait_tex = load(portrait_path)
+	var portrait_tex = null
+	if ResourceLoader.exists(portrait_path):
+		portrait_tex = ResourceLoader.load(portrait_path)
 	if portrait_tex:
 		portrait_rect.texture = portrait_tex
 	else:
@@ -81,9 +83,9 @@ func set_card(card_id: String) -> void:
 	var effect = card.get("effect", "")
 	effect_label.text = effect if effect != "" else ""
 
-func set_card_size(size: Vector2) -> void:
+func set_card_size(card_size: Vector2) -> void:
 	"""Resize card for different contexts (hand: 120×180, preview: 180×270)"""
-	custom_minimum_size = size
+	custom_minimum_size = card_size
 
 func _create_placeholder_portrait(hero_name: String, faction: String) -> void:
 	"""Create a placeholder portrait (solid color + text) until real art is available"""
@@ -101,6 +103,8 @@ func _create_placeholder_portrait(hero_name: String, faction: String) -> void:
 	label.set_anchors_preset(Control.PRESET_FULL_RECT)
 	placeholder.add_child(label)
 
+	for child in portrait_rect.get_children():
+		child.queue_free()
 	portrait_rect.texture = null
 	portrait_rect.add_child(placeholder)
 
