@@ -135,7 +135,7 @@ git commit -m "chore: update START_HERE.md with Phase 6 completion status"
 
 # 📍 CURRENT STATUS
 
-**Last Patch:** (uncommitted) — feat: Phase 7 story UI integration
+**Last Patch:** afe8ca4 — feat: Phase 7 story UI integration
 
 **Current Phase:** Phase 7 ✅ COMPLETE | Phase 8 🔲 PENDING
 
@@ -160,7 +160,7 @@ git commit -m "chore: update START_HERE.md with Phase 6 completion status"
 - ✅ MissionBriefer cancel flow + hide on missing hooks
 - ✅ Narrative hook meter_impact set to display-only (no double meter application)
 
-**Last Commit:** a84c10f — feat: Phase 6 narrative hooks system
+**Last Commit:** afe8ca4 — feat: Phase 7 story UI integration
 
 ## What's Done This Session
 
