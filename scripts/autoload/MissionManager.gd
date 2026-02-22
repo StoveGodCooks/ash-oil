@@ -3,7 +3,11 @@ extends Node
 
 var missions_data: Dictionary = {}
 
+# ============ SIGNALS ============
+signal mission_completed(mission_id: String)
+
 func _ready() -> void:
+	randomize()
 	_load_missions()
 
 func _load_missions() -> void:
@@ -64,10 +68,19 @@ func complete_mission(id: String, outcome: String = "victory") -> void:
 	var rewards = mission.get("victory_rewards", {})
 	if outcome == "retreat": rewards = mission.get("retreat_rewards", rewards)
 	GameState.add_gold(int(rewards.get("gold", 0) * multiplier))
+	if outcome == "victory":
+		var dropped_gear_id: String = _roll_gear_drop()
+		if dropped_gear_id != "":
+			GameState.add_gear(dropped_gear_id)
+			var gear_data: Dictionary = CardManager.get_gear(dropped_gear_id)
+			print("Gear drop: %s (%s)" % [gear_data.get("name", dropped_gear_id), gear_data.get("rarity", "unknown")])
 
 	# Unlock next missions
 	_unlock_next(id)
 	SaveManager.auto_save()
+
+	# Emit signal for narrative manager and other subscribers
+	mission_completed.emit(id)
 
 func _unlock_next(id: String) -> void:
 	if id.begins_with("M"):
@@ -88,6 +101,27 @@ func _unlock_next(id: String) -> void:
 	}
 	for mission in side_unlocks.get(id, []):
 		GameState.unlock_mission(mission)
+
+func _roll_gear_drop() -> String:
+	var roll: float = randf()
+	var target_rarity := "common"
+	if roll < 0.01:
+		target_rarity = "epic"
+	elif roll < 0.10:
+		target_rarity = "rare"
+
+	var candidates: Array = []
+	for gear_id in CardManager.gear_data.keys():
+		if GameState.has_gear(gear_id):
+			continue
+		var gear: Dictionary = CardManager.get_gear(gear_id)
+		if str(gear.get("rarity", "")).to_lower() == target_rarity:
+			candidates.append(gear_id)
+
+	if candidates.is_empty():
+		return ""
+	var pick_idx: int = randi() % candidates.size()
+	return str(candidates[pick_idx])
 
 func check_ending_path() -> String:
 	if GameState.PIETY >= 7: return "Cult"

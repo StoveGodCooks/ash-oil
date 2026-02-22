@@ -1,0 +1,256 @@
+{
+  "mission_hooks": {
+    "M01": {
+      "story_id": "token_arrives",
+      "title": "The Token",
+      "brief": "A boy arrives with a wax seal. Someone is warning you. Someone is hunting you.",
+      "phase": "SURVIVAL",
+      "who_hunts": ["Marcellus"],
+      "who_helps": ["Rhesus"],
+      "meter_impact": { "REPUTATION": 3, "DANGER": 8, "FAITH": 2 },
+      "monologue": "They've already decided my death. Time to decide theirs."
+    },
+    "M02": {
+      "story_id": "empty_arena",
+      "title": "The Empty Arena",
+      "brief": "You face Rhesus in rehearsal. You learn the fix is deeper than you thought.",
+      "phase": "SURVIVAL",
+      "who_hunts": ["Marcellus"],
+      "who_helps": ["Rhesus"],
+      "meter_impact": { "REPUTATION": 5, "DANGER": 3, "FAITH": 4 },
+      "monologue": "Rhesus is as trapped as I am. We're both expensive enough to be valuable."
+    },
+    "M03": {
+      "story_id": "theft",
+      "title": "The Case",
+      "brief": "You steal a ledger from Sabina. Names. Payments. Corruption pressed into wax.",
+      "phase": "SURVIVAL",
+      "who_hunts": ["Marcellus", "Sabina"],
+      "who_helps": ["Moth", "Iona"],
+      "meter_impact": { "REPUTATION": 4, "DANGER": 12, "COST": 5 },
+      "monologue": "If I don't move it, I can't breathe. If I do, I can't hide."
+    },
+    "M04": {
+      "story_id": "ridge_city",
+      "title": "The Quarry Breathes",
+      "brief": "Ridge City. Men cough like it's a rhythm. The magistrate's man finds you.",
+      "phase": "SURVIVAL",
+      "who_hunts": ["Marcellus"],
+      "who_helps": ["Iona"],
+      "meter_impact": { "REPUTATION": 6, "DANGER": 8, "COST": 3 },
+      "monologue": "They want it. I want not to be owned. This is where we find out who blinks first."
+    },
+    "M05": {
+      "story_id": "port_city",
+      "title": "The Quill's Lesson",
+      "brief": "Port City. The Quill owns shadows here. They have Moth. They demand the ledger.",
+      "phase": "SURVIVAL",
+      "who_hunts": ["Marcellus", "Port Syndicate"],
+      "who_helps": ["Moth", "Rhesus"],
+      "meter_impact": { "REPUTATION": 7, "DANGER": 6, "ALLIES": 4, "COST": 8 },
+      "monologue": "I said no. That's all I had. But Moth's blood is on my hands now, and that changed something."
+    },
+    "M06": {
+      "story_id": "shrine_town",
+      "title": "The Shrine Awakens",
+      "brief": "Iona and the shrine network want the ledger. Marcellus's reach extends even here.",
+      "phase": "HOPE",
+      "who_hunts": ["Marcellus", "Shrine Network"],
+      "who_helps": ["Iona", "Varro"],
+      "meter_impact": { "REPUTATION": 8, "DANGER": 4, "FAITH": 6, "ALLIES": 5 },
+      "monologue": "The ledger exists in more hands now. I'm no longer carrying it. I'm becoming it."
+    },
+    "M07": {
+      "story_id": "copied_revelation",
+      "title": "The Copied Page",
+      "brief": "You discover copies of the ledger spreading. The story can't be buried anymore.",
+      "phase": "HOPE",
+      "who_hunts": ["Port Syndicate"],
+      "who_helps": ["Iona", "Rhesus"],
+      "meter_impact": { "REPUTATION": 9, "DANGER": 2, "FAITH": 5, "ALLIES": 6, "RESISTANCE": 3 },
+      "monologue": "Multiple hands hold the truth now. The machine is afraid. I can feel it."
+    },
+    "M08": {
+      "story_id": "gathering_allies",
+      "title": "Building Opposition",
+      "brief": "Other fighters, merchants, believers—people willing to stand against the narrative.",
+      "phase": "HOPE",
+      "who_hunts": ["Marcellus"],
+      "who_helps": ["Rhesus", "Moth", "Iona", "Varro"],
+      "meter_impact": { "REPUTATION": 10, "FAITH": 7, "ALLIES": 8, "RESISTANCE": 4 },
+      "monologue": "They're not following me. They're standing where I stand. That's different. That matters."
+    },
+    "M09": {
+      "story_id": "faction_emergence",
+      "title": "The Factions Reveal",
+      "brief": "State, Cult, Syndicate—they all want the ledger. Each has a different vision of control.",
+      "phase": "HOPE",
+      "who_hunts": ["Marcellus", "Port Syndicate", "Shrine Network"],
+      "who_helps": ["Iona"],
+      "meter_impact": { "REPUTATION": 8, "FAITH": 8, "ALLIES": 7, "RESISTANCE": 6 },
+      "monologue": "The machine isn't one hand. It's many, fighting each other with my bones as stakes."
+    },
+    "M10": {
+      "story_id": "rhesus_choice",
+      "title": "The Fellow Trapped",
+      "brief": "Rhesus faces his own reckoning. Will he keep the cage, or help break it?",
+      "phase": "HOPE",
+      "who_hunts": ["Marcellus"],
+      "who_helps": ["Rhesus", "Varro"],
+      "meter_impact": { "REPUTATION": 11, "ALLIES": 10, "FAITH": 6, "RESISTANCE": 7 },
+      "monologue": "Rhesus chose. His silence was an answer. Now he can't take it back."
+    },
+    "M11": {
+      "story_id": "moth_cost",
+      "title": "The Boy Becomes Real",
+      "brief": "Moth is no longer just a messenger. He's bleeding for the story, not the coin.",
+      "phase": "HOPE",
+      "who_hunts": ["Port Syndicate"],
+      "who_helps": ["Moth", "Iona"],
+      "meter_impact": { "REPUTATION": 9, "ALLIES": 9, "COST": 12, "FAITH": 7 },
+      "monologue": "Moth paid in bruises so I could breathe. I can't undo that. I can only honor it."
+    },
+    "M12": {
+      "story_id": "varro_reckoning",
+      "title": "The Trainer's Bargain",
+      "brief": "Varro made a deal. Now he must choose: the deal or the man.",
+      "phase": "HOPE",
+      "who_hunts": ["Marcellus"],
+      "who_helps": ["Varro", "Rhesus"],
+      "meter_impact": { "REPUTATION": 10, "ALLIES": 11, "COST": 10, "FAITH": 8, "RESISTANCE": 8 },
+      "monologue": "Varro is choosing. The weight on his shoulders mirrors the weight on mine. We're bound now."
+    },
+    "M13": {
+      "story_id": "public_exposure",
+      "title": "The Arena Riot",
+      "brief": "The crowd sees the machinery. Marcellus offers a final choice: obey or die.",
+      "phase": "RESISTANCE",
+      "who_hunts": ["Marcellus", "City Guard"],
+      "who_helps": ["Rhesus", "Varro", "Iona", "Moth"],
+      "meter_impact": { "REPUTATION": 15, "COST": 20, "RESISTANCE": 15, "ALLIES": 12, "FAITH": 10 },
+      "monologue": "The crowd knows now. They've been made fools. Marcellus will burn this city to keep his narrative. So will I."
+    },
+    "M14": {
+      "story_id": "escape_begins",
+      "title": "Breaking the Cage",
+      "brief": "Varro sacrifices. The guards chase. You run toward whatever comes next.",
+      "phase": "RESISTANCE",
+      "who_hunts": ["City Guard", "Marcellus"],
+      "who_helps": ["Varro", "Iona", "Moth"],
+      "meter_impact": { "REPUTATION": 12, "DANGER": -5, "COST": 25, "RESISTANCE": 10 },
+      "monologue": "Varro bought me time with his body. I can't waste it. I won't."
+    },
+    "M15": {
+      "story_id": "allies_tested",
+      "title": "Loyalty Under Fire",
+      "brief": "Rhesus, Iona, Moth—each faces pressure to betray. Each chooses differently.",
+      "phase": "RESISTANCE",
+      "who_hunts": ["Marcellus", "Shrine Network", "Port Syndicate"],
+      "who_helps": [],
+      "meter_impact": { "REPUTATION": 13, "ALLIES": 8, "COST": 15, "FAITH": 5, "RESISTANCE": 12 },
+      "monologue": "Loyalty is tested now. Some will break. Some will burn. I can't save anyone but myself."
+    },
+    "M16": {
+      "story_id": "faction_choice",
+      "title": "Choosing a Path",
+      "brief": "You must commit to one vision: State order, Cult faith, or Syndicate freedom. Or stand alone.",
+      "phase": "RESISTANCE",
+      "who_hunts": ["All Factions"],
+      "who_helps": [],
+      "meter_impact": { "REPUTATION": 14, "FAITH": 12, "RESISTANCE": 14, "COST": 18 },
+      "monologue": "I can wear their colors, or wear none at all. Either way, I'm branded now."
+    },
+    "M17": {
+      "story_id": "opposition_counters",
+      "title": "The Machine Strikes Back",
+      "brief": "Marcellus moves with full force. The city realizes someone is fighting for real.",
+      "phase": "RESISTANCE",
+      "who_hunts": ["Marcellus", "City Guard"],
+      "who_helps": ["Rhesus", "Iona"],
+      "meter_impact": { "REPUTATION": 16, "DANGER": 8, "RESISTANCE": 16, "COST": 22 },
+      "monologue": "They're afraid. That's when they're most dangerous. They'll burn the city to bury the story."
+    },
+    "M18": {
+      "story_id": "final_stands",
+      "title": "Last Line",
+      "brief": "Rhesus, Iona, Moth—each makes their final stand. Some fall. Some survive.",
+      "phase": "RESISTANCE",
+      "who_hunts": ["Marcellus"],
+      "who_helps": ["Rhesus"],
+      "meter_impact": { "REPUTATION": 17, "ALLIES": 6, "COST": 28, "RESISTANCE": 18 },
+      "monologue": "They died standing. That's a kind of victory the machine can't measure."
+    },
+    "M19": {
+      "story_id": "before_reckoning",
+      "title": "The Silence Before",
+      "brief": "Preparation. Waiting. The final confrontation looms.",
+      "phase": "RESISTANCE",
+      "who_hunts": ["Marcellus"],
+      "who_helps": ["Moth"],
+      "meter_impact": { "REPUTATION": 18, "COST": 15, "FAITH": 9, "RESISTANCE": 19 },
+      "monologue": "I've said no a hundred times now. One more no coming. This one will break something."
+    },
+    "M20": {
+      "story_id": "final_confrontation",
+      "title": "The Noon Blood",
+      "brief": "Face Marcellus. The crowd watches. The machine demands a story. You give it the truth.",
+      "phase": "RESISTANCE",
+      "who_hunts": ["Marcellus"],
+      "who_helps": ["Varro", "Rhesus", "Iona", "Moth"],
+      "meter_impact": { "REPUTATION": 20, "COST": 30, "FAITH": 10, "RESISTANCE": 20, "ALLIES": 10 },
+      "monologue": "I'm not a hero. I'm just a man who kept saying no until it mattered."
+    }
+  },
+
+  "story_beats": {
+    "token_arrives": {
+      "text": "The boy's message was warning and invitation both: they want you dead, and they've already decided how. That means you still have time.",
+      "phase": "SURVIVAL",
+      "unlocks_missions": ["M02", "M03"],
+      "unlocks_lieutenants": []
+    },
+    "copied_ledger": {
+      "text": "You realize the ledger exists in multiple hands now. You're no longer the only weapon. You're the story.",
+      "phase": "HOPE",
+      "unlocks_missions": ["M06", "M07", "M08"],
+      "unlocks_lieutenants": []
+    },
+    "public_exposure": {
+      "text": "The arena riot showed the crowd the machinery that moves them. Now they're angry. Now it matters.",
+      "phase": "RESISTANCE",
+      "unlocks_missions": ["M13", "M14", "M15"],
+      "unlocks_lieutenants": []
+    }
+  },
+
+  "character_arcs": {
+    "Rhesus": {
+      "first_encounter": "M02",
+      "missions": ["M02", "M05", "M10", "M18", "M20"],
+      "loyalty_threshold": 0.6,
+      "role": "Fellow trapped fighter, recognizes Cassian's cage",
+      "final_choice": "stand_or_flee"
+    },
+    "Moth": {
+      "first_encounter": "M03",
+      "missions": ["M03", "M04", "M05", "M11", "M19"],
+      "loyalty_threshold": 0.5,
+      "role": "Boy messenger, becomes symbol of cost",
+      "final_choice": "follow_or_survive"
+    },
+    "Iona": {
+      "first_encounter": "M04",
+      "missions": ["M04", "M06", "M09", "M14", "M20"],
+      "loyalty_threshold": 0.7,
+      "role": "Shrine representative caught between faith and hunger",
+      "final_choice": "protect_or_use"
+    },
+    "Varro": {
+      "first_encounter": "M01",
+      "missions": ["M01", "M02", "M03", "M05", "M12", "M20"],
+      "loyalty_threshold": 0.8,
+      "role": "Your trainer, makes the deal, pays the final cost",
+      "final_choice": "betrayal_to_redemption"
+    }
+  }
+}

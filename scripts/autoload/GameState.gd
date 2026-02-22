@@ -32,14 +32,12 @@ var swap_cooldown: int = 0
 var gold: int = 0
 var current_deck: Array = []
 var discovered_cards: Array = []
-
-# ============ GEAR ============
+var owned_gear: Array = []
 var equipped_gear: Dictionary = {
 	"weapon": "",
 	"armor": "",
-	"accessory": ""
+	"accessory": "",
 }
-var gear_inventory: Array = []  # List of gear IDs player owns
 
 # ============ MISSION PROGRESS ============
 var current_mission_id: String = ""
@@ -79,6 +77,14 @@ var routes: Dictionary = {
 	"Ridge_Port":  {"state": "safe",   "toll": 0},
 	"Port_Shrine": {"state": "locked", "toll": 0},
 }
+
+# ============ NARRATIVE STATE ============
+var story_phase: String = "SURVIVAL"  # SURVIVAL / HOPE / RESISTANCE
+var threat_level: Array[String] = ["Marcellus"]  # Who is actively hunting Cassian?
+var refusals_made: int = 0  # Counter: how many times has Cassian said "No"?
+var costs_paid: Array[String] = []  # Names of those who've sacrificed for Cassian
+var narrative_momentum: String = "On the Run"  # Phase-dependent state description
+var completed_story_beats: Array[String] = []  # Story beat IDs that have triggered
 
 # ============ GAME STATE ============
 var current_location: String = "Arena City"
@@ -147,6 +153,17 @@ func add_card(card_id: String) -> bool:
 		return true
 	return false
 
+func add_gear(gear_id: String) -> void:
+	if gear_id not in owned_gear:
+		owned_gear.append(gear_id)
+
+func has_gear(gear_id: String) -> bool:
+	return gear_id in owned_gear
+
+func equip_gear(slot: String, gear_id: String) -> void:
+	if slot in equipped_gear:
+		equipped_gear[slot] = gear_id
+
 # ============ MISSION FUNCTIONS ============
 func complete_mission(mission_id: String) -> void:
 	if mission_id not in completed_missions:
@@ -171,6 +188,8 @@ func to_dict() -> Dictionary:
 		"gold": gold,
 		"current_deck": current_deck,
 		"discovered_cards": discovered_cards,
+		"owned_gear": owned_gear,
+		"equipped_gear": equipped_gear,
 		"completed_missions": completed_missions,
 		"unlocked_missions": unlocked_missions,
 		"current_mission_id": current_mission_id,
@@ -178,12 +197,16 @@ func to_dict() -> Dictionary:
 		"active_hooks": active_hooks,
 		"faction_status": faction_status,
 		"npc_relationships": npc_relationships,
+		"story_phase": story_phase,
+		"threat_level": threat_level,
+		"refusals_made": refusals_made,
+		"costs_paid": costs_paid,
+		"narrative_momentum": narrative_momentum,
+		"completed_story_beats": completed_story_beats,
 		"current_location": current_location,
 		"season": season,
 		"act": act,
 		"ending_reached": ending_reached,
-		"equipped_gear": equipped_gear,
-		"gear_inventory": gear_inventory,
 	}
 
 func from_dict(data: Dictionary) -> void:
@@ -199,6 +222,8 @@ func from_dict(data: Dictionary) -> void:
 	gold               = data.get("gold",               0)
 	current_deck       = data.get("current_deck",       [])
 	discovered_cards   = data.get("discovered_cards",   [])
+	owned_gear         = data.get("owned_gear",         [])
+	equipped_gear      = data.get("equipped_gear",      equipped_gear)
 	completed_missions = data.get("completed_missions",  [])
 	unlocked_missions  = data.get("unlocked_missions",  ["M01"])
 	current_mission_id = data.get("current_mission_id", "")
@@ -206,12 +231,22 @@ func from_dict(data: Dictionary) -> void:
 	active_hooks       = data.get("active_hooks",        [])
 	faction_status     = data.get("faction_status",      faction_status)
 	npc_relationships  = data.get("npc_relationships",   npc_relationships)
+	story_phase        = data.get("story_phase",        "SURVIVAL")
+	var loaded_threat = data.get("threat_level", ["Marcellus"])
+	if loaded_threat is Array:
+		threat_level = Array[String](loaded_threat)
+	elif typeof(loaded_threat) == TYPE_STRING and not loaded_threat.is_empty():
+		threat_level = Array[String]([loaded_threat])
+	else:
+		threat_level = Array[String](["Marcellus"])
+	refusals_made      = data.get("refusals_made",      0)
+	costs_paid         = data.get("costs_paid",         [])
+	narrative_momentum = data.get("narrative_momentum", "On the Run")
+	completed_story_beats = data.get("completed_story_beats", [])
 	current_location   = data.get("current_location",   "Arena City")
 	season             = data.get("season", 1)
 	act                = data.get("act",    1)
 	ending_reached     = data.get("ending_reached", "")
-	equipped_gear      = data.get("equipped_gear",      {"weapon": "", "armor": "", "accessory": ""})
-	gear_inventory     = data.get("gear_inventory",     [])
 	game_loaded.emit()
 
 func reset() -> void:
@@ -220,26 +255,10 @@ func reset() -> void:
 		lieutenant_data[lt] = {"loyalty": 0, "level": 1, "recruited": false, "alive": true}
 	active_lieutenants = []; benched_lieutenants = []
 	gold = 0; current_deck = []; discovered_cards = []
+	owned_gear = []
+	equipped_gear = {"weapon": "", "armor": "", "accessory": ""}
 	completed_missions = []; unlocked_missions = ["M01"]
 	current_mission_id = ""; story_flags = {}; active_hooks = []
+	story_phase = "SURVIVAL"; threat_level = ["Marcellus"]; refusals_made = 0
+	costs_paid = []; narrative_momentum = "On the Run"; completed_story_beats = []
 	current_location = "Arena City"; season = 1; act = 1; ending_reached = ""
-	equipped_gear = {"weapon": "", "armor": "", "accessory": ""}
-	gear_inventory = []
-
-# ============ GEAR FUNCTIONS ============
-func add_gear(gear_id: String) -> void:
-	if gear_id not in gear_inventory:
-		gear_inventory.append(gear_id)
-
-func equip_gear(slot: String, gear_id: String) -> bool:
-	# Validate slot exists
-	if slot not in equipped_gear:
-		return false
-	# Validate gear is in inventory or empty string
-	if gear_id != "" and gear_id not in gear_inventory:
-		return false
-	equipped_gear[slot] = gear_id
-	return true
-
-func get_equipped_gear(slot: String) -> String:
-	return equipped_gear.get(slot, "")
