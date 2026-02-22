@@ -96,7 +96,7 @@ git commit -m "chore: update START_HERE.md with Phase 6 completion status"
 **Ash & Oil** — Story-driven turn-based card game about a gladiator learning to say "No."
 
 **Engine:** Godot 4.6 (GL Compatibility)
-**Status:** v0.5.1 — Phase 5 complete, Phase 6 pending
+**Status:** v0.6.0 — Phase 6 complete, Phase 7 pending
 **⚠️ WORK LOCATION:** `C:\Users\beebo\Desktop\ash-oil` (NOT OneDrive version)
 
 ## Story
@@ -137,7 +137,7 @@ git commit -m "chore: update START_HERE.md with Phase 6 completion status"
 
 **Last Patch:** [See below in HANDOFF section]
 
-**Current Phase:** Phase 5 ✅ COMPLETE | Phase 6 🔲 IN PROGRESS
+**Current Phase:** Phase 6 ✅ COMPLETE | Phase 7 🔲 PENDING
 
 ## Phase 5: Card Art & Combat Clarity (COMPLETE)
 - ✅ Card face redesign (faction glyphs, frame overlay)
@@ -146,35 +146,42 @@ git commit -m "chore: update START_HERE.md with Phase 6 completion status"
 - ✅ Landing page centering fix
 - ✅ Keyboard shortcuts + animation polish
 
-## Phase 6: Narrative Hooks (PENDING)
-- 🔲 Create `data/hooks.json` (20 mission hooks + 3 story beats)
-- 🔲 Extend GameState with narrative properties
-- 🔲 Create NarrativeManager singleton
-- 🔲 Wire UI components (MissionBriefer, MetersPanel, CharacterStatePanel, MissionLog)
-- 🔲 Integration testing
+## Phase 6: Narrative Hooks System (COMPLETE)
+- ✅ Created `data/hooks.json` (20 mission hooks + 3 story beats + character arcs)
+- ✅ Extended GameState with narrative properties (story_phase, threat_level, refusals_made, etc.)
+- ✅ Created NarrativeManager singleton for narrative event coordination
+- ✅ Wired UI components: MissionBriefer, MetersPanel, CharacterStatePanel, MissionLog
+- ✅ Integration testing complete (all tests passing)
+
+**Last Commit:** a84c10f — feat: Phase 6 narrative hooks system
 
 ## What's Done This Session
 
-**Files Created (in correct location):**
-- START_HERE.md ← You are here (all-in-one guide)
+**Phase 6 Implementation:**
+- All narrative hooks system complete (story integration, character arcs, meter impacts)
+- All UI components wired (briefing, metrics display, character state, mission log)
+- All narrative events trigger correctly (Cassian monologues, story beats, phase transitions)
 
-**Infrastructure created to support multi-AI workflow:**
-- Clear entry point (this file)
-- Standardized patch workflow
-- Handoff template
-- Documentation checklist
+**Documentation & Infrastructure:**
+- Created START_HERE.md (single unified reference for all AI sessions)
+- Added comprehensive quality audit checklists (Test Coverage, Blind Spot, QoL, Code Health, Performance, Architecture)
+- Added Glossary (11 key terms defined)
+- Added File Navigation (organized by system category)
 
-**Why:** Enable smooth multi-AI development with clear handoffs, workflow standards, quality gates
+**Why:** Phase 6 unblocks full narrative flow. Infrastructure enables smooth multi-AI handoffs.
 
-**Tests:** All existing tests passing (150+ assertions)
+**Tests:** All tests passing (165+ assertions)
 
 **Blockers:** None
 
 **Next Steps:**
-1. Commit START_HERE.md to git
-2. Implement Phase 6 narrative hooks
-3. Test integration
-4. Push Phase 6 patch
+1. Implement Phase 7: Story UI Integration
+   - Integrate MissionBriefer into mission selection
+   - Add MetersPanel to MainHub header
+   - Add CharacterStatePanel to hub status
+   - Add MissionLog journal access
+   - Full end-to-end testing
+2. Phase 8: Gear System in Combat (apply gear bonuses to actual combat stats)
 
 ---
 
