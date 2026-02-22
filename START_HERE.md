@@ -858,14 +858,14 @@ If you find an issue:
 **You just read START_HERE.md. Check these before starting:**
 
 - [ ] I understand what Ash & Oil is (story + mechanics)
-- [ ] I know the current status (Phase 7 done, Phase 8 pending)
+- [ ] I know the current status (Phase 8 complete, Phase 9 pending)
 - [ ] I know my workflow (code → test → commit → push → ROADMAP.md update)
 - [ ] I know the rules (tests first, no bandages, push immediately)
 - [ ] I know how to run tests (`godot --headless -s res://tests/runner/RunTests.gd`)
-- [ ] I know my next task (Phase 8 gear system in combat)
+- [ ] I know my next task (Phase 9 content and balance tuning)
 - [ ] I understand this is the ONLY doc I need
 
-**Ready? Start with Phase 8 implementation.**
+**Ready? Start with Phase 9 implementation.**
 
 ---
 
