@@ -3,11 +3,13 @@ extends Node
 
 var cards_data: Dictionary = {}
 var lieutenants_data: Dictionary = {}
+var enemy_templates: Dictionary = {}
 
 func _ready() -> void:
 	_load_cards()
 	_load_lieutenants()
-	print("CardManager ready: %d cards, %d lieutenants" % [cards_data.size(), lieutenants_data.size()])
+	_load_enemy_templates()
+	print("CardManager ready: %d cards, %d lieutenants, %d enemies" % [cards_data.size(), lieutenants_data.size(), enemy_templates.size()])
 
 func _load_cards() -> void:
 	var path = "res://data/cards.json"
@@ -28,6 +30,29 @@ func _load_lieutenants() -> void:
 	var json = JSON.new()
 	if json.parse(file.get_as_text()) == OK:
 		lieutenants_data = json.data
+
+func _load_enemy_templates() -> void:
+	var path = "res://data/enemy_templates.json"
+	if not FileAccess.file_exists(path):
+		push_error("enemy_templates.json not found")
+		return
+	var file = FileAccess.open(path, FileAccess.READ)
+	var json = JSON.new()
+	if json.parse(file.get_as_text()) == OK:
+		enemy_templates = json.data
+
+func get_enemy(id: String) -> Dictionary:
+	return enemy_templates.get(id, {})
+
+func get_mission_enemies(mission_id: String) -> Array:
+	var mission = MissionManager.get_mission(mission_id)
+	var enemy_ids: Array = mission.get("enemies", ["warrior_a", "warrior_b"])
+	var result = []
+	for eid in enemy_ids:
+		var tmpl = get_enemy(eid)
+		if not tmpl.is_empty():
+			result.append(tmpl.duplicate())
+	return result
 
 func get_card(id: String) -> Dictionary:
 	return cards_data.get(id, {})
