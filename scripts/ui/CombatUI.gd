@@ -68,6 +68,7 @@ func _ready() -> void:
 	_init_state()
 	_build_ui()
 	_start_turn()
+	_fade_in(self, 0.0)
 
 func _init_state() -> void:
 	champion_hp = 30
@@ -154,7 +155,7 @@ func _build_ui() -> void:
 	title_bar.add_child(title_left)
 
 	var mission_label = Label.new()
-	mission_label.text = "%s: %s — %s" % [mid, mname, mloc]
+	mission_label.text = "%s: %s — %s" % [_format_mission_id(mid), mname, mloc]
 	mission_label.add_theme_font_size_override("font_size", 14)
 	mission_label.add_theme_color_override("font_color", CLR_ACCENT)
 	title_left.add_child(mission_label)
@@ -796,6 +797,28 @@ func _btn_style(color: Color) -> StyleBoxFlat:
 	s.shadow_size  = 3
 	return s
 
+func _format_mission_id(id: String) -> String:
+	if id.length() < 2:
+		return id
+	var prefix = id.substr(0, 1)
+	var num = int(id.substr(1))
+	var roman = _roman(num)
+	return "%s %s" % [prefix, roman]
+
+func _roman(n: int) -> String:
+	if n <= 0:
+		return "N"
+	var vals = [1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1]
+	var syms = ["M","CM","D","CD","C","XC","L","XL","X","IX","V","IV","I"]
+	var out = ""
+	var i = 0
+	while n > 0 and i < vals.size():
+		while n >= vals[i]:
+			out += syms[i]
+			n -= vals[i]
+		i += 1
+	return out
+
 func _make_pill(text: String, color: Color) -> PanelContainer:
 	var panel = PanelContainer.new()
 	var style = StyleBoxFlat.new()
@@ -825,6 +848,11 @@ func _make_pill(text: String, color: Color) -> PanelContainer:
 	margin.add_child(label)
 	panel.set_meta("label", label)
 	return panel
+
+func _fade_in(node: CanvasItem, delay: float) -> void:
+	node.modulate = Color(1, 1, 1, 0)
+	var tween = create_tween()
+	tween.tween_property(node, "modulate:a", 1.0, 0.35).set_delay(delay)
 
 var _log_lines: Array = []
 func _log(msg: String) -> void:

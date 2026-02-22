@@ -22,6 +22,7 @@ var msg_label: Label
 func _ready() -> void:
 	_generate_shop_pool()
 	_build_ui()
+	_fade_in(self, 0.0)
 
 func _generate_shop_pool() -> void:
 	# Offer 6 random cards not already in the deck
@@ -378,3 +379,8 @@ func _seal_style() -> StyleBoxFlat:
 	s.shadow_size = 3
 	s.shadow_color = Color(0, 0, 0, 0.35)
 	return s
+
+func _fade_in(node: CanvasItem, delay: float) -> void:
+	node.modulate = Color(1, 1, 1, 0)
+	var tween = create_tween()
+	tween.tween_property(node, "modulate:a", 1.0, 0.35).set_delay(delay)

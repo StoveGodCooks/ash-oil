@@ -28,6 +28,7 @@ var gear_slot_btns: Dictionary = {}      # {slot: [prev_btn, next_btn]}
 func _ready() -> void:
 	_build_ui()
 	_refresh()
+	_fade_in(self, 0.0)
 
 # ============ BUILD UI ============
 func _build_ui() -> void:
@@ -269,6 +270,7 @@ func _refresh() -> void:
 				continue
 			var card = PanelContainer.new()
 			card.add_theme_stylebox_override("panel", _make_card_style())
+			card.modulate = Color(1, 1, 1, 0)
 			mission_list.add_child(card)
 
 			var card_margin = MarginContainer.new()
@@ -286,7 +288,7 @@ func _refresh() -> void:
 			left.add_theme_constant_override("separation", 6)
 			row.add_child(left)
 
-			var id_pill = _make_pill(mission_id, CLR_ACCENT)
+			var id_pill = _make_pill(_format_mission_id(mission_id), CLR_ACCENT)
 			left.add_child(id_pill)
 
 			var seal = PanelContainer.new()
@@ -294,7 +296,7 @@ func _refresh() -> void:
 			seal.add_theme_stylebox_override("panel", _seal_style())
 			left.add_child(seal)
 
-			var btn = _make_button("[%s] %s" % [mission_id, m.get("name", "Unknown")], Color(0.18, 0.26, 0.32))
+			var btn = _make_button("CONTRACT — %s" % m.get("name", "Unknown"), Color(0.18, 0.26, 0.32))
 			btn.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 			btn.pressed.connect(_on_mission_pressed.bind(mission_id))
 			row.add_child(btn)
@@ -316,6 +318,9 @@ func _refresh() -> void:
 			loc.add_theme_font_size_override("font_size", 9)
 			loc.add_theme_color_override("font_color", CLR_TEXT)
 			right_col.add_child(loc)
+
+			var tween = create_tween()
+			tween.tween_property(card, "modulate:a", 1.0, 0.25).set_delay(0.03 * mission_list.get_child_count())
 
 # ============ HELPERS ============
 func _make_button(text: String, color: Color) -> Button:
@@ -422,6 +427,28 @@ func _make_pill(text: String, color: Color) -> PanelContainer:
 	panel.set_meta("label", label)
 	return panel
 
+func _format_mission_id(id: String) -> String:
+	if id.length() < 2:
+		return id
+	var prefix = id.substr(0, 1)
+	var num = int(id.substr(1))
+	var roman = _roman(num)
+	return "%s %s" % [prefix, roman]
+
+func _roman(n: int) -> String:
+	if n <= 0:
+		return "N"
+	var vals = [1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1]
+	var syms = ["M","CM","D","CD","C","XC","L","XL","X","IX","V","IV","I"]
+	var out = ""
+	var i = 0
+	while n > 0 and i < vals.size():
+		while n >= vals[i]:
+			out += syms[i]
+			n -= vals[i]
+		i += 1
+	return out
+
 func _seal_style() -> StyleBoxFlat:
 	var s = StyleBoxFlat.new()
 	s.bg_color = CLR_SEAL
@@ -523,3 +550,8 @@ func _on_save_pressed() -> void:
 
 func _on_menu_pressed() -> void:
 	get_tree().change_scene_to_file("res://scenes/Main.tscn")
+
+func _fade_in(node: CanvasItem, delay: float) -> void:
+	node.modulate = Color(1, 1, 1, 0)
+	var tween = create_tween()
+	tween.tween_property(node, "modulate:a", 1.0, 0.35).set_delay(delay)

@@ -127,6 +127,8 @@ func _ready() -> void:
 	ver.add_theme_color_override("font_color", CLR_MUTED)
 	vbox.add_child(ver)
 
+	_fade_in(vbox, 0.0)
+
 	print("=== ASH & OIL - MAIN MENU LOADED ===")
 	print("GameState online: RENOWN=%d HEAT=%d" % [GameState.RENOWN, GameState.HEAT])
 	print("Missions available: ", MissionManager.get_available_missions())
@@ -206,3 +208,8 @@ func _panel_style(color: Color) -> StyleBoxFlat:
 	s.shadow_size = 6
 	s.shadow_color = Color(0, 0, 0, 0.35)
 	return s
+
+func _fade_in(node: CanvasItem, delay: float) -> void:
+	node.modulate = Color(1, 1, 1, 0)
+	var tween = create_tween()
+	tween.tween_property(node, "modulate:a", 1.0, 0.4).set_delay(delay)
