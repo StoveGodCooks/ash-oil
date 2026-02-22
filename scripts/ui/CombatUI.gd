@@ -138,15 +138,11 @@ func _build_ui() -> void:
 	for i in range(enemies.size()):
 		var e_btn = Button.new()
 		e_btn.custom_minimum_size = Vector2(160, 90)
+		e_btn.text = _get_enemy_display(i)
 		e_btn.pressed.connect(_on_enemy_selected.bind(i))
 		enemy_hbox.add_child(e_btn)
 		enemy_buttons.append(e_btn)
-
-		var e_label = Label.new()
-		e_label.text = _get_enemy_display(i)
-		e_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-		e_label.add_theme_font_size_override("font_size", 12)
-		enemy_labels.append(e_label)
+		enemy_labels.append(e_btn)  # Use button as label reference
 
 	# Player zone
 	var player_panel = PanelContainer.new()
@@ -397,7 +393,7 @@ func _get_first_alive_enemy() -> int:
 			return i
 	return -1
 
-func _deal_damage_to_enemy(idx: int, amount: int, actor: String = "champion") -> void:
+func _deal_damage_to_enemy(idx: int, amount: int, _actor: String = "champion") -> void:
 	if idx < 0 or idx >= enemies.size():
 		return
 	var enemy = enemies[idx]
@@ -418,7 +414,7 @@ func _apply_synergy(card: Dictionary) -> void:
 	if synergy_type != "none":
 		active_synergies[synergy_type] = active_synergies.get(synergy_type, 0) + 1
 
-func _get_synergy_multiplier(enemy: Dictionary) -> float:
+func _get_synergy_multiplier(_enemy: Dictionary) -> float:
 	"""Get damage multiplier based on active synergies"""
 	var mult = 1.0
 	# Poison synergy: each stack adds 10% damage
@@ -526,9 +522,9 @@ func _get_champion_display() -> String:
 
 func _get_lt_display(lt_name: String) -> String:
 	"""Get display string for a lieutenant"""
-	var lt_data = GameState.lieutenants.get(lt_name, {})
+	var lt_data = CardManager.get_lieutenant(lt_name)
 	var lt_hp = lt_data.get("hp", 25)
-	var lt_max_hp = lt_data.get("max_hp", 25)
+	var lt_max_hp = lt_data.get("hp", 25)
 	var lt_armor = lt_data.get("armor", 2)
 
 	if lt_hp <= 0:
