@@ -16,6 +16,10 @@ const CLR_BTN_DANGER= Color(0.26, 0.095, 0.090)  # Dark blood red
 const CLR_STONE    = Color(0.18, 0.155, 0.120)   # Stone banding
 const CLR_SEAL     = Color(0.36, 0.12, 0.10)     # Wax seal red
 
+const TEX_CREST  = "res://assets/ui/roman/crest.png"
+const TEX_BANNER = "res://assets/ui/roman/banner.png"
+const TEX_SEAL   = "res://assets/ui/roman/seal.png"
+
 # ============ UI REFS ============
 var gold_label: Label
 var meters_label: Label
@@ -98,10 +102,7 @@ func _build_ui() -> void:
 	title.add_theme_color_override("font_color", CLR_ACCENT)
 	title_box.add_child(title)
 
-	var crest = Label.new()
-	crest.text = "◈  LAUREL OF THE ARENA  ◈"
-	crest.add_theme_font_size_override("font_size", 10)
-	crest.add_theme_color_override("font_color", CLR_MUTED)
+	var crest = _make_texture(TEX_CREST, Vector2(64, 64))
 	title_box.add_child(crest)
 
 	var subtitle = Label.new()
@@ -294,6 +295,8 @@ func _refresh() -> void:
 			var seal = PanelContainer.new()
 			seal.custom_minimum_size = Vector2(26, 26)
 			seal.add_theme_stylebox_override("panel", _seal_style())
+			var seal_tex = _make_texture(TEX_SEAL, Vector2(26, 26))
+			seal.add_child(seal_tex)
 			left.add_child(seal)
 
 			var btn = _make_button("CONTRACT — %s" % m.get("name", "Unknown"), Color(0.18, 0.26, 0.32))
@@ -426,6 +429,15 @@ func _make_pill(text: String, color: Color) -> PanelContainer:
 	margin.add_child(label)
 	panel.set_meta("label", label)
 	return panel
+
+func _make_texture(path: String, tex_size: Vector2) -> TextureRect:
+	var tex = TextureRect.new()
+	tex.texture = load(path)
+	tex.custom_minimum_size = tex_size
+	tex.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	tex.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	tex.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	return tex
 
 func _format_mission_id(id: String) -> String:
 	if id.length() < 2:

@@ -13,6 +13,9 @@ const CLR_DANGER = Color(0.26, 0.095, 0.090)
 const CLR_STONE  = Color(0.18, 0.155, 0.120)
 const CLR_SEAL   = Color(0.36, 0.12, 0.10)
 
+const TEX_BANNER = "res://assets/ui/roman/banner.png"
+const TEX_SEAL   = "res://assets/ui/roman/seal.png"
+
 var shop_pool: Array = []
 var card_rows: VBoxContainer
 var gear_rows: VBoxContainer
@@ -65,6 +68,11 @@ func _build_ui() -> void:
 	var title_panel = PanelContainer.new()
 	title_panel.add_theme_stylebox_override("panel", _make_style(CLR_PANEL))
 	vbox.add_child(title_panel)
+
+	var banner_tex = _make_texture(TEX_BANNER, Vector2(520, 48))
+	banner_tex.set_anchors_preset(Control.PRESET_TOP_WIDE)
+	banner_tex.position = Vector2(0, 2)
+	title_panel.add_child(banner_tex)
 
 	var title_margin = MarginContainer.new()
 	title_margin.add_theme_constant_override("margin_left", 12)
@@ -129,6 +137,8 @@ func _build_ui() -> void:
 	var gear_seal = PanelContainer.new()
 	gear_seal.custom_minimum_size = Vector2(24, 24)
 	gear_seal.add_theme_stylebox_override("panel", _seal_style())
+	var gear_seal_tex = _make_texture(TEX_SEAL, Vector2(24, 24))
+	gear_seal.add_child(gear_seal_tex)
 	vbox.add_child(gear_seal)
 
 	gear_rows = VBoxContainer.new()
@@ -363,6 +373,15 @@ func _make_pill(text: String, color: Color) -> PanelContainer:
 	margin.add_child(label)
 	panel.set_meta("label", label)
 	return panel
+
+func _make_texture(path: String, tex_size: Vector2) -> TextureRect:
+	var tex = TextureRect.new()
+	tex.texture = load(path)
+	tex.custom_minimum_size = tex_size
+	tex.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	tex.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	tex.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	return tex
 
 func _seal_style() -> StyleBoxFlat:
 	var s = StyleBoxFlat.new()

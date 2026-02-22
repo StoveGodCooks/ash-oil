@@ -14,6 +14,9 @@ const CLR_DANGER  = Color(0.26, 0.095, 0.090)
 const CLR_STONE   = Color(0.18, 0.155, 0.120)
 const CLR_SEAL    = Color(0.36, 0.12, 0.10)
 
+const TEX_CREST  = "res://assets/ui/roman/crest.png"
+const TEX_BANNER = "res://assets/ui/roman/banner.png"
+
 var start_btn: Button
 var continue_btn: Button
 
@@ -57,7 +60,7 @@ func _ready() -> void:
 
 	# Title banner
 	var banner = PanelContainer.new()
-	banner.custom_minimum_size = Vector2(300, 90)
+	banner.custom_minimum_size = Vector2(320, 140)
 	banner.add_theme_stylebox_override("panel", _panel_style(CLR_PANEL))
 	vbox.add_child(banner)
 
@@ -67,12 +70,13 @@ func _ready() -> void:
 	banner.add_child(banner_v)
 
 	# Crest line
-	var crest = Label.new()
-	crest.text = "◈  LAUREL CREST  ◈"
-	crest.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	crest.add_theme_font_size_override("font_size", 10)
-	crest.add_theme_color_override("font_color", CLR_MUTED)
+	var crest = _make_texture(TEX_CREST, Vector2(72, 72))
+	crest.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 	banner_v.add_child(crest)
+
+	var banner_tex = _make_texture(TEX_BANNER, Vector2(280, 60))
+	banner_tex.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	banner_v.add_child(banner_tex)
 
 	# Title
 	var title = Label.new()
@@ -208,6 +212,15 @@ func _panel_style(color: Color) -> StyleBoxFlat:
 	s.shadow_size = 6
 	s.shadow_color = Color(0, 0, 0, 0.35)
 	return s
+
+func _make_texture(path: String, tex_size: Vector2) -> TextureRect:
+	var tex = TextureRect.new()
+	tex.texture = load(path)
+	tex.custom_minimum_size = tex_size
+	tex.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	tex.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	tex.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	return tex
 
 func _fade_in(node: CanvasItem, delay: float) -> void:
 	node.modulate = Color(1, 1, 1, 0)
