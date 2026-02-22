@@ -452,7 +452,7 @@ func _roman(n: int) -> String:
 func _seal_style() -> StyleBoxFlat:
 	var s = StyleBoxFlat.new()
 	s.bg_color = CLR_SEAL
-	s.border_color = CLR_BORDER
+	s.border_color = CLR_CARD_EDGE
 	s.border_width_left = 1
 	s.border_width_top = 1
 	s.border_width_right = 1
