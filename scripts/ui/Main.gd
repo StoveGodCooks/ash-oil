@@ -80,9 +80,15 @@ func _on_start_pressed() -> void:
 	GameState.reset()
 	GameState.current_deck = CardManager.get_starter_deck()
 	GameState.current_mission_id = "M01"
+	# Give free starting gear (one common per slot)
+	GameState.add_gear("gear_001")   # Iron Gladius   - Weapon
+	GameState.add_gear("gear_009")   # Leather Vest   - Armor
+	GameState.add_gear("gear_017")   # Iron Ring      - Accessory
+	GameState.equip_gear("weapon",    "gear_001")
+	GameState.equip_gear("armor",     "gear_009")
+	GameState.equip_gear("accessory", "gear_017")
 	print("--- NEW GAME STARTED ---")
 	print("Gold: %d | Deck: %d cards" % [GameState.gold, GameState.current_deck.size()])
-	print("Available missions: ", GameState.unlocked_missions)
 	get_tree().change_scene_to_file("res://scenes/MainHub.tscn")
 
 func _on_dev_pressed() -> void:

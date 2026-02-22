@@ -20,6 +20,8 @@ var meters_label: Label
 var mission_list: VBoxContainer
 var lt_label: Label
 var status_label: Label
+var gear_slot_labels: Dictionary = {}    # {slot: label}
+var gear_slot_btns: Dictionary = {}      # {slot: [prev_btn, next_btn]}
 
 func _ready() -> void:
 	_build_ui()
@@ -123,6 +125,42 @@ func _build_ui() -> void:
 	lt_label.autowrap_mode = TextServer.AUTOWRAP_WORD
 	squad_card.add_child(lt_label)
 
+	# ── Gear Card ──
+	var gear_card = _make_section_card(left_col, "GEAR LOADOUT")
+	for slot in ["weapon", "armor", "accessory"]:
+		var row = HBoxContainer.new()
+		row.add_theme_constant_override("separation", 6)
+		gear_card.add_child(row)
+
+		var slot_lbl = Label.new()
+		slot_lbl.text = slot.to_upper() + ":"
+		slot_lbl.add_theme_font_size_override("font_size", 11)
+		slot_lbl.add_theme_color_override("font_color", CLR_ACCENT)
+		slot_lbl.custom_minimum_size = Vector2(72, 0)
+		row.add_child(slot_lbl)
+
+		var info_lbl = Label.new()
+		info_lbl.text = "—"
+		info_lbl.add_theme_font_size_override("font_size", 11)
+		info_lbl.add_theme_color_override("font_color", CLR_TEXT)
+		info_lbl.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		row.add_child(info_lbl)
+		gear_slot_labels[slot] = info_lbl
+
+		var prev_btn = Button.new()
+		prev_btn.text = "◀"
+		prev_btn.custom_minimum_size = Vector2(28, 0)
+		prev_btn.pressed.connect(_on_gear_cycle.bind(slot, -1))
+		row.add_child(prev_btn)
+
+		var next_btn = Button.new()
+		next_btn.text = "▶"
+		next_btn.custom_minimum_size = Vector2(28, 0)
+		next_btn.pressed.connect(_on_gear_cycle.bind(slot, 1))
+		row.add_child(next_btn)
+
+		gear_slot_btns[slot] = [prev_btn, next_btn]
+
 	# ── Actions Card ──
 	var actions_card = _make_section_card(left_col, "ACTIONS")
 	var actions_hbox = HBoxContainer.new()
@@ -181,6 +219,9 @@ func _refresh() -> void:
 		lt_label.text = "No lieutenants recruited yet."
 	else:
 		lt_label.text = "\n".join(lt_lines)
+
+	# Gear loadout
+	_refresh_gear()
 
 	# Missions
 	for child in mission_list.get_children():
@@ -334,6 +375,64 @@ func _make_gradient() -> Texture2D:
 	return tex
 
 # ============ BUTTON HANDLERS ============
+func _refresh_gear() -> void:
+	for slot in ["weapon", "armor", "accessory"]:
+		var equipped_id = GameState.get_equipped_gear(slot)
+		var label = gear_slot_labels.get(slot)
+		if not label:
+			continue
+		if equipped_id == "":
+			label.text = "Empty"
+			label.add_theme_color_override("font_color", CLR_MUTED)
+		else:
+			var g = CardManager.get_gear(equipped_id)
+			var stat_parts = []
+			if g.get("damage", 0) > 0: stat_parts.append("+%d Dmg" % g["damage"])
+			if g.get("armor", 0) > 0:  stat_parts.append("+%d Arm" % g["armor"])
+			if g.get("hp", 0) > 0:     stat_parts.append("+%d HP" % g["hp"])
+			if g.get("hp", 0) < 0:     stat_parts.append("%d HP" % g["hp"])
+			if g.get("speed", 0) > 0:  stat_parts.append("+%d Spd" % g["speed"])
+			var rarity = g.get("rarity", "")
+			var stats_str = " (%s)" % ", ".join(stat_parts) if stat_parts.size() > 0 else ""
+			label.text = "%s%s" % [g.get("name", equipped_id), stats_str]
+			match rarity:
+				"epic":   label.add_theme_color_override("font_color", Color(0.8, 0.5, 1.0))
+				"rare":   label.add_theme_color_override("font_color", Color(0.4, 0.8, 1.0))
+				_:        label.add_theme_color_override("font_color", CLR_TEXT)
+
+		# Enable cycle buttons only if there are items for this slot in inventory
+		var slot_items = _get_slot_inventory(slot)
+		var btns = gear_slot_btns.get(slot, [])
+		for btn in btns:
+			btn.disabled = slot_items.size() == 0
+
+func _get_slot_inventory(slot: String) -> Array:
+	var result = []
+	for gear_id in GameState.gear_inventory:
+		var g = CardManager.get_gear(gear_id)
+		if g.get("slot", "") == slot:
+			result.append(gear_id)
+	return result
+
+func _on_gear_cycle(slot: String, direction: int) -> void:
+	var slot_items = _get_slot_inventory(slot)
+	if slot_items.is_empty():
+		return
+	var current = GameState.get_equipped_gear(slot)
+	var idx = slot_items.find(current)
+	# direction: -1 = prev (or unequip), +1 = next
+	if direction == 1:
+		if idx == slot_items.size() - 1:
+			GameState.equip_gear(slot, "")   # cycle past last = unequip
+		else:
+			GameState.equip_gear(slot, slot_items[idx + 1])
+	else:
+		if idx <= 0:
+			GameState.equip_gear(slot, slot_items[slot_items.size() - 1])
+		else:
+			GameState.equip_gear(slot, slot_items[idx - 1])
+	_refresh_gear()
+
 func _on_mission_pressed(mission_id: String) -> void:
 	if MissionManager.start_mission(mission_id):
 		get_tree().change_scene_to_file("res://scenes/CombatScreen.tscn")
