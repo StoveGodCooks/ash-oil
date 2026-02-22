@@ -3,6 +3,7 @@ extends Control
 
 var shop_pool: Array = []
 var card_rows: VBoxContainer
+var gear_rows: VBoxContainer
 var gold_label: Label
 var msg_label: Label
 
@@ -68,6 +69,22 @@ func _build_ui() -> void:
 
 	var sep2 = HSeparator.new()
 	vbox.add_child(sep2)
+
+	# Gear section header
+	var gear_title = Label.new()
+	gear_title.text = "GEAR FOR SALE"
+	gear_title.add_theme_font_size_override("font_size", 18)
+	gear_title.add_theme_color_override("font_color", Color(0.9, 0.75, 0.4))
+	gear_title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	vbox.add_child(gear_title)
+
+	gear_rows = VBoxContainer.new()
+	gear_rows.add_theme_constant_override("separation", 6)
+	vbox.add_child(gear_rows)
+	_build_gear_rows()
+
+	var sep3 = HSeparator.new()
+	vbox.add_child(sep3)
 
 	# Back button
 	var back_btn = _make_button("← BACK TO HUB", Color(0.25, 0.1, 0.1))
@@ -155,6 +172,93 @@ func _make_button(text: String, color: Color) -> Button:
 	btn.add_theme_stylebox_override("pressed", _make_style(color.darkened(0.15)))
 	btn.custom_minimum_size = Vector2(0, 32)
 	return btn
+
+func _build_gear_rows() -> void:
+	for child in gear_rows.get_children():
+		child.queue_free()
+
+	# Sort gear: weapon → armor → accessory, then common → rare → epic
+	var slot_order = ["weapon", "armor", "accessory"]
+	var rarity_order = ["common", "rare", "epic"]
+	var sorted_ids = []
+	for slot in slot_order:
+		for rarity in rarity_order:
+			for gear_id in CardManager.gear_data:
+				var g = CardManager.get_gear(gear_id)
+				if g.get("slot", "") == slot and g.get("rarity", "") == rarity:
+					sorted_ids.append(gear_id)
+
+	if sorted_ids.is_empty():
+		var empty = Label.new()
+		empty.text = "No gear available."
+		empty.add_theme_color_override("font_color", Color(0.5, 0.5, 0.5))
+		gear_rows.add_child(empty)
+		return
+
+	for gear_id in sorted_ids:
+		var g = CardManager.get_gear(gear_id)
+		var price = g.get("cost", 50)
+		var owned = gear_id in GameState.gear_inventory
+
+		var row = HBoxContainer.new()
+		row.add_theme_constant_override("separation", 10)
+		gear_rows.add_child(row)
+
+		# Build stat string
+		var stat_parts = []
+		if g.get("damage", 0) != 0: stat_parts.append("%+ddmg" % g["damage"])
+		if g.get("armor", 0)  != 0: stat_parts.append("%+darm" % g["armor"])
+		if g.get("hp", 0)     != 0: stat_parts.append("%+dHP"  % g["hp"])
+		if g.get("speed", 0)  != 0: stat_parts.append("%+dspd" % g["speed"])
+		var stats_str = " (%s)" % ", ".join(stat_parts) if stat_parts.size() > 0 else ""
+
+		var info = Label.new()
+		info.text = "%s %s  [%s]%s  %s — %dg" % [
+			_gear_slot_icon(g.get("slot", "")),
+			g.get("name", gear_id),
+			g.get("rarity", "?"),
+			stats_str,
+			g.get("effect_desc", ""),
+			price
+		]
+		info.add_theme_font_size_override("font_size", 11)
+		info.add_theme_color_override("font_color", _gear_rarity_color(g.get("rarity", "")))
+		info.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		info.autowrap_mode = TextServer.AUTOWRAP_WORD
+		row.add_child(info)
+
+		var buy_btn: Button
+		if owned:
+			buy_btn = _make_button("OWNED", Color(0.15, 0.15, 0.15))
+			buy_btn.disabled = true
+		else:
+			buy_btn = _make_button("BUY %dg" % price, Color(0.1, 0.25, 0.35))
+			buy_btn.disabled = GameState.gold < price
+			buy_btn.pressed.connect(_on_buy_gear.bind(gear_id, price))
+		row.add_child(buy_btn)
+
+func _on_buy_gear(gear_id: String, price: int) -> void:
+	if GameState.spend_gold(price):
+		GameState.add_gear(gear_id)
+		var g = CardManager.get_gear(gear_id)
+		msg_label.text = "Purchased %s!" % g.get("name", gear_id)
+		_refresh_gold()
+		_build_gear_rows()
+	else:
+		msg_label.text = "Not enough gold."
+
+func _gear_slot_icon(slot: String) -> String:
+	match slot:
+		"weapon":    return "⚔"
+		"armor":     return "🛡"
+		"accessory": return "💍"
+		_:           return "?"
+
+func _gear_rarity_color(rarity: String) -> Color:
+	match rarity:
+		"epic":   return Color(0.8, 0.5, 1.0)
+		"rare":   return Color(0.4, 0.8, 1.0)
+		_:        return Color(0.8, 0.8, 0.8)
 
 func _make_style(color: Color) -> StyleBoxFlat:
 	var s = StyleBoxFlat.new()

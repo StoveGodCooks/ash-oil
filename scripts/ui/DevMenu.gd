@@ -84,6 +84,18 @@ func _build_ui() -> void:
 
 	vbox.add_child(_sep())
 
+	# ── Grant Gear ──
+	_section(vbox, "GRANT GEAR")
+	var gear_row = HBoxContainer.new()
+	gear_row.add_theme_constant_override("separation", 8)
+	vbox.add_child(gear_row)
+	gear_row.add_child(_btn("Grant Common Set", Color(0.2, 0.2, 0.2),   func(): _grant_gear_tier("common")))
+	gear_row.add_child(_btn("Grant Rare Set",   Color(0.1, 0.2, 0.4),   func(): _grant_gear_tier("rare")))
+	gear_row.add_child(_btn("Grant Epic Set",   Color(0.3, 0.1, 0.4),   func(): _grant_gear_tier("epic")))
+	gear_row.add_child(_btn("Grant ALL Gear",   Color(0.05, 0.3, 0.05), func(): _grant_all_gear()))
+
+	vbox.add_child(_sep())
+
 	# ── Main Missions ──
 	_section(vbox, "JUMP TO MAIN MISSION")
 	var main_grid = GridContainer.new()
@@ -192,6 +204,16 @@ func _run_tests() -> void:
 	vbox.add_child(close_btn)
 
 	dialog.popup_centered()
+
+func _grant_gear_tier(rarity: String) -> void:
+	for gear_id in CardManager.gear_data:
+		var g = CardManager.get_gear(gear_id)
+		if g.get("rarity", "") == rarity:
+			GameState.add_gear(gear_id)
+
+func _grant_all_gear() -> void:
+	for gear_id in CardManager.gear_data:
+		GameState.add_gear(gear_id)
 
 func _unlock_sides() -> void:
 	for sid in ["S01","S02","S03","S04","S05","S06","S07","S08","S09","S10","S11","S12","S13","S14","S15"]:
