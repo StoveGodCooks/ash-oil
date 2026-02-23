@@ -96,7 +96,7 @@ git commit -m "chore: update START_HERE.md with Phase 6 completion status"
 **Ash & Oil** — Story-driven turn-based card game about a gladiator learning to say "No."
 
 **Engine:** Godot 4.6 (GL Compatibility)
-**Status:** v0.7.0 — Phase 8 complete, Phase 9 pending
+**Status:** v0.9.0 — Phase 10 core systems implemented, balance/playtest tuning pending
 **⚠️ WORK LOCATION:** `C:\Users\beebo\Desktop\ash-oil` (NOT OneDrive version)
 
 ## Story
@@ -135,9 +135,9 @@ git commit -m "chore: update START_HERE.md with Phase 6 completion status"
 
 # 📍 CURRENT STATUS
 
-**Last Patch:** dc62d05 — feat_phase8_gear_hardening_rng_drops_tests_docs
+**Last Patch:** local-uncommitted — Phase 10 NPC relationship system + mission gating + dialogue consequences + save test hardening
 
-**Current Phase:** Phase 8 ✅ COMPLETE | Phase 9 🔲 PENDING
+**Current Phase:** Phase 10 🔄 IN PROGRESS (core relationship/faction systems implemented)
 
 ## Phase 5: Card Art & Combat Clarity (COMPLETE)
 - ✅ Card face redesign (faction glyphs, frame overlay)
@@ -164,24 +164,28 @@ git commit -m "chore: update START_HERE.md with Phase 6 completion status"
 
 ## What's Done This Session
 
-**Phase 8 Gear Hardening:**
-- Kept gear bonuses integrated into existing combat stat formulas (damage/armor/HP)
-- Fixed mission gear drop RNG to use seeded mission RNG consistently (no global RNG drift)
-- Improved drop behavior when rolled rarity is exhausted: fallback to other unowned gear before fallback gold
-- Added targeted tests for +2 damage, +1 armor reduction, +3 HP, anti-double-counting, reward text visibility, and empirical drop-rate checks
-- Fixed `MissionManager` shadowed-identifier warning (`seed` parameter rename)
+**Phase 9/10 Progress This Session:**
+- Completed Prompt 9 systems: mission/card rebalance pass, shop pricing updates, accessibility options, combat undo, portrait placeholders
+- Implemented Prompt 10 core NPC relationship system:
+  - Added `data/npcs.json` and `data/npc_dialogue.json`
+  - Extended `scripts/autoload/GameState.gd` with NPC/faction APIs, relationship levels, flags, dialogue lookup, and persistence
+  - Extended `scripts/autoload/MissionManager.gd` with mission lock checks, lock reasons, and NPC/faction mission impacts
+  - Added dialogue choice consequence hook in `scripts/autoload/NarrativeManager.gd`
+  - Added relationship/faction summary + mission lock feedback in `scripts/ui/MainHub.gd`
+- Hardened `scripts/autoload/SaveManager.gd` for headless runs (active save dir fallback + dual-path save checks/deletes)
+- Fixed strict typing warnings in `scripts/autoload/GameState.gd` (warnings treated as errors)
 
-**Tests:** `godot --headless --path C:\Users\beebo\Desktop\ash-oil -s res://tests/runner/RunTests.gd` (ALL TESTS PASSED, 662 assertions)
-**Lint:** `gdlint .` (not run this phase; previously fails with pre-existing violations)
-**Data validation:** `python tests/validate_data.py` (pass)
+**Tests:** `godot --headless --path C:\Users\beebo\Desktop\ash-oil -s res://tests/runner/RunTests.gd` (ALL TESTS PASSED, 676 assertions)
+**Lint:** `gdlint .` (not run this session; known pre-existing lint backlog)
+**Data validation:** not re-run after rebalance script this session
 
 **Blockers:** None
 
 **Next Steps:**
-1. Phase 9 mission difficulty scaling (Act 1 -> Act 3)
-2. Enemy encounter rebalancing (damage/armor/HP curves)
-3. Card cost and shop economy tuning pass
-4. Run lint (`gdlint .`) if requested (still expected to fail on pre-existing issues)
+1. Playtest Act 1/2/3 win rates and tune mission/card/shop balance values from live results
+2. Expand Prompt 10 content wiring (more mission gates + branch outcomes + NPC-specific dialogue coverage)
+3. Hook portrait assets into all intended UI locations (hub, dialogue, combat)
+4. Run/triage gdlint backlog and reduce pre-existing violations
 
 ---
 
@@ -380,17 +384,17 @@ ash-oil/
 
 | Metric | Value |
 |--------|-------|
-| **Version** | v0.7.0 |
+| **Version** | v0.9.0 |
 | **Phases Complete** | 8/8+ |
 | **Missions** | 20 main + 5 side |
 | **Cards** | 87+ |
 | **Lieutenants** | 8 |
 | **Enemies** | 45+ |
 | **Gear** | 24 pieces |
-| **Test Assertions** | 662 |
+| **Test Assertions** | 676 |
 | **Test Coverage** | ~75% |
 | **Code Files** | 20+ |
-| **Data Files** | 6 (cards, missions, lieutenants, enemies, gear, hooks) |
+| **Data Files** | 8 (cards, missions, lieutenants, enemies, gear, hooks, npcs, npc_dialogue) |
 
 ---
 
@@ -859,14 +863,14 @@ If you find an issue:
 **You just read START_HERE.md. Check these before starting:**
 
 - [ ] I understand what Ash & Oil is (story + mechanics)
-- [ ] I know the current status (Phase 8 complete, Phase 9 pending)
+- [ ] I know the current status (Phase 10 core systems implemented, tuning pending)
 - [ ] I know my workflow (code → test → commit → push → ROADMAP.md update)
 - [ ] I know the rules (tests first, no bandages, push immediately)
 - [ ] I know how to run tests (`godot --headless -s res://tests/runner/RunTests.gd`)
-- [ ] I know my next task (Phase 9 content and balance tuning)
+- [ ] I know my next task (Phase 9/10 tuning and content expansion)
 - [ ] I understand this is the ONLY doc I need
 
-**Ready? Start with Phase 9 implementation.**
+**Ready? Start with Phase 9/10 tuning + content pass.**
 
 ---
 
