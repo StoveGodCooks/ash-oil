@@ -164,11 +164,11 @@ func _display_meter_changes(meter_impact: Dictionary) -> void:
 
 		var amount = meter_impact[meter_name]
 		var display_name = meter_names[meter_name]
-		var sign = "+" if amount >= 0 else ""
+		var sign_prefix = "+" if amount >= 0 else ""
 		var color = Color(0.45, 0.85, 0.55) if amount > 0 else Color(0.90, 0.30, 0.28) if amount < 0 else UITheme.COLOR_TEXT_DIM
 
 		var meter_label = Label.new()
-		meter_label.text = "%s %s%d" % [display_name, sign, amount]
+		meter_label.text = "%s %s%d" % [display_name, sign_prefix, amount]
 		meter_label.add_theme_color_override("font_color", color)
 		meter_label.add_theme_font_size_override("font_size", UITheme.FONT_SECONDARY)
 		meters_container.add_child(meter_label)

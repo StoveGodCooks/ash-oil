@@ -1,0 +1,200 @@
+const fs = require("fs");
+const path = require("path");
+
+const root = "C:/Users/beebo/Desktop/ash-oil";
+const dataDir = path.join(root, "data");
+const outPath = path.join(root, "docs", "PHASE9_PLAYTEST_REPORT.md");
+
+function readJson(name) {
+  return JSON.parse(fs.readFileSync(path.join(dataDir, name), "utf8"));
+}
+
+const missions = readJson("missions.json");
+const enemies = readJson("enemy_templates.json");
+const cards = readJson("cards.json");
+
+const starterDeck = [
+  "card_027", "card_027",
+  "card_001", "card_001", "card_001", "card_001",
+  "card_077", "card_077",
+  "card_028", "card_028",
+  "card_002", "card_002",
+  "card_029",
+  "card_033", "card_033",
+  "card_026", "card_030",
+];
+
+function missionNum(id) {
+  return Number(id.slice(1));
+}
+
+function perActIndex(mid, act) {
+  const n = missionNum(mid);
+  if (act === 1) return Math.max(1, n);
+  if (act === 2) return Math.max(1, n - 7);
+  return Math.max(1, n - 14);
+}
+
+function scaling(act, idx) {
+  return {
+    hpScale: 1.0 + (act - 1) * 0.22 + (idx - 1) * 0.04,
+    dmgScale: 1.0 + (act - 1) * 0.16 + (idx - 1) * 0.03,
+    armorBonus: Math.max(0, act - 1) + Math.floor((idx - 1) / 3),
+  };
+}
+
+function cardImpact(card) {
+  if (!card) return { dpt: 0, mit: 0, heal: 0 };
+  const dmg = Number(card.damage || 0);
+  const armor = Number(card.armor || 0);
+  const heal = Number(card.heal || 0);
+  const effect = String(card.effect || "none");
+  let dptBonus = 0;
+  let mitBonus = 0;
+  if (effect.includes("poison")) dptBonus += 0.9;
+  if (effect.includes("execution")) dptBonus += 0.8;
+  if (effect.includes("piercing")) dptBonus += 0.5;
+  if (effect.includes("counter")) dptBonus += 0.4;
+  if (effect.includes("resource_regen")) dptBonus += 0.35;
+  if (effect.includes("damage_buff")) dptBonus += 0.45;
+  if (effect.includes("dodge")) mitBonus += 0.8;
+  if (effect.includes("stun")) mitBonus += 0.6;
+  if (effect.includes("fear")) mitBonus += 0.6;
+  return {
+    dpt: dmg + dptBonus,
+    mit: armor * 0.75 + mitBonus,
+    heal: heal,
+  };
+}
+
+function starterProfile() {
+  let damage = 0;
+  let mitigation = 0;
+  let healing = 0;
+  for (const id of starterDeck) {
+    const card = cards[id];
+    const v = cardImpact(card);
+    damage += v.dpt;
+    mitigation += v.mit;
+    healing += v.heal;
+  }
+  const drawsPerTurn = 3.5;
+  const playsPerTurn = 3.4;
+  const avgDamagePerCard = damage / starterDeck.length;
+  const avgMitPerCard = mitigation / starterDeck.length;
+  const avgHealPerCard = healing / starterDeck.length;
+  return {
+    playerDpt: avgDamagePerCard * playsPerTurn * 2.4,
+    playerMitigation: avgMitPerCard * playsPerTurn * 1.6,
+    playerHealPerTurn: avgHealPerCard * (drawsPerTurn / 3.0) * 1.25,
+  };
+}
+
+function sigmoid(x) {
+  return 1 / (1 + Math.exp(-x));
+}
+
+function analyzeMission(mid, mission, player) {
+  const act = Number(mission.act || 1);
+  const idx = perActIndex(mid, act);
+  const s = scaling(act, idx);
+
+  let enemyEhp = 0;
+  let enemyDpt = 0;
+  for (const eid of mission.enemies || []) {
+    const e = enemies[eid];
+    if (!e) continue;
+    const hp = Math.max(1, Math.round(Number(e.hp || 1) * s.hpScale));
+    const armor = Math.max(0, Number(e.armor || 0) + s.armorBonus);
+    const dmg = Math.max(1, Math.round(Number(e.damage || 1) * s.dmgScale));
+    enemyEhp += hp + armor * 1.25;
+    enemyDpt += dmg;
+  }
+
+  const playerEhp = 30 + player.playerHealPerTurn * 6.0;
+  const netEnemyDpt = Math.max(0.75, enemyDpt - player.playerMitigation);
+  const turnsToWin = enemyEhp / Math.max(1.0, player.playerDpt);
+  const turnsToLose = playerEhp / netEnemyDpt;
+  const pressure = enemyDpt / Math.max(1.0, player.playerDpt);
+  const outcome = turnsToLose - turnsToWin;
+  const winRate = Math.round(sigmoid(outcome * 0.7) * 100);
+  const score = Math.round(enemyEhp + enemyDpt * 2.0);
+  return {
+    id: mid,
+    act,
+    turnsToWin: Number(turnsToWin.toFixed(2)),
+    turnsToLose: Number(turnsToLose.toFixed(2)),
+    pressure: Number(pressure.toFixed(2)),
+    score,
+    winRate,
+  };
+}
+
+const player = starterProfile();
+const main = Object.entries(missions)
+  .filter(([id, m]) => id.startsWith("M") && m.type === "main")
+  .sort((a, b) => missionNum(a[0]) - missionNum(b[0]))
+  .map(([id, mission]) => analyzeMission(id, mission, player));
+
+const byAct = { 1: [], 2: [], 3: [] };
+for (const row of main) byAct[row.act].push(row);
+
+function avg(arr, key) {
+  if (!arr.length) return 0;
+  return arr.reduce((a, b) => a + b[key], 0) / arr.length;
+}
+
+function lineFor(r) {
+  return `| ${r.id} | ${r.act} | ${r.score} | ${r.turnsToWin} | ${r.turnsToLose} | ${r.pressure} | ${r.winRate}% |`;
+}
+
+const spikes = [];
+for (let i = 1; i < main.length; i++) {
+  const prev = main[i - 1];
+  const curr = main[i];
+  const growth = (curr.score - prev.score) / Math.max(1, prev.score);
+  if (growth > 0.3) spikes.push(`${prev.id}->${curr.id} (+${Math.round(growth * 100)}%)`);
+}
+
+const report = [
+  "# Phase 9 Playtest Calibration Report",
+  "",
+  "Generated by `scripts/tools/phase9_playtest_report.js`.",
+  "",
+  "Method: mission-level heuristic simulation using current `missions.json`, `enemy_templates.json`, `cards.json`, and runtime enemy scaling logic mirrored from `CardManager.get_mission_enemies()`.",
+  "",
+  "## Baseline Player Model (Starter Deck)",
+  `- Estimated player damage/turn: **${player.playerDpt.toFixed(2)}**`,
+  `- Estimated mitigation/turn: **${player.playerMitigation.toFixed(2)}**`,
+  `- Estimated healing/turn: **${player.playerHealPerTurn.toFixed(2)}**`,
+  "",
+  "## Main Mission Difficulty Table",
+  "| Mission | Act | Difficulty Score | Turns To Win | Turns To Lose | Pressure | Predicted Win Rate |",
+  "|---|---:|---:|---:|---:|---:|---:|",
+  ...main.map(lineFor),
+  "",
+  "## Act Summary",
+  `- **Act 1** avg score: ${avg(byAct[1], "score").toFixed(1)}, avg win rate: ${avg(byAct[1], "winRate").toFixed(1)}%`,
+  `- **Act 2** avg score: ${avg(byAct[2], "score").toFixed(1)}, avg win rate: ${avg(byAct[2], "winRate").toFixed(1)}%`,
+  `- **Act 3** avg score: ${avg(byAct[3], "score").toFixed(1)}, avg win rate: ${avg(byAct[3], "winRate").toFixed(1)}%`,
+  "",
+  "## Curve Health",
+  spikes.length
+    ? `- Difficulty spikes >30% found: ${spikes.join(", ")}`
+    : "- No >30% mission-to-mission difficulty spikes detected.",
+  "",
+  "## Tuning Recommendations",
+  "- Target predicted win rates:",
+  "  - Act 1: 72-82%",
+  "  - Act 2: 60-75%",
+  "  - Act 3: 45-65%",
+  "- If a mission is too easy (<3 turns to win): increase HP before damage.",
+  "- If a mission is too punishing (<2.4 turns to lose): reduce enemy damage before armor.",
+  "- Re-run this report after each tuning pass.",
+  "",
+];
+
+fs.mkdirSync(path.dirname(outPath), { recursive: true });
+fs.writeFileSync(outPath, report.join("\n") + "\n");
+console.log(`Report written: ${outPath}`);
+console.log(`Act win-rate summary: A1=${avg(byAct[1], "winRate").toFixed(1)}% A2=${avg(byAct[2], "winRate").toFixed(1)}% A3=${avg(byAct[3], "winRate").toFixed(1)}%`);

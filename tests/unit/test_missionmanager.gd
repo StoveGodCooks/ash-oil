@@ -63,6 +63,19 @@ func test_unlock_makes_mission_available() -> void:
 	var avail = MissionManager.get_available_missions()
 	assert_in("M05 available after unlock", "M05", avail)
 
+func test_locked_by_npc_and_faction_requirements() -> void:
+	GameState.unlock_mission("S02")
+	var reasons = MissionManager.get_mission_lock_reasons("S02")
+	assert_not_empty("S02 has lock reasons at start", reasons)
+	assert_false("S02 unavailable at start", MissionManager.is_mission_available("S02"))
+
+func test_unlocks_when_relationship_and_faction_requirements_met() -> void:
+	GameState.unlock_mission("S02")
+	GameState.modify_relationship_score("Lanista", 20, "unit_test")
+	GameState.set_relationship_flag("Lanista", "met", true)
+	GameState.modify_faction_alignment("State", 25, "unit_test")
+	assert_true("S02 available when requirements met", MissionManager.is_mission_available("S02"))
+
 # ── start_mission ─────────────────────────────────────────────────────────────
 func test_start_mission_sets_current_id() -> void:
 	MissionManager.start_mission("M01")
@@ -139,6 +152,18 @@ func test_complete_applies_relationship_changes() -> void:
 	for lt_name in relationships:
 		var expected = relationships[lt_name]
 		assert_eq("%s loyalty after M01" % lt_name, GameState.lieutenant_data[lt_name]["loyalty"], expected)
+
+func test_complete_mission_applies_npc_impacts() -> void:
+	GameState.unlock_mission("M04")
+	MissionManager.complete_mission("M04", "victory")
+	var lanista = GameState.get_npc_state("Lanista")
+	assert_gt("Lanista score increased after M04", int(lanista.get("score", 0)), 0)
+	assert_true("Lanista met flag set after M04", GameState.check_relationship_flag("Lanista", "met"))
+
+func test_complete_mission_applies_faction_changes() -> void:
+	GameState.unlock_mission("M06")
+	MissionManager.complete_mission("M06", "victory")
+	assert_gt("State alignment increased from M06", GameState.get_faction_alignment("State"), 0)
 
 func test_complete_unknown_mission_does_not_crash() -> void:
 	MissionManager.complete_mission("M99", "victory")

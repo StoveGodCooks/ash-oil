@@ -1,0 +1,2482 @@
+Godot Engine v4.6.1.stable.official.14d19694e - https://godotengine.org
+
+ERROR: Failed to read the root certificate store.
+   at: get_system_ca_certificates (platform/windows/os_windows.cpp:2570)
+Loaded 25 missions
+CardManager ready: 87 cards, 8 lieutenants, 26 enemies, 24 gear
+✓ Hooks loaded: 20 missions
+Loaded 25 missions
+[REL] Faction Cult alignment 0 -> 40 (unit_test)
+[REL] Iona score 0 -> 70 (unit_test)
+[REL] Moth score 0 -> 10 (unit_test_log)
+[REL] Varro flag[met]=true
+[COMBAT] Gear active: Iron Chestplate
+[COMBAT] Bonuses: HP +0, ARM +4, DMG +0, SPD +0
+[COMBAT] Gear effects: start_armor
+[COMBAT] Gear active: Test Armor +1
+[COMBAT] Bonuses: HP +0, ARM +1, DMG +0, SPD +0
+[COMBAT] Gear active: Iron Gladius
+[COMBAT] Bonuses: HP +0, ARM +0, DMG +1, SPD +0
+[COMBAT] Gear active: Crimson Fang
+[COMBAT] Bonuses: HP +0, ARM +0, DMG +2, SPD +0
+[COMBAT] Gear effects (not implemented): bleeding_amplify
+[COMBAT] Gear active: Crimson Fang
+[COMBAT] Bonuses: HP +0, ARM +0, DMG +2, SPD +0
+[COMBAT] Gear effects (not implemented): bleeding_amplify
+[COMBAT] Gear active: Regenerative Mail
+[COMBAT] Bonuses: HP +6, ARM +0, DMG +0, SPD +0
+[COMBAT] Gear effects (not implemented): sustain_heal
+[COMBAT] Gear active: Leather Vest
+[COMBAT] Bonuses: HP +3, ARM +0, DMG +0, SPD +0
+Gear drop: Balanced Blade (common)
+Gear drop: Balanced Blade (common)
+Gear drop: Leather Vest (common)
+Gear drop: Agile Tunic (common)
+Gear drop: Leather Vest (common)
+Gear drop: Iron Chestplate (common)
+Gear drop: Agile Tunic (common)
+Gear drop: Lucky Charm (common)
+Gear drop: Balanced Blade (common)
+Gear drop: Stamina Band (common)
+Gear drop: Balanced Blade (common)
+Gear drop: Spiked Club (common)
+Gear drop: Iron Gladius (common)
+Gear drop: Lucky Charm (common)
+Gear drop: Agile Tunic (common)
+Gear drop: Stamina Band (common)
+Gear drop: Energy Talisman (rare)
+Gear drop: Balanced Blade (common)
+Gear drop: Regenerative Mail (rare)
+Gear drop: Iron Ring (common)
+Gear drop: Spiked Club (common)
+Gear drop: Spiked Club (common)
+Gear drop: Balanced Blade (common)
+Gear drop: Fortified Plate (rare)
+Gear drop: Leather Vest (common)
+Gear drop: Regenerative Mail (rare)
+Gear drop: Leather Vest (common)
+Gear drop: Iron Ring (common)
+Gear drop: Lucky Charm (common)
+Gear drop: Balanced Blade (common)
+Gear drop: Stamina Band (common)
+Gear drop: Iron Chestplate (common)
+Gear drop: Spiked Club (common)
+Gear drop: Lucky Charm (common)
+Gear drop: Tower Breaker (rare)
+Gear drop: Agile Tunic (common)
+Gear drop: Leather Vest (common)
+Gear drop: Spiked Club (common)
+Gear drop: Stamina Band (common)
+Gear drop: Iron Chestplate (common)
+Gear drop: Lucky Charm (common)
+Gear drop: Energy Talisman (rare)
+Gear drop: Leather Vest (common)
+Gear drop: Iron Ring (common)
+Gear drop: Iron Ring (common)
+Gear drop: Iron Ring (common)
+Gear drop: Agile Tunic (common)
+Gear drop: Stamina Band (common)
+Gear drop: Iron Ring (common)
+Gear drop: Stamina Band (common)
+Gear drop: Venomous Dagger (rare)
+Gear drop: Agile Tunic (common)
+Gear drop: Balanced Blade (common)
+Gear drop: Agile Tunic (common)
+Gear drop: Stamina Band (common)
+Gear drop: Iron Chestplate (common)
+Gear drop: Agile Tunic (common)
+Gear drop: Agile Tunic (common)
+Gear drop: Balanced Blade (common)
+Gear drop: Agile Tunic (common)
+Gear drop: Iron Ring (common)
+Gear drop: Balanced Blade (common)
+Gear drop: Agile Tunic (common)
+Gear drop: Stamina Band (common)
+Gear drop: Spiked Club (common)
+Gear drop: Agile Tunic (common)
+Gear drop: Stamina Band (common)
+Gear drop: Stamina Band (common)
+Gear drop: Balanced Blade (common)
+Gear drop: Stamina Band (common)
+Gear drop: Leather Vest (common)
+Gear drop: Balanced Blade (common)
+Gear drop: Lucky Charm (common)
+Gear drop: Balanced Blade (common)
+Gear drop: Leather Vest (common)
+Gear drop: Spiked Club (common)
+Gear drop: Lucky Charm (common)
+Gear drop: Bloodstone Ring (epic)
+Gear drop: Iron Gladius (common)
+Gear drop: Regenerative Mail (rare)
+Gear drop: Leather Vest (common)
+Gear drop: Iron Gladius (common)
+Gear drop: Fortified Plate (rare)
+Gear drop: Lucky Charm (common)
+Gear drop: Iron Ring (common)
+Gear drop: Iron Gladius (common)
+Gear drop: Iron Chestplate (common)
+Gear drop: Agile Tunic (common)
+Gear drop: Iron Gladius (common)
+Gear drop: Leather Vest (common)
+Gear drop: Stamina Band (common)
+Gear drop: Lucky Charm (common)
+Gear drop: Balanced Blade (common)
+Gear drop: Iron Gladius (common)
+Gear drop: Regenerative Mail (rare)
+Gear drop: Agile Tunic (common)
+Gear drop: Iron Gladius (common)
+Gear drop: Iron Chestplate (common)
+Gear drop: Balanced Blade (common)
+Gear drop: Iron Ring (common)
+Gear drop: Venomous Dagger (rare)
+Gear drop: Iron Gladius (common)
+Gear drop: Iron Chestplate (common)
+Gear drop: Leather Vest (common)
+Gear drop: Arcane Crystal (rare)
+Gear drop: Iron Chestplate (common)
+Gear drop: Energy Talisman (rare)
+Gear drop: Lucky Charm (common)
+Gear drop: Iron Ring (common)
+Gear drop: Arcane Crystal (rare)
+Gear drop: Stamina Band (common)
+Gear drop: Agile Tunic (common)
+Gear drop: Balanced Blade (common)
+Gear drop: Lucky Charm (common)
+Gear drop: Iron Gladius (common)
+Gear drop: Iron Ring (common)
+Gear drop: Stamina Band (common)
+Gear drop: Agile Tunic (common)
+Gear drop: Leather Vest (common)
+Gear drop: Iron Ring (common)
+Gear drop: Spiked Club (common)
+Gear drop: Crimson Fang (rare)
+Gear drop: Tower Breaker (rare)
+Gear drop: Lucky Charm (common)
+Gear drop: Spiked Club (common)
+Gear drop: Iron Chestplate (common)
+Gear drop: Iron Chestplate (common)
+Gear drop: Leather Vest (common)
+Gear drop: Lucky Charm (common)
+Gear drop: Leather Vest (common)
+Gear drop: Leather Vest (common)
+Gear drop: Iron Chestplate (common)
+Gear drop: Lucky Charm (common)
+Gear drop: Stamina Band (common)
+Gear drop: Iron Ring (common)
+Gear drop: Iron Chestplate (common)
+Gear drop: Iron Ring (common)
+Gear drop: Balanced Blade (common)
+Gear drop: Spiked Club (common)
+Gear drop: Spiked Club (common)
+Gear drop: Stamina Band (common)
+Gear drop: Iron Ring (common)
+Gear drop: Spiked Club (common)
+Gear drop: Regenerative Mail (rare)
+Gear drop: Lucky Charm (common)
+Gear drop: Stamina Band (common)
+Gear drop: Spiked Club (common)
+Gear drop: Stamina Band (common)
+Gear drop: Spiked Club (common)
+Gear drop: Shadow Cloak (rare)
+Gear drop: Spiked Club (common)
+Gear drop: Iron Chestplate (common)
+Gear drop: Iron Chestplate (common)
+Gear drop: Spiked Club (common)
+Gear drop: Leather Vest (common)
+Gear drop: Iron Ring (common)
+Gear drop: Iron Chestplate (common)
+Gear drop: Balanced Blade (common)
+Gear drop: Iron Gladius (common)
+Gear drop: Iron Ring (common)
+Gear drop: Agile Tunic (common)
+Gear drop: Tactician's Lens (rare)
+Gear drop: Stamina Band (common)
+Gear drop: Iron Chestplate (common)
+Gear drop: Iron Chestplate (common)
+Gear drop: Iron Chestplate (common)
+Gear drop: Spiked Club (common)
+Gear drop: Stamina Band (common)
+Gear drop: Agile Tunic (common)
+Gear drop: Stamina Band (common)
+Gear drop: Agile Tunic (common)
+Gear drop: Leather Vest (common)
+Gear drop: Iron Gladius (common)
+Gear drop: Iron Gladius (common)
+Gear drop: Iron Gladius (common)
+Gear drop: Spiked Club (common)
+Gear drop: Agile Tunic (common)
+Gear drop: Iron Chestplate (common)
+Gear drop: Agile Tunic (common)
+Gear drop: Spiked Club (common)
+Gear drop: Leather Vest (common)
+Gear drop: Stamina Band (common)
+Gear drop: Arcane Crystal (rare)
+Gear drop: Iron Gladius (common)
+Gear drop: Agile Tunic (common)
+Gear drop: Iron Chestplate (common)
+Gear drop: Agile Tunic (common)
+Gear drop: Lucky Charm (common)
+Gear drop: Regenerative Mail (rare)
+Gear drop: Agile Tunic (common)
+Gear drop: Arcane Crystal (rare)
+Gear drop: Iron Chestplate (common)
+Gear drop: Stamina Band (common)
+Gear drop: Lucky Charm (common)
+Gear drop: Stamina Band (common)
+Gear drop: Agile Tunic (common)
+Gear drop: Iron Chestplate (common)
+Gear drop: Agile Tunic (common)
+Gear drop: Iron Ring (common)
+Gear drop: Stamina Band (common)
+Gear drop: Stamina Band (common)
+Gear drop: Iron Chestplate (common)
+Gear drop: Iron Gladius (common)
+Gear drop: Iron Ring (common)
+Gear drop: Leather Vest (common)
+Gear drop: Balanced Blade (common)
+Gear drop: Leather Vest (common)
+Gear drop: Agile Tunic (common)
+Gear drop: Lucky Charm (common)
+Gear drop: Iron Gladius (common)
+Gear drop: Iron Ring (common)
+Gear drop: Stamina Band (common)
+Gear drop: Lucky Charm (common)
+Gear drop: Iron Gladius (common)
+Gear drop: Spiked Club (common)
+Gear drop: Balanced Blade (common)
+Gear drop: Agile Tunic (common)
+Gear drop: Stamina Band (common)
+Gear drop: Lucky Charm (common)
+Gear drop: Balanced Blade (common)
+Gear drop: Lucky Charm (common)
+Gear drop: Stamina Band (common)
+Gear drop: Agile Tunic (common)
+Gear drop: Iron Gladius (common)
+Gear drop: Iron Chestplate (common)
+Gear drop: Stamina Band (common)
+Gear drop: Agile Tunic (common)
+Gear drop: Agile Tunic (common)
+Gear drop: Iron Chestplate (common)
+Gear drop: Iron Gladius (common)
+Gear drop: Iron Chestplate (common)
+Gear drop: Tactician's Lens (rare)
+Gear drop: Iron Ring (common)
+Gear drop: Spiked Club (common)
+Gear drop: Leather Vest (common)
+Gear drop: Lucky Charm (common)
+Gear drop: Spiked Club (common)
+Gear drop: Iron Chestplate (common)
+Gear drop: Agile Tunic (common)
+Gear drop: Balanced Blade (common)
+Gear drop: Iron Gladius (common)
+Gear drop: Leather Vest (common)
+Gear drop: Iron Ring (common)
+Gear drop: Balanced Blade (common)
+Gear drop: Iron Ring (common)
+Gear drop: Energy Talisman (rare)
+Gear drop: Iron Chestplate (common)
+Gear drop: Agile Tunic (common)
+Gear drop: Stamina Band (common)
+Gear drop: Spiked Club (common)
+Gear drop: Iron Chestplate (common)
+Gear drop: Leather Vest (common)
+Gear drop: Iron Gladius (common)
+Gear drop: Iron Ring (common)
+Gear drop: Iron Ring (common)
+Gear drop: Iron Ring (common)
+Gear drop: Agile Tunic (common)
+Gear drop: Iron Gladius (common)
+Gear drop: Stamina Band (common)
+Gear drop: Iron Gladius (common)
+Gear drop: Agile Tunic (common)
+Gear drop: Lucky Charm (common)
+Gear drop: Lucky Charm (common)
+Gear drop: Energy Talisman (rare)
+Gear drop: Lucky Charm (common)
+Gear drop: Iron Ring (common)
+Gear drop: Spiked Club (common)
+Gear drop: Lucky Charm (common)
+Gear drop: Tower Breaker (rare)
+Gear drop: Agile Tunic (common)
+Gear drop: Leather Vest (common)
+Gear drop: Spiked Club (common)
+Gear drop: Stamina Band (common)
+Gear drop: Iron Ring (common)
+Gear drop: Agile Tunic (common)
+Gear drop: Iron Gladius (common)
+Gear drop: Iron Ring (common)
+Gear drop: Stamina Band (common)
+Gear drop: Lucky Charm (common)
+Gear drop: Iron Chestplate (common)
+Gear drop: Iron Ring (common)
+Gear drop: Iron Gladius (common)
+Gear drop: Balanced Blade (common)
+Gear drop: Iron Ring (common)
+Gear drop: Iron Chestplate (common)
+Gear drop: Stamina Band (common)
+Gear drop: Venomous Dagger (rare)
+Gear drop: Agile Tunic (common)
+Gear drop: Balanced Blade (common)
+Gear drop: Iron Ring (common)
+Gear drop: Lucky Charm (common)
+Gear drop: Stamina Band (common)
+Gear drop: Iron Chestplate (common)
+Gear drop: Bloodstone Ring (epic)
+Gear drop: Stamina Band (common)
+Gear drop: Iron Chestplate (common)
+Gear drop: Lucky Charm (common)
+Gear drop: Lucky Charm (common)
+Gear drop: Lucky Charm (common)
+Gear drop: Iron Chestplate (common)
+Gear drop: Lucky Charm (common)
+Gear drop: Balanced Blade (common)
+Gear drop: Agile Tunic (common)
+Gear drop: Shadow Cloak (rare)
+Gear drop: Iron Gladius (common)
+Gear drop: Stamina Band (common)
+Gear drop: Venomous Dagger (rare)
+Gear drop: Leather Vest (common)
+Gear drop: Balanced Blade (common)
+Gear drop: Lucky Charm (common)
+Gear drop: Balanced Blade (common)
+Gear drop: Spiked Club (common)
+Gear drop: Agile Tunic (common)
+Gear drop: Balanced Blade (common)
+Gear drop: Lucky Charm (common)
+Gear drop: Balanced Blade (common)
+Gear drop: Leather Vest (common)
+Gear drop: Spiked Club (common)
+Gear drop: Iron Gladius (common)
+Gear drop: Spiked Club (common)
+Gear drop: Lucky Charm (common)
+Gear drop: Iron Gladius (common)
+Gear drop: Agile Tunic (common)
+Gear drop: Leather Vest (common)
+Gear drop: Lucky Charm (common)
+Gear drop: Energy Talisman (rare)
+Gear drop: Leather Vest (common)
+Gear drop: Iron Gladius (common)
+Gear drop: Iron Ring (common)
+Gear drop: Agile Tunic (common)
+Gear drop: Agile Tunic (common)
+Gear drop: Spiked Club (common)
+Gear drop: Lucky Charm (common)
+Gear drop: Energy Talisman (rare)
+Gear drop: Spiked Club (common)
+Gear drop: Iron Gladius (common)
+Gear drop: Stamina Band (common)
+Gear drop: Tactician's Lens (rare)
+Gear drop: Iron Gladius (common)
+Gear drop: Spiked Club (common)
+Gear drop: Agile Tunic (common)
+Gear drop: Shadow Cloak (rare)
+Gear drop: Stamina Band (common)
+Gear drop: Iron Gladius (common)
+Gear drop: Regenerative Mail (rare)
+Gear drop: Lucky Charm (common)
+Gear drop: Lucky Charm (common)
+Gear drop: Spiked Club (common)
+Gear drop: Leather Vest (common)
+Gear drop: Leather Vest (common)
+Gear drop: Iron Ring (common)
+Gear drop: Lucky Charm (common)
+Gear drop: Iron Ring (common)
+Gear drop: Lucky Charm (common)
+Gear drop: Tactician's Lens (rare)
+Gear drop: Iron Chestplate (common)
+Gear drop: Agile Tunic (common)
+Gear drop: Spiked Club (common)
+Gear drop: Iron Gladius (common)
+Gear drop: Agile Tunic (common)
+Gear drop: Iron Chestplate (common)
+Gear drop: Leather Vest (common)
+Gear drop: Stamina Band (common)
+Gear drop: Agile Tunic (common)
+Gear drop: Balanced Blade (common)
+Gear drop: Spiked Club (common)
+Gear drop: Leather Vest (common)
+Gear drop: Spiked Club (common)
+Gear drop: Iron Ring (common)
+Gear drop: Agile Tunic (common)
+Gear drop: Venomous Dagger (rare)
+Gear drop: Leather Vest (common)
+Gear drop: Leather Vest (common)
+Gear drop: Iron Ring (common)
+Gear drop: Spiked Club (common)
+Gear drop: Lucky Charm (common)
+Gear drop: Lucky Charm (common)
+Gear drop: Crimson Fang (rare)
+Gear drop: Spiked Club (common)
+Gear drop: Balanced Blade (common)
+Gear drop: Iron Gladius (common)
+Gear drop: Iron Ring (common)
+Gear drop: Leather Vest (common)
+Gear drop: Stamina Band (common)
+Gear drop: Iron Chestplate (common)
+Gear drop: Shadow Cloak (rare)
+Gear drop: Iron Ring (common)
+Gear drop: Stamina Band (common)
+Gear drop: Agile Tunic (common)
+Gear drop: Stamina Band (common)
+Gear drop: Stamina Band (common)
+Gear drop: Lucky Charm (common)
+Gear drop: Agile Tunic (common)
+Gear drop: Iron Chestplate (common)
+Gear drop: Iron Ring (common)
+Gear drop: Iron Gladius (common)
+Gear drop: Lucky Charm (common)
+Gear drop: Balanced Blade (common)
+Gear drop: Lucky Charm (common)
+Gear drop: Stamina Band (common)
+Gear drop: Stamina Band (common)
+Gear drop: Iron Ring (common)
+Gear drop: Spiked Club (common)
+Gear drop: Balanced Blade (common)
+Gear drop: Spiked Club (common)
+Gear drop: Iron Chestplate (common)
+Gear drop: Balanced Blade (common)
+Gear drop: Spiked Club (common)
+Gear drop: Balanced Blade (common)
+Gear drop: Leather Vest (common)
+Gear drop: Iron Ring (common)
+Gear drop: Spiked Club (common)
+Gear drop: Spiked Club (common)
+Gear drop: Agile Tunic (common)
+Gear drop: Balanced Blade (common)
+Gear drop: Leather Vest (common)
+Gear drop: Energy Talisman (rare)
+Gear drop: Agile Tunic (common)
+Gear drop: Iron Chestplate (common)
+Gear drop: Spiked Club (common)
+Gear drop: Iron Gladius (common)
+Gear drop: Balanced Blade (common)
+Gear drop: Spiked Club (common)
+Gear drop: Lucky Charm (common)
+Gear drop: Leather Vest (common)
+Gear drop: Crimson Fang (rare)
+Gear drop: Lucky Charm (common)
+Gear drop: Iron Ring (common)
+Gear drop: Iron Gladius (common)
+Gear drop: Regenerative Mail (rare)
+Gear drop: Iron Ring (common)
+Gear drop: Balanced Blade (common)
+Gear drop: Iron Chestplate (common)
+Gear drop: Iron Chestplate (common)
+Gear drop: Iron Chestplate (common)
+Gear drop: Balanced Blade (common)
+Gear drop: Leather Vest (common)
+Gear drop: Lucky Charm (common)
+Gear drop: Iron Ring (common)
+Gear drop: Leather Vest (common)
+Gear drop: Iron Chestplate (common)
+Gear drop: Stamina Band (common)
+Gear drop: Iron Chestplate (common)
+Gear drop: Iron Chestplate (common)
+Gear drop: Agile Tunic (common)
+Gear drop: Balanced Blade (common)
+Gear drop: Iron Chestplate (common)
+Gear drop: Balanced Blade (common)
+Gear drop: Agile Tunic (common)
+Gear drop: Spiked Club (common)
+Gear drop: Agile Tunic (common)
+Gear drop: Iron Chestplate (common)
+Gear drop: Agile Tunic (common)
+Gear drop: Spiked Club (common)
+Gear drop: Iron Gladius (common)
+Gear drop: Iron Chestplate (common)
+Gear drop: Iron Ring (common)
+Gear drop: Fortified Plate (rare)
+Gear drop: Tower Breaker (rare)
+Gear drop: Leather Vest (common)
+Gear drop: Agile Tunic (common)
+Gear drop: Iron Chestplate (common)
+Gear drop: Iron Chestplate (common)
+Gear drop: Lucky Charm (common)
+Gear drop: Iron Chestplate (common)
+Gear drop: Spiked Club (common)
+Gear drop: Iron Ring (common)
+Gear drop: Iron Chestplate (common)
+Gear drop: Spiked Club (common)
+Gear drop: Iron Chestplate (common)
+Gear drop: Iron Ring (common)
+Gear drop: Stamina Band (common)
+Gear drop: Balanced Blade (common)
+Gear drop: Leather Vest (common)
+Gear drop: Stamina Band (common)
+Gear drop: Agile Tunic (common)
+Gear drop: Iron Chestplate (common)
+Gear drop: Agile Tunic (common)
+Gear drop: Iron Ring (common)
+Gear drop: Stamina Band (common)
+Gear drop: Agile Tunic (common)
+Gear drop: Spiked Club (common)
+Gear drop: Stamina Band (common)
+Gear drop: Iron Gladius (common)
+Gear drop: Iron Chestplate (common)
+Gear drop: Iron Chestplate (common)
+Gear drop: Iron Ring (common)
+Gear drop: Iron Gladius (common)
+Gear drop: Agile Tunic (common)
+Gear drop: Iron Ring (common)
+Gear drop: Agile Tunic (common)
+Gear drop: Iron Ring (common)
+Gear drop: Stamina Band (common)
+Gear drop: Agile Tunic (common)
+Gear drop: Iron Chestplate (common)
+Gear drop: Spiked Club (common)
+Gear drop: Iron Gladius (common)
+Gear drop: Iron Gladius (common)
+Gear drop: Fortified Plate (rare)
+Gear drop: Iron Gladius (common)
+Gear drop: Agile Tunic (common)
+Gear drop: Balanced Blade (common)
+Gear drop: Lucky Charm (common)
+Gear drop: Stamina Band (common)
+Gear drop: Balanced Blade (common)
+Gear drop: Stamina Band (common)
+Gear drop: Venomous Dagger (rare)
+Gear drop: Stamina Band (common)
+Gear drop: Iron Ring (common)
+Gear drop: Iron Gladius (common)
+Gear drop: Agile Tunic (common)
+Gear drop: Leather Vest (common)
+Gear drop: Agile Tunic (common)
+Gear drop: Spiked Club (common)
+Gear drop: Balanced Blade (common)
+Gear drop: Lucky Charm (common)
+Gear drop: Spiked Club (common)
+Gear drop: Agile Tunic (common)
+Gear drop: Leather Vest (common)
+Gear drop: Leather Vest (common)
+Gear drop: Iron Ring (common)
+Gear drop: Stamina Band (common)
+Gear drop: Arcane Crystal (rare)
+Gear drop: Stamina Band (common)
+Gear drop: Lucky Charm (common)
+Gear drop: Iron Ring (common)
+Gear drop: Regenerative Mail (rare)
+Gear drop: Iron Gladius (common)
+Gear drop: Balanced Blade (common)
+Gear drop: Balanced Blade (common)
+Gear drop: Leather Vest (common)
+Gear drop: Iron Ring (common)
+Gear drop: Lucky Charm (common)
+Gear drop: Iron Chestplate (common)
+Gear drop: Balanced Blade (common)
+Gear drop: Iron Gladius (common)
+Gear drop: Iron Gladius (common)
+Gear drop: Spiked Club (common)
+Gear drop: Iron Gladius (common)
+Gear drop: Lucky Charm (common)
+Gear drop: Leather Vest (common)
+Gear drop: Agile Tunic (common)
+Gear drop: Balanced Blade (common)
+Gear drop: Iron Gladius (common)
+Gear drop: Iron Ring (common)
+Gear drop: Lucky Charm (common)
+Gear drop: Balanced Blade (common)
+Gear drop: Agile Tunic (common)
+Gear drop: Balanced Blade (common)
+Gear drop: Iron Chestplate (common)
+Gear drop: Iron Ring (common)
+Gear drop: Agile Tunic (common)
+Gear drop: Fortified Plate (rare)
+Gear drop: Stamina Band (common)
+Gear drop: Spiked Club (common)
+Gear drop: Lucky Charm (common)
+Gear drop: Agile Tunic (common)
+Gear drop: Balanced Blade (common)
+Gear drop: Agile Tunic (common)
+Gear drop: Spiked Club (common)
+Gear drop: Leather Vest (common)
+Gear drop: Iron Ring (common)
+Gear drop: Agile Tunic (common)
+Gear drop: Agile Tunic (common)
+Gear drop: Stamina Band (common)
+Gear drop: Iron Ring (common)
+Gear drop: Agile Tunic (common)
+Gear drop: Lucky Charm (common)
+Gear drop: Balanced Blade (common)
+Gear drop: Lucky Charm (common)
+Gear drop: Iron Gladius (common)
+Gear drop: Balanced Blade (common)
+Gear drop: Spiked Club (common)
+Gear drop: Iron Chestplate (common)
+Gear drop: Spiked Club (common)
+Gear drop: Iron Chestplate (common)
+Gear drop: Balanced Blade (common)
+Gear drop: Spiked Club (common)
+Gear drop: Tactician's Lens (rare)
+Gear drop: Iron Chestplate (common)
+Gear drop: Balanced Blade (common)
+Gear drop: Regenerative Mail (rare)
+Gear drop: Lucky Charm (common)
+Gear drop: Shadow Cloak (rare)
+Gear drop: Venomous Dagger (rare)
+Gear drop: Spiked Club (common)
+[COMBAT] Gear active: Iron Gladius, Leather Vest, Iron Ring
+[COMBAT] Bonuses: HP +5, ARM +0, DMG +1, SPD +0
+[COMBAT] Gear active: Crimson Fang, Leather Vest
+[COMBAT] Bonuses: HP +3, ARM +0, DMG +2, SPD +0
+[COMBAT] Gear effects (not implemented): bleeding_amplify
+[COMBAT] Gear active: Crimson Fang, Leather Vest
+[COMBAT] Bonuses: HP +3, ARM +0, DMG +2, SPD +0
+[COMBAT] Gear effects (not implemented): bleeding_amplify
+[COMBAT] Gear active: Bloodstone Ring
+[COMBAT] Bonuses: HP -5, ARM +0, DMG +0, SPD +0
+[COMBAT] Gear effects (not implemented): mana_from_damage_taken
+Gear drop: Stamina Band (common)
+Gear drop: Agile Tunic (common)
+Gear drop: Leather Vest (common)
+Gear drop: Balanced Blade (common)
+Gear drop: Iron Gladius (common)
+Gear drop: Iron Chestplate (common)
+Gear drop: Leather Vest (common)
+Gear drop: Iron Ring (common)
+Gear drop: Venomous Dagger (rare)
+Gear drop: Agile Tunic (common)
+Gear drop: Balanced Blade (common)
+Gear drop: Regenerative Mail (rare)
+Gear drop: Iron Gladius (common)
+Gear drop: Leather Vest (common)
+Gear drop: Spiked Club (common)
+Gear drop: Agile Tunic (common)
+Gear drop: Iron Ring (common)
+Gear drop: Agile Tunic (common)
+Gear drop: Balanced Blade (common)
+Gear drop: Balanced Blade (common)
+Gear drop: Spiked Club (common)
+Gear drop: Agile Tunic (common)
+Gear drop: Agile Tunic (common)
+Gear drop: Leather Vest (common)
+Gear drop: Crimson Fang (rare)
+Gear drop: Balanced Blade (common)
+Gear drop: Iron Gladius (common)
+Gear drop: Spiked Club (common)
+Gear drop: Leather Vest (common)
+Gear drop: Spiked Club (common)
+Gear drop: Iron Ring (common)
+Gear drop: Iron Gladius (common)
+Gear drop: Aegis Bulwark (epic)
+Gear drop: Lucky Charm (common)
+Gear drop: Stamina Band (common)
+Gear drop: Leather Vest (common)
+Gear drop: Iron Gladius (common)
+Gear drop: Stamina Band (common)
+Gear drop: Balanced Blade (common)
+Gear drop: Iron Chestplate (common)
+Gear drop: Spiked Club (common)
+Gear drop: Lucky Charm (common)
+Gear drop: Arcane Crystal (rare)
+Gear drop: Stamina Band (common)
+Gear drop: Agile Tunic (common)
+Gear drop: Stamina Band (common)
+Gear drop: Iron Ring (common)
+Gear drop: Spiked Club (common)
+Gear drop: Iron Chestplate (common)
+Gear drop: Stamina Band (common)
+Gear drop: Lucky Charm (common)
+Gear drop: Balanced Blade (common)
+Gear drop: Balanced Blade (common)
+Gear drop: Lucky Charm (common)
+Gear drop: Iron Gladius (common)
+Gear drop: Balanced Blade (common)
+Gear drop: Leather Vest (common)
+Gear drop: Lucky Charm (common)
+Gear drop: Leather Vest (common)
+Gear drop: Agile Tunic (common)
+Gear drop: Crimson Fang (rare)
+Gear drop: Spiked Club (common)
+Gear drop: Agile Tunic (common)
+Gear drop: Stamina Band (common)
+Gear drop: Leather Vest (common)
+Gear drop: Lucky Charm (common)
+Gear drop: Balanced Blade (common)
+Gear drop: Iron Chestplate (common)
+Gear drop: Lucky Charm (common)
+Gear drop: Lucky Charm (common)
+Gear drop: Lucky Charm (common)
+Gear drop: Lucky Charm (common)
+Gear drop: Balanced Blade (common)
+Gear drop: Balanced Blade (common)
+Gear drop: Agile Tunic (common)
+Gear drop: Spiked Club (common)
+Gear drop: Arcane Crystal (rare)
+Gear drop: Iron Ring (common)
+Gear drop: Lucky Charm (common)
+Gear drop: Venomous Dagger (rare)
+Gear drop: Iron Ring (common)
+Gear drop: Balanced Blade (common)
+Gear drop: Energy Talisman (rare)
+Gear drop: Stamina Band (common)
+Gear drop: Shadow Cloak (rare)
+Gear drop: Shadow Cloak (rare)
+Gear drop: Agile Tunic (common)
+Gear drop: Balanced Blade (common)
+Gear drop: Iron Ring (common)
+Gear drop: Lucky Charm (common)
+Gear drop: Leather Vest (common)
+Gear drop: Agile Tunic (common)
+Gear drop: Spiked Club (common)
+Gear drop: Stamina Band (common)
+Gear drop: Lucky Charm (common)
+Gear drop: Iron Chestplate (common)
+Gear drop: Agile Tunic (common)
+Gear drop: Spiked Club (common)
+Gear drop: Lucky Charm (common)
+Gear drop: Leather Vest (common)
+[COMBAT] Gear active: Leather Vest
+[COMBAT] Bonuses: HP +3, ARM +0, DMG +0, SPD +0
+Gear drop: Spiked Club (common)
+[COMBAT] Gear active: Leather Vest
+[COMBAT] Bonuses: HP +3, ARM +0, DMG +0, SPD +0
+[COMBAT] Gear active: Leather Vest
+[COMBAT] Bonuses: HP +3, ARM +0, DMG +0, SPD +0
+[REL] Rhesus flag[met]=true
+[REL] Rhesus score 0 -> 5 (hook_help:M01)
+[REL] Marcellus flag[met]=true
+[REL] Marcellus score -60 -> -64 (hook_hunt:M01)
+Game saved to slot 0
+
+🗣 CASSIAN: They've already decided my death. Time to decide theirs.
+
+
+✦ STORY BEAT: token_arrives
+The boy's message was warning and invitation both: they want you dead, and they've already decided how. That means you still have time.
+
+→ Narrative UI updated: Phase=SURVIVAL, Threats=Marcellus, Refusals=1
+[REL] Rhesus flag[met]=true
+[REL] Rhesus score 0 -> 5 (hook_help:M01)
+[REL] Marcellus flag[met]=true
+[REL] Marcellus score -60 -> -64 (hook_hunt:M01)
+Game saved to slot 0
+
+🗣 CASSIAN: They've already decided my death. Time to decide theirs.
+
+
+✦ STORY BEAT: token_arrives
+The boy's message was warning and invitation both: they want you dead, and they've already decided how. That means you still have time.
+
+→ Narrative UI updated: Phase=SURVIVAL, Threats=Marcellus, Refusals=1
+[REL] Rhesus flag[met]=true
+[REL] Rhesus score 0 -> 5 (hook_help:M01)
+[REL] Marcellus flag[met]=true
+[REL] Marcellus score -60 -> -64 (hook_hunt:M01)
+Game saved to slot 0
+
+🗣 CASSIAN: They've already decided my death. Time to decide theirs.
+
+
+✦ STORY BEAT: token_arrives
+The boy's message was warning and invitation both: they want you dead, and they've already decided how. That means you still have time.
+
+→ Narrative UI updated: Phase=SURVIVAL, Threats=Marcellus, Refusals=1
+[REL] Lanista score 0 -> 15 (mission:M04)
+[REL] Lanista flag[met]=true
+[REL] Iona flag[met]=true
+[REL] Iona score 0 -> 5 (hook_help:M04)
+[REL] Marcellus flag[met]=true
+[REL] Marcellus score -60 -> -64 (hook_hunt:M04)
+[REL] Faction State alignment 0 -> 18 (mission:M04)
+Gear drop: Balanced Blade (common)
+Game saved to slot 0
+
+🗣 CASSIAN: They want it. I want not to be owned. This is where we find out who blinks first.
+
+→ Narrative UI updated: Phase=SURVIVAL, Threats=Marcellus, Refusals=1
+[REL] Iona score 0 -> 12 (mission:M05)
+[REL] Iona flag[met]=true
+[REL] Iona flag[helped]=true
+[REL] Moth score 0 -> 8 (mission:M05)
+[REL] Moth flag[met]=true
+[REL] Moth flag[met]=true
+[REL] Moth score 8 -> 13 (hook_help:M05)
+[REL] Rhesus flag[met]=true
+[REL] Rhesus score 0 -> 5 (hook_help:M05)
+[REL] Marcellus flag[met]=true
+[REL] Marcellus score -60 -> -64 (hook_hunt:M05)
+[REL] Faction Cult alignment 0 -> 22 (mission:M05)
+[REL] Faction State alignment -13 -> -19 (mission:M05)
+Game saved to slot 0
+
+🗣 CASSIAN: I said no. That's all I had. But Moth's blood is on my hands now, and that changed something.
+
+→ Narrative UI updated: Phase=SURVIVAL, Threats=Marcellus,Port Syndicate, Refusals=1
+[REL] Iona score 0 -> 12 (mission:M05)
+[REL] Iona flag[met]=true
+[REL] Iona flag[helped]=true
+[REL] Moth score 0 -> 8 (mission:M05)
+[REL] Moth flag[met]=true
+[REL] Moth flag[met]=true
+[REL] Moth score 8 -> 13 (hook_help:M05)
+[REL] Rhesus flag[met]=true
+[REL] Rhesus score 0 -> 5 (hook_help:M05)
+[REL] Marcellus flag[met]=true
+[REL] Marcellus score -60 -> -64 (hook_hunt:M05)
+[REL] Faction Cult alignment 0 -> 22 (mission:M05)
+[REL] Faction State alignment -13 -> -19 (mission:M05)
+Game saved to slot 0
+
+🗣 CASSIAN: I said no. That's all I had. But Moth's blood is on my hands now, and that changed something.
+
+→ Narrative UI updated: Phase=SURVIVAL, Threats=Marcellus,Port Syndicate, Refusals=1
+[REL] Lanista score 0 -> 6 (mission:M06)
+[REL] Lanista flag[met]=true
+[REL] Iona flag[met]=true
+[REL] Iona score 0 -> 5 (hook_help:M06)
+[REL] Varro flag[met]=true
+[REL] Varro score 0 -> 5 (hook_help:M06)
+[REL] Marcellus flag[met]=true
+[REL] Marcellus score -60 -> -64 (hook_hunt:M06)
+[REL] Faction State alignment 0 -> 20 (mission:M06)
+[REL] Faction Cult alignment -12 -> -18 (mission:M06)
+Game saved to slot 0
+
+✦ STORY BEAT: copied_ledger
+You realize the ledger exists in multiple hands now. You're no longer the only weapon. You're the story.
+
+
+🗣 CASSIAN: The ledger exists in more hands now. I'm no longer carrying it. I'm becoming it.
+
+→ Narrative UI updated: Phase=HOPE, Threats=Marcellus,Shrine Network, Refusals=1
+[REL] Rhesus flag[met]=true
+[REL] Rhesus score 0 -> 5 (hook_help:M01)
+[REL] Marcellus flag[met]=true
+[REL] Marcellus score -60 -> -64 (hook_hunt:M01)
+Gear drop: Spiked Club (common)
+Game saved to slot 0
+
+🗣 CASSIAN: They've already decided my death. Time to decide theirs.
+
+
+✦ STORY BEAT: token_arrives
+The boy's message was warning and invitation both: they want you dead, and they've already decided how. That means you still have time.
+
+→ Narrative UI updated: Phase=SURVIVAL, Threats=Marcellus, Refusals=1
+[REL] Rhesus flag[met]=true
+[REL] Rhesus score 0 -> 5 (hook_help:M01)
+[REL] Marcellus flag[met]=true
+[REL] Marcellus score -60 -> -64 (hook_hunt:M01)
+Gear drop: Spiked Club (common)
+Game saved to slot 0
+
+🗣 CASSIAN: They've already decided my death. Time to decide theirs.
+
+
+✦ STORY BEAT: token_arrives
+The boy's message was warning and invitation both: they want you dead, and they've already decided how. That means you still have time.
+
+→ Narrative UI updated: Phase=SURVIVAL, Threats=Marcellus, Refusals=1
+[REL] Lanista score 0 -> 15 (mission:M04)
+[REL] Lanista flag[met]=true
+[REL] Iona flag[met]=true
+[REL] Iona score 0 -> 5 (hook_help:M04)
+[REL] Marcellus flag[met]=true
+[REL] Marcellus score -60 -> -64 (hook_hunt:M04)
+[REL] Faction State alignment 0 -> 18 (mission:M04)
+Game saved to slot 0
+
+🗣 CASSIAN: They want it. I want not to be owned. This is where we find out who blinks first.
+
+→ Narrative UI updated: Phase=SURVIVAL, Threats=Marcellus, Refusals=1
+[REL] Rhesus flag[met]=true
+[REL] Rhesus score 0 -> 5 (hook_help:M01)
+[REL] Marcellus flag[met]=true
+[REL] Marcellus score -60 -> -64 (hook_hunt:M01)
+Gear drop: Leather Vest (common)
+Game saved to slot 0
+
+🗣 CASSIAN: They've already decided my death. Time to decide theirs.
+
+
+✦ STORY BEAT: token_arrives
+The boy's message was warning and invitation both: they want you dead, and they've already decided how. That means you still have time.
+
+→ Narrative UI updated: Phase=SURVIVAL, Threats=Marcellus, Refusals=1
+[REL] Rhesus flag[met]=true
+[REL] Rhesus score 0 -> 3 (hook_help:M01)
+[REL] Marcellus flag[met]=true
+[REL] Marcellus score -60 -> -62 (hook_hunt:M01)
+Game saved to slot 0
+
+🗣 CASSIAN: They've already decided my death. Time to decide theirs.
+
+
+✦ STORY BEAT: token_arrives
+The boy's message was warning and invitation both: they want you dead, and they've already decided how. That means you still have time.
+
+→ Narrative UI updated: Phase=SURVIVAL, Threats=Marcellus, Refusals=1
+[REL] Rhesus flag[met]=true
+[REL] Rhesus score 0 -> 5 (hook_help:M01)
+[REL] Marcellus flag[met]=true
+[REL] Marcellus score -60 -> -64 (hook_hunt:M01)
+Gear drop: Lucky Charm (common)
+Game saved to slot 0
+
+🗣 CASSIAN: They've already decided my death. Time to decide theirs.
+
+
+✦ STORY BEAT: token_arrives
+The boy's message was warning and invitation both: they want you dead, and they've already decided how. That means you still have time.
+
+→ Narrative UI updated: Phase=SURVIVAL, Threats=Marcellus, Refusals=1
+ERROR: Mission not found: M99
+   at: push_error (core/variant/variant_utility.cpp:1024)
+   GDScript backtrace (most recent call first):
+       [0] complete_mission (res://scripts/autoload/MissionManager.gd:50)
+       [1] test_complete_unknown_mission_does_not_crash (res://tests/unit/test_missionmanager.gd:169)
+       [2] _run_suite (res://tests/runner/TestRunner.gd:96)
+       [3] run_all (res://tests/runner/TestRunner.gd:32)
+       [4] _start (res://tests/runner/RunTests.gd:34)
+[REL] Lanista score 0 -> 20 (unit_test)
+[REL] Lanista flag[met]=true
+[REL] Faction State alignment 0 -> 25 (unit_test)
+Game saved to slot 0
+Game saved to slot 0
+Game loaded from slot 0
+Game saved to slot 9
+ERROR: No save found at: user://saves/slot_9.json
+   at: push_error (core/variant/variant_utility.cpp:1024)
+   GDScript backtrace (most recent call first):
+       [0] load_game (res://scripts/autoload/SaveManager.gd:44)
+       [1] test_load_returns_false_when_no_save (res://tests/unit/test_savemanager.gd:107)
+       [2] _run_suite (res://tests/runner/TestRunner.gd:96)
+       [3] run_all (res://tests/runner/TestRunner.gd:32)
+       [4] _start (res://tests/runner/RunTests.gd:34)
+Game saved to slot 9
+Game loaded from slot 9
+Game saved to slot 7
+Game saved to slot 8
+Game loaded from slot 7
+Game loaded from slot 8
+Game saved to slot 9
+Game loaded from slot 9
+Game saved to slot 9
+Game loaded from slot 9
+Game saved to slot 9
+Game loaded from slot 9
+Game saved to slot 9
+Game loaded from slot 9
+Game saved to slot 9
+Game loaded from slot 9
+Game saved to slot 9
+Game loaded from slot 9
+Game saved to slot 9
+Game loaded from slot 9
+Game saved to slot 9
+Game loaded from slot 9
+Game saved to slot 9
+[REL] Rhesus flag[met]=true
+[REL] Rhesus score 0 -> 5 (hook_help:M01)
+[REL] Marcellus flag[met]=true
+[REL] Marcellus score -60 -> -64 (hook_hunt:M01)
+Game saved to slot 0
+
+🗣 CASSIAN: They've already decided my death. Time to decide theirs.
+
+
+✦ STORY BEAT: token_arrives
+The boy's message was warning and invitation both: they want you dead, and they've already decided how. That means you still have time.
+
+→ Narrative UI updated: Phase=SURVIVAL, Threats=Marcellus, Refusals=1
+[REL] Rhesus flag[met]=true
+[REL] Rhesus score 5 -> 10 (hook_help:M02)
+[REL] Marcellus flag[met]=true
+[REL] Marcellus score -64 -> -68 (hook_hunt:M02)
+Gear drop: Balanced Blade (common)
+Game saved to slot 0
+
+🗣 CASSIAN: Rhesus is as trapped as I am. We're both expensive enough to be valuable.
+
+→ Narrative UI updated: Phase=SURVIVAL, Threats=Marcellus, Refusals=2
+[REL] Moth flag[met]=true
+[REL] Moth score 0 -> 5 (hook_help:M03)
+[REL] Iona flag[met]=true
+[REL] Iona score 0 -> 5 (hook_help:M03)
+[REL] Marcellus flag[met]=true
+[REL] Marcellus score -68 -> -72 (hook_hunt:M03)
+[REL] Sabina flag[met]=true
+[REL] Sabina score -20 -> -24 (hook_hunt:M03)
+Game saved to slot 0
+
+🗣 CASSIAN: If I don't move it, I can't breathe. If I do, I can't hide.
+
+→ Narrative UI updated: Phase=SURVIVAL, Threats=Marcellus,Sabina, Refusals=3
+[REL] Lanista score 0 -> 6 (mission:M06)
+[REL] Lanista flag[met]=true
+[REL] Iona flag[met]=true
+[REL] Iona score 0 -> 5 (hook_help:M06)
+[REL] Varro flag[met]=true
+[REL] Varro score 0 -> 5 (hook_help:M06)
+[REL] Marcellus flag[met]=true
+[REL] Marcellus score -60 -> -64 (hook_hunt:M06)
+[REL] Faction State alignment 0 -> 20 (mission:M06)
+[REL] Faction Cult alignment -12 -> -18 (mission:M06)
+Gear drop: Leather Vest (common)
+Game saved to slot 0
+
+✦ STORY BEAT: copied_ledger
+You realize the ledger exists in multiple hands now. You're no longer the only weapon. You're the story.
+
+
+🗣 CASSIAN: The ledger exists in more hands now. I'm no longer carrying it. I'm becoming it.
+
+→ Narrative UI updated: Phase=HOPE, Threats=Marcellus,Shrine Network, Refusals=1
+[REL] Rhesus flag[met]=true
+[REL] Rhesus score 0 -> 5 (hook_help:M01)
+[REL] Marcellus flag[met]=true
+[REL] Marcellus score -60 -> -64 (hook_hunt:M01)
+Game saved to slot 0
+
+🗣 CASSIAN: They've already decided my death. Time to decide theirs.
+
+
+✦ STORY BEAT: token_arrives
+The boy's message was warning and invitation both: they want you dead, and they've already decided how. That means you still have time.
+
+→ Narrative UI updated: Phase=SURVIVAL, Threats=Marcellus, Refusals=1
+[REL] Rhesus flag[met]=true
+[REL] Rhesus score 5 -> 10 (hook_help:M02)
+[REL] Marcellus flag[met]=true
+[REL] Marcellus score -64 -> -68 (hook_hunt:M02)
+Gear drop: Stamina Band (common)
+Game saved to slot 0
+
+🗣 CASSIAN: Rhesus is as trapped as I am. We're both expensive enough to be valuable.
+
+→ Narrative UI updated: Phase=SURVIVAL, Threats=Marcellus, Refusals=2
+[REL] Rhesus flag[met]=true
+[REL] Rhesus score 0 -> 5 (hook_help:M01)
+[REL] Marcellus flag[met]=true
+[REL] Marcellus score -60 -> -64 (hook_hunt:M01)
+Gear drop: Spiked Club (common)
+Game saved to slot 0
+
+🗣 CASSIAN: They've already decided my death. Time to decide theirs.
+
+
+✦ STORY BEAT: token_arrives
+The boy's message was warning and invitation both: they want you dead, and they've already decided how. That means you still have time.
+
+→ Narrative UI updated: Phase=SURVIVAL, Threats=Marcellus, Refusals=1
+[REL] Lanista score 0 -> 15 (mission:M04)
+[REL] Lanista flag[met]=true
+[REL] Iona flag[met]=true
+[REL] Iona score 0 -> 5 (hook_help:M04)
+[REL] Marcellus flag[met]=true
+[REL] Marcellus score -60 -> -64 (hook_hunt:M04)
+[REL] Faction State alignment 0 -> 18 (mission:M04)
+Game saved to slot 0
+
+🗣 CASSIAN: They want it. I want not to be owned. This is where we find out who blinks first.
+
+→ Narrative UI updated: Phase=SURVIVAL, Threats=Marcellus, Refusals=1
+[REL] Rhesus flag[met]=true
+[REL] Rhesus score 0 -> 5 (hook_help:M01)
+[REL] Marcellus flag[met]=true
+[REL] Marcellus score -60 -> -64 (hook_hunt:M01)
+Gear drop: Agile Tunic (common)
+Game saved to slot 0
+
+🗣 CASSIAN: They've already decided my death. Time to decide theirs.
+
+
+✦ STORY BEAT: token_arrives
+The boy's message was warning and invitation both: they want you dead, and they've already decided how. That means you still have time.
+
+→ Narrative UI updated: Phase=SURVIVAL, Threats=Marcellus, Refusals=1
+[REL] Iona score 0 -> 12 (mission:M05)
+[REL] Iona flag[met]=true
+[REL] Iona flag[helped]=true
+[REL] Moth score 0 -> 8 (mission:M05)
+[REL] Moth flag[met]=true
+[REL] Moth flag[met]=true
+[REL] Moth score 8 -> 13 (hook_help:M05)
+[REL] Rhesus flag[met]=true
+[REL] Rhesus score 0 -> 5 (hook_help:M05)
+[REL] Marcellus flag[met]=true
+[REL] Marcellus score -60 -> -64 (hook_hunt:M05)
+[REL] Faction Cult alignment 0 -> 22 (mission:M05)
+[REL] Faction State alignment -13 -> -19 (mission:M05)
+Gear drop: Shadow Cloak (rare)
+Game saved to slot 0
+
+🗣 CASSIAN: I said no. That's all I had. But Moth's blood is on my hands now, and that changed something.
+
+→ Narrative UI updated: Phase=SURVIVAL, Threats=Marcellus,Port Syndicate, Refusals=1
+[REL] Rhesus flag[met]=true
+[REL] Rhesus score 0 -> 3 (hook_help:M01)
+[REL] Marcellus flag[met]=true
+[REL] Marcellus score -60 -> -62 (hook_hunt:M01)
+Game saved to slot 0
+
+🗣 CASSIAN: They've already decided my death. Time to decide theirs.
+
+
+✦ STORY BEAT: token_arrives
+The boy's message was warning and invitation both: they want you dead, and they've already decided how. That means you still have time.
+
+→ Narrative UI updated: Phase=SURVIVAL, Threats=Marcellus, Refusals=1
+[REL] Rhesus flag[met]=true
+[REL] Rhesus score 0 -> 3 (hook_help:M01)
+[REL] Marcellus flag[met]=true
+[REL] Marcellus score -60 -> -62 (hook_hunt:M01)
+Game saved to slot 0
+
+🗣 CASSIAN: They've already decided my death. Time to decide theirs.
+
+
+✦ STORY BEAT: token_arrives
+The boy's message was warning and invitation both: they want you dead, and they've already decided how. That means you still have time.
+
+→ Narrative UI updated: Phase=SURVIVAL, Threats=Marcellus, Refusals=1
+[REL] Rhesus flag[met]=true
+[REL] Rhesus score 0 -> 3 (hook_help:M01)
+[REL] Marcellus flag[met]=true
+[REL] Marcellus score -60 -> -62 (hook_hunt:M01)
+Game saved to slot 0
+
+🗣 CASSIAN: They've already decided my death. Time to decide theirs.
+
+
+✦ STORY BEAT: token_arrives
+The boy's message was warning and invitation both: they want you dead, and they've already decided how. That means you still have time.
+
+→ Narrative UI updated: Phase=SURVIVAL, Threats=Marcellus, Refusals=1
+[REL] Rhesus flag[met]=true
+[REL] Rhesus score 0 -> 5 (hook_help:M01)
+[REL] Marcellus flag[met]=true
+[REL] Marcellus score -60 -> -64 (hook_hunt:M01)
+Gear drop: Iron Ring (common)
+Game saved to slot 0
+
+🗣 CASSIAN: They've already decided my death. Time to decide theirs.
+
+
+✦ STORY BEAT: token_arrives
+The boy's message was warning and invitation both: they want you dead, and they've already decided how. That means you still have time.
+
+→ Narrative UI updated: Phase=SURVIVAL, Threats=Marcellus, Refusals=1
+[REL] Rhesus flag[met]=true
+[REL] Rhesus score 0 -> 5 (hook_help:M01)
+[REL] Marcellus flag[met]=true
+[REL] Marcellus score -60 -> -64 (hook_hunt:M01)
+Gear drop: Iron Ring (common)
+Game saved to slot 0
+
+🗣 CASSIAN: They've already decided my death. Time to decide theirs.
+
+
+✦ STORY BEAT: token_arrives
+The boy's message was warning and invitation both: they want you dead, and they've already decided how. That means you still have time.
+
+→ Narrative UI updated: Phase=SURVIVAL, Threats=Marcellus, Refusals=1
+[REL] Rhesus flag[met]=true
+[REL] Rhesus score 0 -> 5 (hook_help:M01)
+[REL] Marcellus flag[met]=true
+[REL] Marcellus score -60 -> -64 (hook_hunt:M01)
+Game saved to slot 0
+
+🗣 CASSIAN: They've already decided my death. Time to decide theirs.
+
+
+✦ STORY BEAT: token_arrives
+The boy's message was warning and invitation both: they want you dead, and they've already decided how. That means you still have time.
+
+→ Narrative UI updated: Phase=SURVIVAL, Threats=Marcellus, Refusals=1
+[REL] Rhesus flag[met]=true
+[REL] Rhesus score 0 -> 5 (hook_help:M01)
+[REL] Marcellus flag[met]=true
+[REL] Marcellus score -60 -> -64 (hook_hunt:M01)
+Gear drop: Stamina Band (common)
+Game saved to slot 0
+
+🗣 CASSIAN: They've already decided my death. Time to decide theirs.
+
+
+✦ STORY BEAT: token_arrives
+The boy's message was warning and invitation both: they want you dead, and they've already decided how. That means you still have time.
+
+→ Narrative UI updated: Phase=SURVIVAL, Threats=Marcellus, Refusals=1
+[REL] Rhesus flag[met]=true
+[REL] Rhesus score 0 -> 5 (hook_help:M01)
+[REL] Marcellus flag[met]=true
+[REL] Marcellus score -60 -> -64 (hook_hunt:M01)
+Gear drop: Lucky Charm (common)
+Game saved to slot 0
+
+🗣 CASSIAN: They've already decided my death. Time to decide theirs.
+
+
+✦ STORY BEAT: token_arrives
+The boy's message was warning and invitation both: they want you dead, and they've already decided how. That means you still have time.
+
+→ Narrative UI updated: Phase=SURVIVAL, Threats=Marcellus, Refusals=1
+[REL] Rhesus flag[met]=true
+[REL] Rhesus score 0 -> 5 (hook_help:M01)
+[REL] Marcellus flag[met]=true
+[REL] Marcellus score -60 -> -64 (hook_hunt:M01)
+Game saved to slot 0
+
+🗣 CASSIAN: They've already decided my death. Time to decide theirs.
+
+
+✦ STORY BEAT: token_arrives
+The boy's message was warning and invitation both: they want you dead, and they've already decided how. That means you still have time.
+
+→ Narrative UI updated: Phase=SURVIVAL, Threats=Marcellus, Refusals=1
+[REL] Rhesus flag[met]=true
+[REL] Rhesus score 0 -> 5 (hook_help:M01)
+[REL] Marcellus flag[met]=true
+[REL] Marcellus score -60 -> -64 (hook_hunt:M01)
+Gear drop: Leather Vest (common)
+Game saved to slot 0
+
+🗣 CASSIAN: They've already decided my death. Time to decide theirs.
+
+
+✦ STORY BEAT: token_arrives
+The boy's message was warning and invitation both: they want you dead, and they've already decided how. That means you still have time.
+
+→ Narrative UI updated: Phase=SURVIVAL, Threats=Marcellus, Refusals=1
+Game loaded from slot 0
+Game saved to slot 0
+Game loaded from slot 0
+Game saved to slot 6
+Game loaded from slot 6
+Game saved to slot 6
+Game loaded from slot 6
+Game saved to slot 6
+Game loaded from slot 6
+[REL] Rhesus flag[met]=true
+[REL] Rhesus score 0 -> 5 (hook_help:M01)
+[REL] Marcellus flag[met]=true
+[REL] Marcellus score -60 -> -64 (hook_hunt:M01)
+Game saved to slot 0
+
+🗣 CASSIAN: They've already decided my death. Time to decide theirs.
+
+
+✦ STORY BEAT: token_arrives
+The boy's message was warning and invitation both: they want you dead, and they've already decided how. That means you still have time.
+
+→ Narrative UI updated: Phase=SURVIVAL, Threats=Marcellus, Refusals=1
+[REL] Rhesus flag[met]=true
+[REL] Rhesus score 5 -> 10 (hook_help:M02)
+[REL] Marcellus flag[met]=true
+[REL] Marcellus score -64 -> -68 (hook_hunt:M02)
+Gear drop: Leather Vest (common)
+Game saved to slot 0
+
+🗣 CASSIAN: Rhesus is as trapped as I am. We're both expensive enough to be valuable.
+
+→ Narrative UI updated: Phase=SURVIVAL, Threats=Marcellus, Refusals=2
+Game saved to slot 6
+Game loaded from slot 6
+============================================================
+  ASH & OIL — FULL TEST SUITE
+  2026-02-22T22:34:31
+============================================================
+
+[SUITE] test_cardmanager
+--------------------------------------------------
+
+  [PASS] test_all_cards_have_non_negative_cost (1 assertions)
+  [PASS] All cards have cost >= 0
+
+  [PASS] test_all_cards_have_valid_faction (1 assertions)
+  [PASS] All cards have valid factions
+
+  [PASS] test_all_cards_have_valid_type (1 assertions)
+  [PASS] All cards have valid types
+
+  [PASS] test_all_lieutenant_names_present (8 assertions)
+  [PASS] Marcus loaded
+  [PASS] Livia loaded
+  [PASS] Titus loaded
+  [PASS] Kara loaded
+  [PASS] Decimus loaded
+  [PASS] Julia loaded
+  [PASS] Corvus loaded
+  [PASS] Thane loaded
+
+  [PASS] test_all_lieutenants_loaded (1 assertions)
+  [PASS] 8 lieutenants loaded
+
+  [PASS] test_all_main_missions_have_enemies (20 assertions)
+  [PASS] M01 has enemies
+  [PASS] M02 has enemies
+  [PASS] M03 has enemies
+  [PASS] M04 has enemies
+  [PASS] M05 has enemies
+  [PASS] M06 has enemies
+  [PASS] M07 has enemies
+  [PASS] M08 has enemies
+  [PASS] M09 has enemies
+  [PASS] M10 has enemies
+  [PASS] M11 has enemies
+  [PASS] M12 has enemies
+  [PASS] M13 has enemies
+  [PASS] M14 has enemies
+  [PASS] M15 has enemies
+  [PASS] M16 has enemies
+  [PASS] M17 has enemies
+  [PASS] M18 has enemies
+  [PASS] M19 has enemies
+  [PASS] M20 has enemies
+
+  [PASS] test_card_001_exists (1 assertions)
+  [PASS] card_001 is not empty
+
+  [PASS] test_card_001_has_required_fields (8 assertions)
+  [PASS] card_001 has 'id'
+  [PASS] card_001 has 'name'
+  [PASS] card_001 has 'cost'
+  [PASS] card_001 has 'type'
+  [PASS] card_001 has 'faction'
+  [PASS] card_001 has 'is_signature'
+  [PASS] card_001 has 'power_index'
+  [PASS] card_001 has 'effect'
+
+  [PASS] test_card_001_is_attack_type (1 assertions)
+  [PASS] card_001 type is attack
+
+  [PASS] test_card_027_is_free (1 assertions)
+  [PASS] card_027 (Quick Jab) cost is 0
+
+  [PASS] test_cards_loaded (1 assertions)
+  [PASS] At least 87 cards loaded
+
+  [PASS] test_empty_id_returns_empty (1 assertions)
+  [PASS] Empty ID returns empty dict
+
+  [PASS] test_enemy_has_required_fields (8 assertions)
+  [PASS] quintus has 'id'
+  [PASS] quintus has 'name'
+  [PASS] quintus has 'hp'
+  [PASS] quintus has 'max_hp'
+  [PASS] quintus has 'armor'
+  [PASS] quintus has 'damage'
+  [PASS] quintus has 'poison'
+  [PASS] quintus has 'type'
+
+  [PASS] test_enemy_hp_equals_max_hp_in_template (26 assertions)
+  [PASS] quintus hp==max_hp in template
+  [PASS] warrior_a hp==max_hp in template
+  [PASS] warrior_b hp==max_hp in template
+  [PASS] broker_guard hp==max_hp in template
+  [PASS] ambush_knife hp==max_hp in template
+  [PASS] ambush_knife_2 hp==max_hp in template
+  [PASS] old_champion hp==max_hp in template
+  [PASS] lanista_guard_a hp==max_hp in template
+  [PASS] lanista_guard_b hp==max_hp in template
+  [PASS] cult_acolyte hp==max_hp in template
+  [PASS] cult_zealot hp==max_hp in template
+  [PASS] state_agent hp==max_hp in template
+  [PASS] state_soldier hp==max_hp in template
+  [PASS] dock_thug hp==max_hp in template
+  [PASS] dock_thug_2 hp==max_hp in template
+  [PASS] shadow_enforcer hp==max_hp in template
+  [PASS] shadow_grunt hp==max_hp in template
+  [PASS] varro_decoy hp==max_hp in template
+  [PASS] varro_scout hp==max_hp in template
+  [PASS] reckoning_boss hp==max_hp in template
+  [PASS] reckoning_enforcer hp==max_hp in template
+  [PASS] alley_thug hp==max_hp in template
+  [PASS] arena_rookie hp==max_hp in template
+  [PASS] arena_vet hp==max_hp in template
+  [PASS] pilgrim_bandit hp==max_hp in template
+  [PASS] pilgrim_bandit_2 hp==max_hp in template
+
+  [PASS] test_enemy_stats_non_negative (104 assertions)
+  [PASS] quintus hp>=0
+  [PASS] quintus armor>=0
+  [PASS] quintus damage>=0
+  [PASS] quintus poison>=0
+  [PASS] warrior_a hp>=0
+  [PASS] warrior_a armor>=0
+  [PASS] warrior_a damage>=0
+  [PASS] warrior_a poison>=0
+  [PASS] warrior_b hp>=0
+  [PASS] warrior_b armor>=0
+  [PASS] warrior_b damage>=0
+  [PASS] warrior_b poison>=0
+  [PASS] broker_guard hp>=0
+  [PASS] broker_guard armor>=0
+  [PASS] broker_guard damage>=0
+  [PASS] broker_guard poison>=0
+  [PASS] ambush_knife hp>=0
+  [PASS] ambush_knife armor>=0
+  [PASS] ambush_knife damage>=0
+  [PASS] ambush_knife poison>=0
+  [PASS] ambush_knife_2 hp>=0
+  [PASS] ambush_knife_2 armor>=0
+  [PASS] ambush_knife_2 damage>=0
+  [PASS] ambush_knife_2 poison>=0
+  [PASS] old_champion hp>=0
+  [PASS] old_champion armor>=0
+  [PASS] old_champion damage>=0
+  [PASS] old_champion poison>=0
+  [PASS] lanista_guard_a hp>=0
+  [PASS] lanista_guard_a armor>=0
+  [PASS] lanista_guard_a damage>=0
+  [PASS] lanista_guard_a poison>=0
+  [PASS] lanista_guard_b hp>=0
+  [PASS] lanista_guard_b armor>=0
+  [PASS] lanista_guard_b damage>=0
+  [PASS] lanista_guard_b poison>=0
+  [PASS] cult_acolyte hp>=0
+  [PASS] cult_acolyte armor>=0
+  [PASS] cult_acolyte damage>=0
+  [PASS] cult_acolyte poison>=0
+  [PASS] cult_zealot hp>=0
+  [PASS] cult_zealot armor>=0
+  [PASS] cult_zealot damage>=0
+  [PASS] cult_zealot poison>=0
+  [PASS] state_agent hp>=0
+  [PASS] state_agent armor>=0
+  [PASS] state_agent damage>=0
+  [PASS] state_agent poison>=0
+  [PASS] state_soldier hp>=0
+  [PASS] state_soldier armor>=0
+  [PASS] state_soldier damage>=0
+  [PASS] state_soldier poison>=0
+  [PASS] dock_thug hp>=0
+  [PASS] dock_thug armor>=0
+  [PASS] dock_thug damage>=0
+  [PASS] dock_thug poison>=0
+  [PASS] dock_thug_2 hp>=0
+  [PASS] dock_thug_2 armor>=0
+  [PASS] dock_thug_2 damage>=0
+  [PASS] dock_thug_2 poison>=0
+  [PASS] shadow_enforcer hp>=0
+  [PASS] shadow_enforcer armor>=0
+  [PASS] shadow_enforcer damage>=0
+  [PASS] shadow_enforcer poison>=0
+  [PASS] shadow_grunt hp>=0
+  [PASS] shadow_grunt armor>=0
+  [PASS] shadow_grunt damage>=0
+  [PASS] shadow_grunt poison>=0
+  [PASS] varro_decoy hp>=0
+  [PASS] varro_decoy armor>=0
+  [PASS] varro_decoy damage>=0
+  [PASS] varro_decoy poison>=0
+  [PASS] varro_scout hp>=0
+  [PASS] varro_scout armor>=0
+  [PASS] varro_scout damage>=0
+  [PASS] varro_scout poison>=0
+  [PASS] reckoning_boss hp>=0
+  [PASS] reckoning_boss armor>=0
+  [PASS] reckoning_boss damage>=0
+  [PASS] reckoning_boss poison>=0
+  [PASS] reckoning_enforcer hp>=0
+  [PASS] reckoning_enforcer armor>=0
+  [PASS] reckoning_enforcer damage>=0
+  [PASS] reckoning_enforcer poison>=0
+  [PASS] alley_thug hp>=0
+  [PASS] alley_thug armor>=0
+  [PASS] alley_thug damage>=0
+  [PASS] alley_thug poison>=0
+  [PASS] arena_rookie hp>=0
+  [PASS] arena_rookie armor>=0
+  [PASS] arena_rookie damage>=0
+  [PASS] arena_rookie poison>=0
+  [PASS] arena_vet hp>=0
+  [PASS] arena_vet armor>=0
+  [PASS] arena_vet damage>=0
+  [PASS] arena_vet poison>=0
+  [PASS] pilgrim_bandit hp>=0
+  [PASS] pilgrim_bandit armor>=0
+  [PASS] pilgrim_bandit damage>=0
+  [PASS] pilgrim_bandit poison>=0
+  [PASS] pilgrim_bandit_2 hp>=0
+  [PASS] pilgrim_bandit_2 armor>=0
+  [PASS] pilgrim_bandit_2 damage>=0
+  [PASS] pilgrim_bandit_2 poison>=0
+
+  [PASS] test_enemy_templates_loaded (1 assertions)
+  [PASS] Enemy templates loaded
+
+  [PASS] test_get_mission_enemies_are_independent_copies (1 assertions)
+  [PASS] Enemy copies are independent
+
+  [PASS] test_get_mission_enemies_correct_count_m01 (1 assertions)
+  [PASS] M01 has 3 enemies
+
+  [PASS] test_get_mission_enemies_first_is_quintus (1 assertions)
+  [PASS] M01 first enemy is Quintus
+
+  [PASS] test_get_mission_enemies_m01 (1 assertions)
+  [PASS] M01 enemies not empty
+
+  [PASS] test_get_mission_enemies_unknown_mission_gives_fallback (1 assertions)
+  [PASS] Unknown mission enemy call does not crash
+
+  [PASS] test_invalid_card_returns_empty (1 assertions)
+  [PASS] card_999 returns empty dict
+
+  [PASS] test_invalid_enemy_returns_empty (1 assertions)
+  [PASS] Unknown enemy returns empty dict
+
+  [PASS] test_invalid_lieutenant_returns_empty (1 assertions)
+  [PASS] Unknown lieutenant returns empty
+
+  [PASS] test_lieutenant_cards_all_exist (24 assertions)
+  [PASS] Marcus card card_037 exists
+  [PASS] Marcus card card_038 exists
+  [PASS] Marcus card card_039 exists
+  [PASS] Livia card card_040 exists
+  [PASS] Livia card card_041 exists
+  [PASS] Livia card card_042 exists
+  [PASS] Titus card card_043 exists
+  [PASS] Titus card card_044 exists
+  [PASS] Titus card card_045 exists
+  [PASS] Kara card card_046 exists
+  [PASS] Kara card card_047 exists
+  [PASS] Kara card card_048 exists
+  [PASS] Decimus card card_049 exists
+  [PASS] Decimus card card_050 exists
+  [PASS] Decimus card card_051 exists
+  [PASS] Julia card card_052 exists
+  [PASS] Julia card card_053 exists
+  [PASS] Julia card card_054 exists
+  [PASS] Corvus card card_055 exists
+  [PASS] Corvus card card_056 exists
+  [PASS] Corvus card card_057 exists
+  [PASS] Thane card card_058 exists
+  [PASS] Thane card card_059 exists
+  [PASS] Thane card card_060 exists
+
+  [PASS] test_lieutenant_has_required_fields (8 assertions)
+  [PASS] Marcus has 'name'
+  [PASS] Marcus has 'trait'
+  [PASS] Marcus has 'trait_desc'
+  [PASS] Marcus has 'hp'
+  [PASS] Marcus has 'armor'
+  [PASS] Marcus has 'speed'
+  [PASS] Marcus has 'cards'
+  [PASS] Marcus has 'unlock_mission'
+
+  [PASS] test_lieutenant_hp_positive (8 assertions)
+  [PASS] Marcus hp > 0
+  [PASS] Livia hp > 0
+  [PASS] Titus hp > 0
+  [PASS] Kara hp > 0
+  [PASS] Decimus hp > 0
+  [PASS] Julia hp > 0
+  [PASS] Corvus hp > 0
+  [PASS] Thane hp > 0
+
+  [PASS] test_signature_cards_have_signature_lt (24 assertions)
+  [PASS] card_037 signature has signature_lt
+  [PASS] card_038 signature has signature_lt
+  [PASS] card_039 signature has signature_lt
+  [PASS] card_040 signature has signature_lt
+  [PASS] card_041 signature has signature_lt
+  [PASS] card_042 signature has signature_lt
+  [PASS] card_043 signature has signature_lt
+  [PASS] card_044 signature has signature_lt
+  [PASS] card_045 signature has signature_lt
+  [PASS] card_046 signature has signature_lt
+  [PASS] card_047 signature has signature_lt
+  [PASS] card_048 signature has signature_lt
+  [PASS] card_049 signature has signature_lt
+  [PASS] card_050 signature has signature_lt
+  [PASS] card_051 signature has signature_lt
+  [PASS] card_052 signature has signature_lt
+  [PASS] card_053 signature has signature_lt
+  [PASS] card_054 signature has signature_lt
+  [PASS] card_055 signature has signature_lt
+  [PASS] card_056 signature has signature_lt
+  [PASS] card_057 signature has signature_lt
+  [PASS] card_058 signature has signature_lt
+  [PASS] card_059 signature has signature_lt
+  [PASS] card_060 signature has signature_lt
+
+  [PASS] test_starter_deck_all_cards_exist (1 assertions)
+  [PASS] All starter deck cards exist
+
+  [PASS] test_starter_deck_not_empty (1 assertions)
+  [PASS] Starter deck is not empty
+
+  [PASS] test_starter_deck_returns_new_array_each_time (1 assertions)
+  [PASS] Starter deck calls return independent arrays
+
+  [PASS] test_starter_deck_within_size_limits (2 assertions)
+  [PASS] Starter deck >= 10
+  [PASS] Starter deck <= 30
+
+[SUITE] test_combat_logic
+--------------------------------------------------
+
+  [PASS] test_all_missions_victory_gold_gte_zero (25 assertions)
+  [PASS] M01 victory gold >= 0
+  [PASS] M02 victory gold >= 0
+  [PASS] M03 victory gold >= 0
+  [PASS] M04 victory gold >= 0
+  [PASS] M05 victory gold >= 0
+  [PASS] M06 victory gold >= 0
+  [PASS] M07 victory gold >= 0
+  [PASS] M08 victory gold >= 0
+  [PASS] M09 victory gold >= 0
+  [PASS] M10 victory gold >= 0
+  [PASS] M11 victory gold >= 0
+  [PASS] M12 victory gold >= 0
+  [PASS] M13 victory gold >= 0
+  [PASS] M14 victory gold >= 0
+  [PASS] M15 victory gold >= 0
+  [PASS] M16 victory gold >= 0
+  [PASS] M17 victory gold >= 0
+  [PASS] M18 victory gold >= 0
+  [PASS] M19 victory gold >= 0
+  [PASS] M20 victory gold >= 0
+  [PASS] S01 victory gold >= 0
+  [PASS] S14 victory gold >= 0
+  [PASS] S02 victory gold >= 0
+  [PASS] S06 victory gold >= 0
+  [PASS] S13 victory gold >= 0
+
+  [PASS] test_armor_depletes_across_hits (2 assertions)
+  [PASS] Armor depleted after 2 hits (3+4)
+  [PASS] HP correct after armor depletion: 20-2=18
+
+  [PASS] test_armor_stacks_additive (1 assertions)
+  [PASS] Armor stacks: 2+3=5
+
+  [PASS] test_damage_does_not_affect_poison (1 assertions)
+  [PASS] Damage doesn't reduce poison stacks
+
+  [PASS] test_damage_exact_armor_equals_damage (2 assertions)
+  [PASS] 4 dmg vs 4 armor = 0 actual dmg
+  [PASS] Armor fully depleted
+
+  [PASS] test_damage_full_armor_blocks_all (2 assertions)
+  [PASS] 5 dmg vs 10 armor = 0 actual dmg
+  [PASS] Armor reduced to 5
+
+  [PASS] test_damage_kills_enemy (2 assertions)
+  [PASS] Overkill doesn't go below 0 HP
+  [PASS] Enemy is dead
+
+  [PASS] test_damage_no_armor (1 assertions)
+  [PASS] 5 dmg vs 0 armor = 7 HP left
+
+  [PASS] test_damage_partial_armor_absorption (2 assertions)
+  [PASS] 5 dmg vs 3 armor = 2 actual dmg
+  [PASS] Armor reduced by 3 (absorbed)
+
+  [PASS] test_deck_reshuffles_from_discard (2 assertions)
+  [PASS] Deck refilled from discard
+  [PASS] Discard cleared after reshuffle
+
+  [PASS] test_defeat_when_champion_dead (1 assertions)
+  [PASS] Defeat when champion HP <= 0
+
+  [PASS] test_draw_card_from_deck (2 assertions)
+  [PASS] Hand has 1 card after draw
+  [PASS] Deck has 2 cards after draw
+
+  [PASS] test_free_card_does_not_cost_stamina (1 assertions)
+  [PASS] Free card: stamina unchanged at 3
+
+  [PASS] test_hand_limit (1 assertions)
+  [PASS] Hand doesn't exceed max
+
+  [PASS] test_heal_at_full_hp_no_change (1 assertions)
+  [PASS] Heal at full HP stays at max
+
+  [PASS] test_heal_capped_at_max (1 assertions)
+  [PASS] Heal capped at max_hp: 28+10 -> 30
+
+  [PASS] test_heal_from_zero (1 assertions)
+  [PASS] Heal from 0: 0+10=10
+
+  [PASS] test_heal_restores_hp (1 assertions)
+  [PASS] Heal 5: 15+5=20
+
+  [PASS] test_no_defeat_while_champion_alive (1 assertions)
+  [PASS] No defeat while champion HP > 0
+
+  [PASS] test_no_victory_while_enemy_alive (1 assertions)
+  [PASS] No victory while any enemy alive
+
+  [PASS] test_play_card_moves_to_discard (4 assertions)
+  [PASS] Hand has 1 card after play
+  [PASS] Discard has 1 card after play
+  [PASS] Played card in discard
+  [PASS] Played card not in hand
+
+  [PASS] test_poison_deals_damage (1 assertions)
+  [PASS] Poison 3 deals 3 dmg: 20-3=17
+
+  [PASS] test_poison_decays_each_turn (1 assertions)
+  [PASS] Poison decays: 4->3
+
+  [PASS] test_poison_ignores_armor (2 assertions)
+  [PASS] Poison bypasses armor: 20-3=17
+  [PASS] Armor unchanged by poison
+
+  [PASS] test_poison_kills_enemy (2 assertions)
+  [PASS] Poison kills: HP capped at 0
+  [PASS] Enemy dead from poison
+
+  [PASS] test_poison_stacks_additive (1 assertions)
+  [PASS] Poison stacks: 2+3=5
+
+  [PASS] test_poison_three_turns (2 assertions)
+  [PASS] Poison dealt 3+2+1=6 total
+  [PASS] Poison expired to 0
+
+  [PASS] test_poison_zero_does_nothing (2 assertions)
+  [PASS] Poison 0 does no dmg
+  [PASS] Poison stays at 0
+
+  [PASS] test_retreat_reward_gold_lte_victory (1 assertions)
+  [PASS] Retreat gold <= victory gold
+
+  [PASS] test_stamina_can_play_card_cheaper (1 assertions)
+  [PASS] Can play cheaper card
+
+  [PASS] test_stamina_can_play_card_exact_cost (1 assertions)
+  [PASS] Can play card with exact stamina
+
+  [PASS] test_stamina_cannot_play_expensive_card (1 assertions)
+  [PASS] Cannot play card costing more than stamina
+
+  [PASS] test_stamina_deducted_after_play (1 assertions)
+  [PASS] Stamina deducted: 3-2=1
+
+  [PASS] test_stamina_restores_each_turn (1 assertions)
+  [PASS] Stamina restored to 3 on new turn
+
+  [PASS] test_victory_reward_gold_positive (1 assertions)
+  [PASS] M01 victory gold > 0
+
+  [PASS] test_victory_when_all_enemies_dead (1 assertions)
+  [PASS] Victory when all enemies at 0 HP
+
+  [PASS] test_zero_damage_does_nothing (2 assertions)
+  [PASS] 0 dmg doesn't change HP
+  [PASS] 0 dmg doesn't change armor
+
+[SUITE] test_game_logic
+--------------------------------------------------
+
+  [PASS] test_card_manager (9 assertions)
+  [PASS] 87 cards loaded
+  [PASS] Exactly 8 lieutenants loaded
+  [PASS] Enemy templates loaded
+  [PASS] card_001 exists
+  [PASS] card_001 has correct type
+  [PASS] card_999 returns empty dict
+  [PASS] Starter deck has cards
+  [PASS] Starter deck within 30
+  [PASS] Marcus lieutenant data exists
+
+  [PASS] test_enemy_loading (7 assertions)
+  [PASS] M01 has enemies loaded
+  [PASS] M01 first enemy is Quintus
+  [PASS] Enemy has hp
+  [PASS] Enemy has armor
+  [PASS] Enemy has damage
+  [PASS] M01 enemy hp/max_hp match
+  [PASS] Enemies are independent copies
+
+  [PASS] test_gamestate_deck (3 assertions)
+  [PASS] Deck capped at 30
+  [PASS] Returned false after cap
+  [PASS] card_001 in discovered
+
+  [PASS] test_gamestate_gold (5 assertions)
+  [PASS] Add 100 gold
+  [PASS] Spend 30 gold succeeds
+  [PASS] Gold after spending 30
+  [PASS] Spend 200 when only 70 fails
+  [PASS] Gold unchanged after failed spend
+
+  [PASS] test_gamestate_lieutenants (5 assertions)
+  [PASS] Marcus loyalty +5
+  [PASS] Marcus loyalty clamped at 10
+  [PASS] Marcus loyalty clamped at -5
+  [PASS] Marcus recruited
+  [PASS] Marcus in active squad
+
+  [PASS] test_gamestate_meters (8 assertions)
+  [PASS] RENOWN max clamp (25 -> 20)
+  [PASS] RENOWN min clamp (0)
+  [PASS] HEAT max clamp (100 -> 15)
+  [PASS] PIETY max clamp (50 -> 10)
+  [PASS] FAVOR max clamp (50 -> 10)
+  [PASS] DREAD max clamp (99 -> 10)
+  [PASS] DEBT unlimited (>0)
+  [PASS] DEBT min clamp (0)
+
+  [PASS] test_gamestate_missions (7 assertions)
+  [PASS] M01 unlocked at start
+  [PASS] M01 not completed at start
+  [PASS] M01 available at start
+  [PASS] M01 in completed after complete
+  [PASS] M01 not available after complete
+  [PASS] M02 unlocked manually
+  [PASS] M02 available
+
+  [PASS] test_mission_manager (7 assertions)
+  [PASS] M01 found in missions data
+  [PASS] M01 name correct
+  [PASS] M01 has enemies
+  [PASS] M99 returns empty dict
+  [PASS] PIETY>=7 gives Cult ending
+  [PASS] FAVOR>=6 gives State ending
+  [PASS] No high meters gives Solo ending
+
+[SUITE] test_gamestate
+--------------------------------------------------
+
+  [PASS] test_active_squad_max_two (1 assertions)
+  [PASS] Active squad max 2
+
+  [PASS] test_add_card_no_duplicate_in_discovered (1 assertions)
+  [PASS] card_001 only once in discovered
+
+  [PASS] test_add_card_returns_false_when_full (1 assertions)
+  [PASS] add_card returns false when deck full
+
+  [PASS] test_add_card_returns_true_when_space (1 assertions)
+  [PASS] add_card returns true when space
+
+  [PASS] test_add_card_to_deck (2 assertions)
+  [PASS] Deck has 1 card
+  [PASS] card_001 in deck
+
+  [PASS] test_add_card_tracks_discovered (1 assertions)
+  [PASS] card_001 in discovered
+
+  [PASS] test_add_gold (1 assertions)
+  [PASS] add_gold 150
+
+  [PASS] test_add_gold_accumulates (1 assertions)
+  [PASS] Gold accumulates: 100+50=150
+
+  [PASS] test_all_eight_lieutenants_exist (8 assertions)
+  [PASS] Marcus in lieutenant_data
+  [PASS] Livia in lieutenant_data
+  [PASS] Titus in lieutenant_data
+  [PASS] Kara in lieutenant_data
+  [PASS] Decimus in lieutenant_data
+  [PASS] Julia in lieutenant_data
+  [PASS] Corvus in lieutenant_data
+  [PASS] Thane in lieutenant_data
+
+  [PASS] test_complete_mission_marks_done (1 assertions)
+  [PASS] M01 in completed
+
+  [PASS] test_complete_unlocked_not_in_unlocked_twice (1 assertions)
+  [PASS] M02 only once in unlocked
+
+  [PASS] test_completed_mission_not_available (1 assertions)
+  [PASS] M01 not available after complete
+
+  [PASS] test_debt_clamps_at_zero (1 assertions)
+  [PASS] DEBT cannot go negative
+
+  [PASS] test_debt_is_unlimited (2 assertions)
+  [PASS] DEBT accepts 500
+  [PASS] DEBT accepts 1000
+
+  [PASS] test_deck_capped_at_thirty (1 assertions)
+  [PASS] Deck capped at 30
+
+  [PASS] test_deck_starts_empty (1 assertions)
+  [PASS] Deck starts empty
+
+  [PASS] test_dread_clamps_at_max (1 assertions)
+  [PASS] DREAD clamps at 10
+
+  [PASS] test_favor_clamps_at_max (1 assertions)
+  [PASS] FAVOR clamps at 10
+
+  [PASS] test_from_dict_restores_state (3 assertions)
+  [PASS] RENOWN restored from dict
+  [PASS] Gold restored from dict
+  [PASS] M01 restored in completed
+
+  [PASS] test_from_dict_roundtrip_all_meters (5 assertions)
+  [PASS] HEAT roundtrip
+  [PASS] PIETY roundtrip
+  [PASS] FAVOR roundtrip
+  [PASS] DREAD roundtrip
+  [PASS] DEBT roundtrip
+
+  [PASS] test_get_meter_returns_correct_value (2 assertions)
+  [PASS] get_meter RENOWN returns 7
+  [PASS] get_meter PIETY returns 3
+
+  [PASS] test_get_meter_unknown_returns_zero (1 assertions)
+  [PASS] get_meter unknown returns 0
+
+  [PASS] test_gold_starts_at_zero (1 assertions)
+  [PASS] Gold starts at 0
+
+  [PASS] test_heat_clamps_at_max (1 assertions)
+  [PASS] HEAT clamps at 15
+
+  [PASS] test_heat_clamps_at_min (1 assertions)
+  [PASS] HEAT clamps at 0
+
+  [PASS] test_lieutenant_starts_unrecruited (1 assertions)
+  [PASS] Marcus not recruited at start
+
+  [PASS] test_locked_mission_not_available (1 assertions)
+  [PASS] M05 not available before unlock
+
+  [PASS] test_loyalty_change_negative (1 assertions)
+  [PASS] Marcus loyalty 3-2=1
+
+  [PASS] test_loyalty_change_positive (1 assertions)
+  [PASS] Marcus loyalty +5
+
+  [PASS] test_loyalty_clamps_at_max_ten (1 assertions)
+  [PASS] Marcus loyalty clamped at 10
+
+  [PASS] test_loyalty_clamps_at_min_neg_five (1 assertions)
+  [PASS] Marcus loyalty clamped at -5
+
+  [PASS] test_m01_available_at_start (1 assertions)
+  [PASS] M01 available at start
+
+  [PASS] test_m01_unlocked_at_start (1 assertions)
+  [PASS] M01 unlocked at start
+
+  [PASS] test_meter_decrement (1 assertions)
+  [PASS] HEAT decrements: 10-4=6
+
+  [PASS] test_meter_partial_increment (1 assertions)
+  [PASS] RENOWN accumulates: 5+3=8
+
+  [PASS] test_meters_start_at_zero (6 assertions)
+  [PASS] RENOWN starts at 0
+  [PASS] HEAT starts at 0
+  [PASS] PIETY starts at 0
+  [PASS] FAVOR starts at 0
+  [PASS] DEBT starts at 0
+  [PASS] DREAD starts at 0
+
+  [PASS] test_modify_faction_alignment_is_mutually_exclusive (3 assertions)
+  [PASS] Cult alignment increased
+  [PASS] State alignment pushed down
+  [PASS] Syndicate alignment pushed down
+
+  [PASS] test_modify_relationship_score_changes_level (1 assertions)
+  [PASS] Iona relationship becomes ally
+
+  [PASS] test_no_completed_missions_at_start (1 assertions)
+  [PASS] No missions completed at start
+
+  [PASS] test_npc_registry_loaded (2 assertions)
+  [PASS] npc_registry is populated
+  [PASS] Lanista exists in registry
+
+  [PASS] test_piety_clamps_at_max (1 assertions)
+  [PASS] PIETY clamps at 10
+
+  [PASS] test_recruit_lieutenant (1 assertions)
+  [PASS] Marcus recruited
+
+  [PASS] test_recruited_lieutenant_in_active_squad (1 assertions)
+  [PASS] Marcus in active squad
+
+  [PASS] test_relationship_log_persists_roundtrip (1 assertions)
+  [PASS] relationship_log restored
+
+  [PASS] test_renown_clamps_at_max (1 assertions)
+  [PASS] RENOWN clamps at 20
+
+  [PASS] test_renown_clamps_at_min (1 assertions)
+  [PASS] RENOWN clamps at 0
+
+  [PASS] test_reset_clears_all_meters (3 assertions)
+  [PASS] RENOWN reset to 0
+  [PASS] HEAT reset to 0
+  [PASS] PIETY reset to 0
+
+  [PASS] test_reset_clears_completed_missions (1 assertions)
+  [PASS] Completed missions cleared on reset
+
+  [PASS] test_reset_clears_deck (1 assertions)
+  [PASS] Deck cleared on reset
+
+  [PASS] test_reset_clears_gold (1 assertions)
+  [PASS] Gold reset to 0
+
+  [PASS] test_reset_restores_m01_unlock (2 assertions)
+  [PASS] M01 re-unlocked after reset
+  [PASS] M05 gone after reset
+
+  [PASS] test_set_and_check_relationship_flag (1 assertions)
+  [PASS] Varro met flag true
+
+  [PASS] test_spend_gold_exact_amount (2 assertions)
+  [PASS] spend_gold exact amount succeeds
+  [PASS] Gold reduced to 0
+
+  [PASS] test_spend_gold_insufficient_fails (2 assertions)
+  [PASS] spend_gold over balance fails
+  [PASS] Gold unchanged after failed spend
+
+  [PASS] test_spend_gold_success (2 assertions)
+  [PASS] spend_gold 60 succeeds
+  [PASS] Gold reduced to 40
+
+  [PASS] test_spend_gold_zero (2 assertions)
+  [PASS] spend_gold 0 succeeds
+  [PASS] Gold unchanged after spending 0
+
+  [PASS] test_to_dict_has_all_keys (13 assertions)
+  [PASS] to_dict has 'RENOWN'
+  [PASS] to_dict has 'HEAT'
+  [PASS] to_dict has 'PIETY'
+  [PASS] to_dict has 'FAVOR'
+  [PASS] to_dict has 'DEBT'
+  [PASS] to_dict has 'DREAD'
+  [PASS] to_dict has 'gold'
+  [PASS] to_dict has 'current_deck'
+  [PASS] to_dict has 'completed_missions'
+  [PASS] to_dict has 'unlocked_missions'
+  [PASS] to_dict has 'lieutenant_data'
+  [PASS] to_dict has 'active_lieutenants'
+  [PASS] to_dict has 'faction_status'
+
+  [PASS] test_unlock_mission (1 assertions)
+  [PASS] M05 in unlocked
+
+  [PASS] test_unlock_then_available (1 assertions)
+  [PASS] M05 available after unlock
+
+[SUITE] test_gear_system
+--------------------------------------------------
+
+  [PASS] test_armor_bonus_integration (1 assertions)
+  [PASS] Armor bonus applies at start
+
+  [PASS] test_armor_reduction_with_plus_1_armor_gear (1 assertions)
+  [PASS] Armor +1 absorbs one extra point
+
+  [PASS] test_base_stats_no_gear (4 assertions)
+  [PASS] Base HP max is 30
+  [PASS] Base HP current is 30
+  [PASS] Base armor is 0
+  [PASS] Base damage bonus is 0
+
+  [PASS] test_combat_does_not_modify_persistent_gear (1 assertions)
+  [PASS] Equipped gear unchanged after combat init
+
+  [PASS] test_damage_bonus_integration (1 assertions)
+  [PASS] Damage bonus adds +2
+
+  [PASS] test_damage_calculation_with_plus_2_weapon (1 assertions)
+  [PASS] Base damage 3 becomes 5 with +2 gear
+
+  [PASS] test_drop_chance_increases_with_act (2 assertions)
+  [PASS] Act 2 drop chance > Act 1
+  [PASS] Act 3 drop chance > Act 2
+
+  [PASS] test_fallback_gold_when_all_gear_owned (2 assertions)
+  [PASS] No gear awarded when pool empty
+  [PASS] Fallback gold granted
+
+  [PASS] test_hp_bonus_integration (1 assertions)
+  [PASS] HP bonus applies at start
+
+  [PASS] test_hp_calculation_with_plus_3_gear (2 assertions)
+  [PASS] Max HP increases by +3
+  [PASS] Current HP increases by +3
+
+  [PASS] test_mission_difficulty_affects_empirical_drop_rate (1 assertions)
+  [PASS] Act 3 yields more drops than Act 1
+
+  [PASS] test_multiple_gear_stack_bonuses (2 assertions)
+  [PASS] HP bonuses stack
+  [PASS] Damage bonus applied
+
+  [PASS] test_no_double_counting_on_reinit (4 assertions)
+  [PASS] Initial damage bonus is +2
+  [PASS] Initial HP bonus is +3
+  [PASS] Damage bonus not doubled after reinit
+  [PASS] HP bonus not doubled after reinit
+
+  [PASS] test_no_negative_stats_from_gear (2 assertions)
+  [PASS] Max HP never below 1
+  [PASS] Current HP never below 1
+
+  [PASS] test_rarity_distribution_over_100_rewards_within_5_percent (4 assertions)
+  [PASS] All 100 missions dropped gear at act 4
+  [PASS] Common near 90% (±5%)
+  [PASS] Rare near 9% (±5%)
+  [PASS] Epic near 1% (±5%)
+
+  [PASS] test_rarity_distribution_over_5000_drops (3 assertions)
+  [PASS] Common ~90% (±2%)
+  [PASS] Rare ~9% (±2%)
+  [PASS] Epic ~1% (±2%)
+
+  [PASS] test_reequip_restores_bonus (1 assertions)
+  [PASS] HP restored after re-equip
+
+  [PASS] test_reward_text_shows_dropped_gear (2 assertions)
+  [PASS] Reward includes dropped gear
+  [PASS] Reward text includes dropped item name
+
+  [PASS] test_single_gear_applies_hp (2 assertions)
+  [PASS] Leather Vest adds +3 max HP
+  [PASS] Leather Vest boosts current HP
+
+  [PASS] test_unequip_removes_bonus_next_combat (1 assertions)
+  [PASS] HP reset without gear
+
+[SUITE] test_missionmanager
+--------------------------------------------------
+
+  [PASS] test_all_missions_have_required_fields (1 assertions)
+  [PASS] All missions have required fields
+
+  [PASS] test_complete_applies_relationship_changes (1 assertions)
+  [PASS] Marcus loyalty after M01
+
+  [PASS] test_complete_m01_unlocks_s01 (1 assertions)
+  [PASS] S01 unlocked after M01
+
+  [PASS] test_complete_m01_unlocks_s14 (1 assertions)
+  [PASS] S14 unlocked after M01
+
+  [PASS] test_complete_m04_unlocks_s02 (1 assertions)
+  [PASS] S02 unlocked after M04
+
+  [PASS] test_complete_m05_unlocks_s06 (1 assertions)
+  [PASS] S06 unlocked after M05
+
+  [PASS] test_complete_m05_unlocks_s13 (1 assertions)
+  [PASS] S13 unlocked after M05
+
+  [PASS] test_complete_mission_applies_faction_changes (1 assertions)
+  [PASS] State alignment increased from M06
+
+  [PASS] test_complete_mission_applies_gold_reward (1 assertions)
+  [PASS] M01 victory gold applied
+
+  [PASS] test_complete_mission_applies_meter_changes (1 assertions)
+  [PASS] M01 RENOWN meter applied
+
+  [PASS] test_complete_mission_applies_npc_impacts (2 assertions)
+  [PASS] Lanista score increased after M04
+  [PASS] Lanista met flag set after M04
+
+  [PASS] test_complete_mission_marks_completed (1 assertions)
+  [PASS] M01 in completed_missions
+
+  [PASS] test_complete_mission_retreat_halves_gold (1 assertions)
+  [PASS] M01 retreat gold applied
+
+  [PASS] test_complete_mission_unlocks_next_main (1 assertions)
+  [PASS] M02 unlocked after M01
+
+  [PASS] test_complete_unknown_mission_does_not_crash (1 assertions)
+  [PASS] complete unknown mission does not crash
+
+  [PASS] test_ending_path_cult_at_piety_max (1 assertions)
+  [PASS] PIETY=10 gives Cult ending
+
+  [PASS] test_ending_path_cult_at_piety_seven (1 assertions)
+  [PASS] PIETY=7 gives Cult ending
+
+  [PASS] test_ending_path_piety_beats_favor (1 assertions)
+  [PASS] PIETY>=7 beats FAVOR for Cult ending
+
+  [PASS] test_ending_path_solo_by_default (1 assertions)
+  [PASS] Default ending path is Solo
+
+  [PASS] test_ending_path_solo_low_meters (1 assertions)
+  [PASS] Low meters = Solo ending
+
+  [PASS] test_ending_path_state_at_favor_six (1 assertions)
+  [PASS] FAVOR=6 gives State ending
+
+  [PASS] test_get_available_excludes_completed (1 assertions)
+  [PASS] M01 not available after complete
+
+  [PASS] test_get_available_excludes_locked (1 assertions)
+  [PASS] M05 not available when locked
+
+  [PASS] test_get_available_missions_at_start (1 assertions)
+  [PASS] M01 available at start
+
+  [PASS] test_locked_by_npc_and_faction_requirements (2 assertions)
+  [PASS] S02 has lock reasons at start
+  [PASS] S02 unavailable at start
+
+  [PASS] test_m01_correct_name (1 assertions)
+  [PASS] M01 name is 'The Token'
+
+  [PASS] test_m01_exists (1 assertions)
+  [PASS] M01 found
+
+  [PASS] test_m01_has_enemies (1 assertions)
+  [PASS] M01 has enemies array
+
+  [PASS] test_m01_has_victory_rewards (2 assertions)
+  [PASS] M01 has victory_rewards
+  [PASS] M01 victory_rewards has gold
+
+  [PASS] test_m10_exists (1 assertions)
+  [PASS] M10 found
+
+  [PASS] test_missions_loaded (1 assertions)
+  [PASS] Missions loaded
+
+  [PASS] test_s01_exists (1 assertions)
+  [PASS] S01 found
+
+  [PASS] test_start_mission_returns_false_when_completed (1 assertions)
+  [PASS] start_mission completed M01 returns false
+
+  [PASS] test_start_mission_returns_false_when_locked (1 assertions)
+  [PASS] start_mission locked M10 returns false
+
+  [PASS] test_start_mission_returns_true_when_available (1 assertions)
+  [PASS] start_mission M01 returns true
+
+  [PASS] test_start_mission_sets_current_id (1 assertions)
+  [PASS] current_mission_id set to M01
+
+  [PASS] test_unknown_mission_returns_empty (1 assertions)
+  [PASS] M99 returns empty
+
+  [PASS] test_unlock_makes_mission_available (1 assertions)
+  [PASS] M05 available after unlock
+
+  [PASS] test_unlocks_when_relationship_and_faction_requirements_met (1 assertions)
+  [PASS] S02 available when requirements met
+
+[SUITE] test_savemanager
+--------------------------------------------------
+
+  [PASS] test_auto_save_creates_slot_zero (1 assertions)
+  [PASS] auto_save creates slot 0
+
+  [PASS] test_auto_save_stores_current_state (1 assertions)
+  [PASS] auto_save stores gold correctly
+
+  [PASS] test_delete_nonexistent_does_not_crash (1 assertions)
+  [PASS] Delete nonexistent save does not crash
+
+  [PASS] test_delete_save_removes_file (2 assertions)
+  [PASS] Save exists before delete
+  [PASS] Save gone after delete
+
+  [PASS] test_load_returns_false_when_no_save (1 assertions)
+  [PASS] load_game returns false when no save
+
+  [PASS] test_load_returns_true_on_success (1 assertions)
+  [PASS] load_game returns true on success
+
+  [PASS] test_multiple_slots_are_independent (2 assertions)
+  [PASS] Slot A has 100 gold
+  [PASS] Slot B has 200 gold
+
+  [PASS] test_save_and_load_all_meters (6 assertions)
+  [PASS] RENOWN roundtrip
+  [PASS] HEAT roundtrip
+  [PASS] PIETY roundtrip
+  [PASS] FAVOR roundtrip
+  [PASS] DREAD roundtrip
+  [PASS] DEBT roundtrip
+
+  [PASS] test_save_and_load_completed_missions (1 assertions)
+  [PASS] M01 in restored completed_missions
+
+  [PASS] test_save_and_load_deck (2 assertions)
+  [PASS] Deck restored with 3 cards
+  [PASS] card_001 in restored deck
+
+  [PASS] test_save_and_load_gold (2 assertions)
+  [PASS] Gold is 0 after reset
+  [PASS] Gold restored to 777 after load
+
+  [PASS] test_save_and_load_lieutenant_loyalty (2 assertions)
+  [PASS] Marcus loyalty restored
+  [PASS] Livia recruited status restored
+
+  [PASS] test_save_and_load_renown (1 assertions)
+  [PASS] RENOWN restored to 12
+
+  [PASS] test_save_and_load_story_flags (2 assertions)
+  [PASS] story_flag lanista_met restored
+  [PASS] story_flag quest_count restored
+
+  [PASS] test_save_and_load_unlocked_missions (2 assertions)
+  [PASS] M05 in restored unlocked_missions
+  [PASS] S01 in restored unlocked_missions
+
+  [PASS] test_save_exists_returns_false_for_empty_slot (1 assertions)
+  [PASS] Save slot 9 empty at start
+
+  [PASS] test_save_exists_returns_true_after_save (1 assertions)
+  [PASS] Save exists after save_game
+
+[SUITE] test_mission_flow
+--------------------------------------------------
+
+  [PASS] test_chain_m01_to_m03 (3 assertions)
+  [PASS] M02 available
+  [PASS] M03 available after M02
+  [PASS] M04 available after M03
+
+  [PASS] test_enemy_data_loaded_for_m01 (10 assertions)
+  [PASS] M01 has enemies
+  [PASS] Enemy has hp
+  [PASS] Enemy has damage
+  [PASS] Enemy hp > 0
+  [PASS] Enemy has hp
+  [PASS] Enemy has damage
+  [PASS] Enemy hp > 0
+  [PASS] Enemy has hp
+  [PASS] Enemy has damage
+  [PASS] Enemy hp > 0
+
+  [PASS] test_favor_missions_push_toward_state (1 assertions)
+  [PASS] FAVOR > 0 after M06
+
+  [PASS] test_gold_accumulates_across_missions (1 assertions)
+  [PASS] Gold increased after M02
+
+  [PASS] test_m02_available_after_m01_complete (1 assertions)
+  [PASS] M02 in available after M01
+
+  [PASS] test_mission_hooks_created (1 assertions)
+  [PASS] Hook 'lanista_met' created after M04
+
+  [PASS] test_mission_updates_lieutenant_loyalty (1 assertions)
+  [PASS] Marcus loyalty after M01
+
+  [PASS] test_new_game_all_meters_zero (2 assertions)
+  [PASS] RENOWN=0
+  [PASS] HEAT=0
+
+  [PASS] test_new_game_gold_is_zero (1 assertions)
+  [PASS] Gold starts at 0
+
+  [PASS] test_new_game_has_starter_deck (2 assertions)
+  [PASS] New game has a deck
+  [PASS] New game deck >= 10 cards
+
+  [PASS] test_new_game_m01_is_only_available_mission (2 assertions)
+  [PASS] M01 available
+  [PASS] M02 not available at start
+
+  [PASS] test_piety_missions_push_toward_cult (2 assertions)
+  [PASS] M05 increases PIETY
+  [PASS] PIETY > 0 after M05
+
+  [PASS] test_retreat_awards_retreat_gold (1 assertions)
+  [PASS] Retreat gold correct
+
+  [PASS] test_retreat_gives_less_gold_than_victory (1 assertions)
+  [PASS] Retreat gold <= victory gold
+
+  [PASS] test_retreat_marks_mission_complete (1 assertions)
+  [PASS] M01 marked complete on retreat
+
+  [PASS] test_retreat_still_unlocks_next (1 assertions)
+  [PASS] M02 unlocked even after retreat
+
+  [PASS] test_start_mission_fails_when_completed (1 assertions)
+  [PASS] Cannot restart completed mission
+
+  [PASS] test_start_mission_fails_when_locked (2 assertions)
+  [PASS] Cannot start locked mission
+  [PASS] current_mission_id not set to M10
+
+  [PASS] test_start_mission_sets_id (1 assertions)
+  [PASS] current_mission_id = M01
+
+  [PASS] test_victory_awards_gold (1 assertions)
+  [PASS] Victory gold awarded
+
+  [PASS] test_victory_marks_mission_complete (1 assertions)
+  [PASS] M01 completed after victory
+
+  [PASS] test_victory_unlocks_next_mission (1 assertions)
+  [PASS] M02 unlocked after M01 victory
+
+  [PASS] test_victory_unlocks_side_missions (2 assertions)
+  [PASS] S01 unlocked after M01
+  [PASS] S14 unlocked after M01
+
+  [PASS] test_victory_updates_renown (1 assertions)
+  [PASS] RENOWN updated after M01
+
+[SUITE] test_save_load
+--------------------------------------------------
+
+  [PASS] test_auto_save_after_mission_complete (1 assertions)
+  [PASS] Auto-save created after mission complete
+
+  [PASS] test_auto_save_has_correct_state (1 assertions)
+  [PASS] Auto-save gold correct
+
+  [PASS] test_continue_from_saved_game_is_correct_state (6 assertions)
+  [PASS] State reset (simulating quit)
+  [PASS] Continue: load succeeded
+  [PASS] Continue: RENOWN correct
+  [PASS] Continue: gold correct
+  [PASS] Continue: M01 completed
+  [PASS] Continue: M02 available
+
+  [PASS] test_custom_deck_survives_save_load (6 assertions)
+  [PASS] Custom deck size preserved
+  [PASS] card_001 in restored deck
+  [PASS] card_002 in restored deck
+  [PASS] card_003 in restored deck
+  [PASS] card_027 in restored deck
+  [PASS] card_028 in restored deck
+
+  [PASS] test_discovered_cards_survive_save_load (1 assertions)
+  [PASS] card_010 in discovered after load
+
+  [PASS] test_full_state_roundtrip (16 assertions)
+  [PASS] Sanity: RENOWN=0 after reset
+  [PASS] Load succeeded
+  [PASS] RENOWN restored
+  [PASS] HEAT restored
+  [PASS] PIETY restored
+  [PASS] FAVOR restored
+  [PASS] DREAD restored
+  [PASS] DEBT restored
+  [PASS] Gold restored
+  [PASS] M01 in completed
+  [PASS] M02 in unlocked
+  [PASS] S01 in unlocked
+  [PASS] Marcus loyalty restored
+  [PASS] Marcus recruited restored
+  [PASS] story_flag lanista_met
+  [PASS] Deck restored
+
+  [PASS] test_save_mid_mission_progress (5 assertions)
+  [PASS] Gold preserved mid-campaign
+  [PASS] RENOWN preserved mid-campaign
+  [PASS] M01 completed preserved
+  [PASS] M02 completed preserved
+  [PASS] M03 unlocked preserved
+
+============================================================
+  SUITES:  9
+  PASSED:  676
+  FAILED:  0
+  SKIPPED: 0
+  RESULT:  ALL TESTS PASSED
+============================================================
+WARNING: 1 RID of type "CanvasItem" was leaked.
+   at: _free_rids (servers/rendering/renderer_canvas_cull.cpp:2690)
+WARNING: ObjectDB instances leaked at exit (run with --verbose for details).
+   at: cleanup (core/object/object.cpp:2641)
+ERROR: 1 resources still in use at exit (run with --verbose for details).
+   at: clear (core/io/resource.cpp:810)

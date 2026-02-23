@@ -25,17 +25,21 @@ func _load_missions() -> void:
 		print("Loaded %d missions" % missions_data.size())
 
 func get_mission(id: String) -> Dictionary:
+	if missions_data.is_empty():
+		_load_missions()
 	return missions_data.get(id, {})
 
 func get_available_missions() -> Array:
+	if missions_data.is_empty():
+		_load_missions()
 	var available = []
 	for id in GameState.unlocked_missions:
-		if id not in GameState.completed_missions:
+		if is_mission_available(str(id)):
 			available.append(id)
 	return available
 
 func start_mission(id: String) -> bool:
-	if GameState.is_mission_available(id):
+	if is_mission_available(id):
 		GameState.current_mission_id = id
 		return true
 	return false
@@ -61,6 +65,8 @@ func complete_mission(id: String, outcome: String = "victory") -> void:
 	var relationships = mission.get("relationships", {})
 	for lt in relationships:
 		GameState.change_loyalty(lt, relationships[lt])
+	_apply_npc_relationship_impacts(id, mission, multiplier)
+	_apply_faction_alignment_impacts(id, mission, multiplier)
 
 	# Apply hooks
 	for hook in mission.get("hooks_created", []):
@@ -96,6 +102,138 @@ func _unlock_next(id: String) -> void:
 	}
 	for mission in side_unlocks.get(id, []):
 		GameState.unlock_mission(mission)
+
+func is_mission_available(mission_id: String) -> bool:
+	if not GameState.is_mission_available(mission_id):
+		return false
+	return get_mission_lock_reasons(mission_id).is_empty()
+
+func get_mission_lock_reasons(mission_id: String) -> Array[String]:
+	var reasons: Array[String] = []
+	var mission := get_mission(mission_id)
+	if mission.is_empty():
+		reasons.append("Mission data missing")
+		return reasons
+
+	var npc_requirements = mission.get("npc_requirements", {})
+	for npc_id in npc_requirements.keys():
+		var req = npc_requirements[npc_id]
+		var npc_reason := _check_npc_requirement(str(npc_id), req)
+		if npc_reason != "":
+			reasons.append(npc_reason)
+
+	var faction_requirements = mission.get("faction_requirements", {})
+	for faction_id in faction_requirements.keys():
+		var req = faction_requirements[faction_id]
+		var min_alignment := GameState.FACTION_CONTENT_THRESHOLD + 1
+		if req is Dictionary:
+			min_alignment = int((req as Dictionary).get("min", min_alignment))
+		else:
+			min_alignment = int(req)
+		if GameState.get_faction_alignment(str(faction_id)) < min_alignment:
+			reasons.append("Requires %s alignment %d" % [str(faction_id), min_alignment])
+
+	var blocked_factions = mission.get("forbidden_factions", {})
+	for faction_id in blocked_factions.keys():
+		var threshold := int(blocked_factions[faction_id])
+		if GameState.get_faction_alignment(str(faction_id)) >= threshold:
+			reasons.append("Blocked by %s alignment %d+" % [str(faction_id), threshold])
+
+	return reasons
+
+func can_access_faction_content(faction_id: String) -> bool:
+	return GameState.can_access_faction_content(faction_id)
+
+func _check_npc_requirement(npc_id: String, req) -> String:
+	var state := GameState.get_npc_state(npc_id)
+	if state.is_empty():
+		return "Requires %s" % npc_id
+	var score := int(state.get("score", 0))
+	var level := str(state.get("level", "neutral"))
+	var flags: Dictionary = state.get("flags", {})
+	var min_score := -100
+	var max_score := 100
+	var need_level := ""
+	var required_flags: Array = []
+	var forbidden_flags: Array = []
+
+	if req is Dictionary:
+		var d: Dictionary = req
+		min_score = int(d.get("min_score", min_score))
+		max_score = int(d.get("max_score", max_score))
+		need_level = str(d.get("level", ""))
+		required_flags = d.get("required_flags", [])
+		forbidden_flags = d.get("forbidden_flags", [])
+	elif req is int:
+		min_score = int(req)
+
+	if score < min_score:
+		return "Requires %s trust (%d+)" % [npc_id, min_score]
+	if score > max_score:
+		return "Requires lower tension with %s" % npc_id
+	if need_level != "" and level != need_level:
+		return "Requires %s relationship: %s" % [npc_id, need_level]
+	for f in required_flags:
+		if not bool(flags.get(str(f), false)):
+			return "Requires %s flag: %s" % [npc_id, str(f)]
+	for f in forbidden_flags:
+		if bool(flags.get(str(f), false)):
+			return "%s flag prevents this mission: %s" % [npc_id, str(f)]
+	return ""
+
+func _apply_npc_relationship_impacts(mission_id: String, mission: Dictionary, multiplier: float) -> void:
+	var npc_impacts = mission.get("npc_impacts", {})
+	for npc_id in npc_impacts.keys():
+		var impact: Dictionary = npc_impacts[npc_id]
+		var score_delta := int(round(float(impact.get("score", 0)) * multiplier))
+		if score_delta != 0:
+			GameState.modify_relationship_score(str(npc_id), score_delta, "mission:%s" % mission_id)
+		for flag_name in impact.get("set_flags", []):
+			GameState.set_relationship_flag(str(npc_id), str(flag_name), true)
+		for flag_name in impact.get("clear_flags", []):
+			GameState.set_relationship_flag(str(npc_id), str(flag_name), false)
+
+	var hook := NarrativeManager.get_mission_hook(mission_id)
+	if hook.is_empty():
+		return
+
+	var allies = hook.get("who_helps", [])
+	for npc_id in allies:
+		var npc_name := str(npc_id)
+		if GameState.get_npc_profile(npc_name).is_empty():
+			continue
+		GameState.set_relationship_flag(npc_name, "met", true)
+		GameState.modify_relationship_score(npc_name, int(round(5.0 * multiplier)), "hook_help:%s" % mission_id)
+
+	var hunters = hook.get("who_hunts", [])
+	for npc_id in hunters:
+		var npc_name := str(npc_id)
+		if GameState.get_npc_profile(npc_name).is_empty():
+			continue
+		GameState.set_relationship_flag(npc_name, "met", true)
+		GameState.modify_relationship_score(npc_name, int(round(-4.0 * multiplier)), "hook_hunt:%s" % mission_id)
+
+func _apply_faction_alignment_impacts(mission_id: String, mission: Dictionary, multiplier: float) -> void:
+	var explicit_changes: Dictionary = mission.get("faction_alignment_changes", {})
+	for faction_id in explicit_changes.keys():
+		var scaled := int(round(float(explicit_changes[faction_id]) * multiplier))
+		if scaled != 0:
+			GameState.modify_faction_alignment(str(faction_id), scaled, "mission:%s" % mission_id)
+
+	if not explicit_changes.is_empty():
+		return
+
+	# Fallback derivation from narrative meters when mission lacks explicit faction tuning.
+	var meters: Dictionary = mission.get("meter_changes", {})
+	var inferred := {
+		"Cult": int(meters.get("PIETY", 0)) * 12,
+		"State": int(meters.get("FAVOR", 0)) * 12,
+		"Syndicate": int(meters.get("DREAD", 0)) * 10,
+	}
+	for faction_id in inferred.keys():
+		var delta := int(round(float(inferred[faction_id]) * multiplier))
+		if delta != 0:
+			GameState.modify_faction_alignment(str(faction_id), delta, "inferred:%s" % mission_id)
 
 func _roll_gear_drop() -> String:
 	var target_rarity := roll_gear_rarity()
@@ -134,7 +272,7 @@ func generate_mission_reward(mission_id: String, outcome: String, multiplier: fl
 	var rewards = mission.get("victory_rewards", {})
 	if outcome == "retreat":
 		rewards = mission.get("retreat_rewards", rewards)
-	reward["gold"] = int(rewards.get("gold", 0) * multiplier)
+	reward["gold"] = int(rewards.get("gold", 0))
 	GameState.add_gold(reward["gold"])
 
 	if outcome != "victory":

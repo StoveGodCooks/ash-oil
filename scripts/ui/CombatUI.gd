@@ -62,6 +62,7 @@ var lt_label: Label
 var hand_container: HBoxContainer
 var play_target_marker: Control
 var end_turn_btn: Button
+var undo_btn: Button
 var enemy_labels: Array = []
 var enemy_party_cards: Array = []
 var is_play_animating: bool = false
@@ -96,8 +97,12 @@ var turn_log_panel: PanelContainer
 var turn_log_label: Label
 var turn_log_toggle_btn: Button
 var turn_log_collapsed: bool = true
+var turn_undo_stack: Array = []
 const RAIL_WIDTH: float = 140.0
-const RAIL_SIDE_MARGIN: float = 8.0
+const PLAYER_RAIL_SIDE_MARGIN: float = 0.0
+const ENEMY_RAIL_SIDE_MARGIN: float = 8.0
+const PLAYER_RAIL_Y_OFFSET: float = 9.0
+const ENEMY_RAIL_Y_OFFSET: float = -9.0
 
 func _apply_panel_style(panel: PanelContainer, tone: int = 0) -> void:
 	if panel == null:
@@ -135,6 +140,7 @@ func _style_section_title(label: Label, accent: bool = false) -> void:
 
 func _ready() -> void:
 	set_process_unhandled_input(true)
+	animation_speed = clampf(float(GameState.get_accessibility_setting("animation_speed", 1.0)), 0.5, 2.0)
 	_init_state()
 	_build_ui()
 	var viewport := get_viewport()
@@ -142,6 +148,7 @@ func _ready() -> void:
 		viewport.size_changed.connect(_on_viewport_size_changed)
 	_position_rails.call_deferred()
 	_start_turn()
+	_apply_text_scale_from_accessibility()
 
 func _on_viewport_size_changed() -> void:
 	_position_rails.call_deferred()
@@ -164,10 +171,10 @@ func _position_rails() -> void:
 		return
 	var player_y: float = player_visible_top - overlay_rect.position.y
 	var enemy_y: float = enemy_rect.position.y - overlay_rect.position.y
-	player_rail_ref.position = Vector2(RAIL_SIDE_MARGIN, player_y)
+	player_rail_ref.position = Vector2(PLAYER_RAIL_SIDE_MARGIN, player_y + PLAYER_RAIL_Y_OFFSET)
 	player_rail_ref.size = Vector2(RAIL_WIDTH, mirrored_height)
-	enemy_rail_ref.position = Vector2(overlay_rect.size.x - RAIL_SIDE_MARGIN - RAIL_WIDTH, enemy_y)
-	enemy_rail_ref.size = Vector2(RAIL_WIDTH, mirrored_height)
+	enemy_rail_ref.position = Vector2(overlay_rect.size.x - ENEMY_RAIL_SIDE_MARGIN - RAIL_WIDTH, enemy_y + ENEMY_RAIL_Y_OFFSET)
+	enemy_rail_ref.size = player_rail_ref.size
 
 func _init_state() -> void:
 	champion_hp = 30
@@ -538,6 +545,14 @@ func _build_ui() -> void:
 	end_turn_btn.pressed.connect(_on_end_turn)
 	action_vbox.add_child(end_turn_btn)
 
+	undo_btn = Button.new()
+	undo_btn.text = "UNDO LAST PLAY"
+	undo_btn.custom_minimum_size = Vector2(0, 46)
+	undo_btn.disabled = true
+	undo_btn.tooltip_text = "Undo card plays this turn until End Turn is pressed."
+	undo_btn.pressed.connect(_on_undo_pressed)
+	action_vbox.add_child(undo_btn)
+
 	var retreat_btn = Button.new()
 	retreat_btn.text = "RETREAT"
 	retreat_btn.custom_minimum_size = Vector2(0, 54)
@@ -594,7 +609,7 @@ func _build_ui() -> void:
 	player_rail.anchor_right = 0.0
 	player_rail.anchor_top = 0.0
 	player_rail.anchor_bottom = 0.0
-	player_rail.position = Vector2(RAIL_SIDE_MARGIN, 0.0)
+	player_rail.position = Vector2(PLAYER_RAIL_SIDE_MARGIN, 0.0)
 	player_rail.size = Vector2(RAIL_WIDTH, 1.0)
 	player_rail.z_index       = 60
 	var player_rail_style := StyleBoxFlat.new()
@@ -1030,6 +1045,8 @@ func _set_enemy_target_highlight(active: bool, valid: bool = true) -> void:
 func _start_turn() -> void:
 	if combat_over:
 		return
+	turn_undo_stack.clear()
+	_update_undo_state()
 	_set_enemy_card_slot_state(-1, "empty")
 	stamina = max_stamina_per_turn
 	if turn == 1 and gear_first_turn_stamina_bonus > 0:
@@ -1454,6 +1471,9 @@ func _on_card_pressed(card_idx: int, card_btn: Control) -> void:
 		_log("Not enough stamina! (need %d, have %d)" % [cost, stamina])
 		return
 
+	turn_undo_stack.append(_capture_turn_state())
+	_update_undo_state()
+
 	is_play_animating = true
 	end_turn_btn.disabled = true
 	_hide_hover_tooltip()
@@ -1538,6 +1558,7 @@ func _on_card_pressed(card_idx: int, card_btn: Control) -> void:
 	_check_victory()
 	if not combat_over:
 		end_turn_btn.disabled = false
+	_update_undo_state()
 
 func _parse_effect_stacks(effect: String) -> int:
 	var parts = effect.split("_")
@@ -1611,6 +1632,8 @@ func _on_end_turn() -> void:
 	if combat_over or is_play_animating:
 		return
 
+	turn_undo_stack.clear()
+	_update_undo_state()
 	end_turn_btn.disabled = true
 	await _animate_enemy_slot_breath(1.0)
 
@@ -1670,6 +1693,65 @@ func _on_end_turn() -> void:
 	_start_turn()
 	end_turn_btn.disabled = false
 	skip_enemy_animation = false
+
+func _capture_turn_state() -> Dictionary:
+	var enemies_snapshot: Array = []
+	for enemy in enemies:
+		if enemy is Dictionary:
+			enemies_snapshot.append((enemy as Dictionary).duplicate(true))
+	return {
+		"champion_hp": champion_hp,
+		"champion_max_hp": champion_max_hp,
+		"champion_armor": champion_armor,
+		"lt_hp": lt_hp,
+		"lt_max_hp": lt_max_hp,
+		"lt_armor": lt_armor,
+		"enemies": enemies_snapshot,
+		"hand": hand.duplicate(true),
+		"deck": deck.duplicate(true),
+		"discard_pile": discard_pile.duplicate(true),
+		"stamina": stamina,
+		"mana": mana,
+		"max_mana": max_mana,
+		"turn": turn,
+		"combat_over": combat_over,
+		"player_won": player_won,
+		"log_lines": _log_lines.duplicate(true),
+	}
+
+func _restore_turn_state(state: Dictionary) -> void:
+	champion_hp = int(state.get("champion_hp", champion_hp))
+	champion_max_hp = int(state.get("champion_max_hp", champion_max_hp))
+	champion_armor = int(state.get("champion_armor", champion_armor))
+	lt_hp = int(state.get("lt_hp", lt_hp))
+	lt_max_hp = int(state.get("lt_max_hp", lt_max_hp))
+	lt_armor = int(state.get("lt_armor", lt_armor))
+	enemies = (state.get("enemies", enemies) as Array).duplicate(true)
+	hand = (state.get("hand", hand) as Array).duplicate(true)
+	deck = (state.get("deck", deck) as Array).duplicate(true)
+	discard_pile = (state.get("discard_pile", discard_pile) as Array).duplicate(true)
+	stamina = int(state.get("stamina", stamina))
+	mana = int(state.get("mana", mana))
+	max_mana = int(state.get("max_mana", max_mana))
+	turn = int(state.get("turn", turn))
+	combat_over = bool(state.get("combat_over", combat_over))
+	player_won = bool(state.get("player_won", player_won))
+	_log_lines = (state.get("log_lines", _log_lines) as Array).duplicate(true)
+
+func _on_undo_pressed() -> void:
+	if is_play_animating or turn_undo_stack.is_empty() or combat_over:
+		return
+	var previous: Dictionary = turn_undo_stack.pop_back()
+	_restore_turn_state(previous)
+	end_turn_btn.disabled = false
+	_update_all_ui()
+	_set_enemy_target_highlight(false, true)
+	_update_undo_state()
+
+func _update_undo_state() -> void:
+	if undo_btn == null:
+		return
+	undo_btn.disabled = turn_undo_stack.is_empty() or is_play_animating or combat_over
 
 func _check_victory() -> void:
 	var all_dead = true
@@ -1830,6 +1912,7 @@ func _update_all_ui() -> void:
 	last_ui_champion_hp = champion_hp
 
 	_update_hand_ui()
+	_update_undo_state()
 
 func _player_float_origin() -> Vector2:
 	if player_portrait_panel_ref:
@@ -1864,6 +1947,28 @@ func _spawn_float_text(text: String, color: Color, origin: Vector2, font_px: int
 	tw.tween_property(fx, "modulate:a", 0.0, 0.50).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN)
 	await tw.finished
 	fx.queue_free()
+
+func _apply_text_scale_from_accessibility() -> void:
+	var scale: float = clampf(float(GameState.get_accessibility_setting("text_scale", 1.0)), 0.8, 1.5)
+	if is_equal_approx(scale, 1.0):
+		return
+	_scale_fonts_recursive(self, scale)
+
+func _scale_fonts_recursive(node: Node, scale: float) -> void:
+	if node is Label:
+		var lbl := node as Label
+		var size := lbl.get_theme_font_size("font_size")
+		if size <= 0:
+			size = 14
+		lbl.add_theme_font_size_override("font_size", int(round(float(size) * scale)))
+	elif node is Button:
+		var btn := node as Button
+		var size_btn := btn.get_theme_font_size("font_size")
+		if size_btn <= 0:
+			size_btn = 14
+		btn.add_theme_font_size_override("font_size", int(round(float(size_btn) * scale)))
+	for child in node.get_children():
+		_scale_fonts_recursive(child, scale)
 
 func _init_lieutenant_state() -> void:
 	var active = GameState.active_lieutenants

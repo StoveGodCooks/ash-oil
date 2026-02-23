@@ -140,7 +140,7 @@ func _build_card() -> void:
 
 	# Hover glow (soft gold aura)
 	_hover_glow = ColorRect.new()
-	_hover_glow.color = Color(0.98, 0.84, 0.42, 0.0)
+	_hover_glow.color = Color(0.85, 0.74, 0.42, 0.0)
 	_hover_glow.anchor_left = 0.0
 	_hover_glow.anchor_right = 1.0
 	_hover_glow.anchor_top = 0.0
@@ -291,15 +291,16 @@ func set_card_size(card_size: Vector2) -> void:
 	custom_minimum_size = card_size
 
 func set_hovered(active: bool) -> void:
-	if _hover_glow == null:
-		return
-	var tw = create_tween()
-	tw.tween_property(_hover_glow, "color:a", 0.28 if active else 0.0, 0.15).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+	# Avoid heavy full-card glow; keep hover emphasis to motion/outline elsewhere.
+	if _hover_glow != null:
+		_hover_glow.color.a = 0.0
+	if _rarity_frame != null:
+		_rarity_frame.modulate = Color(1.05, 1.05, 1.05, 1.0) if active else Color(1.0, 1.0, 1.0, 1.0)
 
 func set_selected(active: bool) -> void:
 	if _frame_overlay == null:
 		return
-	_frame_overlay.modulate = Color(1.20, 1.10, 0.80, 1.0) if active else Color(1.0, 1.0, 1.0, 1.0)
+	_frame_overlay.modulate = Color(1.02, 1.02, 1.00, 1.0) if active else Color(1.0, 1.0, 1.0, 1.0)
 
 func pulse_cost() -> void:
 	if _cost_label == null:

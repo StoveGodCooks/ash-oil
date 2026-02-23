@@ -160,6 +160,30 @@ func _update_all_ui() -> void:
 		GameState.refusals_made
 	])
 
+func apply_dialogue_choice(npc_id: String, choice_payload: Dictionary) -> void:
+	# Generic dialogue consequence entrypoint for UI scripts.
+	# Example payload:
+	# {
+	#   "score_delta": 10,
+	#   "set_flags": ["helped"],
+	#   "clear_flags": ["betrayed"],
+	#   "faction_changes": {"Cult": 15, "State": -8},
+	#   "context": "dialogue_help_choice"
+	# }
+	var score_delta := int(choice_payload.get("score_delta", 0))
+	var context := str(choice_payload.get("context", "dialogue"))
+	if score_delta != 0:
+		GameState.modify_relationship_score(npc_id, score_delta, context)
+
+	for flag_name in choice_payload.get("set_flags", []):
+		GameState.set_relationship_flag(npc_id, str(flag_name), true)
+	for flag_name in choice_payload.get("clear_flags", []):
+		GameState.set_relationship_flag(npc_id, str(flag_name), false)
+
+	var faction_changes: Dictionary = choice_payload.get("faction_changes", {})
+	for faction_id in faction_changes.keys():
+		GameState.modify_faction_alignment(str(faction_id), int(faction_changes[faction_id]), context)
+
 # Helper: get character arc info
 func get_character_arc(lieutenant_name: String) -> Dictionary:
 	var arcs = hooks_data.get("character_arcs", {})

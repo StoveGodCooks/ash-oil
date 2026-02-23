@@ -1,0 +1,851 @@
+PROMPT 9: CONTENT & BALANCE TUNING
+For Codex CLI with Full Project Access
+CONTEXT
+Missions have placeholder stats. Card costs may not correlate with power. Starter deck might have weak cards. Shop prices could be unreasonable. We need systematic balancing: missions scale difficulty properly, cards cost appropriately for their power level, economy makes sense.
+VISION
+When complete:
+
+Mission difficulty progresses logically (early missions teach, late missions challenge)
+Card costs correlate with card power
+Starter deck sets players up for success without being overpowered
+Shop prices create meaningful economic choices
+No obviously weak or overpowered cards/missions
+
+SUCCESS CRITERIA
+✓ Act 1 missions visibly easier than Act 3 missions
+✓ No card is obviously underpowered or overpowered
+✓ Starter deck is balanced (teaches mechanics, doesn't trivialize)
+✓ Shop pricing creates tension (want it, but costs something)
+✓ No single dominant strategy (multiple playstyles viable)
+✓ Playtesting confirms difficulty progression feels right
+
+TASK 1: Mission Difficulty Scaling
+Deliverable: Audit and adjust mission difficulty across acts
+Requirements
+
+ Audit current mission list (identify Act 1, 2, 3 boundaries)
+ Record enemy stats for each mission (health, armor, damage)
+ Identify enemy compositions (solo vs. multi-enemy)
+ Plot difficulty curve (graph: mission number vs. enemy power)
+ Verify curve is smooth (no sudden difficulty spikes)
+ Adjust enemy stats to create logical progression
+ Test: Can competent player beat Act 1 consistently?
+ Test: Does Act 2 feel harder than Act 1?
+ Test: Does Act 3 feel harder than Act 2?
+ Verify no mission is unbeatable with starter deck
+
+Implementation Notes
+
+Use consistent difficulty metric (e.g., enemy_health + armor * 2 + damage)
+Early missions should be 1v1 or easy 1v2
+Mid missions should introduce multi-enemy complexity
+Late missions should have tough individual enemies AND multi-enemy fights
+Difficulty should increase ~15-20% per mission on average
+Account for player card pool growth (later missions assume better cards)
+
+
+TASK 2: Enemy Encounter Rebalancing
+Deliverable: Adjust all enemy stat blocks per mission
+Requirements
+
+ For each mission, record current enemy stats (health, armor, damage)
+ Calculate expected player damage based on starter deck
+ Verify mission takes reasonable time (3-6 turns)
+ If too easy (kill in 2 turns), increase enemy stats
+ If too hard (die in 1 turn), decrease enemy stats
+ Adjust 10-20% at a time, test, iterate
+ Account for variation (some playstyles counter certain enemies)
+ Test: With average play, what's win rate per mission?
+ Adjust until win rate is ~70-80% (not trivial, not impossible)
+
+Implementation Notes
+
+Create config file with all enemy stats (don't hardcode)
+Test with multiple starting decks (verify all are viable)
+Adjust damage based on card damage output, not guessing
+If enemy seems weak: increase health first (increases battle length, adds complexity)
+If enemy seems overpowered: decrease damage first (reduces frustration)
+
+
+TASK 3: Card Cost Balancing
+Deliverable: Verify card costs correlate with card power
+Requirements
+
+ Create "power index" for each card (combines damage/healing/utility)
+ Compare power_index to cost
+ Identify cards with high power, low cost (overpowered)
+ Identify cards with low power, high cost (underpowered)
+ Adjust costs so power_index / cost ratio is consistent
+ No card should be obviously better than others at same cost
+ Test: Can player beat missions with cheap cards only? (should be harder)
+ Test: Do expensive cards enable new strategies? (should yes)
+ Verify cost makes sense (3 stamina for +1 armor feels wrong)
+
+Implementation Notes
+
+Power index = (damage + healing + armor_gained) * utility_factor
+Compare ratios: high-cost cards should have higher power_index
+Account for card type (attack vs. defense vs. buff costs differ)
+Don't make all cards identical in efficiency (variety is good)
+Ensure outliers are intentional (high cost = high reward, not design error)
+
+
+TASK 4: Starter Deck Optimization
+Deliverable: Verify starter deck is balanced and teaches mechanics
+Requirements
+
+ Audit current starter deck (list all 10-20 cards)
+ Identify card distribution (attacks, defenses, heals, buffs)
+ Test: Win rate with starter deck vs. Act 1 missions?
+ Identify weak cards (never played in optimal runs)
+ Identify strong cards (always played)
+ Balance: each card should be played sometimes, not always
+ Ensure variety (players learn multiple mechanics)
+ Remove/replace obviously weak cards
+ Test: New player can beat Act 1 with starter deck?
+ Verify deck teaches card interactions (synergies exist)
+
+Implementation Notes
+
+Starter deck shouldn't be optimized (should encourage upgrades)
+Should include card types player will need (attack, defense, heal)
+Remove cards that are never useful
+Include one powerful card (makes player feel capable, not weak)
+Balance around 15-card deck (sweet spot between learning and complexity)
+
+
+TASK 5: Shop Pricing Adjustments
+Deliverable: Verify shop prices create meaningful economic choices
+Requirements
+
+ Audit current shop prices (for all cards and gear)
+ Calculate average gold earned per mission
+ Verify card costs are 1-3 mission rewards (not 10+ missions)
+ Verify expensive cards cost 5-8 mission rewards
+ Create economic flow chart (gold earned → card cost → new strength)
+ Test: Can player afford one new card per mission? (should yes, not multiple)
+ Test: Does saving up for expensive card feel rewarding? (should yes)
+ Verify prices scale with card power (expensive cards should be better)
+ Identify price outliers (card way too cheap or expensive relative to power)
+
+Implementation Notes
+
+Cheap cards: 30-60 gold (common cards, frequently bought)
+Medium cards: 100-150 gold (rare cards, moderate investment)
+Expensive cards: 250+ gold (legendary cards, significant investment)
+Gold earnings: 50 + (mission_difficulty * 20), adjusted for challenge
+Player should feel progression (can afford new cards regularly, but not immediately)
+
+
+TASK 6: Character Portrait Art
+Deliverable: Placeholder or final character portraits organized
+Requirements
+
+ Identify all unique characters (player, NPCs, unique enemies)
+ Create directory structure: res://assets/characters/[character_id].png
+ Ensure each character has portrait (64x64 minimum, 256x256 ideal)
+ Use consistent art style (all portraits feel cohesive)
+ Verify portraits are used in correct locations (hub, dialogue, combat)
+ Test: All portraits load without error
+ No missing portraits (fallback image if needed)
+
+Implementation Notes
+
+Use placeholders if final art not ready (colored shapes with initials)
+Store portraits with consistent naming (e.g., hero_001.png, enemy_warrior_a.png)
+Ensure portraits are readable at all sizes used
+If using AI-generated art, disclose that
+Maintain aspect ratio (square portraits are easiest)
+
+
+TASK 7: Combat Accessibility Options
+Deliverable: Settings panel for accessibility features
+Requirements
+
+ Create accessibility settings UI
+ High contrast mode toggle (increases contrast, removes subtle effects)
+ Colorblind mode toggle (changes color palette, doesn't rely on color alone)
+ Text scale slider (0.8x to 1.5x, affects all UI text)
+ Large cursor option (easier to track)
+ Animation speed toggle (faster for accessibility, slower for clarity)
+ Test: High contrast mode, all UI readable?
+ Test: Colorblind mode, all information still clear?
+ Test: Text at 1.5x scale, no overlap or cutoff?
+ Verify settings persist between sessions
+
+Implementation Notes
+
+High contrast: white text on black, bright colors, no subtle shading
+Colorblind: deuteranopia (red-green) is most common, use blue/yellow/gray
+Text scale: test at extremes (0.8x and 1.5x for edge cases)
+Animation speed: separate from SFX volume (should both be available)
+Settings stored in user config (not game state)
+
+
+TASK 8: Undo Last Card Play
+Deliverable: Allow players to undo final card play before end turn
+Requirements
+
+ Track last card played in current turn
+ Add "Undo" button/option (visible after card play, before end turn)
+ Clicking undo returns card to hand, refunds stamina/resources
+ Undo disabled after end turn committed (can't undo previous turns)
+ Test: Play card, undo, card returns to hand
+ Test: Card played in previous turn can't be undone (turn button hidden)
+ Test: Multiple undos in same turn (should work for any played card this turn)
+ Undo button disabled if no card has been played this turn
+
+Implementation Notes
+
+Undo only works before "End Turn" is clicked
+Once end turn confirmed, undo is disabled for that turn permanently
+Store last card play action, reverse it exactly
+Multiple undos should work (undo card 3, undo card 2, undo card 1)
+Visual feedback: button grayed out when disabled, clear tooltip
+
+
+EXECUTION CHECKLIST
+Phase 1: Difficulty Audit
+
+ Graph current difficulty curve
+ Identify problem areas (spikes, too easy sections)
+ Adjust enemy stats iteratively
+
+Phase 2: Card Balancing
+
+ Create power index for all cards
+ Adjust costs to match power
+ Test card viability
+
+Phase 3: Economic Flow
+
+ Audit shop prices
+ Verify player progression path
+ Test affordability
+
+Phase 4: Content Polish
+
+ Optimize starter deck
+ Add character portraits
+ Add accessibility options
+ Add undo system
+
+Phase 5: Testing
+
+ Playtest full Act 1 (beginner player)
+ Playtest full Act 2 (experienced player)
+ Playtest full Act 3 (optimized player)
+ Verify no obvious exploits or imbalances
+
+
+PROMPT 10: NPC RELATIONSHIP SYSTEM
+For Codex CLI with Full Project Access
+CONTEXT
+Currently NPCs are static (shops, quest givers). They don't react to player choices. No relationships, no consequences to alliance decisions. We need relationship tracking so NPC interactions matter, unlock branching content, and drive narrative consequences.
+VISION
+When complete:
+
+NPCs track relationship status with player
+Relationship flags unlock different missions/dialogue
+Loyalty thresholds open story branches
+Faction alignment affects available content
+Player choices have visible, persistent consequences
+
+SUCCESS CRITERIA
+✓ Each NPC has relationship data structure
+✓ Relationship flags change based on actions
+✓ Relationship thresholds unlock/lock content
+✓ Faction alignment affects mission availability
+✓ Player can see relationship status (UI feedback)
+✓ Dialogue reflects relationship (different dialogue if hostile vs. allied)
+✓ No contradictory states (can't be allied to hostile factions)
+
+TASK 1: NPC Data Structure
+Deliverable: Define relationship data structure for all NPCs
+Requirements
+
+ Identify all unique NPCs (you specified: Lanista, Varro, Rhesus, Iona, Moth + any others)
+ Create data structure for each NPC:
+
+NPC ID (unique identifier)
+Name
+Role (quest giver, shop keeper, story beat, etc.)
+Initial relationship status (neutral, hostile, etc.)
+Current relationship score (-100 to +100 suggested range)
+Relationship flags (array of boolean/string flags)
+Faction affiliation (if any)
+
+
+ Store in external JSON or GDScript dictionary
+ Verify structure is consistent across all NPCs
+ Test: Load NPC data, verify all fields populated
+
+Implementation Notes
+
+NPC data should be persistent (save/load with player data)
+Relationship score drives thresholds (score > 50 = ally, < -50 = enemy)
+Flags are discrete events (recruited, betrayed, helped, etc.)
+Multiple NPCs can share faction (Cult faction, State faction, etc.)
+Initial state should be neutral for most NPCs
+
+
+TASK 2: Relationship Flags & Tracking
+Deliverable: System to set/check relationship flags based on actions
+Requirements
+
+ Define all possible relationship flags (identify from story)
+ Create function set_relationship_flag(npc_id, flag_name, value)
+ Create function check_relationship_flag(npc_id, flag_name) -> bool
+ Create function modify_relationship_score(npc_id, delta)
+ Trigger flag changes on mission completion (if mission impacts NPC)
+ Trigger flag changes on dialogue choices (if player chooses to help/betray)
+ Log all relationship changes (for debugging story flow)
+ Test: Complete mission, verify corresponding NPC flag changes
+ Test: Make dialogue choice, verify relationship score updates
+
+Implementation Notes
+
+Relationship score should change by 5-20 points per major action
+Flags should be specific (recruited, betrayed, indebted, etc.)
+Multiple flags can be true simultaneously
+Score is separate from flags (score tracks favorability, flags track specific events)
+Actions should be one-way (can't undo recruitment once recruited)
+
+
+TASK 3: Loyalty Thresholds
+Deliverable: Relationship thresholds unlock/lock missions and story branches
+Requirements
+
+ Define loyalty thresholds per NPC (e.g., score > 50 = ally, < -50 = enemy)
+ Identify which missions are locked behind relationships
+ Identify which missions become unavailable (if NPC becomes hostile)
+ Create function is_mission_available(mission_id) -> bool (checks NPC relationships)
+ Create function can_access_faction_content(faction_id) -> bool (checks alignment)
+ Test: Gain ally status with NPC, verify new mission appears
+ Test: Become hostile with NPC, verify missions disappear
+ Test: Multiple NPCs affect same mission (must satisfy all requirements)
+ Verify no impossible states (missions that require contradictory relationships)
+
+Implementation Notes
+
+Thresholds should be clear to player (UI shows relationship level)
+Mission should become available immediately when threshold crossed
+Grayed-out missions should show why they're locked ("Requires Varro's trust")
+NPC can be neutral, ally, or enemy (3 states minimum)
+Some missions might require specific faction (not just NPC)
+
+
+TASK 4: NPC Dialogue System
+Deliverable: Simple dialogue that reflects relationship status
+Requirements
+
+ Identify all NPC dialogue points (when do NPCs speak?)
+ Create dialogue structure (simple branching based on flags)
+ Dialogue changes based on relationship (different text if ally vs. neutral)
+ Dialogue reflects past actions (mentions missions completed together)
+ Create function get_npc_dialogue(npc_id, context) -> string
+ Test: Speak to NPC as neutral, dialogue shows distance
+ Test: Speak to same NPC as ally, dialogue shows warmth
+ Test: Dialogue mentions specific past events correctly
+ Verify no dialogue contradictions (NPC doesn't mention event that didn't happen)
+
+Implementation Notes
+
+Use simple if/else or switch statement (not complex branching)
+Store dialogue in external file (JSON or CSV)
+Dialogue should be brief (1-3 sentences, not novel)
+Include NPC personality in dialogue (not generic)
+Account for multiple relationship states (neutral, friend, enemy has different tones)
+
+
+TASK 5: Faction Alignment
+Deliverable: Track player alignment with factions
+Requirements
+
+ Identify all factions (you specified: Cult, State, Syndicate)
+ Create alignment score per faction (-100 to +100)
+ Actions should affect faction alignment (helping Cult member increases Cult alignment)
+ Functions:
+
+get_faction_alignment(faction_id) -> int
+modify_faction_alignment(faction_id, delta)
+
+
+ Test: Complete mission for Cult, Cult alignment increases
+ Test: Alignment affects NPC relationships (allied with Cult = tense with State)
+ Verify alignment conflicts (can't be +50 Cult and +50 State simultaneously)
+ Player can see faction alignment in UI
+
+Implementation Notes
+
+Factions should be mutually exclusive (helping one hurts standing with another)
+Alignment changes by 10-30 per major faction action
+Initial alignment should be 0 (neutral) for all factions
+Some NPCs might be faction-independent (don't care about faction choice)
+
+
+TASK 6: Faction-Locked Missions
+Deliverable: Missions only available to aligned players
+Requirements
+
+ Identify which missions are faction-locked
+ Add faction requirement to mission data
+ Function is_mission_available_faction(mission_id) -> bool (checks alignment)
+ Grayed-out missions show faction requirement ("Requires State alignment")
+ Test: Align with Cult, Cult missions appear
+ Test: Align with State, State missions appear
+ Test: Switching alignment, missions change availability
+ Verify no accidental locks (players can always progress)
+ Some missions should be faction-independent (always available)
+
+Implementation Notes
+
+Requirement threshold: alignment > 25 for faction-locked mission
+Show clear UI indication (faction icon, alignment meter)
+At least 20% of missions should be faction-independent
+Faction choice should feel meaningful (unlock different paths, not just cosmetic)
+
+
+EXECUTION CHECKLIST
+Phase 1: Data Structure
+
+ Define NPC data format
+ Load all NPC data into game
+ Verify persistent storage
+
+Phase 2: Flags & Scoring
+
+ Implement flag system
+ Implement score tracking
+ Wire to mission completion
+
+Phase 3: Thresholds & Gating
+
+ Define loyalty thresholds
+ Lock/unlock missions based on relationships
+ Test availability logic
+
+Phase 4: Dialogue
+
+ Create NPC dialogue system
+ Write dialogue for key NPCs
+ Link dialogue to relationship flags
+
+Phase 5: Faction System
+
+ Implement faction alignment
+ Add faction-locked missions
+ Test faction consequences
+
+Phase 6: Testing
+
+ Playtest relationship consequences
+ Verify no locked-out players
+ Test faction lock mechanics
+
+
+PROMPT 11: ADVANCED COMBAT FEATURES
+For Codex CLI with Full Project Access
+CONTEXT
+Current combat is solid (damage, healing, basic statuses). We need depth: poison stacking mechanics, reflect systems, mana pool expansion, team combos, environmental effects, and boss encounters with unique behaviors. Each adds tactical layers without breaking fundamentals.
+VISION
+When complete:
+
+Poison stacking creates interesting decision trees (apply or amplify?)
+Reflect/thorns system creates positioning strategy (damage back to attacker)
+Mana pool enables new card types and resource management
+Team ability combos reward synergy discovery
+Environmental hazards add mission-specific challenges
+Boss encounters feel unique (not just stat-buffed versions)
+
+SUCCESS CRITERIA
+✓ Poison mechanics work intuitively (player understands stacking)
+✓ Reflect system prevents overpowered spam (attacker takes consequences)
+✓ Mana pool is meaningful (cards cost more than just stamina)
+✓ Team combos feel rewarding (unlock through experimentation)
+✓ Environmental effects are visible (player sees hazards, adapts)
+✓ Boss encounters unique (different tactics than regular enemies)
+✓ No mechanic breaks game balance (each feature enhances, not dominates)
+
+TASK 1: Poison Stacking Mechanics Refinement
+Deliverable: Define and implement poison stacking rules
+Requirements
+
+ Define current poison mechanic (what does it do now?)
+ Decide stacking rules:
+
+Does poison stack additively (2x poison = 2 damage/turn)?
+Or does it have diminishing returns?
+Or capped at max stacks?
+
+
+ Define poison duration (how many turns does it last?)
+ Decide if player can amplify poison (card that increases poison damage)
+ Implement poison tracking (which enemy has how much poison?)
+ Visual feedback for poison (color, icon, count display)
+ Test: Apply poison 3 times, verify damage matches rules
+ Test: Poison expires correctly after duration
+ Verify poison doesn't trivialize combat (check late-game balance)
+
+Implementation Notes
+
+Poison should be meaningful but not dominant (single poison shouldn't win game)
+Visual display crucial (player must see poison stacks)
+Poison should be clearable by player (via card ability or NPC skill)
+Cards with poison should cost more (reflects added value)
+
+
+TASK 2: Reflect/Retaliation System
+Deliverable: Implement damage reflection mechanic
+Requirements
+
+ Define reflect mechanic (Curse of Thorns you mentioned):
+
+How much damage reflects back? (50%, 100%, fixed amount?)
+Does reflect replace damage or add to it?
+
+
+ Identify cards that apply reflect effect
+ When enemy attacks, check if player has reflect
+ Calculate reflect damage
+ Apply reflect damage back to enemy
+ Visual feedback (damage number on enemy when reflect triggers)
+ Test: Apply reflect, enemy attacks, damage appears on enemy
+ Test: Reflect works with armor (does enemy armor block reflect?)
+ Verify reflect doesn't allow infinite loops (cap at reasonable value)
+
+Implementation Notes
+
+Reflect should be less than incoming damage (not overpowered)
+Typical: 30-50% of incoming damage reflects back
+Reflect should still allow player to take damage (not total block)
+Visually distinct from normal damage (different color, glow effect)
+
+
+TASK 3: Mana Pool System Expansion
+Deliverable: Expand mana system from placeholder to functional resource
+Requirements
+
+ Audit current mana system (currently 0, you said)
+ Decide on mana mechanics:
+
+How much mana per turn?
+Does mana exceed max or cap?
+Difference between stamina and mana (what's mana for?)
+
+
+ Identify cards that cost mana (as opposed to stamina)
+ Implement mana recovery (per turn, on specific actions, etc.)
+ Update card play logic to deduct mana
+ Add mana display to UI (similar to stamina display)
+ Test: Play mana-costing card, verify mana decreases
+ Test: Mana recovery works correctly
+ Test: Can't play card if mana insufficient
+ Verify mana and stamina are distinct (player must manage both)
+
+Implementation Notes
+
+Mana should be different purpose than stamina (not just duplicate resource)
+Example: stamina = physical actions, mana = magical/special effects
+Or: stamina = turn's main action, mana = secondary enhancement
+Recovery rate should be slower than stamina (mana is more precious)
+Start with 0 mana (allow player to accumulate for powerful plays)
+
+
+TASK 4: Team Ability System
+Deliverable: Combo moves using multiple characters
+Requirements
+
+ Identify which characters can combo (you have lieutenants + player)
+ Define combo requirements (must have X and Y in party?)
+ Create combo card data (special cards that only work with combo)
+ Implement combo detection (at start of turn, check if combo eligible)
+ Add combo cards to available cards if conditions met
+ Visual indication of available combos
+ Test: Have combo-eligible party, verify combo card appears
+ Test: Remove combo requirement, combo card disappears
+ Combo damage/effects properly calculated
+ Combos feel distinct (clear visual/audio difference from normal cards)
+
+Implementation Notes
+
+Combos shouldn't be mandatory (powerful but not required)
+Combos should cost more (reflect increased power)
+Limit combos available (players discover them, not spam them)
+Visual distinction crucial (player knows it's a combo, not mistake)
+
+
+TASK 5: Environmental Hazards
+Deliverable: Mission-specific arena effects that affect combat
+Requirements
+
+ Identify mission types and suitable hazards
+ Define hazard effects (e.g., arena fire = both take 1 damage/turn)
+ Implement hazard triggers (every turn? on specific turn? random?)
+ Visual representation of hazard (fire in background, ice on ground, etc.)
+ Hazards affect both player and enemy equally (fairness)
+ Player can see hazard before mission starts
+ Hazard affects tactical decisions (player adapts strategy)
+ Test: Hazard activates on correct turn
+ Test: Both player and enemy take hazard damage
+ Verify hazards don't trivialize combat (check balance)
+
+Implementation Notes
+
+Hazards should be visible from mission start (player can prepare)
+Hazards should change tactics (encourage different card choices)
+Don't add hazard to every mission (special occasions only)
+Hazard description in mission briefing (player informed)
+
+
+TASK 6: Boss Encounters
+Deliverable: Unique enemy AI and mechanics for boss battles
+Requirements
+
+ Identify boss encounters (end of act, special missions, etc.)
+ Define boss characteristics:
+
+Unique abilities (not just card combos)
+Special AI behavior (priorities, patterns, etc.)
+Different stat scaling than regular enemies
+
+
+ Implement boss AI (unique decision logic)
+ Boss unique ability implementation (if any)
+ Visual distinction (boss looks different, has special effects)
+ Boss telegraph (player can see what boss will do)
+ Test: Boss fights differently than regular enemies
+ Test: Boss unique ability triggers correctly
+ Test: Boss provides meaningful challenge (not just stat-boosted)
+ Verify boss pattern is learnable (player can strategize after observing)
+
+Implementation Notes
+
+Boss shouldn't be unbeatable (challenging but fair)
+Boss AI should show patterns (player can predict moves)
+Boss telegraphs special abilities (visual cue before activation)
+Boss encounters should feel like story moments (not just harder enemies)
+Multiple bosses should have different mechanics (not all the same)
+
+
+EXECUTION CHECKLIST
+Phase 1: Poison Refinement
+
+ Define stacking rules
+ Implement tracking
+ Add visual feedback
+ Test balance
+
+Phase 2: Reflect System
+
+ Implement reflect detection
+ Calculate reflect damage
+ Add visual effects
+ Test with armor interaction
+
+Phase 3: Mana Pool
+
+ Audit current system
+ Implement recovery
+ Update UI display
+ Test resource management
+
+Phase 4: Team Combos
+
+ Define combo requirements
+ Implement detection
+ Create combo cards
+ Add visual distinction
+
+Phase 5: Environmental Hazards
+
+ Identify suitable missions
+ Define hazard effects
+ Add visual representation
+ Test fairness (affects both equally)
+
+Phase 6: Boss Encounters
+
+ Identify boss battles
+ Implement unique AI
+ Add visual distinction
+ Test difficulty
+
+
+PROMPT 12: STORY & NARRATIVE
+For Codex CLI with Full Project Access
+CONTEXT
+Missions are mechanical (beat enemy, get reward). No story consequence. No narrative arc. We need story hooks that create flags, scenes between missions that develop narrative, consequences that persist across missions, and multiple endings based on player choices. Story doesn't mean text-heavy — it means choices matter and have consequences.
+VISION
+When complete:
+
+Missions trigger story flags (what happened here?)
+Story scenes play between missions (brief narrative moments)
+Consequences persist (previous choices affect current missions)
+Multiple endings based on relationship/faction path taken
+Character arcs for key NPCs (their story develops alongside player)
+Journal tracks progression (what happened, what matters)
+
+SUCCESS CRITERIA
+✓ Story flags created correctly on mission completion
+✓ Flags persist between sessions (save/load works)
+✓ Scene system plays narrative moments without breaking flow
+✓ Endings are visibly different (based on choices made)
+✓ Character arcs feel earned (developed through multiple interactions)
+✓ Journal is optional (doesn't force reading, useful reference)
+✓ Story doesn't slow down gameplay (scenes are brief, skip-able if needed)
+
+TASK 1: Hook System (Story Flags)
+Deliverable: Create story flags on mission/NPC actions
+Requirements
+
+ Identify all story-relevant events (mission completions, NPC interactions, choices)
+ Define flag names (e.g., "completed_arena_first_victory", "allied_with_varro")
+ Create function set_story_flag(flag_name, value)
+ Create function check_story_flag(flag_name) -> bool
+ Trigger flags on:
+
+Mission completion (specific mission completed)
+NPC interactions (recruited, betrayed, etc.)
+Dialogue choices (chose to help, chose to betray, etc.)
+
+
+ Flags persist to save file
+ Test: Complete mission, verify flag sets
+ Test: Load save, flags still present
+ Test: Flag guards story progression (next scene checks flags)
+
+Implementation Notes
+
+Flags should be specific (not generic "progress_1", but "first_victory", "betrayed_varro")
+Flags are permanent (once set, can't be unset)
+Multiple flags can be true (player can have many story states)
+Flags should be human-readable (for debugging and documentation)
+
+
+TASK 2: Scene System (Story Beats)
+Deliverable: Play brief narrative scenes between missions
+Requirements
+
+ Define scene structure (image + text + optional choice)
+ Identify story moments (after mission, between acts, before boss, etc.)
+ Create scene player (display image, text, wait for input)
+ Scenes should be skippable (player can skip if replaying)
+ Scenes mark flags (scene completion tracked)
+ Test: Scene displays correctly
+ Test: Text readable, image visible
+ Test: Choices work (clicking option triggers correct outcome)
+ Test: Scenes don't break mission flow (play then return to mission select)
+
+Implementation Notes
+
+Scenes should be brief (1-3 sentences, not novel)
+Use existing character portraits (no new art needed)
+Scenes optional (player can skip, but encouraged to watch first playthrough)
+Scene text should reflect player's choices (different scenes based on flags)
+No scene should be mandatory (all paths available to all players)
+
+
+TASK 3: Consequence Tracking
+Deliverable: Previous player choices affect future missions
+Requirements
+
+ Identify consequences (which early choices matter later?)
+ Define how consequences change missions:
+
+Dialogue changes (NPC mentions past)
+Enemy composition changes (allied faction appears)
+Available actions change (can't betray if already allied)
+Rewards change (faction provides bonus if aligned)
+
+
+ Implement consequence checks (before mission starts, evaluate flags)
+ Modify mission based on consequences
+ Test: Make choice in early mission, verify later mission reflects it
+ Test: Different choices lead to different mission states
+ Verify consequences feel meaningful (not token changes)
+
+Implementation Notes
+
+Consequences should be surprising but fair (player informed of stakes)
+Early missions shouldn't have massive consequences (let player experiment)
+Late-game missions should have large consequences (stakes increase)
+Consequences should be visible in scene/dialogue (player knows the consequence)
+
+
+TASK 4: Ending Scenes (Multiple Endings)
+Deliverable: 3+ unique ending paths based on player choices
+Requirements
+
+ Identify ending conditions (what determines which ending?)
+ Define 3+ distinct endings (you suggested: Cult, State, Solo)
+ Create ending scene for each (brief narrative conclusion)
+ Ending based on faction alignment / NPC relationships
+ Ending accessible to all players (multiple paths, no grinding required)
+ Endings visibly different (different outcomes, not just different text)
+ Test: Achieve Cult ending, verify it shows
+ Test: Achieve State ending, verify different from Cult
+ Test: Achieve Solo ending, verify unique
+ All endings feel earned (logical conclusion to player's path)
+
+Implementation Notes
+
+Endings determined by final faction/relationship state (not arbitrary)
+Each ending should feel valid (not "true" vs "bad" ending)
+Ending scenes should be brief but conclusive (wrap up story)
+New Game+ should hint at other endings (encourage replays)
+
+
+TASK 5: Character Arcs
+Deliverable: Developed character stories for 5+ key NPCs
+Requirements
+
+ Identify 5+ characters with story arcs
+ Define arc for each:
+
+Start state (who are they at game start?)
+Key story moments (when do they change?)
+End state (who are they by end game?)
+
+
+ Arc should span full game (not resolved in first act)
+ Arc affected by player choices (player can influence character trajectory)
+ Dialogue reflects arc progression (character talks about their journey)
+ Test: Follow character through game, observe development
+ Test: Different player choices lead to different character endings
+ Character arcs feel organic (not forced or artificial)
+
+Implementation Notes
+
+Characters should have agency (not just react to player)
+Arcs should be optional to notice (player can experience without analyzing)
+Characters' ending state should vary (some ally, some betray, etc.)
+Multiple playthroughs should reveal different character paths
+
+
+TASK 6: Journal System
+Deliverable: Persistent log of missions, story progress, characters
+Requirements
+
+ Create journal UI (accessible from hub)
+ Sections:
+
+Completed missions (list with date/act)
+Story progression (key events, flags triggered)
+Character relationships (status with each NPC)
+Endings unlocked (track which endings player has seen)
+
+
+ Journal auto-populates (don't force manual entries)
+ Journal entries are brief (1-2 sentences, not detailed)
+ Test: Complete mission, verify entry appears in journal
+ Test: Journal accessible from hub
+ Test: Journal persists across sessions
+ Journal should be reference, not required reading
+
+Implementation Notes
+
+Journal auto-fills on mission completion (player doesn't manage it)
+Entries should be automatically generated (from mission data + flags)
+Optional entries for key story moments (scenes create entries)
+Journal helps new players understand where they are in story

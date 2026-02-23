@@ -33,24 +33,35 @@ func _generate_shop_pool() -> void:
 	ids.shuffle()
 	shop_pool.clear()
 	for id in ids:
+		var card := CardManager.get_card(id)
+		if bool(card.get("is_signature", false)):
+			continue
 		if id not in GameState.current_deck:
 			shop_pool.append(id)
 		if shop_pool.size() >= 9:
 			break
 
 func _build_gear_pool() -> void:
-	gear_pool = [
-		{"id": "iron_gladius", "name": "Iron Gladius", "slot": "weapon", "damage_mod": 2, "armor": 0, "effect": "opening_strike", "rarity": "common", "price": 65},
-		{"id": "lanista_plate", "name": "Lanista Plate", "slot": "armor", "damage_mod": 0, "armor": 3, "effect": "reduce_damage_next", "rarity": "uncommon", "price": 90},
-		{"id": "crowd_favor_charm", "name": "Crowd Favor Charm", "slot": "accessory", "damage_mod": 1, "armor": 1, "effect": "renown_gain_up", "rarity": "rare", "price": 120},
-		{"id": "bone_dagger", "name": "Bone Dagger", "slot": "weapon", "damage_mod": 3, "armor": 0, "effect": "poison_1", "rarity": "uncommon", "price": 95},
-		{"id": "arena_mail", "name": "Arena Mail", "slot": "armor", "damage_mod": 0, "armor": 4, "effect": "thorns_1", "rarity": "rare", "price": 130},
-		{"id": "oath_band", "name": "Oath Band", "slot": "accessory", "damage_mod": 0, "armor": 2, "effect": "heal_on_victory", "rarity": "legendary", "price": 170},
-	]
+	gear_pool.clear()
+	var all_gear: Array[Dictionary] = []
+	for gear_id in CardManager.gear_data.keys():
+		if GameState.has_gear(gear_id):
+			continue
+		var gear: Dictionary = CardManager.get_gear(gear_id)
+		if gear.is_empty():
+			continue
+		all_gear.append(gear.duplicate())
+	if all_gear.is_empty():
+		return
+	all_gear.shuffle()
+	for gear in all_gear:
+		gear_pool.append(gear)
+		if gear_pool.size() >= 6:
+			break
 
 func _build_ui() -> void:
 	var bg := ColorRect.new()
-	bg.color = UITheme.COLOR_BG
+	bg.color = UITheme.background_color()
 	bg.set_anchors_preset(Control.PRESET_FULL_RECT)
 	add_child(bg)
 
@@ -251,7 +262,7 @@ func _make_gear_btn(gear: Dictionary) -> Button:
 	btn.text = "%s\n%s  |  %+d dmg  %+d armor\n%dg" % [
 		str(gear.get("name", gear_id)),
 		badge,
-		int(gear.get("damage_mod", 0)),
+		int(gear.get("damage", 0)),
 		int(gear.get("armor", 0)),
 		price,
 	]
@@ -299,7 +310,12 @@ func _on_buy_gear(gear_id: String, price: int) -> void:
 			break
 	_refresh_top()
 	_rebuild_lists()
-	msg_label.text = "Purchased and equipped %s." % gear_id
+	var gear_name := gear_id
+	for gear in gear_pool:
+		if str(gear.get("id", "")) == gear_id:
+			gear_name = str(gear.get("name", gear_id))
+			break
+	msg_label.text = "Purchased and equipped %s." % gear_name
 	_close_previews()
 
 func _close_previews() -> void:
@@ -319,7 +335,14 @@ func _hover_out(btn: Control) -> void:
 	t.tween_property(btn, "scale", Vector2.ONE, 0.15).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
 
 func _card_price(card: Dictionary) -> int:
-	return int(card.get("cost", 1)) * 20 + int(float(card.get("power_index", 1.0)) * 10.0)
+	var stamina_cost: int = int(card.get("cost", 1))
+	var power_index: float = float(card.get("power_index", 1.0))
+	var base_price: int = 30 + (stamina_cost * 35) + int(power_index * 60.0)
+	if stamina_cost >= 3:
+		base_price += 35
+	if bool(card.get("is_signature", false)):
+		base_price += 40
+	return clampi(base_price, 30, 380)
 
 func _card_summary(card: Dictionary) -> String:
 	var parts: Array[String] = []

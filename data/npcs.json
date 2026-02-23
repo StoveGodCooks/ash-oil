@@ -1,0 +1,65 @@
+{
+  "Lanista": {
+    "id": "Lanista",
+    "name": "The Lanista",
+    "role": "arena_owner",
+    "initial_status": "neutral",
+    "initial_score": 0,
+    "faction": "State",
+    "flags": ["met", "betrayed", "indebted"]
+  },
+  "Varro": {
+    "id": "Varro",
+    "name": "Varro",
+    "role": "trainer",
+    "initial_status": "neutral",
+    "initial_score": 0,
+    "faction": "Neutral",
+    "flags": ["met", "revealed", "allied", "betrayed"]
+  },
+  "Rhesus": {
+    "id": "Rhesus",
+    "name": "Rhesus",
+    "role": "fighter_ally",
+    "initial_status": "neutral",
+    "initial_score": 0,
+    "faction": "Neutral",
+    "flags": ["met", "ally", "rescued", "betrayed"]
+  },
+  "Iona": {
+    "id": "Iona",
+    "name": "Iona",
+    "role": "shrine_contact",
+    "initial_status": "neutral",
+    "initial_score": 0,
+    "faction": "Cult",
+    "flags": ["met", "helped", "betrayed"]
+  },
+  "Moth": {
+    "id": "Moth",
+    "name": "Moth",
+    "role": "messenger",
+    "initial_status": "neutral",
+    "initial_score": 0,
+    "faction": "Syndicate",
+    "flags": ["met", "rescued", "injured", "betrayed"]
+  },
+  "Marcellus": {
+    "id": "Marcellus",
+    "name": "Marcellus",
+    "role": "antagonist",
+    "initial_status": "hostile",
+    "initial_score": -60,
+    "faction": "State",
+    "flags": ["met", "hunting_player"]
+  },
+  "Sabina": {
+    "id": "Sabina",
+    "name": "Sabina",
+    "role": "magistrate_agent",
+    "initial_status": "hostile",
+    "initial_score": -20,
+    "faction": "State",
+    "flags": ["met", "hunting_player"]
+  }
+}

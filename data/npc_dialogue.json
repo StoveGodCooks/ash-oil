@@ -1,0 +1,68 @@
+{
+  "Lanista": {
+    "contexts": {
+      "default": {
+        "ally": "You have earned the arena's respect. Do not waste it.",
+        "neutral": "Win your next match and we can talk terms.",
+        "enemy": "I own this pit. You are no longer welcome in it.",
+        "flags": {
+          "betrayed": "You crossed me once. There is no second bargain."
+        }
+      }
+    }
+  },
+  "Varro": {
+    "contexts": {
+      "default": {
+        "ally": "Keep your guard high. We finish this together.",
+        "neutral": "Your footwork is better. Your judgment still needs work.",
+        "enemy": "I taught you to survive. I did not teach you mercy.",
+        "flags": {
+          "revealed": "Now you know why I kept secrets. Move carefully."
+        }
+      }
+    }
+  },
+  "Rhesus": {
+    "contexts": {
+      "default": {
+        "ally": "You stood for me. I stand for you.",
+        "neutral": "We both know this city chews people up.",
+        "enemy": "We are done. Keep your distance.",
+        "flags": {
+          "rescued": "You pulled me out when no one else would."
+        }
+      }
+    }
+  },
+  "Iona": {
+    "contexts": {
+      "default": {
+        "ally": "The shrine remembers your name for the right reasons.",
+        "neutral": "Faith is a ledger too. Every debt is counted.",
+        "enemy": "The shrine doors are closed to you now."
+      }
+    }
+  },
+  "Moth": {
+    "contexts": {
+      "default": {
+        "ally": "I am still here because you did not run.",
+        "neutral": "Coin talks. You listen, maybe we both eat.",
+        "enemy": "I should have never trusted you.",
+        "flags": {
+          "injured": "Do not look at me like that. I knew the risk."
+        }
+      }
+    }
+  },
+  "Marcellus": {
+    "contexts": {
+      "default": {
+        "ally": "Serve well and your name may survive this season.",
+        "neutral": "Everything here has a price. Including you.",
+        "enemy": "I decide who is remembered and who disappears."
+      }
+    }
+  }
+}

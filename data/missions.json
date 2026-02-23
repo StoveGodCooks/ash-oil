@@ -6,12 +6,25 @@
     "act": 1,
     "description": "Your first arena fight. Prove yourself to the crowd and earn your token of passage.",
     "location": "Arena City",
-    "enemies": ["quintus", "warrior_a", "warrior_b"],
-    "meter_changes": {"RENOWN": 2, "HEAT": 1},
-    "relationships": {"Marcus": 1},
+    "enemies": [
+      "quintus",
+      "warrior_a",
+      "warrior_b"
+    ],
+    "meter_changes": {
+      "RENOWN": 2,
+      "HEAT": 1
+    },
+    "relationships": {
+      "Marcus": 1
+    },
     "hooks_created": [],
-    "victory_rewards": {"gold": 50},
-    "retreat_rewards": {"gold": 0}
+    "victory_rewards": {
+      "gold": 85
+    },
+    "retreat_rewards": {
+      "gold": 85
+    }
   },
   "M02": {
     "id": "M02",
@@ -20,12 +33,28 @@
     "act": 1,
     "description": "A cloaked broker offers gold for a job. The alley smells like a trap — but your debts don't care.",
     "location": "Arena City",
-    "enemies": ["broker_guard", "ambush_knife", "ambush_knife_2"],
-    "meter_changes": {"RENOWN": 1, "HEAT": 2, "DEBT": -10},
-    "relationships": {"Marcus": 1},
-    "hooks_created": ["broker_met"],
-    "victory_rewards": {"gold": 80},
-    "retreat_rewards": {"gold": 20}
+    "enemies": [
+      "broker_guard",
+      "ambush_knife",
+      "ambush_knife_2"
+    ],
+    "meter_changes": {
+      "RENOWN": 1,
+      "HEAT": 2,
+      "DEBT": -10
+    },
+    "relationships": {
+      "Marcus": 1
+    },
+    "hooks_created": [
+      "broker_met"
+    ],
+    "victory_rewards": {
+      "gold": 100
+    },
+    "retreat_rewards": {
+      "gold": 100
+    }
   },
   "M03": {
     "id": "M03",
@@ -34,12 +63,25 @@
     "act": 1,
     "description": "A former champion calls in an old favor. Fight or pay — either way, it costs you.",
     "location": "Arena City",
-    "enemies": ["old_champion", "warrior_a"],
-    "meter_changes": {"RENOWN": 3, "HEAT": 1},
-    "relationships": {"Marcus": 1, "Titus": 1},
+    "enemies": [
+      "old_champion",
+      "warrior_a"
+    ],
+    "meter_changes": {
+      "RENOWN": 3,
+      "HEAT": 1
+    },
+    "relationships": {
+      "Marcus": 1,
+      "Titus": 1
+    },
     "hooks_created": [],
-    "victory_rewards": {"gold": 60},
-    "retreat_rewards": {"gold": 0}
+    "victory_rewards": {
+      "gold": 115
+    },
+    "retreat_rewards": {
+      "gold": 115
+    }
   },
   "M04": {
     "id": "M04",
@@ -48,12 +90,35 @@
     "act": 1,
     "description": "The arena's owner summons you. The Lanista doesn't waste words — or mercy.",
     "location": "Arena City",
-    "enemies": ["lanista_guard_a", "lanista_guard_b"],
-    "meter_changes": {"RENOWN": 2, "FAVOR": 1},
-    "relationships": {"Livia": 1},
-    "hooks_created": ["lanista_met"],
-    "victory_rewards": {"gold": 100},
-    "retreat_rewards": {"gold": 25}
+    "enemies": [
+      "lanista_guard_a",
+      "lanista_guard_b"
+    ],
+    "meter_changes": {
+      "RENOWN": 2,
+      "FAVOR": 1
+    },
+    "relationships": {
+      "Livia": 1
+    },
+    "npc_impacts": {
+      "Lanista": {
+        "score": 15,
+        "set_flags": ["met"]
+      }
+    },
+    "faction_alignment_changes": {
+      "State": 18
+    },
+    "hooks_created": [
+      "lanista_met"
+    ],
+    "victory_rewards": {
+      "gold": 130
+    },
+    "retreat_rewards": {
+      "gold": 130
+    }
   },
   "M05": {
     "id": "M05",
@@ -62,12 +127,42 @@
     "act": 1,
     "description": "Escort a wounded priest through hostile territory to the shrine. The Cult is watching.",
     "location": "Ridge Road",
-    "enemies": ["cult_acolyte", "cult_zealot", "pilgrim_bandit"],
-    "meter_changes": {"RENOWN": 2, "PIETY": 2, "HEAT": 1},
-    "relationships": {"Julia": 2},
-    "hooks_created": ["cult_noticed"],
-    "victory_rewards": {"gold": 70},
-    "retreat_rewards": {"gold": 10}
+    "enemies": [
+      "cult_acolyte",
+      "cult_zealot",
+      "pilgrim_bandit"
+    ],
+    "meter_changes": {
+      "RENOWN": 2,
+      "PIETY": 2,
+      "HEAT": 1
+    },
+    "relationships": {
+      "Julia": 2
+    },
+    "npc_impacts": {
+      "Iona": {
+        "score": 12,
+        "set_flags": ["met", "helped"]
+      },
+      "Moth": {
+        "score": 8,
+        "set_flags": ["met"]
+      }
+    },
+    "faction_alignment_changes": {
+      "Cult": 22,
+      "State": -6
+    },
+    "hooks_created": [
+      "cult_noticed"
+    ],
+    "victory_rewards": {
+      "gold": 145
+    },
+    "retreat_rewards": {
+      "gold": 145
+    }
   },
   "M06": {
     "id": "M06",
@@ -76,12 +171,36 @@
     "act": 1,
     "description": "State agents have been following you. Time to decide: run, talk, or fight your way clear.",
     "location": "Arena City",
-    "enemies": ["state_agent", "state_soldier"],
-    "meter_changes": {"HEAT": -3, "FAVOR": 2},
-    "relationships": {"Decimus": 1},
-    "hooks_created": ["state_contact"],
-    "victory_rewards": {"gold": 90},
-    "retreat_rewards": {"gold": 30}
+    "enemies": [
+      "state_agent",
+      "state_soldier"
+    ],
+    "meter_changes": {
+      "HEAT": -3,
+      "FAVOR": 2
+    },
+    "relationships": {
+      "Decimus": 1
+    },
+    "npc_impacts": {
+      "Lanista": {
+        "score": 6,
+        "set_flags": ["met"]
+      }
+    },
+    "faction_alignment_changes": {
+      "State": 20,
+      "Cult": -6
+    },
+    "hooks_created": [
+      "state_contact"
+    ],
+    "victory_rewards": {
+      "gold": 160
+    },
+    "retreat_rewards": {
+      "gold": 160
+    }
   },
   "M07": {
     "id": "M07",
@@ -90,194 +209,433 @@
     "act": 1,
     "description": "Word spreads of a black market beneath the docks. Rare cards, rare risks.",
     "location": "Port District",
-    "enemies": ["dock_thug", "dock_thug_2", "broker_guard"],
-    "meter_changes": {"RENOWN": 1, "HEAT": 2, "DREAD": 1},
-    "relationships": {"Corvus": 2},
-    "hooks_created": ["black_market_open"],
-    "victory_rewards": {"gold": 120},
-    "retreat_rewards": {"gold": 40}
+    "enemies": [
+      "dock_thug",
+      "dock_thug_2",
+      "broker_guard"
+    ],
+    "meter_changes": {
+      "RENOWN": 1,
+      "HEAT": 2,
+      "DREAD": 1
+    },
+    "relationships": {
+      "Corvus": 2
+    },
+    "hooks_created": [
+      "black_market_open"
+    ],
+    "victory_rewards": {
+      "gold": 175
+    },
+    "retreat_rewards": {
+      "gold": 175
+    }
   },
   "M08": {
     "id": "M08",
     "name": "The Dread Pact",
     "type": "main",
-    "act": 1,
+    "act": 2,
     "description": "A shadow faction offers power at a price. Accept their terms and your reputation darkens permanently.",
     "location": "Port District",
-    "enemies": ["shadow_enforcer", "shadow_grunt", "shadow_grunt"],
-    "meter_changes": {"DREAD": 3, "RENOWN": 3, "PIETY": -1},
-    "relationships": {"Thane": 2, "Julia": -1},
-    "hooks_created": ["dread_pact_signed"],
-    "victory_rewards": {"gold": 150},
-    "retreat_rewards": {"gold": 50}
+    "enemies": [
+      "shadow_enforcer",
+      "shadow_grunt",
+      "shadow_grunt"
+    ],
+    "meter_changes": {
+      "DREAD": 3,
+      "RENOWN": 3,
+      "PIETY": -1
+    },
+    "relationships": {
+      "Thane": 2,
+      "Julia": -1
+    },
+    "npc_impacts": {
+      "Moth": {
+        "score": 10,
+        "set_flags": ["met"]
+      },
+      "Iona": {
+        "score": -6
+      }
+    },
+    "faction_alignment_changes": {
+      "Syndicate": 24,
+      "Cult": -8,
+      "State": -5
+    },
+    "hooks_created": [
+      "dread_pact_signed"
+    ],
+    "victory_rewards": {
+      "gold": 105
+    },
+    "retreat_rewards": {
+      "gold": 105
+    }
   },
   "M09": {
     "id": "M09",
     "name": "Varro's Trial",
     "type": "main",
-    "act": 1,
+    "act": 2,
     "description": "The mysterious Varro tests your crew with an elaborate ambush. Survive to earn a powerful ally.",
     "location": "Ridge Road",
-    "enemies": ["varro_decoy", "varro_scout", "varro_scout"],
-    "meter_changes": {"RENOWN": 4, "HEAT": 1},
-    "relationships": {"Marcus": 2, "Kara": 2},
-    "hooks_created": ["varro_met"],
-    "victory_rewards": {"gold": 130},
-    "retreat_rewards": {"gold": 30}
+    "enemies": [
+      "varro_decoy",
+      "varro_scout",
+      "varro_scout"
+    ],
+    "meter_changes": {
+      "RENOWN": 4,
+      "HEAT": 1
+    },
+    "relationships": {
+      "Marcus": 2,
+      "Kara": 2
+    },
+    "npc_impacts": {
+      "Varro": {
+        "score": 18,
+        "set_flags": ["met", "revealed"]
+      }
+    },
+    "hooks_created": [
+      "varro_met"
+    ],
+    "victory_rewards": {
+      "gold": 120
+    },
+    "retreat_rewards": {
+      "gold": 120
+    }
   },
   "M10": {
     "id": "M10",
     "name": "The First Reckoning",
     "type": "main",
-    "act": 1,
+    "act": 2,
     "description": "Every debt, every favor, every enemy — they all arrive at once. This is the point of no return.",
     "location": "Arena City",
-    "enemies": ["reckoning_boss", "reckoning_enforcer"],
-    "meter_changes": {"RENOWN": 5, "HEAT": -2, "DEBT": -30},
-    "relationships": {"Marcus": 2, "Livia": 2},
-    "hooks_created": ["act1_resolved"],
-    "victory_rewards": {"gold": 200},
-    "retreat_rewards": {"gold": 50}
+    "enemies": [
+      "reckoning_boss",
+      "reckoning_enforcer"
+    ],
+    "meter_changes": {
+      "RENOWN": 5,
+      "HEAT": -2,
+      "DEBT": -30
+    },
+    "relationships": {
+      "Marcus": 2,
+      "Livia": 2
+    },
+    "hooks_created": [
+      "act1_resolved"
+    ],
+    "victory_rewards": {
+      "gold": 135
+    },
+    "retreat_rewards": {
+      "gold": 135
+    }
   },
   "M11": {
     "id": "M11",
     "name": "The Arena Rises",
     "type": "main",
-    "act": 1,
+    "act": 2,
     "description": "The Lanista opens the grand arena. Fight to establish dominance — rivals watch from every seat.",
     "location": "Arena City",
-    "enemies": ["arena_vet", "warrior_a", "warrior_b"],
-    "meter_changes": {"RENOWN": 4, "HEAT": 1},
-    "relationships": {"Livia": 1, "Titus": 1},
-    "hooks_created": ["grand_arena_open"],
-    "victory_rewards": {"gold": 140},
-    "retreat_rewards": {"gold": 30}
+    "enemies": [
+      "arena_vet",
+      "warrior_a",
+      "warrior_b"
+    ],
+    "meter_changes": {
+      "RENOWN": 4,
+      "HEAT": 1
+    },
+    "relationships": {
+      "Livia": 1,
+      "Titus": 1
+    },
+    "hooks_created": [
+      "grand_arena_open"
+    ],
+    "victory_rewards": {
+      "gold": 150
+    },
+    "retreat_rewards": {
+      "gold": 150
+    }
   },
   "M12": {
     "id": "M12",
     "name": "Syndicate Notice",
     "type": "main",
-    "act": 1,
+    "act": 2,
     "description": "The Syndicate sends a message: pay tribute or become a target.",
     "location": "Port District",
-    "enemies": ["dock_thug", "dock_thug_2", "ambush_knife"],
-    "meter_changes": {"HEAT": 2, "DEBT": 20},
-    "relationships": {"Corvus": 1},
-    "hooks_created": ["syndicate_noticed"],
-    "victory_rewards": {"gold": 110},
-    "retreat_rewards": {"gold": 20}
+    "enemies": [
+      "dock_thug",
+      "dock_thug_2",
+      "ambush_knife"
+    ],
+    "meter_changes": {
+      "HEAT": 2,
+      "DEBT": 20
+    },
+    "relationships": {
+      "Corvus": 1
+    },
+    "hooks_created": [
+      "syndicate_noticed"
+    ],
+    "victory_rewards": {
+      "gold": 165
+    },
+    "retreat_rewards": {
+      "gold": 165
+    }
   },
   "M13": {
     "id": "M13",
     "name": "The Ridge Passage",
     "type": "main",
-    "act": 1,
+    "act": 2,
     "description": "Open the locked ridge route before it becomes a strategic liability.",
     "location": "Ridge Road",
-    "enemies": ["pilgrim_bandit", "pilgrim_bandit_2", "cult_acolyte"],
-    "meter_changes": {"RENOWN": 3, "PIETY": 1},
-    "relationships": {"Kara": 2},
-    "hooks_created": ["ridge_opened"],
-    "victory_rewards": {"gold": 120},
-    "retreat_rewards": {"gold": 25}
+    "enemies": [
+      "pilgrim_bandit",
+      "pilgrim_bandit_2",
+      "cult_acolyte"
+    ],
+    "meter_changes": {
+      "RENOWN": 3,
+      "PIETY": 1
+    },
+    "relationships": {
+      "Kara": 2
+    },
+    "hooks_created": [
+      "ridge_opened"
+    ],
+    "victory_rewards": {
+      "gold": 180
+    },
+    "retreat_rewards": {
+      "gold": 180
+    }
   },
   "M14": {
     "id": "M14",
     "name": "Varro's Offer",
     "type": "main",
-    "act": 1,
+    "act": 2,
     "description": "Varro reveals himself — and the network he controls. Join, or walk away with a target on your back.",
     "location": "Ridge Road",
-    "enemies": ["varro_decoy", "varro_scout"],
-    "meter_changes": {"RENOWN": 3, "DREAD": 1},
-    "relationships": {"Kara": 2, "Marcus": 1},
-    "hooks_created": ["varro_allied"],
-    "victory_rewards": {"gold": 160},
-    "retreat_rewards": {"gold": 40}
+    "enemies": [
+      "varro_decoy",
+      "varro_scout"
+    ],
+    "meter_changes": {
+      "RENOWN": 3,
+      "DREAD": 1
+    },
+    "relationships": {
+      "Kara": 2,
+      "Marcus": 1
+    },
+    "hooks_created": [
+      "varro_allied"
+    ],
+    "victory_rewards": {
+      "gold": 195
+    },
+    "retreat_rewards": {
+      "gold": 195
+    }
   },
   "M15": {
     "id": "M15",
     "name": "The Cult Demands",
     "type": "main",
-    "act": 1,
+    "act": 3,
     "description": "The Cult's high priest makes a final demand. Refuse and they become enemies. Comply and PIETY soars.",
     "location": "Ridge Road",
-    "enemies": ["cult_zealot", "cult_acolyte", "cult_acolyte"],
-    "meter_changes": {"PIETY": 4, "HEAT": 2},
-    "relationships": {"Julia": 3},
-    "hooks_created": ["cult_demand_resolved"],
-    "victory_rewards": {"gold": 130},
-    "retreat_rewards": {"gold": 20}
+    "enemies": [
+      "cult_zealot",
+      "cult_acolyte",
+      "cult_acolyte"
+    ],
+    "meter_changes": {
+      "PIETY": 4,
+      "HEAT": 2
+    },
+    "relationships": {
+      "Julia": 3
+    },
+    "hooks_created": [
+      "cult_demand_resolved"
+    ],
+    "victory_rewards": {
+      "gold": 125
+    },
+    "retreat_rewards": {
+      "gold": 125
+    }
   },
   "M16": {
     "id": "M16",
     "name": "State Crackdown",
     "type": "main",
-    "act": 1,
+    "act": 3,
     "description": "State soldiers raid the district. Fight through or bribe your way out.",
     "location": "Arena City",
-    "enemies": ["state_soldier", "state_agent", "state_soldier"],
-    "meter_changes": {"HEAT": -4, "FAVOR": 3},
-    "relationships": {"Decimus": 2},
-    "hooks_created": ["crackdown_survived"],
-    "victory_rewards": {"gold": 150},
-    "retreat_rewards": {"gold": 40}
+    "enemies": [
+      "state_soldier",
+      "state_agent",
+      "state_soldier"
+    ],
+    "meter_changes": {
+      "HEAT": -4,
+      "FAVOR": 3
+    },
+    "relationships": {
+      "Decimus": 2
+    },
+    "hooks_created": [
+      "crackdown_survived"
+    ],
+    "victory_rewards": {
+      "gold": 140
+    },
+    "retreat_rewards": {
+      "gold": 140
+    }
   },
   "M17": {
     "id": "M17",
     "name": "The Shadow War",
     "type": "main",
-    "act": 1,
+    "act": 3,
     "description": "Shadow faction turf wars spill into your territory. Choose a side — or fight both.",
     "location": "Port District",
-    "enemies": ["shadow_enforcer", "shadow_grunt", "dock_thug"],
-    "meter_changes": {"DREAD": 2, "RENOWN": 3},
-    "relationships": {"Thane": 2, "Corvus": 1},
-    "hooks_created": ["shadow_war_resolved"],
-    "victory_rewards": {"gold": 170},
-    "retreat_rewards": {"gold": 50}
+    "enemies": [
+      "shadow_enforcer",
+      "shadow_grunt",
+      "dock_thug"
+    ],
+    "meter_changes": {
+      "DREAD": 2,
+      "RENOWN": 3
+    },
+    "relationships": {
+      "Thane": 2,
+      "Corvus": 1
+    },
+    "hooks_created": [
+      "shadow_war_resolved"
+    ],
+    "victory_rewards": {
+      "gold": 155
+    },
+    "retreat_rewards": {
+      "gold": 155
+    }
   },
   "M18": {
     "id": "M18",
     "name": "Debt Collectors",
     "type": "main",
-    "act": 1,
+    "act": 3,
     "description": "Your creditors send heavies. Pay in full — or pay in blood.",
     "location": "Arena City",
-    "enemies": ["reckoning_enforcer", "ambush_knife", "ambush_knife_2"],
-    "meter_changes": {"DEBT": -40, "HEAT": 1},
-    "relationships": {"Marcus": 1},
-    "hooks_created": ["debt_cleared"],
-    "victory_rewards": {"gold": 180},
-    "retreat_rewards": {"gold": 60}
+    "enemies": [
+      "reckoning_enforcer",
+      "ambush_knife",
+      "ambush_knife_2"
+    ],
+    "meter_changes": {
+      "DEBT": -40,
+      "HEAT": 1
+    },
+    "relationships": {
+      "Marcus": 1
+    },
+    "hooks_created": [
+      "debt_cleared"
+    ],
+    "victory_rewards": {
+      "gold": 170
+    },
+    "retreat_rewards": {
+      "gold": 170
+    }
   },
   "M19": {
     "id": "M19",
     "name": "The Lanista's Gambit",
     "type": "main",
-    "act": 1,
+    "act": 3,
     "description": "The Lanista bets everything on one match. Win and the arena is yours to command.",
     "location": "Arena City",
-    "enemies": ["arena_vet", "lanista_guard_a", "lanista_guard_b"],
-    "meter_changes": {"RENOWN": 5, "FAVOR": 2},
-    "relationships": {"Livia": 3, "Titus": 2},
-    "hooks_created": ["arena_command"],
-    "victory_rewards": {"gold": 220},
-    "retreat_rewards": {"gold": 60}
+    "enemies": [
+      "arena_vet",
+      "lanista_guard_a",
+      "lanista_guard_b"
+    ],
+    "meter_changes": {
+      "RENOWN": 5,
+      "FAVOR": 2
+    },
+    "relationships": {
+      "Livia": 3,
+      "Titus": 2
+    },
+    "hooks_created": [
+      "arena_command"
+    ],
+    "victory_rewards": {
+      "gold": 185
+    },
+    "retreat_rewards": {
+      "gold": 185
+    }
   },
   "M20": {
     "id": "M20",
     "name": "End of Season One",
     "type": "main",
-    "act": 1,
+    "act": 3,
     "description": "The season closes. One final confrontation to cement your legend — or bury it.",
     "location": "Arena City",
-    "enemies": ["reckoning_boss", "reckoning_enforcer", "shadow_grunt"],
-    "meter_changes": {"RENOWN": 6, "HEAT": -3},
-    "relationships": {"Marcus": 3, "Livia": 2},
-    "hooks_created": ["season1_complete"],
-    "victory_rewards": {"gold": 300},
-    "retreat_rewards": {"gold": 80}
+    "enemies": [
+      "reckoning_boss",
+      "reckoning_enforcer",
+      "shadow_grunt"
+    ],
+    "meter_changes": {
+      "RENOWN": 6,
+      "HEAT": -3
+    },
+    "relationships": {
+      "Marcus": 3,
+      "Livia": 2
+    },
+    "hooks_created": [
+      "season1_complete"
+    ],
+    "victory_rewards": {
+      "gold": 200
+    },
+    "retreat_rewards": {
+      "gold": 200
+    }
   },
   "S01": {
     "id": "S01",
@@ -286,12 +644,22 @@
     "act": 1,
     "description": "A local thug owes money to the wrong people. Collect — or walk away.",
     "location": "Arena City",
-    "enemies": ["alley_thug", "alley_thug"],
-    "meter_changes": {"HEAT": 1, "DEBT": -5},
+    "enemies": [
+      "alley_thug",
+      "alley_thug"
+    ],
+    "meter_changes": {
+      "HEAT": 1,
+      "DEBT": -5
+    },
     "relationships": {},
     "hooks_created": [],
-    "victory_rewards": {"gold": 40},
-    "retreat_rewards": {"gold": 0}
+    "victory_rewards": {
+      "gold": 55
+    },
+    "retreat_rewards": {
+      "gold": 55
+    }
   },
   "S14": {
     "id": "S14",
@@ -300,12 +668,21 @@
     "act": 1,
     "description": "Fight a crowd-pleasing exhibition match for extra coin and fame.",
     "location": "Arena City",
-    "enemies": ["arena_rookie", "arena_rookie"],
-    "meter_changes": {"RENOWN": 2},
+    "enemies": [
+      "arena_rookie",
+      "arena_rookie"
+    ],
+    "meter_changes": {
+      "RENOWN": 2
+    },
     "relationships": {},
     "hooks_created": [],
-    "victory_rewards": {"gold": 60},
-    "retreat_rewards": {"gold": 10}
+    "victory_rewards": {
+      "gold": 94
+    },
+    "retreat_rewards": {
+      "gold": 94
+    }
   },
   "S02": {
     "id": "S02",
@@ -314,39 +691,129 @@
     "act": 1,
     "description": "The Lanista needs a quiet favor. No questions, no witnesses.",
     "location": "Arena City",
-    "enemies": ["alley_thug", "broker_guard"],
-    "meter_changes": {"FAVOR": 1, "HEAT": 1},
-    "relationships": {"Livia": 1},
+    "enemies": [
+      "alley_thug",
+      "broker_guard"
+    ],
+    "meter_changes": {
+      "FAVOR": 1,
+      "HEAT": 1
+    },
+    "relationships": {
+      "Livia": 1
+    },
+    "npc_requirements": {
+      "Lanista": {
+        "min_score": 10,
+        "required_flags": ["met"],
+        "forbidden_flags": ["betrayed"]
+      }
+    },
+    "faction_requirements": {
+      "State": {
+        "min": 18
+      }
+    },
+    "npc_impacts": {
+      "Lanista": {
+        "score": 8,
+        "set_flags": ["met"]
+      }
+    },
     "hooks_created": [],
-    "victory_rewards": {"gold": 75},
-    "retreat_rewards": {"gold": 20}
+    "victory_rewards": {
+      "gold": 65
+    },
+    "retreat_rewards": {
+      "gold": 65
+    }
   },
   "S06": {
     "id": "S06",
     "name": "The Pilgrim Guard",
     "type": "side",
-    "act": 1,
+    "act": 2,
     "description": "Escort pilgrims to the shrine — danger lurks on the ridge.",
     "location": "Ridge Road",
-    "enemies": ["pilgrim_bandit", "pilgrim_bandit_2"],
-    "meter_changes": {"PIETY": 2, "RENOWN": 1},
-    "relationships": {"Julia": 1},
+    "enemies": [
+      "pilgrim_bandit",
+      "pilgrim_bandit_2"
+    ],
+    "meter_changes": {
+      "PIETY": 2,
+      "RENOWN": 1
+    },
+    "relationships": {
+      "Julia": 1
+    },
+    "npc_requirements": {
+      "Iona": {
+        "min_score": 10,
+        "required_flags": ["met"],
+        "forbidden_flags": ["betrayed"]
+      }
+    },
+    "faction_requirements": {
+      "Cult": {
+        "min": 20
+      }
+    },
+    "npc_impacts": {
+      "Iona": {
+        "score": 10,
+        "set_flags": ["helped"]
+      }
+    },
     "hooks_created": [],
-    "victory_rewards": {"gold": 50},
-    "retreat_rewards": {"gold": 0}
+    "victory_rewards": {
+      "gold": 88
+    },
+    "retreat_rewards": {
+      "gold": 88
+    }
   },
   "S13": {
     "id": "S13",
     "name": "Shrine Debt",
     "type": "side",
-    "act": 1,
+    "act": 2,
     "description": "The shrine priests need muscle. Their gods can't protect them — you can.",
     "location": "Ridge Road",
-    "enemies": ["cult_acolyte", "pilgrim_bandit"],
-    "meter_changes": {"PIETY": 3, "DEBT": -15},
-    "relationships": {"Julia": 2},
+    "enemies": [
+      "cult_acolyte",
+      "pilgrim_bandit"
+    ],
+    "meter_changes": {
+      "PIETY": 3,
+      "DEBT": -15
+    },
+    "relationships": {
+      "Julia": 2
+    },
+    "npc_requirements": {
+      "Moth": {
+        "min_score": 8,
+        "required_flags": ["met"],
+        "forbidden_flags": ["betrayed"]
+      }
+    },
+    "faction_requirements": {
+      "Syndicate": {
+        "min": 20
+      }
+    },
+    "npc_impacts": {
+      "Moth": {
+        "score": 12,
+        "set_flags": ["rescued"]
+      }
+    },
     "hooks_created": [],
-    "victory_rewards": {"gold": 55},
-    "retreat_rewards": {"gold": 10}
+    "victory_rewards": {
+      "gold": 98
+    },
+    "retreat_rewards": {
+      "gold": 98
+    }
   }
 }

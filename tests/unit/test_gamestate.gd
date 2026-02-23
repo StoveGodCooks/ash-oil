@@ -284,3 +284,29 @@ func test_from_dict_roundtrip_all_meters() -> void:
 	assert_eq("FAVOR roundtrip", GameState.FAVOR, 4)
 	assert_eq("DREAD roundtrip", GameState.DREAD, 3)
 	assert_eq("DEBT roundtrip",  GameState.DEBT,  100)
+
+# ── NPC Relationships / Factions ─────────────────────────────────────────────
+func test_npc_registry_loaded() -> void:
+	assert_not_empty("npc_registry is populated", GameState.npc_registry)
+	assert_in("Lanista exists in registry", "Lanista", GameState.npc_registry.keys())
+
+func test_set_and_check_relationship_flag() -> void:
+	GameState.set_relationship_flag("Varro", "met", true)
+	assert_true("Varro met flag true", GameState.check_relationship_flag("Varro", "met"))
+
+func test_modify_relationship_score_changes_level() -> void:
+	GameState.modify_relationship_score("Iona", 70, "unit_test")
+	assert_eq("Iona relationship becomes ally", GameState.get_relationship_level("Iona"), "ally")
+
+func test_modify_faction_alignment_is_mutually_exclusive() -> void:
+	GameState.modify_faction_alignment("Cult", 40, "unit_test")
+	assert_gt("Cult alignment increased", GameState.get_faction_alignment("Cult"), 0)
+	assert_lt("State alignment pushed down", GameState.get_faction_alignment("State"), 1)
+	assert_lt("Syndicate alignment pushed down", GameState.get_faction_alignment("Syndicate"), 1)
+
+func test_relationship_log_persists_roundtrip() -> void:
+	GameState.modify_relationship_score("Moth", 10, "unit_test_log")
+	var saved = GameState.to_dict()
+	GameState.reset()
+	GameState.from_dict(saved)
+	assert_not_empty("relationship_log restored", GameState.relationship_log)

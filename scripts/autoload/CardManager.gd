@@ -59,11 +59,34 @@ func get_enemy(id: String) -> Dictionary:
 func get_mission_enemies(mission_id: String) -> Array:
 	var mission = MissionManager.get_mission(mission_id)
 	var enemy_ids: Array = mission.get("enemies", ["warrior_a", "warrior_b"])
+	var act: int = int(mission.get("act", 1))
+	var mission_num: int = 1
+	if mission_id.begins_with("M") and mission_id.length() >= 3:
+		mission_num = maxi(1, mission_id.substr(1).to_int())
+	elif mission_id.begins_with("S"):
+		mission_num = 6
+	var per_act_idx: int = mission_num
+	match act:
+		2:
+			per_act_idx = maxi(1, mission_num - 7)
+		3:
+			per_act_idx = maxi(1, mission_num - 14)
+	var hp_scale: float = 1.0 + float(act - 1) * 0.22 + float(per_act_idx - 1) * 0.04
+	var dmg_scale: float = 1.0 + float(act - 1) * 0.16 + float(per_act_idx - 1) * 0.03
+	var armor_bonus: int = maxi(0, act - 1) + int(floor(float(per_act_idx - 1) / 3.0))
 	var result = []
 	for eid in enemy_ids:
 		var tmpl = get_enemy(eid)
 		if not tmpl.is_empty():
-			result.append(tmpl.duplicate())
+			var tuned_enemy: Dictionary = tmpl.duplicate()
+			var base_hp: int = int(tuned_enemy.get("hp", 1))
+			var base_armor: int = int(tuned_enemy.get("armor", 0))
+			var base_damage: int = int(tuned_enemy.get("damage", 1))
+			tuned_enemy["hp"] = maxi(1, int(round(float(base_hp) * hp_scale)))
+			tuned_enemy["max_hp"] = int(tuned_enemy["hp"])
+			tuned_enemy["armor"] = maxi(0, base_armor + armor_bonus)
+			tuned_enemy["damage"] = maxi(1, int(round(float(base_damage) * dmg_scale)))
+			result.append(tuned_enemy)
 	return result
 
 func get_card(id: String) -> Dictionary:
@@ -76,12 +99,14 @@ func get_gear(gear_id: String) -> Dictionary:
 	return gear_data.get(gear_id, {})
 
 func get_starter_deck() -> Array:
-	## A balanced 20-card starter deck for new games
+	## 15-card starter deck tuned for Phase 9 pacing and teaching core mechanics.
 	return [
-		"card_027", "card_027", "card_027", "card_027",  # 4x Quick Jab (free, 1 dmg)
-		"card_001", "card_001", "card_001", "card_001",  # 4x Veteran's Strike (cost 1, 3 dmg)
-		"card_028", "card_028", "card_028",              # 3x Steady Stance (free, 1 armor)
-		"card_002", "card_002", "card_002",              # 3x Shield Bash (cost 1, 2 armor)
-		"card_029", "card_029", "card_029",              # 3x Mending Potion (cost 1, heal 2)
-		"card_033", "card_033",                          # 2x First Aid (cost 1, heal 3)
+		"card_027", "card_027",                          # 2x Quick Jab (free poke)
+		"card_001", "card_001", "card_001", "card_001",  # 4x Veteran's Strike (core attack)
+		"card_077", "card_077",                          # 2x Focused Strike (stronger finisher)
+		"card_028", "card_028",                          # 2x Steady Stance (free defense)
+		"card_002", "card_002",                          # 2x Shield Bash (armor + utility)
+		"card_029",                                      # 1x Mending Potion (small heal)
+		"card_033", "card_033",                          # 2x First Aid (reliable sustain)
+		"card_026", "card_030",                          # 1x Parry, 1x Iron Skin (reactive + scaling defense)
 	]
