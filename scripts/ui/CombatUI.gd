@@ -84,6 +84,7 @@ var player_party_cards: Array = []
 var unit_popout_backdrop: ColorRect
 var unit_popout_panel: PanelContainer
 var unit_popout_label: Label
+var rail_overlay: Control
 var last_ui_champion_hp: int = 30
 var animation_speed: float = 1.0
 var skip_enemy_animation: bool = false
@@ -174,6 +175,13 @@ func _build_ui() -> void:
 	main_vbox.set_anchors_preset(Control.PRESET_FULL_RECT)
 	main_vbox.add_theme_constant_override("separation", 8)
 	add_child(main_vbox)
+
+	# Full-screen overlay for party rails — anchors resolve against full screen.
+	rail_overlay = Control.new()
+	rail_overlay.set_anchors_preset(Control.PRESET_FULL_RECT)
+	rail_overlay.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	rail_overlay.z_index = 70
+	add_child(rail_overlay)
 
 	# HEADER BAR (4%)
 	var header_zone = PanelContainer.new()
@@ -542,28 +550,18 @@ func _build_ui() -> void:
 	hover_tooltip_label.vertical_alignment = VERTICAL_ALIGNMENT_TOP
 	hover_tooltip_panel.add_child(hover_tooltip_label)
 
-	# Free-position overlays inside container-managed zones.
-	var enemy_overlay = Control.new()
-	enemy_overlay.set_anchors_preset(Control.PRESET_FULL_RECT)
-	enemy_overlay.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	enemy_zone.add_child(enemy_overlay)
-
-	var player_overlay = Control.new()
-	player_overlay.set_anchors_preset(Control.PRESET_FULL_RECT)
-	player_overlay.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	player_zone.add_child(player_overlay)
-
-	# Side-wall party rails (FF-style): player lower-left, enemy upper-right.
+	# Side-wall party rails — both parented to rail_overlay (full-screen).
+	# Anchors are screen-relative: enemy top-half, player bottom-half (45% each).
 	var player_rail = PanelContainer.new()
-	player_rail.anchor_left = 0.0
-	player_rail.anchor_right = 0.0
-	player_rail.anchor_top = 0.04
-	player_rail.anchor_bottom = 0.74
-	player_rail.offset_left = 8
-	player_rail.offset_right = 148
-	player_rail.offset_top = 0
+	player_rail.anchor_left   = 0.0
+	player_rail.anchor_right  = 0.0
+	player_rail.anchor_top    = 0.50
+	player_rail.anchor_bottom = 0.95
+	player_rail.offset_left   = 8
+	player_rail.offset_right  = 148
+	player_rail.offset_top    = 0
 	player_rail.offset_bottom = 0
-	player_rail.z_index = 60
+	player_rail.z_index       = 60
 	var player_rail_style := StyleBoxFlat.new()
 	player_rail_style.bg_color = Color(0.10, 0.09, 0.10, 0.84)
 	player_rail_style.border_color = Color(0.34, 0.30, 0.24, 0.92)
@@ -576,7 +574,7 @@ func _build_ui() -> void:
 	player_rail_style.corner_radius_bottom_left = 6
 	player_rail_style.corner_radius_bottom_right = 6
 	player_rail.add_theme_stylebox_override("panel", player_rail_style)
-	player_overlay.add_child(player_rail)
+	rail_overlay.add_child(player_rail)
 
 	var player_rail_vbox = VBoxContainer.new()
 	player_rail_vbox.set_anchors_preset(Control.PRESET_FULL_RECT)
@@ -591,7 +589,7 @@ func _build_ui() -> void:
 
 	for i in range(5):
 		var slot = PanelContainer.new()
-		slot.custom_minimum_size = Vector2(132, 60)
+		slot.custom_minimum_size = Vector2(132, 40)
 		slot.size_flags_vertical = Control.SIZE_EXPAND_FILL
 		slot.mouse_filter = Control.MOUSE_FILTER_STOP
 		var slot_style := StyleBoxFlat.new()
@@ -658,15 +656,15 @@ func _build_ui() -> void:
 		})
 
 	var enemy_rail = PanelContainer.new()
-	enemy_rail.anchor_left = 1.0
-	enemy_rail.anchor_right = 1.0
-	enemy_rail.anchor_top = 0.04
-	enemy_rail.anchor_bottom = 0.66
-	enemy_rail.offset_left = -148
-	enemy_rail.offset_right = -8
-	enemy_rail.offset_top = 0
+	enemy_rail.anchor_left   = 1.0
+	enemy_rail.anchor_right  = 1.0
+	enemy_rail.anchor_top    = 0.05
+	enemy_rail.anchor_bottom = 0.50
+	enemy_rail.offset_left   = -148
+	enemy_rail.offset_right  = -8
+	enemy_rail.offset_top    = 0
 	enemy_rail.offset_bottom = 0
-	enemy_rail.z_index = 60
+	enemy_rail.z_index       = 60
 	var enemy_rail_style := StyleBoxFlat.new()
 	enemy_rail_style.bg_color = Color(0.10, 0.09, 0.10, 0.84)
 	enemy_rail_style.border_color = Color(0.34, 0.30, 0.24, 0.92)
@@ -679,7 +677,7 @@ func _build_ui() -> void:
 	enemy_rail_style.corner_radius_bottom_left = 6
 	enemy_rail_style.corner_radius_bottom_right = 6
 	enemy_rail.add_theme_stylebox_override("panel", enemy_rail_style)
-	enemy_overlay.add_child(enemy_rail)
+	rail_overlay.add_child(enemy_rail)
 
 	var enemy_rail_vbox = VBoxContainer.new()
 	enemy_rail_vbox.set_anchors_preset(Control.PRESET_FULL_RECT)
@@ -694,7 +692,7 @@ func _build_ui() -> void:
 
 	for i in range(5):
 		var slot = PanelContainer.new()
-		slot.custom_minimum_size = Vector2(132, 60)
+		slot.custom_minimum_size = Vector2(132, 40)
 		slot.size_flags_vertical = Control.SIZE_EXPAND_FILL
 		slot.mouse_filter = Control.MOUSE_FILTER_STOP
 		var enemy_slot_style := StyleBoxFlat.new()
