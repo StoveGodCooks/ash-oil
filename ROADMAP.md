@@ -1,8 +1,8 @@
 # Ash & Oil — Development Roadmap
 
-**Current Version:** v0.7.0 — Phase 8: Gear System in Combat
-**Last Updated:** February 22, 2026
-**Status:** Gear bonuses apply in combat with seeded mission-based drops, expanded validation tests, and reward text verification
+**Current Version:** v0.9.0 — Phase 10: NPC Relationship System (core)
+**Last Updated:** February 23, 2026
+**Status:** Prompt 9 major systems and Prompt 10 core relationship/faction systems are implemented; full suite passing (676 assertions)
 
 ---
 
@@ -151,28 +151,28 @@
 - [x] RNG consistency hardening for gear drops (seeded MissionManager RNG for rarity + item selection)
 - [x] Added targeted tests for +2 damage, +1 armor mitigation, +3 HP, no double-counting, and reward text display
 
-### Phase 9: Content & Balance Tuning
+### Phase 9: Content & Balance Tuning 🔄
 **Focus:** Balance missions, card costs, enemy encounters
 
-- [ ] Mission difficulty scaling (Act 1 → Act 3)
-- [ ] Enemy encounter rebalancing (damage, armor, HP per mission)
-- [ ] Card cost balancing (verify power_index vs. cost correlation)
+- [x] Mission difficulty scaling (Act 1 → Act 3)
+- [x] Enemy encounter rebalancing (damage, armor, HP per mission)
+- [x] Card cost balancing (verify power_index vs. cost correlation)
 - [ ] Lieutenant ability cards (signature card effects per lieutenant)
-- [ ] Starter deck optimization (current: 10–20 cards)
-- [ ] Shop pricing adjustments (test economy flow)
-- [ ] Character portrait art (save to `res://assets/characters/[hero_id].png`)
-- [ ] Combat accessibility options panel (high contrast / colorblind / text scale)
-- [ ] Undo last card play (pre-end-turn only)
+- [x] Starter deck optimization (current: 15-card teaching deck)
+- [x] Shop pricing adjustments (test economy flow)
+- [x] Character portrait placeholders (saved to `res://assets/characters/[hero_id].png`)
+- [x] Combat accessibility options panel (high contrast / colorblind / text scale)
+- [x] Undo last card play (pre-end-turn only)
 
-### Phase 10: NPC Relationship System
+### Phase 10: NPC Relationship System 🔄
 **Focus:** Relationship tracking, loyalty-based story gates
 
-- [ ] NPC data structure (Lanista, Varro, Rhesus, Iona, Moth)
-- [ ] Relationship flags (favor, hostility, recruited)
-- [ ] Loyalty thresholds (unlock side missions, change ending)
-- [ ] NPC dialogue system (simple text-based branching)
-- [ ] Faction alignment (Cult, State, Syndicate)
-- [ ] Faction-locked missions (only accessible if aligned)
+- [x] NPC data structure (Lanista, Varro, Rhesus, Iona, Moth)
+- [x] Relationship flags (favor, hostility, recruited)
+- [x] Loyalty thresholds (unlock side missions, change ending)
+- [x] NPC dialogue system (simple text-based branching)
+- [x] Faction alignment (Cult, State, Syndicate)
+- [x] Faction-locked missions (only accessible if aligned)
 
 ### Phase 11: Advanced Combat Features
 **Focus:** New card mechanics, special effects, environmental factors
@@ -258,11 +258,11 @@
 - [x] Turn-log panel + keyboard shortcuts + animation speed controls
 - [x] Card face readability pass (type icon + rarity glow + tooltip polish)
 
-### Next Phase (Phase 9: Content & Balance Tuning)
-- [ ] Mission difficulty scaling (Act 1 → Act 3)
-- [ ] Enemy encounter rebalancing (damage, armor, HP per mission)
-- [ ] Card cost balancing (verify power_index vs. cost correlation)
-- [ ] Shop pricing adjustments (test economy flow)
+### Next Phase (Phase 10 tuning + polish)
+- [ ] Expand relationship-driven mission branches and lock reasons across more missions
+- [ ] Add deeper NPC dialogue coverage for ally/neutral/enemy states and event flags
+- [ ] Playtest faction-alignment progression and retune thresholds
+- [ ] Finalize remaining Phase 9 playtest tuning and lieutenant signature card depth
 
 ---
 
@@ -294,7 +294,7 @@
 | Missions (Side) | 15 | 50+ |
 | Lieutenants | 8 | 12 |
 | Unique Enemies | 45+ | 100+ |
-| Test Coverage | 662 assertions | 250+ |
+| Test Coverage | 676 assertions | 250+ |
 | Acts | 4 (implied) | 5 |
 | Endings | 3 planned | 5+ |
 
@@ -305,9 +305,9 @@
 - **v0.4** — Core gameplay complete, test infrastructure
 - **v0.5** — Gear system, card art frame, full UI restyle
 - **v0.6** — Narrative hooks + story UI integration
-- **v0.7** (Current) — Phase 8 gear system in combat
+- **v0.7** — Phase 8 gear system in combat
 - **v0.8** — Phase 9 content & balance tuning
-- **v0.9** — Phase 10 NPC system, relationship tracking
+- **v0.9** (Current) — Phase 10 NPC system, relationship tracking
 - **v1.0** — Phase 11 advanced combat, special effects
 - **v1.1** — Phase 12 story content, narrative branching
 - **v1.2** — Phase 13 progression system, upgrades
@@ -322,7 +322,7 @@
 - **No character portrait art** — CardDisplay uses faction glyphs as placeholder; ready to swap in real art when available
 - **Fallback enemy list remains** — Combat uses mission enemies first, but still has single-enemy fallback for safety when mission data is missing
 - **Card effects not resolved** — Effect strings ("poison_1", "stun_2") display but don't execute (Phase 9 task)
-- **Accessibility options not exposed** — speed controls exist via hotkeys, but no settings UI for text scale/color modes yet
+- **Accessibility follow-through pending in all screens** — settings exist; some combat-specific contrast/palette tuning remains
 - **CombatUI exceeds 1000 lines** — now includes UX systems; split into components (HUD/Hand/EnemyIntent/Log) is recommended
 
 ---
