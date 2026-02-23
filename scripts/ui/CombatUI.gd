@@ -85,6 +85,10 @@ var unit_popout_backdrop: ColorRect
 var unit_popout_panel: PanelContainer
 var unit_popout_label: Label
 var rail_overlay: Control
+var player_rail_ref: PanelContainer
+var enemy_rail_ref: PanelContainer
+var enemy_zone_ref: Control
+var player_zone_ref: Control
 var last_ui_champion_hp: int = 30
 var animation_speed: float = 1.0
 var skip_enemy_animation: bool = false
@@ -92,6 +96,8 @@ var turn_log_panel: PanelContainer
 var turn_log_label: Label
 var turn_log_toggle_btn: Button
 var turn_log_collapsed: bool = true
+const RAIL_WIDTH: float = 140.0
+const RAIL_SIDE_MARGIN: float = 8.0
 
 func _apply_panel_style(panel: PanelContainer, tone: int = 0) -> void:
 	if panel == null:
@@ -131,7 +137,37 @@ func _ready() -> void:
 	set_process_unhandled_input(true)
 	_init_state()
 	_build_ui()
+	var viewport := get_viewport()
+	if viewport and not viewport.size_changed.is_connected(_on_viewport_size_changed):
+		viewport.size_changed.connect(_on_viewport_size_changed)
+	_position_rails.call_deferred()
 	_start_turn()
+
+func _on_viewport_size_changed() -> void:
+	_position_rails.call_deferred()
+
+func _position_rails() -> void:
+	if rail_overlay == null or player_rail_ref == null or enemy_rail_ref == null:
+		return
+	if enemy_zone_ref == null or player_zone_ref == null:
+		return
+	await get_tree().process_frame
+	var overlay_rect: Rect2 = rail_overlay.get_global_rect()
+	var enemy_rect: Rect2 = enemy_zone_ref.get_global_rect()
+	var player_rect: Rect2 = player_zone_ref.get_global_rect()
+	var vp_h: float = float(get_viewport_rect().size.y)
+	var enemy_visible_height: float = maxf(0.0, minf(enemy_rect.position.y + enemy_rect.size.y, vp_h) - maxf(enemy_rect.position.y, 0.0))
+	var player_visible_top: float = maxf(0.0, player_rect.position.y)
+	var player_visible_height: float = maxf(0.0, minf(player_rect.position.y + player_rect.size.y, vp_h) - player_visible_top)
+	var mirrored_height: float = floorf(minf(enemy_visible_height, player_visible_height))
+	if mirrored_height <= 0.0:
+		return
+	var player_y: float = player_visible_top - overlay_rect.position.y
+	var enemy_y: float = enemy_rect.position.y - overlay_rect.position.y
+	player_rail_ref.position = Vector2(RAIL_SIDE_MARGIN, player_y)
+	player_rail_ref.size = Vector2(RAIL_WIDTH, mirrored_height)
+	enemy_rail_ref.position = Vector2(overlay_rect.size.x - RAIL_SIDE_MARGIN - RAIL_WIDTH, enemy_y)
+	enemy_rail_ref.size = Vector2(RAIL_WIDTH, mirrored_height)
 
 func _init_state() -> void:
 	champion_hp = 30
@@ -226,6 +262,7 @@ func _build_ui() -> void:
 	enemy_zone.size_flags_stretch_ratio = 28.0
 	_apply_panel_style(enemy_zone, 1)
 	main_vbox.add_child(enemy_zone)
+	enemy_zone_ref = enemy_zone
 
 	var enemy_bg = ColorRect.new()
 	enemy_bg.set_anchors_preset(Control.PRESET_FULL_RECT)
@@ -371,6 +408,7 @@ func _build_ui() -> void:
 	player_zone.size_flags_stretch_ratio = 33.0
 	_apply_panel_style(player_zone, 1)
 	main_vbox.add_child(player_zone)
+	player_zone_ref = player_zone
 
 	var player_bg = ColorRect.new()
 	player_bg.set_anchors_preset(Control.PRESET_FULL_RECT)
@@ -551,16 +589,13 @@ func _build_ui() -> void:
 	hover_tooltip_panel.add_child(hover_tooltip_label)
 
 	# Side-wall party rails — both parented to rail_overlay (full-screen).
-	# Anchors are screen-relative: enemy top-half, player bottom-half (45% each).
 	var player_rail = PanelContainer.new()
-	player_rail.anchor_left   = 0.0
-	player_rail.anchor_right  = 0.0
-	player_rail.anchor_top    = 0.50
-	player_rail.anchor_bottom = 0.95
-	player_rail.offset_left   = 8
-	player_rail.offset_right  = 148
-	player_rail.offset_top    = 0
-	player_rail.offset_bottom = 0
+	player_rail.anchor_left = 0.0
+	player_rail.anchor_right = 0.0
+	player_rail.anchor_top = 0.0
+	player_rail.anchor_bottom = 0.0
+	player_rail.position = Vector2(RAIL_SIDE_MARGIN, 0.0)
+	player_rail.size = Vector2(RAIL_WIDTH, 1.0)
 	player_rail.z_index       = 60
 	var player_rail_style := StyleBoxFlat.new()
 	player_rail_style.bg_color = Color(0.10, 0.09, 0.10, 0.84)
@@ -575,6 +610,7 @@ func _build_ui() -> void:
 	player_rail_style.corner_radius_bottom_right = 6
 	player_rail.add_theme_stylebox_override("panel", player_rail_style)
 	rail_overlay.add_child(player_rail)
+	player_rail_ref = player_rail
 
 	var player_rail_vbox = VBoxContainer.new()
 	player_rail_vbox.set_anchors_preset(Control.PRESET_FULL_RECT)
@@ -656,14 +692,12 @@ func _build_ui() -> void:
 		})
 
 	var enemy_rail = PanelContainer.new()
-	enemy_rail.anchor_left   = 1.0
-	enemy_rail.anchor_right  = 1.0
-	enemy_rail.anchor_top    = 0.05
-	enemy_rail.anchor_bottom = 0.50
-	enemy_rail.offset_left   = -148
-	enemy_rail.offset_right  = -8
-	enemy_rail.offset_top    = 0
-	enemy_rail.offset_bottom = 0
+	enemy_rail.anchor_left = 0.0
+	enemy_rail.anchor_right = 0.0
+	enemy_rail.anchor_top = 0.0
+	enemy_rail.anchor_bottom = 0.0
+	enemy_rail.position = Vector2(0.0, 0.0)
+	enemy_rail.size = Vector2(RAIL_WIDTH, 1.0)
 	enemy_rail.z_index       = 60
 	var enemy_rail_style := StyleBoxFlat.new()
 	enemy_rail_style.bg_color = Color(0.10, 0.09, 0.10, 0.84)
@@ -678,6 +712,7 @@ func _build_ui() -> void:
 	enemy_rail_style.corner_radius_bottom_right = 6
 	enemy_rail.add_theme_stylebox_override("panel", enemy_rail_style)
 	rail_overlay.add_child(enemy_rail)
+	enemy_rail_ref = enemy_rail
 
 	var enemy_rail_vbox = VBoxContainer.new()
 	enemy_rail_vbox.set_anchors_preset(Control.PRESET_FULL_RECT)
