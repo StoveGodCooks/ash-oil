@@ -135,9 +135,9 @@ git commit -m "chore: update START_HERE.md with Phase 6 completion status"
 
 # 📍 CURRENT STATUS
 
-**Last Patch:** local-uncommitted — Phase 10 relationship locks + dialogue contexts + signature card depth + new tests
+**Last Patch:** db772f1 — fix: Add missing lieutenant recruitment in mission completion
 
-**Current Phase:** Phase 10 ✅ COMPLETE | Phase 11 🔲 PENDING (advanced combat features up next)
+**Current Phase:** Phase 10 ✅ COMPLETE | Phase 11 🔲 PENDING (advanced combat features, balance tuning)
 
 ## Phase 5: Card Art & Combat Clarity (COMPLETE)
 - ✅ Card face redesign (faction glyphs, frame overlay)
@@ -164,7 +164,16 @@ git commit -m "chore: update START_HERE.md with Phase 6 completion status"
 
 ## What's Done This Session
 
-**Phase 9/10 Progress This Session:**
+**Phase 10 Bug Fix (CRITICAL):**
+- Fixed missing lieutenant recruitment: lieutenants now properly recruit when their `unlock_mission` is completed
+  - Marcus recruits on M01 victory
+  - Julia recruits on M02 victory
+  - Livia recruits on M04 victory
+  - (Kara, Decimus, Titus, Corvus, Thane follow their respective unlock missions)
+- Added 3 new recruitment tests to MissionManager suite
+- Tests updated: 689 assertions passing (686 + 3 new)
+
+**Phase 9/10 Progress (Earlier):**
 - Added relationship-driven mission locks/impacts: M10, M14, M15, M17, M19 now require specific NPC trust/flags and track faction stances; M12 now pushes Syndicate alignment; new lock reasons surface in MainHub.
 - Expanded NPC dialogue coverage: new `mission_locked` context lines, betrayal/indebted hooks, Sabina dialogue entry, and flag-driven responses (injured/rescued/etc.).
 - New tests for relationship/faction gating + dialogue contexts (`tests/unit/test_relationships.gd`); mission/data JSON validated.
@@ -179,7 +188,7 @@ git commit -m "chore: update START_HERE.md with Phase 6 completion status"
 - Hardened `scripts/autoload/SaveManager.gd` for headless runs (active save dir fallback + dual-path save checks/deletes)
 - Fixed strict typing warnings in `scripts/autoload/GameState.gd` (warnings treated as errors)
 
-**Tests:** `godot --headless --path C:\Users\beebo\Desktop\ash-oil -s res://tests/runner/RunTests.gd` (ALL TESTS PASSED, 686 assertions)
+**Tests:** `godot --headless --path C:\Users\beebo\Desktop\ash-oil -s res://tests/runner/RunTests.gd` (ALL TESTS PASSED, 689 assertions)
 **Lint:** `gdlint .` (not run this session; known pre-existing lint backlog)
 **Data validation:** not re-run after rebalance script this session
 
@@ -394,7 +403,7 @@ ash-oil/
 | **Lieutenants** | 8 |
 | **Enemies** | 45+ |
 | **Gear** | 24 pieces |
-| **Test Assertions** | 686 |
+| **Test Assertions** | 689 |
 | **Test Coverage** | ~75% |
 | **Code Files** | 20+ |
 | **Data Files** | 8 (cards, missions, lieutenants, enemies, gear, hooks, npcs, npc_dialogue) |
