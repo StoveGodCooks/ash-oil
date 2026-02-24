@@ -33,6 +33,7 @@ var enemies: Array = []
 var hand: Array = []
 var deck: Array = []
 var discard_pile: Array = []
+var selected_enemy_idx: int = -1
 
 var stamina: int = 3
 var mana: int = 0
@@ -194,6 +195,7 @@ func _init_state() -> void:
 	enemies = CardManager.get_mission_enemies(current_mission_id)
 	if enemies.is_empty():
 		enemies = [{"name": "Grunt", "hp": 12, "max_hp": 12, "armor": 0, "damage": 2, "poison": 0}]
+	_ensure_valid_enemy_target()
 
 	deck = GameState.current_deck.duplicate()
 	if deck.is_empty():
@@ -1021,6 +1023,32 @@ func _animate_enemy_card_to_battlefield(slot_idx: int, should_persist: bool) -> 
 		_set_enemy_card_slot_state(slot_idx, "empty")
 	ghost.queue_free()
 
+func _refresh_target_display() -> void:
+	if enemy_target_reticle_label == null:
+		return
+	var idx := _get_selected_enemy()
+	if idx >= 0 and idx < enemies.size():
+		var e: Dictionary = enemies[idx]
+		var hp := int(e.get("hp", 0))
+		var max_hp := int(e.get("max_hp", hp))
+		var armor := int(e.get("armor", 0))
+		enemy_target_reticle_label.text = "◉ %s" % str(e.get("name", "Enemy"))
+		enemy_target_reticle_label.tooltip_text = "HP %d/%d  ARM %d" % [hp, max_hp, armor]
+	else:
+		enemy_target_reticle_label.text = "◉"
+		enemy_target_reticle_label.tooltip_text = "No target selected"
+
+func _update_enemy_selection_highlight() -> void:
+	for i in range(enemy_party_cards.size()):
+		var panel := enemy_party_cards[i].get("panel") as Control
+		if panel == null:
+			continue
+		if i == _get_selected_enemy():
+			panel.modulate = Color(1.08, 1.04, 0.92, 1.0)
+		else:
+			var alive: bool = (i < enemies.size() and enemies[i].get("hp", 0) > 0)
+			panel.modulate = Color(1.0, 1.0, 1.0, 1.0) if alive else Color(0.72, 0.72, 0.72, 0.9)
+
 func _set_enemy_target_highlight(active: bool, valid: bool = true) -> void:
 	if enemy_target_reticle_label:
 		if active:
@@ -1307,11 +1335,25 @@ func _player_stat_tooltip(slot_idx: int) -> String:
 		str(lt_data.get("trait", "None"))
 	]
 
+func _select_enemy(slot_idx: int) -> void:
+	if slot_idx < 0 or slot_idx >= enemies.size():
+		return
+	if int(enemies[slot_idx].get("hp", 0)) <= 0:
+		return
+	selected_enemy_idx = slot_idx
+	_refresh_target_display()
+	_update_enemy_selection_highlight()
+	_set_enemy_target_highlight(true, true)
+
 func _on_unit_plate_gui_input(event: InputEvent, side: String, slot_idx: int) -> void:
 	var mouse_event: InputEventMouseButton = event as InputEventMouseButton
 	if mouse_event == null:
 		return
-	if mouse_event.button_index != MOUSE_BUTTON_LEFT or not mouse_event.pressed:
+	if side == "enemy" and mouse_event.button_index == MOUSE_BUTTON_LEFT and mouse_event.pressed:
+		_select_enemy(slot_idx)
+		return
+	var opens_popout := (mouse_event.button_index == MOUSE_BUTTON_RIGHT and mouse_event.pressed) or (mouse_event.button_index == MOUSE_BUTTON_LEFT and mouse_event.pressed and side != "enemy")
+	if not opens_popout:
 		return
 	var details: String = ""
 	if side == "enemy":
@@ -1492,7 +1534,7 @@ func _on_card_pressed(card_idx: int, card_btn: Control) -> void:
 	match type:
 		"attack":
 			var dmg = _get_total_attack_damage(int(card_data.get("damage", 0)))
-			var target = _get_priority_enemy()
+			var target = _get_target_enemy()
 			if target >= 0:
 				_deal_damage_to_enemy(target, dmg)
 				_spawn_float_text("-%d" % dmg, Color(1.0, 0.26, 0.26, 1.0), _enemy_float_origin(target), 28)
@@ -1519,7 +1561,7 @@ func _on_card_pressed(card_idx: int, card_btn: Control) -> void:
 			var react_dmg = _get_total_attack_damage(int(card_data.get("damage", 0)))
 			var react_armor = card_data.get("armor", 0)
 			if react_dmg > 0:
-				var react_target = _get_priority_enemy()
+				var react_target = _get_target_enemy()
 				if react_target >= 0:
 					_deal_damage_to_enemy(react_target, react_dmg)
 			if react_armor > 0:
@@ -1584,6 +1626,25 @@ func _get_priority_enemy() -> int:
 			idx = i
 	return idx
 
+func _get_selected_enemy() -> int:
+	if selected_enemy_idx >= 0 and selected_enemy_idx < enemies.size():
+		var enemy: Dictionary = enemies[selected_enemy_idx]
+		if int(enemy.get("hp", 0)) > 0:
+			return selected_enemy_idx
+	return -1
+
+func _get_target_enemy() -> int:
+	var chosen := _get_selected_enemy()
+	if chosen >= 0:
+		return chosen
+	return _get_priority_enemy()
+
+func _ensure_valid_enemy_target() -> void:
+	if _get_selected_enemy() == -1:
+		selected_enemy_idx = _get_priority_enemy()
+	_refresh_target_display()
+	_update_enemy_selection_highlight()
+
 func _apply_support_effect(effect: String) -> void:
 	match effect:
 		"resource_regen":
@@ -1627,6 +1688,8 @@ func _deal_damage_to_enemy(idx: int, amount: int) -> void:
 			var recoil = create_tween()
 			recoil.tween_property(enemy_panel, "position:x", 8.0, 0.08).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
 			recoil.tween_property(enemy_panel, "position:x", 0.0, 0.12).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN)
+	if idx == _get_selected_enemy() and enemy["hp"] <= 0:
+		_ensure_valid_enemy_target()
 
 func _on_end_turn() -> void:
 	if combat_over or is_play_animating:
@@ -1645,6 +1708,7 @@ func _on_end_turn() -> void:
 			enemy["hp"] = max(0, enemy["hp"] - poison_dmg)
 			enemy["poison"] = max(0, enemy["poison"] - 1)
 			_log("%s takes %d poison damage → %d HP" % [enemy["name"], poison_dmg, enemy["hp"]])
+	_ensure_valid_enemy_target()
 
 	_check_victory()
 	if combat_over:
@@ -1717,6 +1781,7 @@ func _capture_turn_state() -> Dictionary:
 		"combat_over": combat_over,
 		"player_won": player_won,
 		"log_lines": _log_lines.duplicate(true),
+		"selected_enemy_idx": selected_enemy_idx,
 	}
 
 func _restore_turn_state(state: Dictionary) -> void:
@@ -1737,6 +1802,8 @@ func _restore_turn_state(state: Dictionary) -> void:
 	combat_over = bool(state.get("combat_over", combat_over))
 	player_won = bool(state.get("player_won", player_won))
 	_log_lines = (state.get("log_lines", _log_lines) as Array).duplicate(true)
+	selected_enemy_idx = int(state.get("selected_enemy_idx", selected_enemy_idx))
+	_ensure_valid_enemy_target()
 
 func _on_undo_pressed() -> void:
 	if is_play_animating or turn_undo_stack.is_empty() or combat_over:
@@ -1850,6 +1917,8 @@ func _update_enemy_focus_ui() -> void:
 		_set_unit_card_ui(enemy_party_cards[i], str(enemy.get("name", "Enemy")), hp, max_hp, armor, true)
 		if panel:
 			panel.tooltip_text = _enemy_stat_tooltip(i)
+	_update_enemy_selection_highlight()
+	_refresh_target_display()
 
 func _update_player_party_ui() -> void:
 	if player_party_cards.is_empty():

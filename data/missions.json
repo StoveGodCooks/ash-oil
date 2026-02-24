@@ -333,6 +333,26 @@
       "Marcus": 2,
       "Livia": 2
     },
+    "npc_requirements": {
+      "Lanista": {
+        "min_score": 10,
+        "required_flags": ["met"],
+        "forbidden_flags": ["betrayed"]
+      },
+      "Varro": {
+        "min_score": 8,
+        "required_flags": ["revealed"]
+      }
+    },
+    "npc_impacts": {
+      "Lanista": {
+        "score": 10,
+        "set_flags": ["met"]
+      },
+      "Varro": {
+        "score": 6
+      }
+    },
     "hooks_created": [
       "act1_resolved"
     ],
@@ -363,6 +383,14 @@
       "Livia": 1,
       "Titus": 1
     },
+    "npc_impacts": {
+      "Lanista": {
+        "score": 8
+      },
+      "Sabina": {
+        "score": -6
+      }
+    },
     "hooks_created": [
       "grand_arena_open"
     ],
@@ -391,6 +419,16 @@
     },
     "relationships": {
       "Corvus": 1
+    },
+    "faction_alignment_changes": {
+      "Syndicate": 18,
+      "State": -8
+    },
+    "npc_impacts": {
+      "Moth": {
+        "score": 6,
+        "set_flags": ["met"]
+      }
     },
     "hooks_created": [
       "syndicate_noticed"
@@ -450,6 +488,22 @@
       "Kara": 2,
       "Marcus": 1
     },
+    "npc_requirements": {
+      "Varro": {
+        "min_score": 15,
+        "required_flags": ["revealed"],
+        "forbidden_flags": ["betrayed"]
+      }
+    },
+    "npc_impacts": {
+      "Varro": {
+        "score": 10,
+        "set_flags": ["allied"]
+      },
+      "Moth": {
+        "score": 4
+      }
+    },
     "hooks_created": [
       "varro_allied"
     ],
@@ -478,6 +532,30 @@
     },
     "relationships": {
       "Julia": 3
+    },
+    "npc_requirements": {
+      "Iona": {
+        "min_score": 15,
+        "required_flags": ["met"],
+        "forbidden_flags": ["betrayed"]
+      }
+    },
+    "faction_requirements": {
+      "Cult": {
+        "min": 18
+      }
+    },
+    "forbidden_factions": {
+      "State": 35
+    },
+    "npc_impacts": {
+      "Iona": {
+        "score": 12,
+        "set_flags": ["helped"]
+      },
+      "Lanista": {
+        "score": -6
+      }
     },
     "hooks_created": [
       "cult_demand_resolved"
@@ -538,6 +616,30 @@
       "Thane": 2,
       "Corvus": 1
     },
+    "npc_requirements": {
+      "Moth": {
+        "min_score": 8,
+        "required_flags": ["met"],
+        "forbidden_flags": ["betrayed"]
+      }
+    },
+    "faction_requirements": {
+      "Syndicate": {
+        "min": 16
+      }
+    },
+    "forbidden_factions": {
+      "Cult": 30
+    },
+    "npc_impacts": {
+      "Moth": {
+        "score": 10,
+        "set_flags": ["rescued"]
+      },
+      "Iona": {
+        "score": -6
+      }
+    },
     "hooks_created": [
       "shadow_war_resolved"
     ],
@@ -596,6 +698,30 @@
     "relationships": {
       "Livia": 3,
       "Titus": 2
+    },
+    "npc_requirements": {
+      "Lanista": {
+        "min_score": 40,
+        "required_flags": ["met"],
+        "forbidden_flags": ["betrayed"]
+      }
+    },
+    "faction_requirements": {
+      "State": {
+        "min": 22
+      }
+    },
+    "forbidden_factions": {
+      "Cult": 40
+    },
+    "npc_impacts": {
+      "Lanista": {
+        "score": 12,
+        "set_flags": ["indebted"]
+      },
+      "Sabina": {
+        "score": -10
+      }
     },
     "hooks_created": [
       "arena_command"

@@ -1,8 +1,8 @@
 # Ash & Oil — Development Roadmap
 
-**Current Version:** v0.9.0 — Phase 10: NPC Relationship System (core)
-**Last Updated:** February 23, 2026
-**Status:** Prompt 9 major systems and Prompt 10 core relationship/faction systems are implemented; full suite passing (676 assertions)
+**Current Version:** v0.9.0 — Phase 10: NPC Relationship System (finalized)
+**Last Updated:** February 24, 2026
+**Status:** Prompt 9 major systems and Phase 10 relationship/faction gating/dialogue are implemented; full suite passing (686 assertions)
 
 ---
 
@@ -157,14 +157,14 @@
 - [x] Mission difficulty scaling (Act 1 → Act 3)
 - [x] Enemy encounter rebalancing (damage, armor, HP per mission)
 - [x] Card cost balancing (verify power_index vs. cost correlation)
-- [ ] Lieutenant ability cards (signature card effects per lieutenant)
+- [x] Lieutenant ability cards (signature card effects per lieutenant)
 - [x] Starter deck optimization (current: 15-card teaching deck)
 - [x] Shop pricing adjustments (test economy flow)
 - [x] Character portrait placeholders (saved to `res://assets/characters/[hero_id].png`)
 - [x] Combat accessibility options panel (high contrast / colorblind / text scale)
 - [x] Undo last card play (pre-end-turn only)
 
-### Phase 10: NPC Relationship System 🔄
+### Phase 10: NPC Relationship System ✅
 **Focus:** Relationship tracking, loyalty-based story gates
 
 - [x] NPC data structure (Lanista, Varro, Rhesus, Iona, Moth)
@@ -173,6 +173,7 @@
 - [x] NPC dialogue system (simple text-based branching)
 - [x] Faction alignment (Cult, State, Syndicate)
 - [x] Faction-locked missions (only accessible if aligned)
+- [x] Expanded relationship gates/impacts (M10, M14, M15, M17, M19) + mission_locked dialogue contexts
 
 ### Phase 11: Advanced Combat Features
 **Focus:** New card mechanics, special effects, environmental factors
@@ -258,11 +259,11 @@
 - [x] Turn-log panel + keyboard shortcuts + animation speed controls
 - [x] Card face readability pass (type icon + rarity glow + tooltip polish)
 
-### Next Phase (Phase 10 tuning + polish)
-- [ ] Expand relationship-driven mission branches and lock reasons across more missions
-- [ ] Add deeper NPC dialogue coverage for ally/neutral/enemy states and event flags
-- [ ] Playtest faction-alignment progression and retune thresholds
-- [ ] Finalize remaining Phase 9 playtest tuning and lieutenant signature card depth
+### Next Phase (Phase 11 advanced combat setup)
+- [ ] Finalize lieutenant signature/ability cards (Phase 9 remaining depth)
+- [ ] Begin Phase 11 combat feature work (poison stacking, retaliation/reflect, mana pool prep)
+- [ ] Playtest new relationship gates for fairness; tune faction thresholds if needed
+- [ ] Integrate portrait assets into hub/dialogue/combat once ready
 
 ---
 
@@ -294,7 +295,7 @@
 | Missions (Side) | 15 | 50+ |
 | Lieutenants | 8 | 12 |
 | Unique Enemies | 45+ | 100+ |
-| Test Coverage | 676 assertions | 250+ |
+| Test Coverage | 686 assertions | 250+ |
 | Acts | 4 (implied) | 5 |
 | Endings | 3 planned | 5+ |
 

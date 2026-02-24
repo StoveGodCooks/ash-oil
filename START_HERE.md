@@ -135,9 +135,9 @@ git commit -m "chore: update START_HERE.md with Phase 6 completion status"
 
 # 📍 CURRENT STATUS
 
-**Last Patch:** local-uncommitted — Phase 10 NPC relationship system + mission gating + dialogue consequences + save test hardening
+**Last Patch:** local-uncommitted — Phase 10 relationship locks + dialogue contexts + signature card depth + new tests
 
-**Current Phase:** Phase 10 🔄 IN PROGRESS (core relationship/faction systems implemented)
+**Current Phase:** Phase 10 ✅ COMPLETE | Phase 11 🔲 PENDING (advanced combat features up next)
 
 ## Phase 5: Card Art & Combat Clarity (COMPLETE)
 - ✅ Card face redesign (faction glyphs, frame overlay)
@@ -165,6 +165,10 @@ git commit -m "chore: update START_HERE.md with Phase 6 completion status"
 ## What's Done This Session
 
 **Phase 9/10 Progress This Session:**
+- Added relationship-driven mission locks/impacts: M10, M14, M15, M17, M19 now require specific NPC trust/flags and track faction stances; M12 now pushes Syndicate alignment; new lock reasons surface in MainHub.
+- Expanded NPC dialogue coverage: new `mission_locked` context lines, betrayal/indebted hooks, Sabina dialogue entry, and flag-driven responses (injured/rescued/etc.).
+- New tests for relationship/faction gating + dialogue contexts (`tests/unit/test_relationships.gd`); mission/data JSON validated.
+- Lieutenant signature card depth pass: refreshed cards 037-060 with distinctive effects, resource hooks, and power tuning aligned to each lieutenant's role.
 - Completed Prompt 9 systems: mission/card rebalance pass, shop pricing updates, accessibility options, combat undo, portrait placeholders
 - Implemented Prompt 10 core NPC relationship system:
   - Added `data/npcs.json` and `data/npc_dialogue.json`
@@ -175,17 +179,16 @@ git commit -m "chore: update START_HERE.md with Phase 6 completion status"
 - Hardened `scripts/autoload/SaveManager.gd` for headless runs (active save dir fallback + dual-path save checks/deletes)
 - Fixed strict typing warnings in `scripts/autoload/GameState.gd` (warnings treated as errors)
 
-**Tests:** `godot --headless --path C:\Users\beebo\Desktop\ash-oil -s res://tests/runner/RunTests.gd` (ALL TESTS PASSED, 676 assertions)
+**Tests:** `godot --headless --path C:\Users\beebo\Desktop\ash-oil -s res://tests/runner/RunTests.gd` (ALL TESTS PASSED, 686 assertions)
 **Lint:** `gdlint .` (not run this session; known pre-existing lint backlog)
 **Data validation:** not re-run after rebalance script this session
 
 **Blockers:** None
 
 **Next Steps:**
-1. Playtest Act 1/2/3 win rates and tune mission/card/shop balance values from live results
-2. Expand Prompt 10 content wiring (more mission gates + branch outcomes + NPC-specific dialogue coverage)
-3. Hook portrait assets into all intended UI locations (hub, dialogue, combat)
-4. Run/triage gdlint backlog and reduce pre-existing violations
+1. Playtest Act 1/2/3 win rates and tune mission/card/shop balance values from live results (verify new mission locks feel fair)
+2. Hook portrait assets into all intended UI locations (hub, dialogue, combat)
+3. Run/triage gdlint backlog and reduce pre-existing violations
 
 ---
 
@@ -391,7 +394,7 @@ ash-oil/
 | **Lieutenants** | 8 |
 | **Enemies** | 45+ |
 | **Gear** | 24 pieces |
-| **Test Assertions** | 676 |
+| **Test Assertions** | 686 |
 | **Test Coverage** | ~75% |
 | **Code Files** | 20+ |
 | **Data Files** | 8 (cards, missions, lieutenants, enemies, gear, hooks, npcs, npc_dialogue) |

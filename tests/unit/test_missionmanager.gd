@@ -165,6 +165,37 @@ func test_complete_mission_applies_faction_changes() -> void:
 	MissionManager.complete_mission("M06", "victory")
 	assert_gt("State alignment increased from M06", GameState.get_faction_alignment("State"), 0)
 
+# ── Lieutenant Recruitment ────────────────────────────────────────────────────────
+func test_marcus_recruited_after_m01() -> void:
+	MissionManager.complete_mission("M01", "victory")
+	var marcus = GameState.lieutenant_data.get("Marcus", {})
+	assert_true("Marcus recruited after M01", bool(marcus.get("recruited", false)))
+
+func test_julia_recruited_after_m02() -> void:
+	GameState.unlock_mission("M02")
+	MissionManager.complete_mission("M02", "victory")
+	var julia = GameState.lieutenant_data.get("Julia", {})
+	assert_true("Julia recruited after M02", bool(julia.get("recruited", false)))
+
+func test_livia_recruited_after_m04() -> void:
+	GameState.unlock_mission("M04")
+	MissionManager.complete_mission("M04", "victory")
+	var livia = GameState.lieutenant_data.get("Livia", {})
+	assert_true("Livia recruited after M04", bool(livia.get("recruited", false)))
+
+func test_all_lieutenants_unlock_missions_exist() -> void:
+	var lt_data = CardManager.lieutenant_data
+	var bad = []
+	for lt_id in lt_data.keys():
+		var unlock_id = lt_data[lt_id].get("unlock_mission", "")
+		if unlock_id == "":
+			bad.append("%s missing unlock_mission" % lt_id)
+		else:
+			var mission = MissionManager.get_mission(unlock_id)
+			if mission.is_empty():
+				bad.append("%s unlock_mission %s not found" % [lt_id, unlock_id])
+	assert_empty("All lieutenants have valid unlock missions", bad)
+
 func test_complete_unknown_mission_does_not_crash() -> void:
 	MissionManager.complete_mission("M99", "victory")
 	assert_true("complete unknown mission does not crash", true)

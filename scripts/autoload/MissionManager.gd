@@ -73,6 +73,9 @@ func complete_mission(id: String, outcome: String = "victory") -> void:
 		if hook not in GameState.active_hooks:
 			GameState.active_hooks.append(hook)
 
+	# Recruit any lieutenants unlocked by this mission
+	_recruit_unlocked_lieutenants(id)
+
 	# Distribute rewards
 	last_reward = generate_mission_reward(id, outcome, multiplier)
 
@@ -102,6 +105,20 @@ func _unlock_next(id: String) -> void:
 	}
 	for mission in side_unlocks.get(id, []):
 		GameState.unlock_mission(mission)
+
+func _recruit_unlocked_lieutenants(mission_id: String) -> void:
+	# Check if any lieutenant unlocks on this mission
+	var lt_data = CardManager.lieutenants_data
+	for lt_id in lt_data.keys():
+		var lt = lt_data[lt_id]
+		var unlock_mission = lt.get("unlock_mission", "")
+		# Check if this lieutenant unlocks on this mission and not already recruited
+		if unlock_mission == mission_id:
+			var lt_state = GameState.lieutenant_data.get(lt_id, {})
+			var already_recruited = bool(lt_state.get("recruited", false))
+			if not already_recruited:
+				GameState.recruit_lieutenant(lt_id)
+				print("Recruited: %s" % lt.get("name", lt_id))
 
 func is_mission_available(mission_id: String) -> bool:
 	if not GameState.is_mission_available(mission_id):

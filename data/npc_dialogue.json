@@ -6,7 +6,16 @@
         "neutral": "Win your next match and we can talk terms.",
         "enemy": "I own this pit. You are no longer welcome in it.",
         "flags": {
-          "betrayed": "You crossed me once. There is no second bargain."
+          "betrayed": "You crossed me once. There is no second bargain.",
+          "indebted": "For now, I owe you. Spend it carefully."
+        }
+      },
+      "mission_locked": {
+        "ally": "The arena bankroll is yours. Name the bout and I will open the gates.",
+        "neutral": "Prove you can carry the house purse before I stake more on you.",
+        "enemy": "No wagers, no favors. You get nothing from me.",
+        "flags": {
+          "betrayed": "The ledger shows betrayal. No lock opens for you."
         }
       }
     }
@@ -20,6 +29,11 @@
         "flags": {
           "revealed": "Now you know why I kept secrets. Move carefully."
         }
+      },
+      "mission_locked": {
+        "ally": "I will clear the path. Call and the network moves.",
+        "neutral": "I do not open doors for strangers. Earn my trust.",
+        "enemy": "You chose a side. It is not mine."
       }
     }
   },
@@ -32,6 +46,11 @@
         "flags": {
           "rescued": "You pulled me out when no one else would."
         }
+      },
+      "mission_locked": {
+        "ally": "You need muscle? Say the word.",
+        "neutral": "If the odds are bad, I walk. Convince me.",
+        "enemy": "I won't lift a finger for you."
       }
     }
   },
@@ -40,7 +59,15 @@
       "default": {
         "ally": "The shrine remembers your name for the right reasons.",
         "neutral": "Faith is a ledger too. Every debt is counted.",
-        "enemy": "The shrine doors are closed to you now."
+        "enemy": "The shrine doors are closed to you now.",
+        "flags": {
+          "helped": "The shrine owes you a lantern's worth of light."
+        }
+      },
+      "mission_locked": {
+        "ally": "The shrine will open the path you ask for.",
+        "neutral": "Bring a worthy offering before I intercede.",
+        "enemy": "No blessing, no passage. You chose this exile."
       }
     }
   },
@@ -53,6 +80,14 @@
         "flags": {
           "injured": "Do not look at me like that. I knew the risk."
         }
+      },
+      "mission_locked": {
+        "ally": "I will move word through the Syndicate. Your route is clear.",
+        "neutral": "Pay in advance if you want smuggler doors to open.",
+        "enemy": "Syndicate hears what I say. I say: keep them out.",
+        "flags": {
+          "rescued": "You carried me once. I'll return the favor - once."
+        }
       }
     }
   },
@@ -62,6 +97,28 @@
         "ally": "Serve well and your name may survive this season.",
         "neutral": "Everything here has a price. Including you.",
         "enemy": "I decide who is remembered and who disappears."
+      },
+      "mission_locked": {
+        "ally": "I can quiet the magistrate long enough for your move.",
+        "neutral": "Bring something worth my ink before you ask for access.",
+        "enemy": "You don't move without my word. You won't get it."
+      }
+    }
+  },
+  "Sabina": {
+    "contexts": {
+      "default": {
+        "ally": "Orders from above favor us both. Stay useful.",
+        "neutral": "The magistrate watches. So do I.",
+        "enemy": "I will hunt you as long as you breathe.",
+        "flags": {
+          "hunting_player": "Your face is posted. Do not show it near my district."
+        }
+      },
+      "mission_locked": {
+        "ally": "I can pull the patrols away. Do not waste the opening.",
+        "neutral": "Clear your record or clear my sight.",
+        "enemy": "No clearance, no mercy. The State closes every door."
       }
     }
   }
