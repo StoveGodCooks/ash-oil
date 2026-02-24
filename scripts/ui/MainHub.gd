@@ -474,7 +474,7 @@ func _gear_text() -> String:
 func _cycle_gear(slot: String, direction: int) -> void:
 	# Collect all owned gear for this slot
 	var owned: Array = []
-	for gear_id in GameState.gear_inventory:
+	for gear_id in GameState.owned_gear:
 		var g := CardManager.get_gear(gear_id)
 		if g.get("slot", "") == slot:
 			if gear_id not in owned:
