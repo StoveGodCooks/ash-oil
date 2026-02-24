@@ -335,13 +335,13 @@ func _refresh_missions() -> void:
 	for child in mission_list.get_children():
 		child.queue_free()
 
-	var visible: Array = []
+	var visible_missions: Array = []
 	for mission_id in GameState.unlocked_missions:
 		if mission_id in GameState.completed_missions:
 			continue
-		visible.append(mission_id)
+		visible_missions.append(mission_id)
 
-	if visible.is_empty():
+	if visible_missions.is_empty():
 		var none := Label.new()
 		none.text = "No missions currently available."
 		UITheme.style_body(none, UITheme.FONT_BODY, true)
@@ -352,7 +352,7 @@ func _refresh_missions() -> void:
 		return
 
 	var has_available := false
-	for mission_id in visible:
+	for mission_id in visible_missions:
 		var mission := MissionManager.get_mission(mission_id)
 		var lock_reasons := MissionManager.get_mission_lock_reasons(str(mission_id))
 		var unlocked_now := lock_reasons.is_empty()
@@ -378,7 +378,7 @@ func _refresh_missions() -> void:
 		return
 
 	if selected_mission_id == "":
-		for mission_id in visible:
+		for mission_id in visible_missions:
 			if MissionManager.is_mission_available(str(mission_id)):
 				_on_mission_selected(str(mission_id))
 				break

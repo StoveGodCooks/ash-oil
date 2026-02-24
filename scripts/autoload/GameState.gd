@@ -514,12 +514,12 @@ func _enforce_npc_faction_consistency() -> void:
 
 func _fallback_dialogue(npc_id: String, level: String) -> String:
 	var profile: Dictionary = npc_profiles.get(npc_id, {})
-	var name := str(profile.get("name", npc_id))
+	var npc_display_name := str(profile.get("name", npc_id))
 	if level == "ally":
-		return "%s trusts you." % name
+		return "%s trusts you." % npc_display_name
 	if level == "enemy":
-		return "%s refuses to cooperate." % name
-	return "%s remains cautious." % name
+		return "%s refuses to cooperate." % npc_display_name
+	return "%s remains cautious." % npc_display_name
 
 func _log_relationship(line: String) -> void:
 	relationship_log.append(line)

@@ -78,8 +78,8 @@ func add_entry(mission_id: String) -> void:
 		var meter_text = "  Meters: "
 		for meter in meter_impact:
 			var val = meter_impact[meter]
-			var sign = "+" if val >= 0 else ""
-			meter_text += "%s %s%d  " % [meter, sign, val]
+			var sign_str = "+" if val >= 0 else ""
+			meter_text += "%s %s%d  " % [meter, sign_str, val]
 		meters_label.text = meter_text.trim_suffix("  ")
 		UITheme.style_body(meters_label, UITheme.FONT_FINE, true)
 		entry_vbox.add_child(meters_label)
