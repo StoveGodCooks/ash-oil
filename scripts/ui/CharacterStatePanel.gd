@@ -103,7 +103,7 @@ func _update_allies() -> void:
 			recruited_count += 1
 			var ally_label = Label.new()
 			var loyalty := int(lt_data.get("loyalty", 0))
-			var loyalty_text := "★" * max(0, loyalty) if loyalty > 0 else "✗"
+			var loyalty_text: String = "★".repeat(max(0, loyalty)) if loyalty > 0 else "✗"
 			ally_label.text = "  %s %s" % [lt_name, loyalty_text]
 			UITheme.style_body(ally_label, UITheme.FONT_FINE)
 			allies_container.add_child(ally_label)
