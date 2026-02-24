@@ -1933,7 +1933,7 @@ func _update_player_party_ui() -> void:
 			continue
 		var lt_key := str(active_lt[lt_idx])
 		var lt_data: Dictionary = CardManager.get_lieutenant(lt_key)
-		var lt_display_name := lt_data.get("name", lt_key).to_upper()
+		var lt_display_name: String = str(lt_data.get("name", lt_key)).to_upper()
 		if lt_idx == 0:
 			_set_unit_card_ui(player_party_cards[slot_idx], lt_display_name, lt_hp, lt_max_hp, lt_armor, true)
 		else:
@@ -1946,7 +1946,7 @@ func _get_champion_display() -> String:
 
 func _get_lt_display() -> String:
 	var lt_data := CardManager.get_lieutenant(lt_name)
-	var display := lt_data.get("name", lt_name) if not lt_data.is_empty() else lt_name
+	var display: String = str(lt_data.get("name", lt_name)) if not lt_data.is_empty() else lt_name
 	if lt_hp <= 0:
 		return "%s [DOWN]" % display
 	return "%s\n❤ %d/%d  🛡 %d" % [display, lt_hp, lt_max_hp, lt_armor]
