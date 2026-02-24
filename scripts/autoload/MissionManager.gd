@@ -281,7 +281,7 @@ func roll_gear_rarity() -> String:
 		return "rare"
 	return "common"
 
-func generate_mission_reward(mission_id: String, outcome: String, multiplier: float) -> Dictionary:
+func generate_mission_reward(mission_id: String, outcome: String, _multiplier: float) -> Dictionary:
 	var mission = get_mission(mission_id)
 	if mission.is_empty():
 		return {"gold": 0, "gear_id": "", "gear_name": "", "gear_rarity": "", "dropped": false}
