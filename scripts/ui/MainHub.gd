@@ -194,8 +194,44 @@ func _build_middle() -> Control:
 	UITheme.style_header(title, UITheme.FONT_SUBHEADER, true)
 	box.add_child(title)
 
+	# One cycle row per slot
+	for slot in ["weapon", "armor", "accessory"]:
+		var row := HBoxContainer.new()
+		row.add_theme_constant_override("separation", 4)
+		box.add_child(row)
+
+		var slot_lbl := Label.new()
+		slot_lbl.text = slot.capitalize() + ":"
+		slot_lbl.custom_minimum_size = Vector2(72, 0)
+		UITheme.style_body(slot_lbl, UITheme.FONT_BODY)
+		row.add_child(slot_lbl)
+
+		var prev_btn := Button.new()
+		prev_btn.text = "◀"
+		prev_btn.custom_minimum_size = Vector2(28, 28)
+		prev_btn.add_theme_font_size_override("font_size", 12)
+		row.add_child(prev_btn)
+
+		var name_lbl := Label.new()
+		name_lbl.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		name_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		name_lbl.autowrap_mode = TextServer.AutowrapMode.AUTOWRAP_OFF
+		UITheme.style_body(name_lbl, UITheme.FONT_BODY)
+		name_lbl.name = "gear_name_%s" % slot
+		row.add_child(name_lbl)
+
+		var next_btn := Button.new()
+		next_btn.text = "▶"
+		next_btn.custom_minimum_size = Vector2(28, 28)
+		next_btn.add_theme_font_size_override("font_size", 12)
+		row.add_child(next_btn)
+
+		prev_btn.pressed.connect(func(_s = slot): _cycle_gear(_s, -1))
+		next_btn.pressed.connect(func(_s = slot): _cycle_gear(_s, +1))
+
 	gear_label = Label.new()
 	gear_label.autowrap_mode = TextServer.AutowrapMode.AUTOWRAP_WORD
+	gear_label.visible = false   # kept for compat, hidden in favour of row labels
 	UITheme.style_body(gear_label, UITheme.FONT_BODY)
 	box.add_child(gear_label)
 	return panel
@@ -291,6 +327,7 @@ func _refresh() -> void:
 		character_state_panel.refresh()
 	squad_label.text = _squad_text()
 	gear_label.text = _gear_text()
+	_refresh_gear_labels()
 	relationship_label.text = _relationship_text()
 	_refresh_missions()
 
@@ -413,23 +450,52 @@ func _on_accessibility_save_pressed(
 
 func _squad_text() -> String:
 	var lines: Array[String] = []
-	for lt_name in GameState.lieutenant_data.keys():
-		var lt: Dictionary = GameState.lieutenant_data[lt_name]
+	for lt_id in GameState.lieutenant_data.keys():
+		var lt: Dictionary = GameState.lieutenant_data[lt_id]
 		if bool(lt.get("recruited", false)):
-			var state := "ACTIVE" if lt_name in GameState.active_lieutenants else "BENCH"
-			lines.append("%s  Lv%d  Loyalty %d  [%s]" % [lt_name, int(lt.get("level", 1)), int(lt.get("loyalty", 0)), state])
+			var state := "ACTIVE" if lt_id in GameState.active_lieutenants else "BENCH"
+			var full_name: String = CardManager.get_lieutenant(lt_id).get("name", lt_id)
+			lines.append("%s  Lv%d  Loyalty %d  [%s]" % [full_name, int(lt.get("level", 1)), int(lt.get("loyalty", 0)), state])
 	if lines.is_empty():
 		return "No recruited squad members."
 	return "\n".join(lines)
 
+func _gear_name(slot: String) -> String:
+	var gear_id := str(GameState.equipped_gear.get(slot, ""))
+	if gear_id == "":
+		return "— None —"
+	var gear := CardManager.get_gear(gear_id)
+	return gear.get("name", gear_id) if not gear.is_empty() else gear_id
+
 func _gear_text() -> String:
-	var w := str(GameState.equipped_gear.get("weapon", ""))
-	var a := str(GameState.equipped_gear.get("armor", ""))
-	var x := str(GameState.equipped_gear.get("accessory", ""))
-	if w == "": w = "None"
-	if a == "": a = "None"
-	if x == "": x = "None"
-	return "Weapon: %s\nArmor: %s\nAccessory: %s" % [w, a, x]
+	return "Weapon: %s\nArmor: %s\nAccessory: %s" % [
+		_gear_name("weapon"), _gear_name("armor"), _gear_name("accessory")]
+
+func _cycle_gear(slot: String, direction: int) -> void:
+	# Collect all owned gear for this slot
+	var owned: Array = []
+	for gear_id in GameState.gear_inventory:
+		var g := CardManager.get_gear(gear_id)
+		if g.get("slot", "") == slot:
+			if gear_id not in owned:
+				owned.append(gear_id)
+	if owned.is_empty():
+		return
+	var current := str(GameState.equipped_gear.get(slot, ""))
+	var idx := owned.find(current)
+	# -1 means nothing equipped — cycle to first or last
+	var next_idx := wrapi(idx + direction, -1, owned.size())
+	if next_idx == -1:
+		GameState.equipped_gear[slot] = ""
+	else:
+		GameState.equip_gear(slot, owned[next_idx])
+	_refresh_gear_labels()
+
+func _refresh_gear_labels() -> void:
+	for slot in ["weapon", "armor", "accessory"]:
+		var lbl := find_child("gear_name_%s" % slot, true, false) as Label
+		if lbl:
+			lbl.text = _gear_name(slot)
 
 func _relationship_text() -> String:
 	var cult := GameState.get_faction_alignment("Cult")

@@ -72,15 +72,29 @@ func _build_ui() -> void:
 
 	vbox.add_child(_sep())
 
+	# ── Recruit Lieutenants ──
+	_section(vbox, "RECRUIT LIEUTENANTS")
+	var lt_row = HBoxContainer.new()
+	lt_row.add_theme_constant_override("separation", 8)
+	lt_row.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	vbox.add_child(lt_row)
+	lt_row.add_child(_btn("Recruit ALL LTs", Color(0.3, 0.15, 0.0), func(): _recruit_all_lts()))
+	for lt_id in CardManager.lieutenants_data.keys():
+		lt_row.add_child(_btn(lt_id, Color(0.22, 0.12, 0.0),
+			func(_id = lt_id): GameState.recruit_lieutenant(_id)))
+
+	vbox.add_child(_sep())
+
 	# ── Unlock All Missions ──
-	_section(vbox, "UNLOCK MISSIONS")
+	_section(vbox, "UNLOCK & COMPLETE MISSIONS")
 	var unlock_row = HBoxContainer.new()
 	unlock_row.add_theme_constant_override("separation", 8)
 	vbox.add_child(unlock_row)
-	unlock_row.add_child(_btn("Unlock M01-M10", Color(0.2,0.2,0.35), func(): _unlock_range("M", 1, 10)))
-	unlock_row.add_child(_btn("Unlock M11-M20", Color(0.2,0.2,0.35), func(): _unlock_range("M", 11, 20)))
-	unlock_row.add_child(_btn("Unlock All Sides",Color(0.15,0.25,0.2),func(): _unlock_sides()))
-	unlock_row.add_child(_btn("Complete M01",   Color(0.15,0.3,0.15), func(): GameState.complete_mission("M01")))
+	unlock_row.add_child(_btn("Unlock M01-M10",  Color(0.2,0.2,0.35), func(): _unlock_range("M", 1, 10)))
+	unlock_row.add_child(_btn("Unlock M11-M20",  Color(0.2,0.2,0.35), func(): _unlock_range("M", 11, 20)))
+	unlock_row.add_child(_btn("Unlock All Sides", Color(0.15,0.25,0.2), func(): _unlock_sides()))
+	unlock_row.add_child(_btn("Complete M01",     Color(0.15,0.3,0.15), func(): MissionManager.complete_mission("M01")))
+	unlock_row.add_child(_btn("Complete M01-M05", Color(0.1,0.3,0.1),   func(): _complete_range(1, 5)))
 
 	vbox.add_child(_sep())
 
@@ -214,6 +228,16 @@ func _grant_gear_tier(rarity: String) -> void:
 func _grant_all_gear() -> void:
 	for gear_id in CardManager.gear_data:
 		GameState.add_gear(gear_id)
+
+func _recruit_all_lts() -> void:
+	for lt_id in CardManager.lieutenants_data.keys():
+		GameState.recruit_lieutenant(lt_id)
+
+func _complete_range(from: int, to: int) -> void:
+	for i in range(from, to + 1):
+		var mid := "M%02d" % i
+		GameState.unlock_mission(mid)
+		MissionManager.complete_mission(mid)
 
 func _unlock_sides() -> void:
 	for sid in ["S01","S02","S03","S04","S05","S06","S07","S08","S09","S10","S11","S12","S13","S14","S15"]:

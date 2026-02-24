@@ -1931,22 +1931,25 @@ func _update_player_party_ui() -> void:
 		if lt_idx >= active_lt.size():
 			_set_unit_card_ui(player_party_cards[slot_idx], "Empty", 0, 1, 0, false)
 			continue
-		var lt_unit_name := str(active_lt[lt_idx]).to_upper()
+		var lt_key := str(active_lt[lt_idx])
+		var lt_data: Dictionary = CardManager.get_lieutenant(lt_key)
+		var lt_display_name := lt_data.get("name", lt_key).to_upper()
 		if lt_idx == 0:
-			_set_unit_card_ui(player_party_cards[slot_idx], lt_unit_name, lt_hp, lt_max_hp, lt_armor, true)
+			_set_unit_card_ui(player_party_cards[slot_idx], lt_display_name, lt_hp, lt_max_hp, lt_armor, true)
 		else:
-			var lt_data: Dictionary = CardManager.get_lieutenant(str(active_lt[lt_idx]))
 			var est_hp := int(lt_data.get("hp", 25))
 			var est_armor := int(lt_data.get("armor", 0))
-			_set_unit_card_ui(player_party_cards[slot_idx], lt_unit_name, est_hp, est_hp, est_armor, true)
+			_set_unit_card_ui(player_party_cards[slot_idx], lt_display_name, est_hp, est_hp, est_armor, true)
 
 func _get_champion_display() -> String:
 	return "CHAMPION\nHP %d/%d  ARM %d\nWarrior Stance" % [champion_hp, champion_max_hp, champion_armor]
 
 func _get_lt_display() -> String:
+	var lt_data := CardManager.get_lieutenant(lt_name)
+	var display := lt_data.get("name", lt_name) if not lt_data.is_empty() else lt_name
 	if lt_hp <= 0:
-		return "%s [DOWN]" % lt_name
-	return "%s\n❤ %d/%d  🛡 %d" % [lt_name, lt_hp, lt_max_hp, lt_armor]
+		return "%s [DOWN]" % display
+	return "%s\n❤ %d/%d  🛡 %d" % [display, lt_hp, lt_max_hp, lt_armor]
 
 func _update_all_ui() -> void:
 	var hp_before := last_ui_champion_hp
