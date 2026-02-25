@@ -392,7 +392,7 @@ func _build_content_panel() -> void:
 
 	var col := VBoxContainer.new()
 	col.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	col.add_theme_constant_override("separation", 12)
+	col.add_theme_constant_override("separation", 0)
 	wrap.add_child(col)
 
 	var header := HBoxContainer.new()
@@ -410,11 +410,20 @@ func _build_content_panel() -> void:
 	content_header_context_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 	content_header_context_label.add_theme_font_size_override("font_size", UITheme.FONT_SIZE_BODY)
 	content_header_context_label.add_theme_color_override("font_color", UITheme.CLR_MUTED)
+	content_header_context_label.text = ""
 	header.add_child(content_header_context_label)
+
+	var header_gap := Control.new()
+	header_gap.custom_minimum_size = Vector2(0, 8)
+	col.add_child(header_gap)
 
 	var divider := SectionDivider.new()
 	divider.custom_minimum_size = Vector2(0, 16)
 	col.add_child(divider)
+
+	var body_gap := Control.new()
+	body_gap.custom_minimum_size = Vector2(0, 12)
+	col.add_child(body_gap)
 
 	var body_center := CenterContainer.new()
 	body_center.size_flags_vertical = Control.SIZE_EXPAND_FILL
