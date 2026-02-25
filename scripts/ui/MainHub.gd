@@ -239,11 +239,18 @@ func _build_meters_strip() -> void:
 	meters_strip.add_child(row)
 
 	for meter_def in METER_DEFS:
+		var cell_pad := MarginContainer.new()
+		cell_pad.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		cell_pad.add_theme_constant_override("margin_left", 6)
+		cell_pad.add_theme_constant_override("margin_right", 6)
+		row.add_child(cell_pad)
+
 		var cell := HBoxContainer.new()
 		cell.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		cell.size_flags_vertical = Control.SIZE_EXPAND_FILL
 		cell.alignment = BoxContainer.ALIGNMENT_CENTER
 		cell.add_theme_constant_override("separation", 6)
-		row.add_child(cell)
+		cell_pad.add_child(cell)
 
 		var abbr := Label.new()
 		abbr.text = str(meter_def["abbr"])
