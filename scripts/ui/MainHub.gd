@@ -85,7 +85,6 @@ var content_placeholder_body: Label
 
 var bottom_hint_label: Label
 var bottom_shortcut_label: Label
-var bottom_status_label: Label
 
 var selected_tab_index := 0
 var _runtime_hash := ""
@@ -455,10 +454,17 @@ func _build_content_panel() -> void:
 
 
 func _build_bottom_bar() -> void:
+	var pad := MarginContainer.new()
+	pad.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	pad.add_theme_constant_override("margin_left", 16)
+	pad.add_theme_constant_override("margin_right", 16)
+	bottom_bar.add_child(pad)
+
 	var row := HBoxContainer.new()
+	row.alignment = BoxContainer.ALIGNMENT_CENTER
 	row.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	row.add_theme_constant_override("separation", 12)
-	bottom_bar.add_child(row)
+	pad.add_child(row)
 
 	bottom_hint_label = Label.new()
 	bottom_hint_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
@@ -466,12 +472,6 @@ func _build_bottom_bar() -> void:
 	bottom_hint_label.add_theme_color_override("font_color", UITheme.CLR_MUTED)
 	bottom_hint_label.text = "SELECT A TAB TO BEGIN"
 	row.add_child(bottom_hint_label)
-
-	bottom_status_label = Label.new()
-	bottom_status_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	bottom_status_label.add_theme_font_size_override("font_size", UITheme.FONT_SIZE_CAPTION)
-	bottom_status_label.add_theme_color_override("font_color", UITheme.CLR_MUTED)
-	row.add_child(bottom_status_label)
 
 	bottom_shortcut_label = Label.new()
 	bottom_shortcut_label.add_theme_font_size_override("font_size", UITheme.FONT_SIZE_FINE)
@@ -519,7 +519,7 @@ func _execute_tab_action(index: int) -> void:
 	var kind := str(tab_def.get("kind", "context"))
 	match kind:
 		"context":
-			bottom_status_label.text = "TAB READY: %s" % str(tab_def["label"])
+			pass
 		"scene":
 			_transition_to_scene(str(tab_def.get("scene", "")))
 		_:
@@ -534,7 +534,7 @@ func _transition_to_scene(scene_path: String) -> void:
 
 func _on_save_pressed() -> void:
 	SaveManager.save_game(0)
-	bottom_status_label.text = "Progress saved to slot 0."
+	bottom_hint_label.text = "PROGRESS SAVED TO SLOT 0."
 
 
 func _on_dev_pressed() -> void:
