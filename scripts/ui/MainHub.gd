@@ -166,13 +166,20 @@ func _build_ui() -> void:
 
 
 func _build_top_bar() -> void:
+	var pad := MarginContainer.new()
+	pad.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	pad.add_theme_constant_override("margin_left", 12)
+	pad.add_theme_constant_override("margin_right", 12)
+	top_bar.add_child(pad)
+
 	var row := HBoxContainer.new()
 	row.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	row.add_theme_constant_override("separation", 0)
-	top_bar.add_child(row)
+	pad.add_child(row)
 
 	var left_col := VBoxContainer.new()
 	left_col.custom_minimum_size = Vector2(200, 0)
+	left_col.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	left_col.alignment = BoxContainer.ALIGNMENT_CENTER
 	left_col.add_theme_constant_override("separation", 2)
 	row.add_child(left_col)
@@ -191,23 +198,37 @@ func _build_top_bar() -> void:
 
 	var center_col := VBoxContainer.new()
 	center_col.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	center_col.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	center_col.alignment = BoxContainer.ALIGNMENT_CENTER
 	row.add_child(center_col)
 
 	top_bar_masthead_label = Label.new()
 	top_bar_masthead_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	top_bar_masthead_label.text = "-- *  ASH AND OIL  * --"
+	top_bar_masthead_label.text = "── ✦  ASH AND OIL  ✦ ──"
 	top_bar_masthead_label.add_theme_font_size_override("font_size", UITheme.FONT_SIZE_CAPTION)
 	top_bar_masthead_label.add_theme_color_override("font_color", UITheme.CLR_MUTED)
 	center_col.add_child(top_bar_masthead_label)
 
 	var right_col := HBoxContainer.new()
+	right_col.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	right_col.alignment = BoxContainer.ALIGNMENT_CENTER
 	right_col.add_theme_constant_override("separation", 16)
 	row.add_child(right_col)
 
-	top_gold_value_label = _make_top_stat(right_col, "G", UITheme.CLR_GOLD)
-	top_deck_value_label = _make_top_stat(right_col, "D", UITheme.CLR_VELLUM)
-	top_completed_value_label = _make_top_stat(right_col, "M", UITheme.CLR_VELLUM)
+	top_gold_value_label = _make_top_stat(right_col, "⚖", UITheme.CLR_GOLD)
+	top_deck_value_label = _make_top_stat(right_col, "⚔", UITheme.CLR_VELLUM)
+	top_completed_value_label = _make_top_stat(right_col, "✓", UITheme.CLR_VELLUM)
+
+	if OS.is_debug_build():
+		var dev_btn := Button.new()
+		dev_btn.text = "DEV"
+		dev_btn.custom_minimum_size = Vector2(56, 28)
+		dev_btn.add_theme_font_size_override("font_size", UITheme.FONT_SIZE_FINE)
+		dev_btn.add_theme_stylebox_override("normal", UITheme.btn_secondary())
+		dev_btn.add_theme_stylebox_override("hover", UITheme.btn_secondary_hover())
+		dev_btn.add_theme_stylebox_override("pressed", UITheme.btn_active())
+		dev_btn.pressed.connect(_on_dev_pressed)
+		right_col.add_child(dev_btn)
 
 
 func _build_meters_strip() -> void:
@@ -569,13 +590,13 @@ func _story_phase_label() -> String:
 	var phase := str(GameState.story_phase).strip_edges().to_upper()
 	match phase:
 		"SURVIVAL":
-			return "PHASE I - SURVIVAL"
+			return "PHASE I — SURVIVAL"
 		"HOPE":
-			return "PHASE II - HOPE"
+			return "PHASE II — HOPE"
 		"RESISTANCE":
-			return "PHASE III - RESISTANCE"
+			return "PHASE III — RESISTANCE"
 		_:
-			return "PHASE - %s" % phase
+			return "PHASE — %s" % phase
 
 
 func _update_nav_states() -> void:
