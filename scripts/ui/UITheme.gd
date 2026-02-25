@@ -1,5 +1,5 @@
-extends RefCounted
 class_name UITheme
+extends RefCounted
 
 # -- STONE & EARTH (backgrounds, surfaces) ------------------------------
 const CLR_VOID := Color(0.055, 0.042, 0.030)

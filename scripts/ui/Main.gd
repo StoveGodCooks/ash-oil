@@ -1,139 +1,155 @@
 extends Control
-## Main menu - builds UI in code so scene file stays simple
+## Roman landing page composition for Ash & Oil.
 
-# ── Parchment & Wax palette ──
-const CLR_BG      = Color(0.08, 0.065, 0.050)
-const CLR_PANEL   = Color(0.14, 0.110, 0.080)
-const CLR_BORDER  = Color(0.42, 0.320, 0.160)
-const CLR_ACCENT  = Color(0.86, 0.700, 0.360)
-const CLR_TEXT    = Color(0.90, 0.840, 0.680)
-const CLR_MUTED   = Color(0.58, 0.520, 0.400)
-const CLR_BTN     = Color(0.20, 0.160, 0.115)
-const CLR_BTN_ALT = Color(0.14, 0.220, 0.150)
-const CLR_DANGER  = Color(0.26, 0.095, 0.090)
-const CLR_STONE   = Color(0.18, 0.155, 0.120)
-const CLR_SEAL    = Color(0.36, 0.12, 0.10)
+class RomanAwning extends Control:
+	var tint := Color(0.240, 0.192, 0.138, 0.30)
 
-const TEX_CREST  = "res://assets/ui/roman/crest.png"
-const TEX_BANNER = "res://assets/ui/roman/banner.png"
+	func _ready() -> void:
+		mouse_filter = Control.MOUSE_FILTER_IGNORE
+
+	func _draw() -> void:
+		var apex := Vector2(size.x * 0.5, size.y)
+		draw_line(Vector2(0, 0), apex, tint, 1.0)
+		draw_line(Vector2(size.x, 0), apex, tint, 1.0)
+
+
+class RomanDivider extends Control:
+	var tint := UITheme.CLR_BRONZE
+
+	func _ready() -> void:
+		mouse_filter = Control.MOUSE_FILTER_IGNORE
+
+	func _draw() -> void:
+		UITheme.draw_section_divider(self, size.y * 0.5, size.x, tint)
+
 
 var start_btn: Button
 var continue_btn: Button
 
 func _ready() -> void:
-	# Background layers
-	var bg = ColorRect.new()
-	bg.color = CLR_BG
+	var bg := ColorRect.new()
+	bg.color = UITheme.CLR_VOID
 	bg.set_anchors_preset(Control.PRESET_FULL_RECT)
+	bg.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	add_child(bg)
 
-	var stone_top = ColorRect.new()
-	stone_top.color = CLR_STONE
-	stone_top.set_anchors_preset(Control.PRESET_TOP_WIDE)
-	stone_top.custom_minimum_size = Vector2(0, 70)
-	add_child(stone_top)
+	var awning := RomanAwning.new()
+	awning.name = "Awning"
+	awning.set_anchors_preset(Control.PRESET_FULL_RECT)
+	add_child(awning)
 
-	var stone_bottom = ColorRect.new()
-	stone_bottom.color = CLR_STONE
-	stone_bottom.set_anchors_preset(Control.PRESET_BOTTOM_WIDE)
-	stone_bottom.custom_minimum_size = Vector2(0, 70)
-	add_child(stone_bottom)
+	var top_ornament := RomanDivider.new()
+	top_ornament.name = "TopOrnament"
+	top_ornament.custom_minimum_size = Vector2(600, 18)
+	top_ornament.anchor_left = 0.5
+	top_ornament.anchor_right = 0.5
+	top_ornament.anchor_top = 0.30
+	top_ornament.anchor_bottom = 0.30
+	top_ornament.offset_left = -300
+	top_ornament.offset_right = 300
+	top_ornament.offset_top = -9
+	top_ornament.offset_bottom = 9
+	add_child(top_ornament)
 
-	var bg_top = ColorRect.new()
-	bg_top.color = CLR_PANEL
-	bg_top.set_anchors_preset(Control.PRESET_TOP_WIDE)
-	bg_top.custom_minimum_size = Vector2(0, 180)
-	add_child(bg_top)
+	var center := CenterContainer.new()
+	center.set_anchors_preset(Control.PRESET_FULL_RECT)
+	add_child(center)
 
-	var vignette = ColorRect.new()
-	vignette.color = Color(0, 0, 0, 0.25)
-	vignette.set_anchors_preset(Control.PRESET_FULL_RECT)
-	add_child(vignette)
+	var column := VBoxContainer.new()
+	column.name = "CenterColumn"
+	column.custom_minimum_size = Vector2(600, 0)
+	column.alignment = BoxContainer.ALIGNMENT_CENTER
+	column.add_theme_constant_override("separation", 16)
+	center.add_child(column)
 
-	# Center container
-	var vbox = VBoxContainer.new()
-	vbox.set_anchors_preset(Control.PRESET_CENTER)
-	vbox.grow_horizontal = Control.GROW_DIRECTION_BOTH
-	vbox.grow_vertical = Control.GROW_DIRECTION_BOTH
-	vbox.custom_minimum_size = Vector2(300, 400)
-	vbox.alignment = BoxContainer.ALIGNMENT_CENTER
-	add_child(vbox)
+	var title_block := VBoxContainer.new()
+	title_block.alignment = BoxContainer.ALIGNMENT_CENTER
+	title_block.add_theme_constant_override("separation", 4)
+	column.add_child(title_block)
 
-	# Title banner
-	var banner = PanelContainer.new()
-	banner.custom_minimum_size = Vector2(300, 140)
-	banner.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	banner.add_theme_stylebox_override("panel", _panel_style(CLR_PANEL))
-	vbox.add_child(banner)
+	var ash := Label.new()
+	ash.text = "A S H"
+	ash.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	ash.add_theme_font_size_override("font_size", 56)
+	ash.add_theme_color_override("font_color", UITheme.CLR_GOLD)
+	title_block.add_child(ash)
 
-	var banner_v = VBoxContainer.new()
-	banner_v.alignment = BoxContainer.ALIGNMENT_CENTER
-	banner_v.set_anchors_preset(Control.PRESET_FULL_RECT)
-	banner.add_child(banner_v)
+	var ornament_line := Label.new()
+	ornament_line.text = "── ✦ ──"
+	ornament_line.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	ornament_line.add_theme_font_size_override("font_size", UITheme.FONT_SIZE_CAPTION)
+	ornament_line.add_theme_color_override("font_color", UITheme.CLR_BRONZE)
+	title_block.add_child(ornament_line)
 
-	# Crest line
-	var crest = _make_texture(TEX_CREST, Vector2(72, 72))
-	crest.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-	banner_v.add_child(crest)
+	var and_oil := Label.new()
+	and_oil.text = "A N D   O I L"
+	and_oil.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	and_oil.add_theme_font_size_override("font_size", UITheme.FONT_SIZE_TITLE)
+	and_oil.add_theme_color_override("font_color", UITheme.CLR_BRONZE)
+	title_block.add_child(and_oil)
 
-	var banner_tex = _make_texture(TEX_BANNER, Vector2(280, 60))
-	banner_tex.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-	banner_v.add_child(banner_tex)
+	var subtitle := Label.new()
+	subtitle.text = "A GLADIATOR'S CHRONICLE"
+	subtitle.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	subtitle.add_theme_font_size_override("font_size", UITheme.FONT_SIZE_CAPTION)
+	subtitle.add_theme_color_override("font_color", UITheme.CLR_MUTED)
+	column.add_child(subtitle)
 
-	# Title
-	var title = Label.new()
-	title.text = "ASH  &  OIL"
-	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	title.add_theme_font_size_override("font_size", 48)
-	title.add_theme_color_override("font_color", CLR_ACCENT)
-	banner_v.add_child(title)
+	var divider_spacer := Control.new()
+	divider_spacer.custom_minimum_size = Vector2(0, 40)
+	column.add_child(divider_spacer)
 
-	# Subtitle
-	var sub = Label.new()
-	sub.text = "GLADIATOR CONTRACTS & BLOOD DEBTS"
-	sub.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	sub.add_theme_font_size_override("font_size", 14)
-	sub.add_theme_color_override("font_color", CLR_TEXT)
-	banner_v.add_child(sub)
+	var mid_divider := RomanDivider.new()
+	mid_divider.name = "MidDivider"
+	mid_divider.custom_minimum_size = Vector2(560, 18)
+	column.add_child(mid_divider)
 
-	# Spacer
-	var sp1 = Control.new()
-	sp1.custom_minimum_size = Vector2(0, 40)
-	vbox.add_child(sp1)
+	var btn_col := VBoxContainer.new()
+	btn_col.alignment = BoxContainer.ALIGNMENT_CENTER
+	btn_col.add_theme_constant_override("separation", 16)
+	column.add_child(btn_col)
 
-	# New Game button
-	start_btn = _make_button("ENTER THE ARENA", CLR_BTN)
-	start_btn.custom_minimum_size = Vector2(200, 50)
+	start_btn = Button.new()
+	start_btn.text = "NEW CAMPAIGN"
+	start_btn.custom_minimum_size = Vector2(280, 52)
+	_apply_button_theme(start_btn, "primary")
 	start_btn.pressed.connect(_on_start_pressed)
-	vbox.add_child(start_btn)
+	btn_col.add_child(start_btn)
 
-	# Continue button
-	continue_btn = _make_button("RESUME CONTRACT", CLR_BTN_ALT)
-	continue_btn.custom_minimum_size = Vector2(200, 50)
+	continue_btn = Button.new()
+	continue_btn.text = "CONTINUE"
+	continue_btn.custom_minimum_size = Vector2(280, 52)
+	_apply_button_theme(continue_btn, "secondary")
 	continue_btn.disabled = not SaveManager.save_exists(1)
+	if continue_btn.disabled:
+		continue_btn.modulate = Color(1.0, 1.0, 1.0, 0.55)
 	continue_btn.pressed.connect(_on_continue_pressed)
-	vbox.add_child(continue_btn)
+	btn_col.add_child(continue_btn)
 
-	# Spacer
-	var sp2 = Control.new()
-	sp2.custom_minimum_size = Vector2(0, 20)
-	vbox.add_child(sp2)
+	if OS.is_debug_build():
+		var dev_btn := Button.new()
+		dev_btn.text = "DEV MODE"
+		dev_btn.custom_minimum_size = Vector2(200, 40)
+		_apply_button_theme(dev_btn, "secondary")
+		dev_btn.pressed.connect(_on_dev_pressed)
+		btn_col.add_child(dev_btn)
 
-	# Dev Mode button
-	var dev_btn = _make_button("DEV MODE", CLR_DANGER)
-	dev_btn.custom_minimum_size = Vector2(200, 40)
-	dev_btn.pressed.connect(_on_dev_pressed)
-	vbox.add_child(dev_btn)
+	var version := Label.new()
+	version.text = "v0.4 - Phase 4 Complete"
+	version.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	version.add_theme_font_size_override("font_size", UITheme.FONT_SIZE_FINE)
+	version.add_theme_color_override("font_color", UITheme.CLR_MUTED)
+	version.anchor_left = 0.5
+	version.anchor_right = 0.5
+	version.anchor_top = 1.0
+	version.anchor_bottom = 1.0
+	version.offset_left = -160
+	version.offset_right = 160
+	version.offset_top = -20 - UITheme.FONT_SIZE_FINE
+	version.offset_bottom = -20
+	add_child(version)
 
-	# Version
-	var ver = Label.new()
-	ver.text = "v0.4 - Phase 4 Complete"
-	ver.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	ver.add_theme_font_size_override("font_size", 11)
-	ver.add_theme_color_override("font_color", CLR_MUTED)
-	vbox.add_child(ver)
-
-	_fade_in(vbox, 0.0)
+	_fade_in(column, 0.0)
 
 	print("=== ASH & OIL - MAIN MENU LOADED ===")
 	print("GameState online: RENOWN=%d HEAT=%d" % [GameState.RENOWN, GameState.HEAT])
@@ -165,66 +181,21 @@ func _on_continue_pressed() -> void:
 	else:
 		print("No save file found!")
 
-func _make_button(text: String, color: Color) -> Button:
-	var btn = Button.new()
-	btn.text = text
-	btn.add_theme_font_size_override("font_size", 14)
-	btn.add_theme_color_override("font_color", CLR_TEXT)
-	btn.add_theme_stylebox_override("normal", _make_style(color))
-	btn.add_theme_stylebox_override("hover", _make_style(color.lightened(0.15)))
-	btn.add_theme_stylebox_override("pressed", _make_style(color.darkened(0.15)))
-	return btn
-
-func _make_style(color: Color) -> StyleBoxFlat:
-	var s = StyleBoxFlat.new()
-	s.bg_color = color
-	s.border_color = CLR_BORDER
-	s.border_width_left = 1
-	s.border_width_top = 1
-	s.border_width_right = 1
-	s.border_width_bottom = 2
-	s.corner_radius_top_left = 6
-	s.corner_radius_top_right = 6
-	s.corner_radius_bottom_left = 6
-	s.corner_radius_bottom_right = 6
-	s.content_margin_left = 14
-	s.content_margin_right = 14
-	s.content_margin_top = 6
-	s.content_margin_bottom = 6
-	s.shadow_size = 4
-	s.shadow_color = Color(0, 0, 0, 0.35)
-	return s
-
-func _panel_style(color: Color) -> StyleBoxFlat:
-	var s = StyleBoxFlat.new()
-	s.bg_color = color
-	s.border_color = CLR_BORDER
-	s.border_width_left = 1
-	s.border_width_top = 1
-	s.border_width_right = 1
-	s.border_width_bottom = 2
-	s.corner_radius_top_left = 8
-	s.corner_radius_top_right = 8
-	s.corner_radius_bottom_left = 8
-	s.corner_radius_bottom_right = 8
-	s.content_margin_left = 10
-	s.content_margin_right = 10
-	s.content_margin_top = 8
-	s.content_margin_bottom = 8
-	s.shadow_size = 6
-	s.shadow_color = Color(0, 0, 0, 0.35)
-	return s
-
-func _make_texture(path: String, tex_size: Vector2) -> TextureRect:
-	var tex = TextureRect.new()
-	tex.texture = load(path)
-	tex.custom_minimum_size = tex_size
-	tex.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-	tex.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-	tex.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	return tex
+func _apply_button_theme(btn: Button, style_kind: String) -> void:
+	btn.add_theme_font_size_override("font_size", UITheme.FONT_SIZE_BODY)
+	match style_kind:
+		"primary":
+			btn.add_theme_color_override("font_color", UITheme.CLR_VOID)
+			btn.add_theme_stylebox_override("normal", UITheme.btn_primary())
+			btn.add_theme_stylebox_override("hover", UITheme.btn_primary_hover())
+			btn.add_theme_stylebox_override("pressed", UITheme.btn_active())
+		_:
+			btn.add_theme_color_override("font_color", UITheme.CLR_VELLUM)
+			btn.add_theme_stylebox_override("normal", UITheme.btn_secondary())
+			btn.add_theme_stylebox_override("hover", UITheme.btn_secondary_hover())
+			btn.add_theme_stylebox_override("pressed", UITheme.btn_active())
 
 func _fade_in(node: CanvasItem, delay: float) -> void:
 	node.modulate = Color(1, 1, 1, 0)
-	var tween = create_tween()
+	var tween := create_tween()
 	tween.tween_property(node, "modulate:a", 1.0, 0.4).set_delay(delay)
