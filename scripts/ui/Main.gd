@@ -43,12 +43,13 @@ func _ready() -> void:
 	top_ornament.custom_minimum_size = Vector2(600, 18)
 	top_ornament.anchor_left = 0.5
 	top_ornament.anchor_right = 0.5
-	top_ornament.anchor_top = 0.30
-	top_ornament.anchor_bottom = 0.30
+	top_ornament.anchor_top = 0.24
+	top_ornament.anchor_bottom = 0.24
 	top_ornament.offset_left = -300
 	top_ornament.offset_right = 300
 	top_ornament.offset_top = -9
 	top_ornament.offset_bottom = 9
+	top_ornament.z_index = 1
 	add_child(top_ornament)
 
 	var center := CenterContainer.new()
@@ -63,30 +64,57 @@ func _ready() -> void:
 	center.add_child(column)
 
 	var title_block := VBoxContainer.new()
+	title_block.custom_minimum_size = Vector2(560, 0)
 	title_block.alignment = BoxContainer.ALIGNMENT_CENTER
-	title_block.add_theme_constant_override("separation", 4)
+	title_block.add_theme_constant_override("separation", 0)
+	title_block.z_index = 5
 	column.add_child(title_block)
+
+	var ash_row := HBoxContainer.new()
+	ash_row.add_theme_constant_override("separation", 12)
+	ash_row.alignment = BoxContainer.ALIGNMENT_CENTER
+	title_block.add_child(ash_row)
+
+	var left_line := Label.new()
+	left_line.text = "────────"
+	left_line.add_theme_font_size_override("font_size", UITheme.FONT_SIZE_CAPTION)
+	left_line.add_theme_color_override("font_color", UITheme.CLR_BRONZE)
+	ash_row.add_child(left_line)
 
 	var ash := Label.new()
 	ash.text = "A S H"
 	ash.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	ash.add_theme_font_size_override("font_size", 56)
 	ash.add_theme_color_override("font_color", UITheme.CLR_GOLD)
-	title_block.add_child(ash)
+	ash_row.add_child(ash)
 
-	var ornament_line := Label.new()
-	ornament_line.text = "── ✦ ──"
-	ornament_line.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	ornament_line.add_theme_font_size_override("font_size", UITheme.FONT_SIZE_CAPTION)
-	ornament_line.add_theme_color_override("font_color", UITheme.CLR_BRONZE)
-	title_block.add_child(ornament_line)
+	var right_line := Label.new()
+	right_line.text = "────────"
+	right_line.add_theme_font_size_override("font_size", UITheme.FONT_SIZE_CAPTION)
+	right_line.add_theme_color_override("font_color", UITheme.CLR_BRONZE)
+	ash_row.add_child(right_line)
 
-	var and_oil := Label.new()
-	and_oil.text = "A N D   O I L"
-	and_oil.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	and_oil.add_theme_font_size_override("font_size", UITheme.FONT_SIZE_TITLE)
-	and_oil.add_theme_color_override("font_color", UITheme.CLR_BRONZE)
-	title_block.add_child(and_oil)
+	var amp_spacer_top := Control.new()
+	amp_spacer_top.custom_minimum_size = Vector2(0, 8)
+	title_block.add_child(amp_spacer_top)
+
+	var amp := Label.new()
+	amp.text = "&"
+	amp.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	amp.add_theme_font_size_override("font_size", UITheme.FONT_SIZE_HEADER)
+	amp.add_theme_color_override("font_color", UITheme.CLR_BRONZE)
+	title_block.add_child(amp)
+
+	var amp_spacer_bottom := Control.new()
+	amp_spacer_bottom.custom_minimum_size = Vector2(0, 8)
+	title_block.add_child(amp_spacer_bottom)
+
+	var oil := Label.new()
+	oil.text = "O I L"
+	oil.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	oil.add_theme_font_size_override("font_size", 56)
+	oil.add_theme_color_override("font_color", UITheme.CLR_GOLD)
+	title_block.add_child(oil)
 
 	var subtitle := Label.new()
 	subtitle.text = "A GLADIATOR'S CHRONICLE"
