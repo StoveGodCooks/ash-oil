@@ -301,14 +301,25 @@ func _build_left_nav() -> void:
 		btn.focus_mode = Control.FOCUS_ALL
 		btn.text = ""
 		btn.pressed.connect(_on_tab_pressed.bind(i))
+		btn.mouse_entered.connect(_update_nav_states)
+		btn.mouse_exited.connect(_update_nav_states)
+		btn.focus_entered.connect(_update_nav_states)
+		btn.focus_exited.connect(_update_nav_states)
 		col.add_child(btn)
 		nav_buttons.append(btn)
 
+		var row_pad := MarginContainer.new()
+		row_pad.set_anchors_preset(Control.PRESET_FULL_RECT)
+		row_pad.add_theme_constant_override("margin_left", 8)
+		row_pad.add_theme_constant_override("margin_right", 8)
+		btn.add_child(row_pad)
+
 		var row := HBoxContainer.new()
-		row.set_anchors_preset(Control.PRESET_FULL_RECT)
 		row.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		row.size_flags_vertical = Control.SIZE_EXPAND_FILL
+		row.alignment = BoxContainer.ALIGNMENT_CENTER
 		row.add_theme_constant_override("separation", 6)
-		btn.add_child(row)
+		row_pad.add_child(row)
 
 		var accent := ColorRect.new()
 		accent.custom_minimum_size = Vector2(3, 0)
@@ -323,14 +334,14 @@ func _build_left_nav() -> void:
 		row.add_child(labels)
 
 		var roman := Label.new()
-		roman.text = str(tab_def["roman"])
+		roman.text = "%s." % str(tab_def["roman"])
 		roman.add_theme_font_size_override("font_size", UITheme.FONT_SIZE_FINE)
 		roman.add_theme_color_override("font_color", UITheme.CLR_MUTED)
 		labels.add_child(roman)
 		nav_roman_by_index[i] = roman
 
 		var name := Label.new()
-		name.text = str(tab_def["label"])
+		name.text = _tracked_caps(str(tab_def["label"]))
 		name.add_theme_font_size_override("font_size", UITheme.FONT_SIZE_BODY)
 		name.add_theme_color_override("font_color", UITheme.CLR_PARCHMENT)
 		labels.add_child(name)
@@ -354,6 +365,10 @@ func _build_left_nav() -> void:
 	save_button = Button.new()
 	save_button.text = "SAVE"
 	save_button.custom_minimum_size = Vector2(0, 44)
+	save_button.add_theme_font_size_override("font_size", UITheme.FONT_SIZE_BODY)
+	save_button.add_theme_stylebox_override("normal", _save_button_style(false))
+	save_button.add_theme_stylebox_override("hover", _save_button_style(true))
+	save_button.add_theme_stylebox_override("pressed", UITheme.btn_active())
 	save_button.pressed.connect(_on_save_pressed)
 	col.add_child(save_button)
 
@@ -625,6 +640,7 @@ func _update_nav_states() -> void:
 				roman.add_theme_color_override("font_color", UITheme.CLR_GOLD)
 			if name != null:
 				name.add_theme_color_override("font_color", UITheme.CLR_GOLD)
+				name.add_theme_font_size_override("font_size", UITheme.FONT_SIZE_SUBHEAD)
 		elif is_hover:
 			btn.add_theme_stylebox_override("normal", UITheme.btn_secondary_hover())
 			btn.add_theme_stylebox_override("hover", UITheme.btn_secondary_hover())
@@ -636,8 +652,9 @@ func _update_nav_states() -> void:
 				roman.add_theme_color_override("font_color", UITheme.CLR_PARCHMENT)
 			if name != null:
 				name.add_theme_color_override("font_color", UITheme.CLR_VELLUM)
+				name.add_theme_font_size_override("font_size", UITheme.FONT_SIZE_BODY)
 		else:
-			btn.add_theme_stylebox_override("normal", UITheme.btn_secondary())
+			btn.add_theme_stylebox_override("normal", _transparent_button_style())
 			btn.add_theme_stylebox_override("hover", UITheme.btn_secondary_hover())
 			btn.add_theme_stylebox_override("pressed", UITheme.btn_active())
 			if accent != null:
@@ -646,6 +663,7 @@ func _update_nav_states() -> void:
 				roman.add_theme_color_override("font_color", UITheme.CLR_MUTED)
 			if name != null:
 				name.add_theme_color_override("font_color", UITheme.CLR_PARCHMENT)
+				name.add_theme_font_size_override("font_size", UITheme.FONT_SIZE_BODY)
 
 
 func _make_top_stat(parent: Node, icon_text: String, value_color: Color) -> Label:
@@ -697,3 +715,23 @@ func _frame_style(
 	style.border_width_right = border_right
 	style.border_width_bottom = border_bottom
 	return style
+
+
+func _transparent_button_style() -> StyleBoxFlat:
+	var style := StyleBoxFlat.new()
+	style.bg_color = UITheme.CLR_VOID
+	style.bg_color.a = 0.0
+	style.border_color = UITheme.CLR_VOID
+	style.border_color.a = 0.0
+	return style
+
+
+func _save_button_style(hovered: bool) -> StyleBoxFlat:
+	var style := UITheme.btn_secondary_hover() if hovered else UITheme.btn_secondary()
+	style.content_margin_top = 12
+	style.content_margin_bottom = 12
+	return style
+
+
+func _tracked_caps(text: String) -> String:
+	return " ".join(text.to_upper().split(""))
