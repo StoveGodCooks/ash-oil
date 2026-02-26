@@ -111,6 +111,17 @@ static func panel_raised() -> StyleBoxFlat:
 	style.content_margin_bottom = PAD_MD
 	return style
 
+static func panel_raised_hover() -> StyleBoxFlat:
+	var style := _new_stylebox(CLR_STONE_LITE, CLR_GOLD, 2, 4)
+	style.shadow_color = Color(1.0, 0.9, 0.3, 0.55)
+	style.shadow_size = 8
+	style.shadow_offset = Vector2(0, 4)
+	style.content_margin_left = PAD_MD
+	style.content_margin_right = PAD_MD
+	style.content_margin_top = PAD_MD
+	style.content_margin_bottom = PAD_MD
+	return style
+
 static func panel_inset() -> StyleBoxFlat:
 	var style := _new_stylebox(CLR_VOID, CLR_BRONZE, 1, 2)
 	style.content_margin_left = PAD_SM

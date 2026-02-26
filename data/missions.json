@@ -4,7 +4,7 @@
     "name": "The Token",
     "type": "main",
     "act": 1,
-    "description": "Your first arena fight. Prove yourself to the crowd and earn your token of passage.",
+    "description": "The Primus wants bodies in the sand before the midday crowd thins. You're first on the slate — cheap entertainment for an indifferent house. Nobody expects much. Use that.",
     "location": "Arena City",
     "enemies": [
       "quintus",
@@ -31,7 +31,7 @@
     "name": "Blood Contract",
     "type": "main",
     "act": 1,
-    "description": "A cloaked broker offers gold for a job. The alley smells like a trap — but your debts don't care.",
+    "description": "A cloaked broker offers gold for a job with no name. The alley smells like a trap, the terms smell like a trap, and the broker's eyes move like a man who has done this before. Your debts don't care about any of that.",
     "location": "Arena City",
     "enemies": [
       "broker_guard",
@@ -61,7 +61,7 @@
     "name": "Gladiator Debt",
     "type": "main",
     "act": 1,
-    "description": "A former champion calls in an old favor. Fight or pay — either way, it costs you.",
+    "description": "A former champion sends word through a mutual contact. The favor is old — you didn't think he remembered it. He remembers everything. Fight or pay what you owe. There is no third option he's willing to discuss.",
     "location": "Arena City",
     "enemies": [
       "old_champion",
@@ -88,7 +88,7 @@
     "name": "The Lanista",
     "type": "main",
     "act": 1,
-    "description": "The arena's owner summons you. The Lanista doesn't waste words — or mercy.",
+    "description": "The Lanista doesn't summon people twice. She owns the arena, the contracts, the debts that keep fighters compliant — and she wants a conversation. She won't explain what about. She doesn't have to.",
     "location": "Arena City",
     "enemies": [
       "lanista_guard_a",
@@ -125,7 +125,7 @@
     "name": "The Shrine Fracture",
     "type": "main",
     "act": 1,
-    "description": "Escort a wounded priest through hostile territory to the shrine. The Cult is watching.",
+    "description": "A wounded priest needs safe passage to the ridge shrine before whoever put three knife wounds in him finishes the job. The ridge road is Cult territory — they're watching for exactly this kind of errand. You'll be visible the entire way.",
     "location": "Ridge Road",
     "enemies": [
       "cult_acolyte",
@@ -169,7 +169,7 @@
     "name": "The State's Eye",
     "type": "main",
     "act": 1,
-    "description": "State agents have been following you. Time to decide: run, talk, or fight your way clear.",
+    "description": "Two State agents have been following you for four days. They're not subtle — they want you to know. That means they're either very confident or under orders to be visible. Either way, the decision is yours: run, talk, or make them regret the assignment.",
     "location": "Arena City",
     "enemies": [
       "state_agent",
@@ -207,7 +207,7 @@
     "name": "Underground Market",
     "type": "main",
     "act": 1,
-    "description": "Word spreads of a black market beneath the docks. Rare cards, rare risks.",
+    "description": "Beneath the docks, in the part of Port City that doesn't appear on any official map, there's a market that operates on a different economy. Rare goods, rare debts, rare opportunities. The risks are priced accordingly.",
     "location": "Port District",
     "enemies": [
       "dock_thug",
@@ -237,7 +237,7 @@
     "name": "The Dread Pact",
     "type": "main",
     "act": 2,
-    "description": "A shadow faction offers power at a price. Accept their terms and your reputation darkens permanently.",
+    "description": "The shadow faction doesn't announce itself. It presents a set of arrangements, a mutual understanding, an implied future where certain doors stay open. Accept their terms and certain things become possible that weren't before. What becomes impossible is something they'll explain later.",
     "location": "Port District",
     "enemies": [
       "shadow_enforcer",
@@ -282,7 +282,7 @@
     "name": "Varro's Trial",
     "type": "main",
     "act": 2,
-    "description": "The mysterious Varro tests your crew with an elaborate ambush. Survive to earn a powerful ally.",
+    "description": "Varro tests things before he trusts them. The ambush on the ridge road is a test — one that could get you killed if you don't understand that in time. Survive it without hating him for it and you might have the most valuable ally in the city.",
     "location": "Ridge Road",
     "enemies": [
       "varro_decoy",
@@ -318,7 +318,7 @@
     "name": "The First Reckoning",
     "type": "main",
     "act": 2,
-    "description": "Every debt, every favor, every enemy — they all arrive at once. This is the point of no return.",
+    "description": "Every debt you've run up, every favor you've called in, every enemy you've made — they've all arrived at the same hour. This is what the point of no return actually feels like. Less dramatic than you expected. More final.",
     "location": "Arena City",
     "enemies": [
       "reckoning_boss",
@@ -368,7 +368,7 @@
     "name": "The Arena Rises",
     "type": "main",
     "act": 2,
-    "description": "The Lanista opens the grand arena. Fight to establish dominance — rivals watch from every seat.",
+    "description": "The Lanista opens the grand arena for the season's main program. Every rival with ambitions and every patron with influence has a seat. This is the bout that separates the fighters who are remembered from the ones who are replaced.",
     "location": "Arena City",
     "enemies": [
       "arena_vet",
@@ -394,6 +394,14 @@
     "hooks_created": [
       "grand_arena_open"
     ],
+    "hazard": {
+      "name": "Blood on the Sand",
+      "summary": "Arena sand is salted with shards; both sides take 1 true damage each round.",
+      "damage_per_turn": 1,
+      "applies_to": "both",
+      "start_turn": 1,
+      "duration": 4
+    },
     "victory_rewards": {
       "gold": 150
     },
@@ -406,7 +414,7 @@
     "name": "Syndicate Notice",
     "type": "main",
     "act": 2,
-    "description": "The Syndicate sends a message: pay tribute or become a target.",
+    "description": "The Syndicate doesn't threaten in words. They send two men to stand outside your door at noon and not leave until evening. The message is the men. Pay the tribute or become a different kind of lesson for the next person who doesn't.",
     "location": "Port District",
     "enemies": [
       "dock_thug",
@@ -445,7 +453,7 @@
     "name": "The Ridge Passage",
     "type": "main",
     "act": 2,
-    "description": "Open the locked ridge route before it becomes a strategic liability.",
+    "description": "The ridge route has been blocked for three seasons by bandits with Cult connections. Everyone who needs it open has been waiting for someone else to pay the cost of opening it. You're the someone else.",
     "location": "Ridge Road",
     "enemies": [
       "pilgrim_bandit",
@@ -474,7 +482,7 @@
     "name": "Varro's Offer",
     "type": "main",
     "act": 2,
-    "description": "Varro reveals himself — and the network he controls. Join, or walk away with a target on your back.",
+    "description": "Varro has been running a network of informants, sympathisers, and discreet creditors for longer than you've been fighting. He's willing to offer you access. Walk away and he remains neutral. Walk away wrong and he becomes something else.",
     "location": "Ridge Road",
     "enemies": [
       "varro_decoy",
@@ -519,7 +527,7 @@
     "name": "The Cult Demands",
     "type": "main",
     "act": 3,
-    "description": "The Cult's high priest makes a final demand. Refuse and they become enemies. Comply and PIETY soars.",
+    "description": "The high priest of the shrine network arrives in person, which means the demand is significant enough that he didn't trust a messenger. Refuse and the Cult becomes an active obstacle. Comply and you inherit both their faith and their enemies.",
     "location": "Ridge Road",
     "enemies": [
       "cult_zealot",
@@ -572,7 +580,7 @@
     "name": "State Crackdown",
     "type": "main",
     "act": 3,
-    "description": "State soldiers raid the district. Fight through or bribe your way out.",
+    "description": "The State crackdown comes without warning, which means someone tipped them off and that someone knows your schedule. The district is locked down, the usual exits are watched. You have three options and none of them are clean.",
     "location": "Arena City",
     "enemies": [
       "state_soldier",
@@ -601,7 +609,7 @@
     "name": "The Shadow War",
     "type": "main",
     "act": 3,
-    "description": "Shadow faction turf wars spill into your territory. Choose a side — or fight both.",
+    "description": "Two shadow factions have decided that the dock district is worth bleeding over. Their war has no regard for the people who live and work in it. You're in the middle by geography. Choosing a side means inheriting their enemies. Fighting both means inheriting everyone's.",
     "location": "Port District",
     "enemies": [
       "shadow_enforcer",
@@ -655,7 +663,7 @@
     "name": "Debt Collectors",
     "type": "main",
     "act": 3,
-    "description": "Your creditors send heavies. Pay in full — or pay in blood.",
+    "description": "Your creditors have run out of patience and hired the kind of men who don't negotiate. Pay the debt in full today — every coin, no extensions — or the negotiation happens differently. They've done this before. So have you.",
     "location": "Arena City",
     "enemies": [
       "reckoning_enforcer",
@@ -684,7 +692,7 @@
     "name": "The Lanista's Gambit",
     "type": "main",
     "act": 3,
-    "description": "The Lanista bets everything on one match. Win and the arena is yours to command.",
+    "description": "The Lanista has laid her entire position on this match — her contracts, her standing with the State, her ownership of the arena itself. She's not explaining why. She's asking you to win, and she's asking without the usual leverage, which means she's out of it. This is what trust looks like from her.",
     "location": "Arena City",
     "enemies": [
       "arena_vet",
@@ -738,7 +746,7 @@
     "name": "End of Season One",
     "type": "main",
     "act": 3,
-    "description": "The season closes. One final confrontation to cement your legend — or bury it.",
+    "description": "The season closes on a single bout that has taken three acts to arrive at. Everything that happened before was the prelude. The arena is full, the bets are placed, and the story is in its final chapter. What you do in the next hour will be what people say happened for the rest of their lives.",
     "location": "Arena City",
     "enemies": [
       "reckoning_boss",
@@ -768,7 +776,7 @@
     "name": "The Rat Run",
     "type": "side",
     "act": 1,
-    "description": "A local thug owes money to the wrong people. Collect — or walk away.",
+    "description": "A local thug has been borrowing from people who don't lend charitably. He's three payments behind and running out of explanations. Someone has to go collect, and that someone is apparently you. He won't be happy about it.",
     "location": "Arena City",
     "enemies": [
       "alley_thug",
@@ -792,7 +800,7 @@
     "name": "Crowd Favorite",
     "type": "side",
     "act": 1,
-    "description": "Fight a crowd-pleasing exhibition match for extra coin and fame.",
+    "description": "An exhibition bout — no real stakes, just the crowd and the spectacle and the particular pleasure of a clean fight with no political weight attached. These moments don't last long. Enjoy the simplicity of it.",
     "location": "Arena City",
     "enemies": [
       "arena_rookie",
@@ -815,7 +823,7 @@
     "name": "The Lanista's Errand",
     "type": "side",
     "act": 1,
-    "description": "The Lanista needs a quiet favor. No questions, no witnesses.",
+    "description": "The Lanista has an errand that she can't assign to anyone on her official payroll. No questions, no written record, no witnesses who aren't already compromised. She's asked you specifically, which means she's either testing you or she's run out of people she trusts.",
     "location": "Arena City",
     "enemies": [
       "alley_thug",
@@ -859,7 +867,7 @@
     "name": "The Pilgrim Guard",
     "type": "side",
     "act": 2,
-    "description": "Escort pilgrims to the shrine — danger lurks on the ridge.",
+    "description": "A group of pilgrims needs safe passage to the ridge shrine. They're unarmed, they're slow, and the ridge road has been dangerous since the bandit factions moved in. Someone has to walk beside them, and they've asked in the name of their god, which is the kind of ask that costs you nothing to fulfill and everything to refuse.",
     "location": "Ridge Road",
     "enemies": [
       "pilgrim_bandit",
@@ -903,7 +911,7 @@
     "name": "Shrine Debt",
     "type": "side",
     "act": 2,
-    "description": "The shrine priests need muscle. Their gods can't protect them — you can.",
+    "description": "The shrine priests have sent a formal request for protection — formal, because they understand that asking a fighter for help requires acknowledging that their faith isn't sufficient armor. They're right about that. You respect the honesty of it.",
     "location": "Ridge Road",
     "enemies": [
       "cult_acolyte",

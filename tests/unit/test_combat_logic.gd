@@ -27,6 +27,11 @@ func _is_dead(enemy: Dictionary) -> bool:
 func _champion_healed(hp: int, heal: int, max_hp: int) -> int:
 	return min(max_hp, hp + heal)
 
+func _reflected_damage(incoming: int, ratio: float) -> int:
+	if incoming <= 0 or ratio <= 0.0:
+		return 0
+	return maxi(1, int(ceil(float(incoming) * ratio)))
+
 # ── Damage Calculation ────────────────────────────────────────────────────────
 func test_damage_no_armor() -> void:
 	var e = _make_enemy("Grunt", 12, 0, 2)
@@ -109,6 +114,13 @@ func test_poison_stacks_additive() -> void:
 	e["poison"] += 3
 	assert_eq("Poison stacks: 2+3=5", e["poison"], 5)
 
+func test_poison_caps_at_max() -> void:
+	var e = _make_enemy("Victim", 30, 0, 0)
+	e["poison"] = 11
+	var cap = 12
+	e["poison"] = min(e["poison"] + 5, cap)
+	assert_eq("Poison capped at 12 stacks", e["poison"], 12)
+
 func test_poison_zero_does_nothing() -> void:
 	var e = _make_enemy("Clean", 20, 0, 2)
 	e["poison"] = 0
@@ -131,6 +143,12 @@ func test_poison_three_turns() -> void:
 	e = _apply_poison(e)  # -1, poison=0
 	assert_eq("Poison dealt 3+2+1=6 total", e["hp"], 24)
 	assert_eq("Poison expired to 0", e["poison"], 0)
+
+func test_reflect_returns_damage() -> void:
+	var incoming = 10
+	var ratio = 0.5
+	var reflected = _reflected_damage(incoming, ratio)
+	assert_eq("50% reflect from 10 dmg = 5 returned", reflected, 5)
 
 # ── Healing ────────────────────────────────────────────────────────────────────
 func test_heal_restores_hp() -> void:

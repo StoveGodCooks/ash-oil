@@ -166,8 +166,8 @@
     "name": "Curse of Thorns",
     "cost": 0,
     "type": "effect",
-    "effect": "reflect_damage",
-    "power_index": 0.19,
+    "effect": "reflect_thorns",
+    "power_index": 0.32,
     "faction": "SPECTER",
     "is_signature": false
   },

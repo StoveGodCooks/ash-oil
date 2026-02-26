@@ -3,220 +3,240 @@
     "M01": {
       "story_id": "token_arrives",
       "title": "The Token",
-      "brief": "A boy arrives with a wax seal. Someone is warning you. Someone is hunting you.",
+      "brief": "A folded scrap arrives before dawn, wax-sealed with a sigil you don't recognise. The words are plain: they know where you sleep. Marcellus has hired men. Rhesus has hired better ones. The next forty-eight hours will decide which debt gets paid first.",
+      "scene": "The torchlight in your quarters is burning lower than usual. Someone trimmed the wick. Small details — you've learned to notice small details. Outside, the city is already making its bets.",
       "phase": "SURVIVAL",
       "who_hunts": ["Marcellus"],
       "who_helps": ["Rhesus"],
       "meter_impact": { "REPUTATION": 3, "DANGER": 8, "FAITH": 2 },
-      "monologue": "They've already decided my death. Time to decide theirs."
+      "monologue": "They decided my death in a room I've never seen, with men whose names I'll never know. Fair enough. I'll decide theirs in the sand, in front of ten thousand witnesses. The crowd always loved a reversal."
     },
     "M02": {
       "story_id": "empty_arena",
       "title": "The Empty Arena",
-      "brief": "You face Rhesus in rehearsal. You learn the fix is deeper than you thought.",
+      "brief": "Rhesus pulls you aside before the day's bouts. The rehearsal fight isn't a rehearsal. The fix runs deeper than either of you understood — someone above the Lanista has already decided who walks out. Rhesus is as trapped in this as you are. You're going to have to trust each other, which neither of you wants to do.",
+      "scene": "The arena at dawn is a different animal. Empty stands, raked sand, the smell of last night's bonfires still hanging in the air. Your name and Rhesus's are chalked on the program board by the south gate. Neither of you put them there.",
       "phase": "SURVIVAL",
       "who_hunts": ["Marcellus"],
       "who_helps": ["Rhesus"],
       "meter_impact": { "REPUTATION": 5, "DANGER": 3, "FAITH": 4 },
-      "monologue": "Rhesus is as trapped as I am. We're both expensive enough to be valuable."
+      "monologue": "Rhesus is as trapped as I am. We're both expensive enough to be valuable and cheap enough to be discarded. That's the cage. The question is whether we use it against each other or find the door together."
     },
     "M03": {
       "story_id": "theft",
       "title": "The Case",
-      "brief": "You steal a ledger from Sabina. Names. Payments. Corruption pressed into wax.",
+      "brief": "Moth brings word of a ledger — names, payments, every bribe and fixed match Sabina has processed in the last three seasons. If it goes public, Marcellus's whole operation crumbles. If it disappears, nothing changes. Moth and Iona can get you to it, but the extraction is a knife's edge. One wrong move and the Collegium knows you're coming.",
+      "scene": "The Collegium's counting house sits behind a courtyard that smells of wet plaster and old coin. Moth knows a loose bar on the east window. He's a boy with a talent for noticing things people leave unguarded.",
       "phase": "SURVIVAL",
       "who_hunts": ["Marcellus", "Sabina"],
       "who_helps": ["Moth", "Iona"],
       "meter_impact": { "REPUTATION": 4, "DANGER": 12, "COST": 5 },
-      "monologue": "If I don't move it, I can't breathe. If I do, I can't hide."
+      "monologue": "If I don't move it, I can't breathe. If I do, I can't hide. But a man who doesn't move is already dead — he just hasn't been told yet. I've been told."
     },
     "M04": {
       "story_id": "ridge_city",
       "title": "The Quarry Breathes",
-      "brief": "Ridge City. Men cough like it's a rhythm. The magistrate's man finds you.",
+      "brief": "The magistrate's man finds you on the Ridge Road. He knows about the ledger. He doesn't want it destroyed — he wants a copy for himself. The quarry workers cough like it's a rhythm here; they're sick, they're angry, and they're watching you talk to someone who works for the people who made them sick. Choose carefully what that conversation looks like.",
+      "scene": "Ridge City clings to the hillside like it's afraid of falling. The quarry dust gets into everything — your mouth, your lungs, the creases of your hands. Men cough in a steady rhythm here. They've been coughing so long they don't notice it anymore.",
       "phase": "SURVIVAL",
       "who_hunts": ["Marcellus"],
       "who_helps": ["Iona"],
       "meter_impact": { "REPUTATION": 6, "DANGER": 8, "COST": 3 },
-      "monologue": "They want it. I want not to be owned. This is where we find out who blinks first."
+      "monologue": "They want the ledger. I want not to be owned. This is where we find out who blinks first. I've been staring at worse men for longer."
     },
     "M05": {
       "story_id": "port_city",
       "title": "The Quill's Lesson",
-      "brief": "Port City. The Quill owns shadows here. They have Moth. They demand the ledger.",
+      "brief": "The Quill owns the shadow trade in Port City — debts, blackmail, shipment papers that don't quite match the cargo. They have Moth. The ask is simple: surrender the ledger or the boy doesn't come home. Rhesus says pay it. Iona says never negotiate with the Quill. You've got until the tide turns to decide whose advice you trust.",
+      "scene": "Port City doesn't sleep — it shifts. The docks smell of brine and rot and the kind of commerce that doesn't appear in any official tally. Somewhere in one of these warehouses, Moth is waiting to find out if you're coming.",
       "phase": "SURVIVAL",
       "who_hunts": ["Marcellus", "Port Syndicate"],
       "who_helps": ["Moth", "Rhesus"],
       "meter_impact": { "REPUTATION": 7, "DANGER": 6, "ALLIES": 4, "COST": 8 },
-      "monologue": "I said no. That's all I had. But Moth's blood is on my hands now, and that changed something."
+      "monologue": "I said no. That's all I had left to give — one refusal they couldn't buy. Moth's blood is on my hands now, and that changed something permanent in me. I'm no longer just trying to survive."
     },
     "M06": {
       "story_id": "shrine_town",
       "title": "The Shrine Awakens",
-      "brief": "Iona and the shrine network want the ledger. Marcellus's reach extends even here.",
+      "brief": "Iona's shrine network wants the ledger as leverage against the State's crackdown on the Cult. Varro appears for the first time — he claims neutrality, but he knows too much for that to be true. Marcellus's reach extends even here, to the pilgrim roads and the stone shrines. Every hand that touches this ledger pulls the next into the fire.",
+      "scene": "The shrine town sits at the end of a road that narrows to almost nothing. Pilgrims come here to be absolved. Most of them have simpler sins than yours. The smell of incense and old stone and something burning at a distance.",
       "phase": "HOPE",
       "who_hunts": ["Marcellus", "Shrine Network"],
       "who_helps": ["Iona", "Varro"],
       "meter_impact": { "REPUTATION": 8, "DANGER": 4, "FAITH": 6, "ALLIES": 5 },
-      "monologue": "The ledger exists in more hands now. I'm no longer carrying it. I'm becoming it."
+      "monologue": "The ledger exists in more hands now. I'm no longer carrying it — I'm becoming it. Every person who reads those names and understands them is another wall between me and a quiet death."
     },
     "M07": {
       "story_id": "copied_revelation",
       "title": "The Copied Page",
-      "brief": "You discover copies of the ledger spreading. The story can't be buried anymore.",
+      "brief": "Copies of the ledger are moving through the city. Someone — possibly Moth, possibly Iona, possibly someone you've never met — decided the best protection was saturation. The story can't be buried anymore. The Syndicate is furious. The State is watching. And somewhere, Marcellus is deciding what his next move costs.",
+      "scene": "You find the first copy nailed to a fountain post near the Forum Boarium. Then another on the door of a wine shop. Then a third in the hand of a man who looked surprised you noticed him reading it. The city is starting to understand what it's holding.",
       "phase": "HOPE",
       "who_hunts": ["Port Syndicate"],
       "who_helps": ["Iona", "Rhesus"],
       "meter_impact": { "REPUTATION": 9, "DANGER": 2, "FAITH": 5, "ALLIES": 6, "RESISTANCE": 3 },
-      "monologue": "Multiple hands hold the truth now. The machine is afraid. I can feel it."
+      "monologue": "Multiple hands hold the truth now. The machine is afraid — I can feel it in the way it's moving, faster and harder than before. When a machine is afraid, it makes mistakes. I intend to be standing near those mistakes."
     },
     "M08": {
       "story_id": "gathering_allies",
       "title": "Building Opposition",
-      "brief": "Other fighters, merchants, believers—people willing to stand against the narrative.",
+      "brief": "Other fighters, merchants, a dockworker who lost his brother in a fixed match — people willing to stand against the machinery, not because they're brave but because they're done. They're not following you. They're just occupying the same refusal. That's enough. You need to protect that fragile thing before Marcellus finds a way to scatter it.",
+      "scene": "They come at different hours, by different routes, to a warehouse near the south wall that officially stores grain. They don't know each other. They don't particularly trust you. But they all have the same expression when they sit down — the look of someone who has finally stopped being afraid of being afraid.",
       "phase": "HOPE",
       "who_hunts": ["Marcellus"],
       "who_helps": ["Rhesus", "Moth", "Iona", "Varro"],
       "meter_impact": { "REPUTATION": 10, "FAITH": 7, "ALLIES": 8, "RESISTANCE": 4 },
-      "monologue": "They're not following me. They're standing where I stand. That's different. That matters."
+      "monologue": "They're not following me. They're standing where I stand. That's different — that's everything. A movement you lead can be beheaded. A movement that simply exists in many places at once is something else entirely."
     },
     "M09": {
       "story_id": "faction_emergence",
       "title": "The Factions Reveal",
-      "brief": "State, Cult, Syndicate—they all want the ledger. Each has a different vision of control.",
+      "brief": "The State wants the ledger as evidence to consolidate control. The Cult wants it as proof of civic corruption to grow their flock. The Syndicate wants it destroyed or bought. Each faction has a different vision of what the city should be, and all of them are now in the same room, talking about you like you're a piece on their board. You're going to have to learn how to be a piece that moves itself.",
+      "scene": "Iona lays it out plainly on a table in the back of a potter's shop: three factions, three offers, one ledger. Through the window you can see the street. Everyone out there is living inside one of these three visions without knowing it.",
       "phase": "HOPE",
       "who_hunts": ["Marcellus", "Port Syndicate", "Shrine Network"],
       "who_helps": ["Iona"],
       "meter_impact": { "REPUTATION": 8, "FAITH": 8, "ALLIES": 7, "RESISTANCE": 6 },
-      "monologue": "The machine isn't one hand. It's many, fighting each other with my bones as stakes."
+      "monologue": "The machine isn't one hand. It's many, fighting each other with my bones as the stakes. That's useful information — a divided machine has seams. I need to find the seams before it remembers to be unified."
     },
     "M10": {
       "story_id": "rhesus_choice",
       "title": "The Fellow Trapped",
-      "brief": "Rhesus faces his own reckoning. Will he keep the cage, or help break it?",
+      "brief": "Rhesus has been offered his freedom — real freedom, papers and passage and a new name — in exchange for your location. He hasn't taken it yet, which tells you something. But the offer is still on the table. Varro thinks Rhesus will choose correctly. Rhesus thinks you shouldn't need to ask. Someone is wrong, and there's only one way to find out.",
+      "scene": "Rhesus meets you at the old training grounds at the edge of the city. He's been here since the fourth hour, which means he was early, which means he's been thinking. He has the look of a man rehearsing a speech he isn't sure he'll give.",
       "phase": "HOPE",
       "who_hunts": ["Marcellus"],
       "who_helps": ["Rhesus", "Varro"],
       "meter_impact": { "REPUTATION": 11, "ALLIES": 10, "FAITH": 6, "RESISTANCE": 7 },
-      "monologue": "Rhesus chose. His silence was an answer. Now he can't take it back."
+      "monologue": "Rhesus chose. His silence was an answer — the kind you can't unmake. Now he can't take it back, and neither can I. Some decisions matter more for what they close off than what they open."
     },
     "M11": {
       "story_id": "moth_cost",
       "title": "The Boy Becomes Real",
-      "brief": "Moth is no longer just a messenger. He's bleeding for the story, not the coin.",
+      "brief": "Moth is no longer just a messenger. He's been carrying things for you at real risk — documents, meetings, warnings — and the Syndicate has noticed. He came in this morning with three broken fingers and a message that wasn't meant for him. He didn't break. He's not bleeding for coin anymore. He's bleeding for the story, and that's a different and more dangerous thing.",
+      "scene": "He holds his hand flat on the table like he's trying to stop it from moving on its own. Three fingers, wrapped in cloth that used to be his sleeve. He hasn't complained. That's what worries you — a boy who hasn't complained about three broken fingers has made a decision about who he is.",
       "phase": "HOPE",
       "who_hunts": ["Port Syndicate"],
       "who_helps": ["Moth", "Iona"],
       "meter_impact": { "REPUTATION": 9, "ALLIES": 9, "COST": 12, "FAITH": 7 },
-      "monologue": "Moth paid in bruises so I could breathe. I can't undo that. I can only honor it."
+      "monologue": "Moth paid in bruises so I could breathe. I can't undo that. I can only honor it — and make absolutely certain those bruises meant something in the end."
     },
     "M12": {
       "story_id": "varro_reckoning",
       "title": "The Trainer's Bargain",
-      "brief": "Varro made a deal. Now he must choose: the deal or the man.",
+      "brief": "Varro made a deal before you ever met him — a deal that made him useful to the people you're fighting, and that he's been quietly working to undo ever since. Now the people he made the deal with want their end of it, and Varro is deciding whether the man he's become is worth more than the safety the old deal bought. He needs to choose before they force the choice for him.",
+      "scene": "Varro doesn't explain things twice. He explained this once, in a room with one door and no windows, in a voice that sounded like someone who had been carrying a heavy thing for a very long time and had finally decided to set it down.",
       "phase": "HOPE",
       "who_hunts": ["Marcellus"],
       "who_helps": ["Varro", "Rhesus"],
       "meter_impact": { "REPUTATION": 10, "ALLIES": 11, "COST": 10, "FAITH": 8, "RESISTANCE": 8 },
-      "monologue": "Varro is choosing. The weight on his shoulders mirrors the weight on mine. We're bound now."
+      "monologue": "Varro is choosing. The weight on his shoulders mirrors the weight on mine. We're bound now — not by trust, exactly, but by the specific shared knowledge of what it costs to refuse the cage."
     },
     "M13": {
       "story_id": "public_exposure",
       "title": "The Arena Riot",
-      "brief": "The crowd sees the machinery. Marcellus offers a final choice: obey or die.",
+      "brief": "The crowd sees the machinery. Someone — you, or someone acting in your name, or the idea of you that has been spreading through the city — has pulled back the curtain on how the matches are decided, how the bets are placed, who benefits from the performance of danger. Marcellus offers a final choice: obey, disappear, or be made an example of. The crowd is watching to see what you choose.",
+      "scene": "The arena is louder than it has any right to be. The noise has a different quality today — not the hunger for spectacle but something older, the sound of people who have been given a language for their anger and are testing its edges. Half of them don't know what they're angry about yet. They will soon.",
       "phase": "RESISTANCE",
       "who_hunts": ["Marcellus", "City Guard"],
       "who_helps": ["Rhesus", "Varro", "Iona", "Moth"],
       "meter_impact": { "REPUTATION": 15, "COST": 20, "RESISTANCE": 15, "ALLIES": 12, "FAITH": 10 },
-      "monologue": "The crowd knows now. They've been made fools. Marcellus will burn this city to keep his narrative. So will I."
+      "monologue": "The crowd knows now. They've been made fools for years and they've finally been shown the proof of it. Marcellus will burn this city to keep his narrative. So will I — but for different reasons and with different materials."
     },
     "M14": {
       "story_id": "escape_begins",
       "title": "Breaking the Cage",
-      "brief": "Varro sacrifices. The guards chase. You run toward whatever comes next.",
+      "brief": "Varro sacrifices something permanent so you have a window. The guards are already moving. What you do with the next four hours will determine whether everything that came before amounted to anything. You can't go back to any of the places you've been. You can't contact most of the people who helped you. You run toward whatever comes next, which is the only direction left.",
+      "scene": "Varro is still standing when you leave. That detail will stay with you. He chose a position and he held it and he let you go, and his face had the expression of a man who has finally paid his debt in full. The door is behind you. The street is ahead.",
       "phase": "RESISTANCE",
       "who_hunts": ["City Guard", "Marcellus"],
       "who_helps": ["Varro", "Iona", "Moth"],
       "meter_impact": { "REPUTATION": 12, "DANGER": -5, "COST": 25, "RESISTANCE": 10 },
-      "monologue": "Varro bought me time with his body. I can't waste it. I won't."
+      "monologue": "Varro bought me time with his body. I can't waste it — not one hour of it. He knew what he was doing and he did it anyway. That's the kind of gift that demands to be honored."
     },
     "M15": {
       "story_id": "allies_tested",
       "title": "Loyalty Under Fire",
-      "brief": "Rhesus, Iona, Moth—each faces pressure to betray. Each chooses differently.",
+      "brief": "Rhesus is being pressured. Iona's shrine network is fracturing under State scrutiny. Moth has gone quiet — the silence that means either he's safe or he isn't. Each of your allies faces pressure calibrated specifically to what they care about most. Each will choose differently. Some of those choices will hurt.",
+      "scene": "You hear about Rhesus from a dockworker who doesn't know you. You hear about Iona from a shrine priest who's afraid of his own shadow. You hear about Moth from nothing, which is its own kind of information. The machine has learned your network. It's pulling the threads one by one.",
       "phase": "RESISTANCE",
       "who_hunts": ["Marcellus", "Shrine Network", "Port Syndicate"],
       "who_helps": [],
       "meter_impact": { "REPUTATION": 13, "ALLIES": 8, "COST": 15, "FAITH": 5, "RESISTANCE": 12 },
-      "monologue": "Loyalty is tested now. Some will break. Some will burn. I can't save anyone but myself."
+      "monologue": "Loyalty is tested now. Some will break — not from weakness but from the specific weight placed on what they love most. I can't save anyone from that. I can only make sure what they chose mattered."
     },
     "M16": {
       "story_id": "faction_choice",
       "title": "Choosing a Path",
-      "brief": "You must commit to one vision: State order, Cult faith, or Syndicate freedom. Or stand alone.",
+      "brief": "The State offers order and legitimacy. The Cult offers faith and a different kind of power. The Syndicate offers freedom — or its approximation, which is the freedom to be exploited by someone who at least admits what they're doing. Or you stand alone, which is the purest choice and the most expensive. The window for deciding is closing.",
+      "scene": "Three envoys, three meetings, same week. Each one made their case with the practiced confidence of someone accustomed to getting an answer. Each one left without one. They'll be back. The question is which one you want to see when they return.",
       "phase": "RESISTANCE",
       "who_hunts": ["All Factions"],
       "who_helps": [],
       "meter_impact": { "REPUTATION": 14, "FAITH": 12, "RESISTANCE": 14, "COST": 18 },
-      "monologue": "I can wear their colors, or wear none at all. Either way, I'm branded now."
+      "monologue": "I can wear their colors, or wear none at all. Either way, I'm branded now — by what I've done and who I've protected and what I refused. The brand was always coming. The only question was which one."
     },
     "M17": {
       "story_id": "opposition_counters",
       "title": "The Machine Strikes Back",
-      "brief": "Marcellus moves with full force. The city realizes someone is fighting for real.",
+      "brief": "Marcellus moves with full force — not because he's confident but because he's afraid. The story has spread further than he can contain it. The city has started to have conversations he can't monitor. He's going to make an example of someone. The only question is whether it's you or someone close to you, and whether you can move fast enough to prevent either.",
+      "scene": "You hear the guard movements before you see them. Twelve men, coordinated routes, the kind of deployment that costs money and means someone has made a decision. Rhesus sends a single word by courier: now. Iona sends nothing, which means the same thing.",
       "phase": "RESISTANCE",
       "who_hunts": ["Marcellus", "City Guard"],
       "who_helps": ["Rhesus", "Iona"],
       "meter_impact": { "REPUTATION": 16, "DANGER": 8, "RESISTANCE": 16, "COST": 22 },
-      "monologue": "They're afraid. That's when they're most dangerous. They'll burn the city to bury the story."
+      "monologue": "They're afraid. That's when they're most dangerous — not when they're strong but when they're cornered. They'll burn the city to bury the story. I need to make sure the story is already too large to bury."
     },
     "M18": {
       "story_id": "final_stands",
       "title": "Last Line",
-      "brief": "Rhesus, Iona, Moth—each makes their final stand. Some fall. Some survive.",
+      "brief": "Rhesus makes his final stand in a place that means something to both of you. Iona chooses between her faith and her survival, and the choice she makes will define what the shrine network becomes after this. Moth does something reckless and necessary. Some of them will fall. What matters is what they stood for when they did.",
+      "scene": "You don't see Rhesus go down. You hear about it later, from someone who was there, in a voice that meant they hadn't decided yet how to carry what they'd seen. There's a particular silence that follows a person who decided to stand still in the wrong place at the right moment.",
       "phase": "RESISTANCE",
       "who_hunts": ["Marcellus"],
       "who_helps": ["Rhesus"],
       "meter_impact": { "REPUTATION": 17, "ALLIES": 6, "COST": 28, "RESISTANCE": 18 },
-      "monologue": "They died standing. That's a kind of victory the machine can't measure."
+      "monologue": "They died standing. Not heroically — messily, in complicated ways, for reasons that were partly fear and partly love and partly the specific pride of refusing to be what someone else decided they were. That's a kind of victory the machine can't measure."
     },
     "M19": {
       "story_id": "before_reckoning",
       "title": "The Silence Before",
-      "brief": "Preparation. Waiting. The final confrontation looms.",
+      "brief": "Preparation. Waiting. The grinding patience of knowing something is coming and not being able to make it come faster. Moth is the only one still within reach. The final confrontation is not a matter of if anymore. You spend these hours deciding what you want to be when it happens — not what you want to win, but what you want to be.",
+      "scene": "The city feels different when you know it might be the last time you see it. Not smaller — bigger, somehow, and more specific. The baker on the corner. The loose stone in the third arch of the aqueduct. The way the light falls on the arena wall at the seventh hour. You notice things you never bothered to notice before.",
       "phase": "RESISTANCE",
       "who_hunts": ["Marcellus"],
       "who_helps": ["Moth"],
       "meter_impact": { "REPUTATION": 18, "COST": 15, "FAITH": 9, "RESISTANCE": 19 },
-      "monologue": "I've said no a hundred times now. One more no coming. This one will break something."
+      "monologue": "I've said no a hundred times now. One more no coming — the final one. This one will break something, either what he built or what I am. I find I'm strangely at peace with either outcome."
     },
     "M20": {
       "story_id": "final_confrontation",
       "title": "The Noon Blood",
-      "brief": "Face Marcellus. The crowd watches. The machine demands a story. You give it the truth.",
+      "brief": "Face Marcellus in the arena where it started. The crowd watches — not the crowd that came to see a spectacle but the crowd that has spent three seasons learning what the spectacle was hiding. The machine demands a story it can control. You give it the truth instead, which is the one thing it cannot absorb. This is what all of it was for.",
+      "scene": "High noon. The sand is dry and white and specific. Marcellus is already in his box, in the position of a man who has decided how this ends. Below him, ten thousand people who have been given a different version of events. In the sand, you — which is the one variable he forgot to account for.",
       "phase": "RESISTANCE",
       "who_hunts": ["Marcellus"],
       "who_helps": ["Varro", "Rhesus", "Iona", "Moth"],
       "meter_impact": { "REPUTATION": 20, "COST": 30, "FAITH": 10, "RESISTANCE": 20, "ALLIES": 10 },
-      "monologue": "I'm not a hero. I'm just a man who kept saying no until it mattered."
+      "monologue": "I'm not a hero. I never claimed to be. I'm a man who kept saying no until the no accumulated into something that couldn't be ignored — until it became a story the city could tell itself about what's possible. That's enough. That's more than enough."
     }
   },
 
   "story_beats": {
     "token_arrives": {
-      "text": "The boy's message was warning and invitation both: they want you dead, and they've already decided how. That means you still have time.",
+      "text": "The boy's message was warning and invitation both: they want you dead, and they've already decided how. That means you still have time — time being the one resource that can't be bought, only borrowed.",
       "phase": "SURVIVAL",
       "unlocks_missions": ["M02", "M03"],
       "unlocks_lieutenants": []
     },
     "copied_ledger": {
-      "text": "You realize the ledger exists in multiple hands now. You're no longer the only weapon. You're the story.",
+      "text": "You realize the ledger exists in multiple hands now. You're no longer the only weapon — you're the story, and stories are harder to kill than people. Harder, but not impossible. The machine knows this.",
       "phase": "HOPE",
       "unlocks_missions": ["M06", "M07", "M08"],
       "unlocks_lieutenants": []
     },
     "public_exposure": {
-      "text": "The arena riot showed the crowd the machinery that moves them. Now they're angry. Now it matters.",
+      "text": "The arena riot showed the crowd the machinery that moves them. Now they're angry. Now it matters — not as an abstraction but as a specific, material fact in the streets of a city that has finally been given the language for its own frustration.",
       "phase": "RESISTANCE",
       "unlocks_missions": ["M13", "M14", "M15"],
       "unlocks_lieutenants": []

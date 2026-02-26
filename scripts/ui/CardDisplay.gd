@@ -1,10 +1,15 @@
 extends Control
 ## Card display — faction glyph design, built entirely in code.
 ## Swap to real portrait art later with zero code changes.
+## Batch 5A: Enhanced layered faction zones, glyphs, cost badges, name ribbons.
 
 signal card_pressed()
 
-# ── Parchment & Wax palette ──
+# ── Size variants ──
+enum CardSize { SMALL = 0, MEDIUM = 1, LARGE = 2 }
+var current_size: CardSize = CardSize.MEDIUM
+
+# ── Parchment & Wax palette (legacy, override with UITheme) ──
 const CLR_BG      = Color(0.08, 0.065, 0.050)
 const CLR_PANEL   = Color(0.14, 0.110, 0.080)
 const CLR_BORDER  = Color(0.42, 0.320, 0.160)
@@ -85,25 +90,25 @@ func _build_card() -> void:
 	card_bg.mouse_filter = MOUSE_FILTER_IGNORE
 	add_child(card_bg)
 
-	# 3 — Faction colour zone (top 58%)
+	# 3 — Faction colour zone (top 42% per spec)
 	_faction_bg = ColorRect.new()
 	_faction_bg.color = FACTION_COLOR.get("NEUTRAL", Color(0.12, 0.10, 0.08, 0.90))
 	_faction_bg.anchor_left   = 0.0; _faction_bg.anchor_right  = 1.0
-	_faction_bg.anchor_top    = 0.0; _faction_bg.anchor_bottom = 0.58
+	_faction_bg.anchor_top    = 0.0; _faction_bg.anchor_bottom = 0.42
 	_faction_bg.offset_left   = 2;   _faction_bg.offset_right  = -2
 	_faction_bg.offset_top    = 2;   _faction_bg.offset_bottom = 0
 	_faction_bg.mouse_filter  = MOUSE_FILTER_IGNORE
 	add_child(_faction_bg)
 
-	# 4 — Large faction glyph (watermark style, low opacity)
+	# 4 — Large faction glyph (watermark style, 25% opacity per spec)
 	_faction_glyph = Label.new()
 	_faction_glyph.text = FACTION_GLYPH.get("NEUTRAL", "⚔")
 	_faction_glyph.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	_faction_glyph.vertical_alignment   = VERTICAL_ALIGNMENT_CENTER
 	_faction_glyph.add_theme_font_size_override("font_size", 54)
-	_faction_glyph.add_theme_color_override("font_color", Color(1, 1, 1, 0.16))
+	_faction_glyph.add_theme_color_override("font_color", Color(1, 1, 1, 0.25))
 	_faction_glyph.anchor_left   = 0.0; _faction_glyph.anchor_right  = 1.0
-	_faction_glyph.anchor_top    = 0.0; _faction_glyph.anchor_bottom = 0.58
+	_faction_glyph.anchor_top    = 0.0; _faction_glyph.anchor_bottom = 0.42
 	_faction_glyph.offset_left   = 0;   _faction_glyph.offset_right  = 0
 	_faction_glyph.offset_top    = 0;   _faction_glyph.offset_bottom = 0
 	_faction_glyph.mouse_filter  = MOUSE_FILTER_IGNORE
@@ -116,8 +121,8 @@ func _build_card() -> void:
 	_type_icon.add_theme_font_size_override("font_size", 30)
 	_type_icon.add_theme_color_override("font_color", Color(1.0, 1.0, 1.0, 0.92))
 	_type_icon.anchor_left = 0.0; _type_icon.anchor_right = 1.0
-	_type_icon.anchor_top = 0.0; _type_icon.anchor_bottom = 0.58
-	_type_icon.offset_top = 18
+	_type_icon.anchor_top = 0.0; _type_icon.anchor_bottom = 0.42
+	_type_icon.offset_top = 4
 	_type_icon.offset_bottom = 0
 	_type_icon.mouse_filter = MOUSE_FILTER_IGNORE
 	add_child(_type_icon)
@@ -153,18 +158,18 @@ func _build_card() -> void:
 	add_child(_hover_glow)
 	move_child(_hover_glow, 0)
 
-	# 6 — Name ribbon (horizontal band at ~58% height)
+	# 6 — Name ribbon (horizontal band at 42% height, 20px tall per spec)
 	var ribbon = PanelContainer.new()
 	var rib_style = StyleBoxFlat.new()
-	rib_style.bg_color = Color(CLR_STONE.r, CLR_STONE.g, CLR_STONE.b, 0.95)
-	rib_style.border_width_top    = 1
-	rib_style.border_width_bottom = 1
-	rib_style.border_color = CLR_BORDER
+	rib_style.bg_color = UITheme.CLR_STONE if (UITheme != null) else Color(CLR_STONE.r, CLR_STONE.g, CLR_STONE.b, 0.85)
+	rib_style.border_width_top    = 0
+	rib_style.border_width_bottom = 0
+	rib_style.border_color = UITheme.CLR_BRONZE if (UITheme != null) else CLR_BORDER
 	ribbon.add_theme_stylebox_override("panel", rib_style)
 	ribbon.anchor_left   = 0.0;  ribbon.anchor_right  = 1.0
-	ribbon.anchor_top    = 0.58; ribbon.anchor_bottom = 0.58
+	ribbon.anchor_top    = 0.42; ribbon.anchor_bottom = 0.42
 	ribbon.offset_left   = 2;    ribbon.offset_right  = -2
-	ribbon.offset_top    = 0;    ribbon.offset_bottom = 22
+	ribbon.offset_top    = 0;    ribbon.offset_bottom = 26
 	ribbon.mouse_filter  = MOUSE_FILTER_IGNORE
 	add_child(ribbon)
 
@@ -178,65 +183,45 @@ func _build_card() -> void:
 
 	_name_label = Label.new()
 	_name_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	_name_label.add_theme_font_size_override("font_size", 11)
-	_name_label.add_theme_color_override("font_color", CLR_ACCENT)
+	_name_label.add_theme_font_size_override("font_size", UITheme.FONT_SIZE_CAPTION if (UITheme != null) else 12)
+	_name_label.add_theme_color_override("font_color", UITheme.CLR_VELLUM if (UITheme != null) else CLR_ACCENT)
 	_name_label.text = "Card Name"
 	_name_label.autowrap_mode = TextServer.AUTOWRAP_WORD
+	_name_label.custom_minimum_size = Vector2(0, 20)
 	rib_margin.add_child(_name_label)
 
-	# 7 — Cost badge (top-left corner)
+	# 7 — Cost badge (top-left corner, gold circle per spec)
 	var cost_badge = PanelContainer.new()
 	var badge_style = StyleBoxFlat.new()
-	badge_style.bg_color = Color(0.05, 0.04, 0.03, 0.92)
-	badge_style.border_width_right  = 1
-	badge_style.border_width_bottom = 1
-	badge_style.border_color = CLR_BORDER
-	badge_style.corner_radius_bottom_right = 5
-	badge_style.content_margin_left   = 3
-	badge_style.content_margin_right  = 3
-	badge_style.content_margin_top    = 1
-	badge_style.content_margin_bottom = 1
+	badge_style.bg_color = UITheme.CLR_GOLD if (UITheme != null) else Color(0.86, 0.70, 0.28)
+	badge_style.border_width_left = 0
+	badge_style.border_width_right = 0
+	badge_style.border_width_top = 0
+	badge_style.border_width_bottom = 0
+	badge_style.corner_radius_top_left = 11
+	badge_style.corner_radius_top_right = 11
+	badge_style.corner_radius_bottom_left = 11
+	badge_style.corner_radius_bottom_right = 11
+	badge_style.content_margin_left   = 0
+	badge_style.content_margin_right  = 0
+	badge_style.content_margin_top    = 0
+	badge_style.content_margin_bottom = 0
 	cost_badge.add_theme_stylebox_override("panel", badge_style)
+	cost_badge.custom_minimum_size = Vector2(22, 22)
 	cost_badge.anchor_left   = 0.0; cost_badge.anchor_right  = 0.0
 	cost_badge.anchor_top    = 0.0; cost_badge.anchor_bottom = 0.0
-	cost_badge.offset_left   = 2;   cost_badge.offset_right  = 24
-	cost_badge.offset_top    = 2;   cost_badge.offset_bottom = 22
+	cost_badge.offset_left   = 5;   cost_badge.offset_right  = 27
+	cost_badge.offset_top    = 5;   cost_badge.offset_bottom = 27
 	cost_badge.mouse_filter  = MOUSE_FILTER_IGNORE
 	add_child(cost_badge)
 
 	_cost_label = Label.new()
 	_cost_label.text = "0"
 	_cost_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	_cost_label.add_theme_font_size_override("font_size", 12)
-	_cost_label.add_theme_color_override("font_color", CLR_ACCENT)
+	_cost_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	_cost_label.add_theme_font_size_override("font_size", UITheme.FONT_BODY if (UITheme != null) else 14)
+	_cost_label.add_theme_color_override("font_color", UITheme.CLR_VOID if (UITheme != null) else Color(0.07, 0.06, 0.05))
 	cost_badge.add_child(_cost_label)
-
-	# 8 — Stats + effect area (below ribbon)
-	var stats_area = VBoxContainer.new()
-	stats_area.add_theme_constant_override("separation", 2)
-	stats_area.anchor_left   = 0.0;  stats_area.anchor_right  = 1.0
-	stats_area.anchor_top    = 0.58; stats_area.anchor_bottom = 1.0
-	stats_area.offset_left   = 5;    stats_area.offset_right  = -5
-	stats_area.offset_top    = 24;   stats_area.offset_bottom = -4
-	stats_area.mouse_filter  = MOUSE_FILTER_IGNORE
-	add_child(stats_area)
-
-	_stats_label = Label.new()
-	_stats_label.add_theme_font_size_override("font_size", 10)
-	_stats_label.add_theme_color_override("font_color", CLR_TEXT)
-	_stats_label.text = ""
-	stats_area.add_child(_stats_label)
-
-	var sep = HSeparator.new()
-	sep.add_theme_color_override("color", CLR_BORDER)
-	stats_area.add_child(sep)
-
-	_effect_label = Label.new()
-	_effect_label.add_theme_font_size_override("font_size", 10)
-	_effect_label.add_theme_color_override("font_color", CLR_MUTED)
-	_effect_label.autowrap_mode = TextServer.AUTOWRAP_WORD
-	_effect_label.text = ""
-	stats_area.add_child(_effect_label)
 
 	_unplayable_x = Label.new()
 	_unplayable_x.text = "✖"
@@ -289,6 +274,21 @@ func set_card(card_id: String) -> void:
 
 func set_card_size(card_size: Vector2) -> void:
 	custom_minimum_size = card_size
+	# Determine size variant based on width
+	if card_size.x <= 110:
+		current_size = CardSize.SMALL
+	elif card_size.x <= 150:
+		current_size = CardSize.MEDIUM
+	else:
+		current_size = CardSize.LARGE
+
+	# Show/hide elements based on size
+	if _stats_label:
+		_stats_label.visible = (current_size != CardSize.SMALL)
+	if _effect_label:
+		_effect_label.visible = (current_size == CardSize.LARGE)
+	if _type_icon:
+		_type_icon.visible = (current_size != CardSize.SMALL)
 
 func set_hovered(active: bool) -> void:
 	# Avoid heavy full-card glow; keep hover emphasis to motion/outline elsewhere.

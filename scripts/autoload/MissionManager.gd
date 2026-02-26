@@ -57,6 +57,19 @@ func complete_mission(id: String, outcome: String = "victory") -> void:
 	if outcome == "retreat": multiplier = 0.5
 	elif outcome == "defeat": multiplier = 0.25
 
+	# Thane "Arena Fav": +5 RENOWN bonus on arena mission victories
+	var mission_location: String = str(mission.get("location", ""))
+	if outcome == "victory" and mission_location == "Arena City":
+		var has_thane := false
+		for lt_id in GameState.active_lieutenants:
+			var lt_d: Dictionary = CardManager.get_lieutenant(str(lt_id))
+			if str(lt_d.get("trait", "")) == "Arena Fav":
+				has_thane = true
+				break
+		if has_thane:
+			GameState.change_meter("RENOWN", 5)
+			print("[Thane] Arena Fav: +5 RENOWN from crowd favor.")
+
 	var meters = mission.get("meter_changes", {})
 	for meter in meters:
 		GameState.change_meter(meter, int(meters[meter] * multiplier))

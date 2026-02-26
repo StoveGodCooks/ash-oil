@@ -184,7 +184,7 @@ func test_livia_recruited_after_m04() -> void:
 	assert_true("Livia recruited after M04", bool(livia.get("recruited", false)))
 
 func test_all_lieutenants_unlock_missions_exist() -> void:
-	var lt_data = CardManager.lieutenant_data
+	var lt_data = CardManager.lieutenants_data
 	var bad = []
 	for lt_id in lt_data.keys():
 		var unlock_id = lt_data[lt_id].get("unlock_mission", "")

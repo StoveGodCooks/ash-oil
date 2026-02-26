@@ -5,6 +5,7 @@ extends PanelContainer
 
 var title_label: Label
 var brief_label: Label
+var scene_label: Label
 var hunts_label: Label
 var helps_label: Label
 var monologue_label: Label
@@ -25,8 +26,16 @@ func _ready() -> void:
 	hide()
 
 func _build_ui() -> void:
-	add_theme_stylebox_override("panel", UITheme.make_panel_style(true))
-	custom_minimum_size = Vector2(420, 520)
+	# Modal panel with CLR_GOLD 2px border per spec
+	var panel_style := UITheme.panel_raised()
+	panel_style.border_color = UITheme.CLR_GOLD
+	panel_style.border_width_left = 2
+	panel_style.border_width_top = 2
+	panel_style.border_width_right = 2
+	panel_style.border_width_bottom = 2
+	add_theme_stylebox_override("panel", panel_style)
+	custom_minimum_size = Vector2(560, 580)
+	set_anchors_preset(Control.PRESET_CENTER)
 
 	var vbox := VBoxContainer.new()
 	vbox.add_theme_constant_override("separation", UITheme.PAD_SM)
@@ -52,6 +61,14 @@ func _build_ui() -> void:
 	brief_label.autowrap_mode = TextServer.AUTOWRAP_WORD
 	brief_label.custom_minimum_size = Vector2(0, 64)
 	vbox.add_child(brief_label)
+
+	scene_label = Label.new()
+	UITheme.style_body(scene_label, UITheme.FONT_SIZE_BODY)
+	scene_label.add_theme_color_override("font_color", UITheme.CLR_MUTED)
+	scene_label.autowrap_mode = TextServer.AUTOWRAP_WORD
+	scene_label.custom_minimum_size = Vector2(0, 48)
+	scene_label.visible = false
+	vbox.add_child(scene_label)
 
 	var intel_panel := PanelContainer.new()
 	intel_panel.add_theme_stylebox_override("panel", UITheme.make_panel_style())
@@ -85,7 +102,7 @@ func _build_ui() -> void:
 	UITheme.style_body(monologue_label, UITheme.FONT_SECONDARY, true)
 	monologue_label.add_theme_color_override("font_color", UITheme.COLOR_TEXT_DIM)
 	monologue_label.autowrap_mode = TextServer.AUTOWRAP_WORD
-	monologue_label.custom_minimum_size = Vector2(0, 60)
+	monologue_label.custom_minimum_size = Vector2(0, 80)
 	vbox.add_child(monologue_label)
 
 	var meter_title := Label.new()
@@ -125,6 +142,12 @@ func set_mission(mission_id: String) -> void:
 	# Set title and brief
 	title_label.text = hook.get("title", mission_id)
 	brief_label.text = hook.get("brief", "")
+
+	# Show atmospheric scene description if present
+	var scene_text: String = hook.get("scene", "")
+	if scene_label != null:
+		scene_label.text = scene_text
+		scene_label.visible = scene_text != ""
 
 	# Show who's hunting
 	var who_hunts = hook.get("who_hunts", [])

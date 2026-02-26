@@ -9,9 +9,11 @@ const CARD_HOVER_LIFT_PX: float = 14.0
 const CARD_HOVER_TIME: float = 0.15
 const CARD_PLAY_MOVE_TIME: float = 0.35
 const CARD_PLAY_PULSE_TIME: float = 0.10
+const MAX_POISON_STACKS: int = 12
 const HAND_REFLOW_TIME: float = 0.20
 const HAND_REFLOW_SHIFT: float = 112.0
 const CARD_DISPLAY_SCRIPT = preload("res://scripts/ui/CardDisplay.gd")
+const CARD_DISPLAY_SCENE = preload("res://scenes/CardDisplay.tscn")
 const ENEMY_SLOT_COUNT: int = 5
 const UI_BG: Color = Color(0.07, 0.06, 0.05, 1.0)
 const UI_TEXT: Color = Color(0.90, 0.88, 0.84, 1.0)
@@ -23,6 +25,7 @@ const UI_ACCENT_COLD: Color = Color(0.58, 0.76, 0.92, 1.0)
 var champion_hp: int = 30
 var champion_max_hp: int = 30
 var champion_armor: int = 0
+var last_ui_champion_armor: int = 0  # tracks armor for animation
 
 var lt_name: String = "Marcus"
 var lt_hp: int = 25
@@ -35,10 +38,10 @@ var deck: Array = []
 var discard_pile: Array = []
 var selected_enemy_idx: int = -1
 
-var stamina: int = 3
-var mana: int = 0
-var max_mana: int = 3
-var mana_regen_per_turn: int = 0
+var command_points: int = 5
+var max_command_points: int = 5
+var last_ui_command_points: int = 5  # tracks CP for animation
+var gear_start_cp_bonus: int = 0    # flat bonus CP at combat start (from gear)
 var turn: int = 1
 var combat_over: bool = false
 var player_won: bool = false
@@ -48,15 +51,15 @@ var opening_draw_bonus: int = 0
 var gear_flat_damage_bonus: int = 0
 var gear_draw_per_turn_bonus: int = 0
 var gear_opening_draw_bonus: int = 0
-var gear_start_mana_bonus: int = 0
-var gear_first_turn_stamina_bonus: int = 0
-var max_stamina_per_turn: int = 3
+var reflect_ratio: float = 0.0            # percent of incoming dmg reflected back (0.0–1.0)
+var reflect_turns: int = 0                # remaining turns the reflect buff is active
+var hazard_data: Dictionary = {}          # optional mission hazard (damage-over-time, etc.)
+var hazard_intro_shown: bool = false
 
 # ============ UI REFERENCES ============
 var log_label: Label
 var health_label: Label
-var stamina_label: Label
-var mana_label: Label
+var cp_label: Label
 var turn_label: Label
 var champion_label: Label
 var lt_label: Label
@@ -80,6 +83,9 @@ var enemy_armor_label: Label
 var player_portrait_panel_ref: Control
 var hover_tooltip_panel: PanelContainer
 var hover_tooltip_label: Label
+var card_popup_panel: PanelContainer = null
+var hover_card_display: Control = null
+var hover_effect_label: Label = null
 var player_hp_bar: ProgressBar
 var player_stats_panel_ref: Control
 var player_party_cards: Array = []
@@ -181,14 +187,13 @@ func _init_state() -> void:
 	champion_hp = 30
 	champion_max_hp = 30
 	champion_armor = 0
+	last_ui_champion_armor = 0
 	gear_flat_damage_bonus = 0
 	gear_draw_per_turn_bonus = 0
 	gear_opening_draw_bonus = 0
-	gear_start_mana_bonus = 0
-	gear_first_turn_stamina_bonus = 0
-	max_stamina_per_turn = 3
-	max_mana = 3
-	mana_regen_per_turn = 0
+	gear_start_cp_bonus = 0
+	max_command_points = 5
+	last_ui_command_points = 5
 	_init_lieutenant_state()
 	_resolve_mission_context()
 
@@ -203,11 +208,13 @@ func _init_state() -> void:
 	deck.shuffle()
 	hand = []
 	discard_pile = []
-	stamina = max_stamina_per_turn
-	mana = 0
+	command_points = max_command_points
 	turn = 1
 	combat_over = false
 	last_ui_champion_hp = champion_hp
+	reflect_ratio = 0.0
+	reflect_turns = 0
+	hazard_intro_shown = false
 	_apply_equipped_gear_bonuses()
 
 func _build_ui() -> void:
@@ -275,7 +282,7 @@ func _build_ui() -> void:
 
 	var enemy_bg = ColorRect.new()
 	enemy_bg.set_anchors_preset(Control.PRESET_FULL_RECT)
-	enemy_bg.color = Color(0.16, 0.11, 0.10, 0.42)
+	enemy_bg.color = Color(0.10, 0.14, 0.16, 0.50)  # Cool-dark blue zone
 	enemy_zone.add_child(enemy_bg)
 
 	var enemy_margin = MarginContainer.new()
@@ -367,6 +374,21 @@ func _build_ui() -> void:
 	middle_bg.color = Color(0.10, 0.10, 0.10, 0.55)
 	middle_zone.add_child(middle_bg)
 
+	# Gold divider lines at top and bottom of middle zone
+	var divider_top = ColorRect.new()
+	divider_top.set_anchors_preset(Control.PRESET_TOP_WIDE)
+	divider_top.offset_bottom = 2
+	divider_top.color = UITheme.CLR_GOLD
+	divider_top.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	middle_zone.add_child(divider_top)
+
+	var divider_bottom = ColorRect.new()
+	divider_bottom.set_anchors_preset(Control.PRESET_BOTTOM_WIDE)
+	divider_bottom.offset_top = -2
+	divider_bottom.color = UITheme.CLR_GOLD
+	divider_bottom.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	middle_zone.add_child(divider_bottom)
+
 	var middle_margin = MarginContainer.new()
 	middle_margin.set_anchors_preset(Control.PRESET_FULL_RECT)
 	middle_margin.add_theme_constant_override("margin_left", 12)
@@ -406,7 +428,7 @@ func _build_ui() -> void:
 	log_label = Label.new()
 	log_label.text = "Combat begins..."
 	log_label.add_theme_font_size_override("font_size", 13)
-	log_label.add_theme_color_override("font_color", UI_TEXT_MUTED)
+	log_label.add_theme_color_override("font_color", UITheme.CLR_PARCHMENT)
 	log_label.autowrap_mode = LOG_AUTOWRAP_MODE
 	log_label.custom_minimum_size = Vector2(0, 96)
 	middle_vbox.add_child(log_label)
@@ -421,7 +443,7 @@ func _build_ui() -> void:
 
 	var player_bg = ColorRect.new()
 	player_bg.set_anchors_preset(Control.PRESET_FULL_RECT)
-	player_bg.color = Color(0.12, 0.10, 0.10, 0.60)
+	player_bg.color = Color(0.18, 0.12, 0.08, 0.55)  # Warm-dark orange/brown zone
 	player_zone.add_child(player_bg)
 
 	var player_margin = MarginContainer.new()
@@ -467,15 +489,22 @@ func _build_ui() -> void:
 	health_label = Label.new()
 	health_label.text = "Health: %d/%d" % [champion_hp, champion_max_hp]
 	health_label.add_theme_font_size_override("font_size", 16)
-	health_label.add_theme_color_override("font_color", UI_TEXT)
+	health_label.add_theme_color_override("font_color", UITheme.CLR_VELLUM)
 	res_vbox.add_child(health_label)
 
 	player_hp_bar = ProgressBar.new()
 	player_hp_bar.min_value = 0
 	player_hp_bar.max_value = champion_max_hp
 	player_hp_bar.value = champion_hp
-	player_hp_bar.custom_minimum_size = Vector2(240, 16)
+	player_hp_bar.custom_minimum_size = Vector2(240, 12)
 	player_hp_bar.show_percentage = false
+	# Style HP bar with red/blood color
+	var hp_bg_style = StyleBoxFlat.new()
+	hp_bg_style.bg_color = Color(0.20, 0.12, 0.12, 0.8)
+	player_hp_bar.add_theme_stylebox_override("background", hp_bg_style)
+	var hp_fill_style = StyleBoxFlat.new()
+	hp_fill_style.bg_color = UITheme.CLR_BLOOD
+	player_hp_bar.add_theme_stylebox_override("fill", hp_fill_style)
 	res_vbox.add_child(player_hp_bar)
 
 	var armor_label = Label.new()
@@ -484,15 +513,11 @@ func _build_ui() -> void:
 	armor_label.add_theme_color_override("font_color", UI_ACCENT_COLD)
 	res_vbox.add_child(armor_label)
 
-	mana_label = Label.new()
-	mana_label.text = "Mana: %d/%d" % [mana, max_mana]
-	mana_label.add_theme_font_size_override("font_size", 14)
-	res_vbox.add_child(mana_label)
-
-	stamina_label = Label.new()
-	stamina_label.text = "Stamina: %d/%d" % [stamina, max_stamina_per_turn]
-	stamina_label.add_theme_font_size_override("font_size", 14)
-	res_vbox.add_child(stamina_label)
+	cp_label = Label.new()
+	cp_label.text = "CP: %d/%d" % [command_points, max_command_points]
+	cp_label.add_theme_font_size_override("font_size", 14)
+	cp_label.add_theme_color_override("font_color", UITheme.CLR_GOLD)
+	res_vbox.add_child(cp_label)
 
 	lt_label = Label.new()
 	lt_label.text = _get_lt_display()
@@ -544,7 +569,11 @@ func _build_ui() -> void:
 	end_turn_btn = Button.new()
 	end_turn_btn.text = "END TURN"
 	end_turn_btn.custom_minimum_size = Vector2(0, 60)
+	UITheme.style_button(end_turn_btn, "END TURN", 60)
 	end_turn_btn.pressed.connect(_on_end_turn)
+	end_turn_btn.mouse_entered.connect(_on_end_turn_btn_entered)
+	end_turn_btn.mouse_exited.connect(_on_end_turn_btn_exited)
+	_apply_button_press_bounce(end_turn_btn)
 	action_vbox.add_child(end_turn_btn)
 
 	undo_btn = Button.new()
@@ -552,14 +581,20 @@ func _build_ui() -> void:
 	undo_btn.custom_minimum_size = Vector2(0, 46)
 	undo_btn.disabled = true
 	undo_btn.tooltip_text = "Undo card plays this turn until End Turn is pressed."
+	undo_btn.add_theme_font_size_override("font_size", UITheme.FONT_SECONDARY)
+	undo_btn.add_theme_color_override("font_color", UITheme.CLR_VELLUM)
+	undo_btn.add_theme_stylebox_override("normal", UITheme.btn_secondary())
+	undo_btn.add_theme_stylebox_override("disabled", UITheme.panel_inset())
 	undo_btn.pressed.connect(_on_undo_pressed)
+	_apply_button_press_bounce(undo_btn)
 	action_vbox.add_child(undo_btn)
 
 	var retreat_btn = Button.new()
 	retreat_btn.text = "RETREAT"
 	retreat_btn.custom_minimum_size = Vector2(0, 54)
-	retreat_btn.modulate = Color(1.0, 0.86, 0.86)
+	UITheme.style_button(retreat_btn, "RETREAT", 54)
 	retreat_btn.pressed.connect(_on_retreat)
+	_apply_button_press_bounce(retreat_btn)
 	action_vbox.add_child(retreat_btn)
 
 	# DEBUG / STATUS BAR (4%) — visible only in debug builds.
@@ -604,6 +639,43 @@ func _build_ui() -> void:
 	hover_tooltip_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
 	hover_tooltip_label.vertical_alignment = VERTICAL_ALIGNMENT_TOP
 	hover_tooltip_panel.add_child(hover_tooltip_label)
+
+	# Full card pop-out (appears above hovered hand card)
+	card_popup_panel = PanelContainer.new()
+	card_popup_panel.visible = false
+	card_popup_panel.modulate.a = 0.0
+	card_popup_panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	card_popup_panel.z_index = 250
+	var popup_style := StyleBoxFlat.new()
+	popup_style.bg_color = UITheme.CLR_STONE
+	popup_style.border_color = UITheme.CLR_BRONZE
+	popup_style.border_width_left = 2
+	popup_style.border_width_top = 2
+	popup_style.border_width_right = 2
+	popup_style.border_width_bottom = 2
+	popup_style.content_margin_left = 8
+	popup_style.content_margin_right = 8
+	popup_style.content_margin_top = 8
+	popup_style.content_margin_bottom = 8
+	card_popup_panel.add_theme_stylebox_override("panel", popup_style)
+	add_child(card_popup_panel)
+
+	var popup_vbox := VBoxContainer.new()
+	popup_vbox.add_theme_constant_override("separation", 8)
+	card_popup_panel.add_child(popup_vbox)
+
+	hover_card_display = CARD_DISPLAY_SCENE.instantiate()
+	hover_card_display.set_card_size(Vector2(160, 240))
+	hover_card_display.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	popup_vbox.add_child(hover_card_display)
+
+	hover_effect_label = Label.new()
+	hover_effect_label.custom_minimum_size = Vector2(160, 0)
+	hover_effect_label.add_theme_font_size_override("font_size", UITheme.FONT_SIZE_CAPTION)
+	hover_effect_label.add_theme_color_override("font_color", UITheme.CLR_PARCHMENT)
+	hover_effect_label.autowrap_mode = TextServer.AUTOWRAP_WORD
+	hover_effect_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	popup_vbox.add_child(hover_effect_label)
 
 	# Side-wall party rails — both parented to rail_overlay (full-screen).
 	var player_rail = PanelContainer.new()
@@ -1076,11 +1148,11 @@ func _start_turn() -> void:
 	turn_undo_stack.clear()
 	_update_undo_state()
 	_set_enemy_card_slot_state(-1, "empty")
-	stamina = max_stamina_per_turn
-	if turn == 1 and gear_first_turn_stamina_bonus > 0:
-		stamina += gear_first_turn_stamina_bonus
-	if mana_regen_per_turn > 0:
-		mana = min(max_mana, mana + mana_regen_per_turn)
+	command_points = max_command_points
+	last_ui_command_points = command_points  # Reset animation tracker
+	if turn == 1 and gear_start_cp_bonus > 0:
+		command_points += gear_start_cp_bonus
+		last_ui_command_points = command_points
 	var draw_count = BASE_TURN_DRAW
 	draw_count += gear_draw_per_turn_bonus
 	if turn == 1 and opening_draw_bonus > 0:
@@ -1089,7 +1161,15 @@ func _start_turn() -> void:
 		draw_count += gear_opening_draw_bonus
 	_draw_cards(draw_count)
 	_update_all_ui()
-	_log("--- Turn %d --- Draw %d cards. Stamina restored." % [turn, draw_count])
+	_log("--- Turn %d --- Draw %d cards. CP restored to %d." % [turn, draw_count, command_points])
+	# Kara: Tracker — reveal enemy damage intent at turn start
+	if _has_lt_trait("Tracker"):
+		var intents: Array[String] = []
+		for enemy in enemies:
+			if int(enemy.get("hp", 0)) > 0:
+				intents.append("%s (%d dmg)" % [str(enemy.get("name", "?")), int(enemy.get("damage", 0))])
+		if not intents.is_empty():
+			_log("Kara's Tracker: Enemies this turn — %s" % ", ".join(intents))
 
 func _draw_cards(n: int) -> void:
 	for i in range(n):
@@ -1116,7 +1196,7 @@ func _update_hand_ui() -> void:
 			continue
 
 		var cost = card_data.get("cost", 1)
-		var can_play = (cost <= stamina)
+		var can_play = (cost <= command_points)
 
 		var card_view: Control = CARD_DISPLAY_SCRIPT.new()
 		card_view.custom_minimum_size = Vector2(124, 186)
@@ -1125,7 +1205,7 @@ func _update_hand_ui() -> void:
 		card_view.call("set_card", card_id)
 		card_view.tooltip_text = "%s\nCost: %d\n%s" % [card_data.get("name", "?"), cost, _get_card_desc(card_data)]
 		card_view.set_meta("can_play", can_play)
-		card_view.set_meta("hover_tip", "%s\nCost: %d\n%s" % [card_data.get("name", "?"), cost, _get_card_desc(card_data)])
+		card_view.set_meta("hover_card_id", card_id)
 		if not can_play or combat_over:
 			card_view.modulate = Color(0.72, 0.72, 0.72, 0.9)
 
@@ -1134,9 +1214,23 @@ func _update_hand_ui() -> void:
 		card_view.mouse_exited.connect(_on_card_hover_exited.bind(card_view))
 		card_view.connect("card_pressed", _on_card_pressed.bind(i, card_view))
 
+		# Setup for slide-in animation
+		card_view.modulate.a = 0.0
+		card_view.position.y += 24.0
+
 		hand_container.add_child(card_view)
 
 	_apply_hand_fan()
+
+	# Animate card draw with staggered entrance
+	var children = hand_container.get_children()
+	for idx in range(children.size()):
+		var card = children[idx]
+		var delay = idx * 0.05 * _scaled_time(1.0)
+		var tween = create_tween()
+		tween.set_parallel(true)
+		tween.tween_property(card, "modulate:a", 1.0, _scaled_time(0.20)).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT).set_delay(delay)
+		tween.tween_property(card, "position:y", card.position.y - 24.0, _scaled_time(0.20)).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT).set_delay(delay)
 
 func _get_card_desc(data: Dictionary) -> String:
 	var type = data.get("type", "")
@@ -1186,7 +1280,7 @@ func _on_card_hover_entered(card_btn: Control) -> void:
 		card_btn.call("set_hovered", true)
 	card_btn.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
 	_set_enemy_target_highlight(true, can_play)
-	_show_hover_tooltip(card_btn, str(card_btn.get_meta("hover_tip", card_btn.tooltip_text)))
+	_show_card_popup(card_btn, str(card_btn.get_meta("hover_card_id", "")))
 	card_btn.z_index = 10
 	card_btn.pivot_offset = Vector2(card_btn.size.x * 0.5, card_btn.size.y)
 	var tween = create_tween()
@@ -1201,7 +1295,7 @@ func _on_card_hover_exited(card_btn: Control) -> void:
 	if card_btn.has_method("set_hovered"):
 		card_btn.call("set_hovered", false)
 	_set_enemy_target_highlight(false, true)
-	_hide_hover_tooltip()
+	_hide_card_popup()
 	var base_rot = float(card_btn.get_meta("base_rot", 0.0))
 	card_btn.z_index = 0
 	var tween = create_tween()
@@ -1231,6 +1325,38 @@ func _hide_hover_tooltip() -> void:
 	tw.tween_property(hover_tooltip_panel, "modulate:a", 0.0, 0.15).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN)
 	await tw.finished
 	hover_tooltip_panel.visible = false
+
+func _show_card_popup(card_btn: Control, card_id: String) -> void:
+	if card_popup_panel == null or hover_card_display == null or card_id.is_empty():
+		return
+	hover_card_display.call("set_card", card_id)
+	var card_data := CardManager.get_card(card_id)
+	var effect_desc := _get_card_desc(card_data)
+	if hover_effect_label != null:
+		hover_effect_label.text = "" if (effect_desc == "" or effect_desc == "none") else effect_desc
+		hover_effect_label.visible = hover_effect_label.text != ""
+	var card_rect := card_btn.get_global_rect()
+	var viewport_size := get_viewport_rect().size
+	var panel_w := 176.0
+	var panel_h := 300.0
+	var pos := Vector2(
+		card_rect.position.x - (panel_w * 0.5) + (card_rect.size.x * 0.5),
+		card_rect.position.y - panel_h - 12.0
+	)
+	pos.x = clamp(pos.x, 8.0, viewport_size.x - panel_w - 8.0)
+	pos.y = clamp(pos.y, 8.0, viewport_size.y - panel_h - 8.0)
+	card_popup_panel.global_position = pos
+	card_popup_panel.visible = true
+	var tw := create_tween()
+	tw.tween_property(card_popup_panel, "modulate:a", 1.0, 0.15).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+
+func _hide_card_popup() -> void:
+	if card_popup_panel == null:
+		return
+	var tw := create_tween()
+	tw.tween_property(card_popup_panel, "modulate:a", 0.0, 0.15).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN)
+	await tw.finished
+	card_popup_panel.visible = false
 
 func _animate_hand_reflow(removed_idx: int) -> void:
 	var moved := false
@@ -1316,8 +1442,8 @@ func _on_unit_plate_hover_exited(target_panel: Control) -> void:
 
 func _player_stat_tooltip(slot_idx: int) -> String:
 	if slot_idx == 0:
-		return "CHAMPION\nHP: %d/%d\nArmor: %d\nMana: %d/%d\nStamina: %d/%d\nWarrior Stance" % [
-			champion_hp, champion_max_hp, champion_armor, mana, max_mana, stamina, max_stamina_per_turn
+		return "CHAMPION\nHP: %d/%d\nArmor: %d\nCP: %d/%d\nWarrior Stance" % [
+			champion_hp, champion_max_hp, champion_armor, command_points, max_command_points
 		]
 	var active_lt: Array = GameState.active_lieutenants
 	var lt_idx := slot_idx - 1
@@ -1442,6 +1568,7 @@ func _unhandled_input(event: InputEvent) -> void:
 			_hide_unit_popout()
 			_set_enemy_target_highlight(false, true)
 			_hide_hover_tooltip()
+			_hide_card_popup()
 		KEY_SPACE:
 			skip_enemy_animation = true
 		KEY_MINUS:
@@ -1505,12 +1632,12 @@ func _on_card_pressed(card_idx: int, card_btn: Control) -> void:
 		return
 
 	var cost = card_data.get("cost", 1)
-	if cost > stamina:
+	if cost > command_points:
 		_set_enemy_target_highlight(true, false)
 		if card_btn.has_method("show_unplayable"):
 			card_btn.call("show_unplayable")
-		card_btn.tooltip_text = "Insufficient Stamina\nNeed %d / Have %d" % [cost, stamina]
-		_log("Not enough stamina! (need %d, have %d)" % [cost, stamina])
+		card_btn.tooltip_text = "Insufficient CP\nNeed %d / Have %d" % [cost, command_points]
+		_log("Not enough CP! (need %d, have %d)" % [cost, command_points])
 		return
 
 	turn_undo_stack.append(_capture_turn_state())
@@ -1519,6 +1646,7 @@ func _on_card_pressed(card_idx: int, card_btn: Control) -> void:
 	is_play_animating = true
 	end_turn_btn.disabled = true
 	_hide_hover_tooltip()
+	_hide_card_popup()
 	if card_btn.has_method("set_selected"):
 		card_btn.call("set_selected", true)
 	if card_btn.has_method("pulse_cost"):
@@ -1526,7 +1654,7 @@ func _on_card_pressed(card_idx: int, card_btn: Control) -> void:
 	await _animate_play_card(card_btn)
 	await _animate_hand_reflow(card_idx)
 
-	stamina -= cost
+	command_points -= cost
 
 	var type = card_data.get("type", "attack")
 	var effect = card_data.get("effect", "none")
@@ -1539,9 +1667,10 @@ func _on_card_pressed(card_idx: int, card_btn: Control) -> void:
 				_deal_damage_to_enemy(target, dmg)
 				_spawn_float_text("-%d" % dmg, Color(1.0, 0.26, 0.26, 1.0), _enemy_float_origin(target), 28)
 				if "poison" in effect:
-					var stacks = _parse_effect_stacks(effect)
-					enemies[target]["poison"] += stacks
-					_log("%s poisoned (%d stacks)" % [enemies[target]["name"], enemies[target]["poison"]])
+					var stacks := _parse_effect_stacks(effect)
+					if _has_lt_trait("Toxic"):  # Decimus: all poison +1 stack
+						stacks += 1
+					_add_poison(target, stacks)
 
 		"defense":
 			var armor = card_data.get("armor", 0)
@@ -1574,9 +1703,10 @@ func _on_card_pressed(card_idx: int, card_btn: Control) -> void:
 				if enemies[i]["hp"] <= 0:
 					continue
 				if "poison" in effect:
-					var aoe_stacks = _parse_effect_stacks(effect)
-					enemies[i]["poison"] += aoe_stacks
-					_log("%s poisoned (%d stacks)" % [enemies[i]["name"], enemies[i]["poison"]])
+					var aoe_stacks := _parse_effect_stacks(effect)
+					if _has_lt_trait("Toxic"):  # Decimus: all poison +1 stack
+						aoe_stacks += 1
+					_add_poison(i, aoe_stacks)
 				elif area_dmg > 0:
 					_deal_damage_to_enemy(i, area_dmg)
 
@@ -1607,6 +1737,18 @@ func _parse_effect_stacks(effect: String) -> int:
 	if parts.size() >= 2 and parts[-1].is_valid_int():
 		return int(parts[-1])
 	return 1
+
+func _add_poison(enemy_idx: int, stacks: int) -> void:
+	if enemy_idx < 0 or enemy_idx >= enemies.size():
+		return
+	if stacks <= 0:
+		return
+	var enemy: Dictionary = enemies[enemy_idx] as Dictionary
+	var before := int(enemy.get("poison", 0))
+	var after := clampi(before + stacks, 0, MAX_POISON_STACKS)
+	enemy["poison"] = after
+	enemies[enemy_idx] = enemy
+	_log("%s poisoned (%d → %d stacks)" % [enemy["name"], before, after])
 
 func _get_first_alive_enemy() -> int:
 	for i in range(enemies.size()):
@@ -1648,19 +1790,64 @@ func _ensure_valid_enemy_target() -> void:
 func _apply_support_effect(effect: String) -> void:
 	match effect:
 		"resource_regen":
-			stamina = min(max_stamina_per_turn, stamina + 1)
-			_log("Stamina restored +1 (%d/%d)" % [stamina, max_stamina_per_turn])
+			command_points = min(max_command_points, command_points + 1)
+			_log("CP restored +1 (%d/%d)" % [command_points, max_command_points])
 		"card_draw":
 			_draw_cards(1)
 			_log("Drew 1 card from effect.")
 		_:
 			pass
 
+func _hazard_active() -> bool:
+	if hazard_data.is_empty():
+		return false
+	var start_turn := int(hazard_data.get("start_turn", 1))
+	var duration := int(hazard_data.get("duration", 0))
+	if turn < start_turn:
+		return false
+	if duration > 0 and turn > start_turn + duration - 1:
+		return false
+	return true
+
+func _log_hazard_intro() -> void:
+	if hazard_intro_shown or hazard_data.is_empty():
+		return
+	var name := str(hazard_data.get("name", "Hazard"))
+	var summary := str(hazard_data.get("summary", "Arena hazard is active."))
+	_log("%s: %s" % [name, summary])
+	hazard_intro_shown = true
+
+func _apply_hazard_tick(reason: String) -> void:
+	if not _hazard_active():
+		return
+	var dmg: int = int(hazard_data.get("damage_per_turn", 0))
+	if dmg <= 0:
+		return
+	var applies_to := str(hazard_data.get("applies_to", "both"))
+	var name := str(hazard_data.get("name", "Hazard"))
+	if applies_to == "both" or applies_to == "player":
+		var absorbed: int = min(champion_armor, dmg)
+		champion_armor = max(0, champion_armor - absorbed)
+		var actual: int = dmg - absorbed
+		champion_hp = max(0, champion_hp - actual)
+		_spawn_float_text("-%d" % actual, Color(0.96, 0.48, 0.38, 1.0), _player_float_origin(), 22)
+	if applies_to == "both" or applies_to == "enemies":
+		for i in range(enemies.size()):
+			if enemies[i]["hp"] <= 0:
+				continue
+			enemies[i]["hp"] = max(0, enemies[i]["hp"] - dmg)
+			_spawn_float_text("-%d" % dmg, Color(0.96, 0.78, 0.38, 1.0), _enemy_float_origin(i), 22)
+	_log("%s deals %d damage (%s turn)" % [name, dmg, reason])
+
 func _apply_global_effect(effect: String) -> void:
 	match effect:
 		"reflect_damage":
 			champion_armor += 2
 			_log("Curse of Thorns active: +2 armor.")
+		"reflect_thorns":
+			reflect_ratio = 0.5
+			reflect_turns = 2
+			_log("Thorns active: 50% damage reflected for 2 turns.")
 		"fear":
 			for i in range(enemies.size()):
 				if enemies[i]["hp"] > 0:
@@ -1676,10 +1863,10 @@ func _apply_global_effect(effect: String) -> void:
 func _deal_damage_to_enemy(idx: int, amount: int) -> void:
 	if idx < 0 or idx >= enemies.size():
 		return
-	var enemy = enemies[idx]
-	var absorbed = min(enemy.get("armor", 0), amount)
+	var enemy: Dictionary = enemies[idx] as Dictionary
+	var absorbed: int = min(enemy.get("armor", 0), amount)
 	enemy["armor"] = max(0, enemy.get("armor", 0) - absorbed)
-	var actual = amount - absorbed
+	var actual: int = amount - absorbed
 	enemy["hp"] = max(0, enemy["hp"] - actual)
 	_log("Hit %s for %d dmg (%d armor) → %d/%d HP" % [enemy["name"], actual, absorbed, enemy["hp"], enemy["max_hp"]])
 	if idx >= 0 and idx < enemy_party_cards.size():
@@ -1691,10 +1878,50 @@ func _deal_damage_to_enemy(idx: int, amount: int) -> void:
 	if idx == _get_selected_enemy() and enemy["hp"] <= 0:
 		_ensure_valid_enemy_target()
 
+func _on_end_turn_btn_entered() -> void:
+	if end_turn_btn.disabled or combat_over:
+		return
+	var tw = create_tween()
+	tw.set_parallel(true)
+	tw.tween_property(end_turn_btn, "modulate", Color(1.0, 1.0, 0.7, 1.0), 0.15).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+	tw.tween_property(end_turn_btn, "scale", Vector2(1.05, 1.05), 0.15).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+
+func _on_end_turn_btn_exited() -> void:
+	if end_turn_btn.disabled or combat_over:
+		return
+	var tw = create_tween()
+	tw.set_parallel(true)
+	tw.tween_property(end_turn_btn, "modulate", Color.WHITE, 0.12).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN)
+	tw.tween_property(end_turn_btn, "scale", Vector2.ONE, 0.12).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN)
+
+
+func _apply_button_press_bounce(btn: Button) -> void:
+	btn.pressed.connect(func() -> void:
+		var tween := create_tween()
+		tween.set_trans(Tween.TRANS_ELASTIC).set_ease(Tween.EASE_OUT)
+		tween.tween_property(btn, "scale", Vector2(0.95, 0.95), 0.1)
+		tween.tween_property(btn, "scale", Vector2(1.0, 1.0), 0.2)
+	)
+
+
+func _shake_element(element: Control, duration: float = 0.3, intensity: float = 3.0) -> void:
+	if element == null:
+		return
+	var original_pos := element.position
+	var elapsed := 0.0
+	while elapsed < duration:
+		var offset := Vector2(randf_range(-intensity, intensity), randf_range(-intensity * 0.5, intensity * 0.5))
+		element.position = original_pos + offset
+		elapsed += get_physics_process_delta_time()
+		await get_tree().process_frame
+	element.position = original_pos
+
+
 func _on_end_turn() -> void:
 	if combat_over or is_play_animating:
 		return
 
+	_log_hazard_intro()
 	turn_undo_stack.clear()
 	_update_undo_state()
 	end_turn_btn.disabled = true
@@ -1723,11 +1950,11 @@ func _on_end_turn() -> void:
 		await get_tree().create_timer(_scaled_time(0.55)).timeout
 	var slot_idx = 0
 	for i in range(enemies.size()):
-		var enemy = enemies[i]
+		var enemy: Dictionary = enemies[i] as Dictionary
 		if enemy["hp"] <= 0:
 			continue
 		var active_slot = min(slot_idx, ENEMY_SLOT_COUNT - 1)
-		var incoming = int(enemy.get("damage", 2))
+		var incoming: int = int(enemy.get("damage", 2))
 		_set_enemy_card_slot_state(active_slot, "known")
 		var tele_lbl := enemy_card_slot_labels[active_slot] as Label
 		if tele_lbl:
@@ -1737,13 +1964,18 @@ func _on_end_turn() -> void:
 		await _animate_enemy_card_appear(active_slot)
 		await _animate_enemy_card_flip(active_slot)
 		_set_enemy_card_slot_state(active_slot, "active")
-		var dmg = incoming
-		var absorbed = min(champion_armor, dmg)
+		var dmg: int = incoming
+		var absorbed: int = min(champion_armor, dmg)
 		champion_armor = max(0, champion_armor - absorbed)
-		var actual = dmg - absorbed
+		var actual: int = dmg - absorbed
 		champion_hp = max(0, champion_hp - actual)
 		_spawn_float_text("-%d" % actual, Color(1.0, 0.24, 0.24, 1.0), _player_float_origin(), 28)
 		_log("%s attacks! %d dmg (-%d armor) → Champion: %d/%d HP" % [enemy["name"], actual, absorbed, champion_hp, champion_max_hp])
+		if reflect_ratio > 0.0 and reflect_turns > 0 and actual > 0:
+			var reflected: int = maxi(1, int(ceil(float(actual) * reflect_ratio)))
+			enemies[i]["hp"] = max(0, enemies[i]["hp"] - reflected)
+			_spawn_float_text("-%d" % reflected, Color(0.72, 0.92, 1.0, 1.0), _enemy_float_origin(i), 24)
+			_log("Thorns reflect %d dmg back to %s" % [reflected, enemy["name"]])
 		await _animate_enemy_card_to_battlefield(active_slot, true)
 		if not skip_enemy_animation:
 			await get_tree().create_timer(_scaled_time(0.45)).timeout
@@ -1752,6 +1984,17 @@ func _on_end_turn() -> void:
 		if champion_hp <= 0:
 			_on_defeat()
 			return
+
+	if reflect_turns > 0:
+		reflect_turns = max(0, reflect_turns - 1)
+
+	_apply_hazard_tick("end of round")
+	if champion_hp <= 0:
+		_on_defeat()
+		return
+	_check_victory()
+	if combat_over:
+		return
 
 	turn += 1
 	_start_turn()
@@ -1774,9 +2017,9 @@ func _capture_turn_state() -> Dictionary:
 		"hand": hand.duplicate(true),
 		"deck": deck.duplicate(true),
 		"discard_pile": discard_pile.duplicate(true),
-		"stamina": stamina,
-		"mana": mana,
-		"max_mana": max_mana,
+		"command_points": command_points,
+		"last_ui_command_points": last_ui_command_points,
+		"max_command_points": max_command_points,
 		"turn": turn,
 		"combat_over": combat_over,
 		"player_won": player_won,
@@ -1795,9 +2038,9 @@ func _restore_turn_state(state: Dictionary) -> void:
 	hand = (state.get("hand", hand) as Array).duplicate(true)
 	deck = (state.get("deck", deck) as Array).duplicate(true)
 	discard_pile = (state.get("discard_pile", discard_pile) as Array).duplicate(true)
-	stamina = int(state.get("stamina", stamina))
-	mana = int(state.get("mana", mana))
-	max_mana = int(state.get("max_mana", max_mana))
+	command_points = int(state.get("command_points", command_points))
+	last_ui_command_points = int(state.get("last_ui_command_points", last_ui_command_points))
+	max_command_points = int(state.get("max_command_points", max_command_points))
 	turn = int(state.get("turn", turn))
 	combat_over = bool(state.get("combat_over", combat_over))
 	player_won = bool(state.get("player_won", player_won))
@@ -1834,6 +2077,11 @@ func _on_victory() -> void:
 	combat_over = true
 	player_won = true
 	_log("=== VICTORY! All enemies defeated! ===")
+	# Julia: Hope — heal +5 HP after every victory
+	if _has_lt_trait("Hope"):
+		champion_hp = min(champion_max_hp, champion_hp + 5)
+		_spawn_float_text("+5", Color(0.20, 1.0, 0.45, 1.0), _player_float_origin(), 28)
+		_log("Julia's Hope: +5 HP restored after victory.")
 	_update_all_ui()
 
 	MissionManager.complete_mission(current_mission_id, "victory")
@@ -1955,22 +2203,34 @@ func _update_all_ui() -> void:
 	var hp_before := last_ui_champion_hp
 	if turn_label:
 		turn_label.text = "Turn %d" % turn
+		_animate_turn_label()
 	if health_label:
 		health_label.text = "Health: %d/%d" % [champion_hp, champion_max_hp]
 	if player_hp_bar:
 		player_hp_bar.max_value = champion_max_hp
 		var hp_tw = create_tween()
 		hp_tw.tween_property(player_hp_bar, "value", champion_hp, 0.30).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
-	if stamina_label:
-		stamina_label.text = "Stamina: %d/%d" % [stamina, max_stamina_per_turn]
-	if mana_label:
-		mana_label.text = "Mana: %d/%d" % [mana, max_mana]
+	if cp_label:
+		_animate_cp_update()
 
 	_update_enemy_focus_ui()
 	_update_player_party_ui()
 
 	if champion_label:
 		champion_label.text = _get_champion_display()
+		# Animate armor change
+		if champion_armor != last_ui_champion_armor:
+			var armor_change = champion_armor - last_ui_champion_armor
+			var armor_color = Color(0.70, 1.0, 0.75, 1.0) if armor_change > 0 else Color(1.0, 0.85, 0.70, 1.0)
+			var tw = create_tween()
+			tw.set_parallel(true)
+			tw.tween_property(champion_label, "modulate", Color(1.0, 1.0, 1.0, 1.0) * armor_color, _scaled_time(0.12)).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+			tw.tween_property(champion_label, "scale", Vector2(1.06, 1.06), _scaled_time(0.12)).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+			var tw2 = create_tween()
+			tw2.set_parallel(true)
+			tw2.tween_property(champion_label, "modulate", Color.WHITE, _scaled_time(0.18)).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN)
+			tw2.tween_property(champion_label, "scale", Vector2.ONE, _scaled_time(0.18)).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN)
+			last_ui_champion_armor = champion_armor
 	if lt_label:
 		lt_label.text = _get_lt_display()
 	if debug_status_label and debug_status_label.visible:
@@ -1981,10 +2241,56 @@ func _update_all_ui() -> void:
 		var flash = create_tween()
 		flash.tween_property(player_stats_panel_ref, "modulate", flash_col, 0.08).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
 		flash.tween_property(player_stats_panel_ref, "modulate", Color(1.0, 1.0, 1.0, 1.0), 0.15).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN)
+		# Shake effect when damage taken
+		if champion_hp < hp_before:
+			_shake_element(player_zone_ref, 0.3, 3.0)
 	last_ui_champion_hp = champion_hp
 
 	_update_hand_ui()
 	_update_undo_state()
+
+func _animate_turn_label() -> void:
+	if not turn_label or turn == 1:
+		return
+	# Pulse animation when turn advances
+	var tw = create_tween()
+	tw.set_parallel(true)
+	tw.tween_property(turn_label, "scale", Vector2(1.15, 1.15), _scaled_time(0.12)).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+	tw.tween_property(turn_label, "modulate", Color(1.0, 1.0, 0.7, 1.0), _scaled_time(0.12)).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+
+	var tw2 = create_tween()
+	tw2.set_parallel(true)
+	tw2.tween_property(turn_label, "scale", Vector2.ONE, _scaled_time(0.20)).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN)
+	tw2.tween_property(turn_label, "modulate", Color.WHITE, _scaled_time(0.20)).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN)
+
+func _animate_cp_update() -> void:
+	if not cp_label or command_points == last_ui_command_points:
+		cp_label.text = "CP: %d/%d" % [command_points, max_command_points]
+		return
+
+	var cp_change = command_points - last_ui_command_points
+	var cp_color = Color(0.70, 1.0, 0.75, 1.0) if cp_change > 0 else Color(1.0, 0.70, 0.70, 1.0)
+	var sign_str = "+" if cp_change > 0 else ""
+
+	# Flash the CP label with color feedback
+	var tw = create_tween()
+	tw.set_parallel(true)
+	tw.tween_property(cp_label, "modulate", Color(1.0, 1.0, 1.0, 1.0) * cp_color, _scaled_time(0.12)).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+	tw.tween_property(cp_label, "scale", Vector2(1.08, 1.08), _scaled_time(0.12)).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+
+	# Return to normal
+	var tw2 = create_tween()
+	tw2.set_parallel(true)
+	tw2.tween_property(cp_label, "modulate", Color.WHITE, _scaled_time(0.18)).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN)
+	tw2.tween_property(cp_label, "scale", Vector2.ONE, _scaled_time(0.18)).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN)
+
+	# Update text
+	cp_label.text = "CP: %d/%d" % [command_points, max_command_points]
+
+	# Spawn floating text for the change
+	_spawn_float_text(sign_str + str(cp_change), cp_color, cp_label.get_global_rect().get_center(), 16)
+
+	last_ui_command_points = command_points
 
 func _player_float_origin() -> Vector2:
 	if player_portrait_panel_ref:
@@ -2042,6 +2348,13 @@ func _scale_fonts_recursive(node: Node, scale: float) -> void:
 	for child in node.get_children():
 		_scale_fonts_recursive(child, scale)
 
+func _has_lt_trait(trait_name: String) -> bool:
+	for lt_id in GameState.active_lieutenants:
+		var d: Dictionary = CardManager.get_lieutenant(str(lt_id))
+		if str(d.get("trait", "")) == trait_name:
+			return true
+	return false
+
 func _init_lieutenant_state() -> void:
 	var active = GameState.active_lieutenants
 	lt_name = "Marcus"
@@ -2052,7 +2365,17 @@ func _init_lieutenant_state() -> void:
 	lt_hp = int(lt_data.get("hp", 25))
 	lt_max_hp = lt_hp
 	lt_armor = int(lt_data.get("armor", 2))
-	opening_draw_bonus = 1 if str(lt_data.get("trait", "")) == "Disciplined" else 0
+
+	# Apply passive traits from ALL active lieutenants
+	opening_draw_bonus = 0
+	for lt_id in active:
+		var d: Dictionary = CardManager.get_lieutenant(str(lt_id))
+		match str(d.get("trait", "")):
+			"Disciplined":  # Marcus: +1 card on opening draw
+				opening_draw_bonus += 1
+			"Blessed":      # Livia: +2 CP at start of combat
+				command_points = min(max_command_points, command_points + 2)
+				_log("Livia's Blessing: +2 starting CP.")
 
 func _resolve_mission_context() -> void:
 	current_mission_id = GameState.current_mission_id
@@ -2066,6 +2389,7 @@ func _resolve_mission_context() -> void:
 		current_mission_id = "M01"
 		GameState.current_mission_id = current_mission_id
 		current_mission_data = MissionManager.get_mission(current_mission_id)
+	hazard_data = current_mission_data.get("hazard", {})
 
 func _apply_equipped_gear_bonuses() -> void:
 	var equipped: Dictionary = GameState.equipped_gear
@@ -2102,18 +2426,12 @@ func _apply_equipped_gear_bonuses() -> void:
 			"start_armor":
 				start_armor_bonus += 2
 				applied_effects.append("start_armor")
-			"start_mana":
-				gear_start_mana_bonus += 1
-				applied_effects.append("start_mana")
-			"start_stamina":
-				gear_first_turn_stamina_bonus += 1
-				applied_effects.append("start_stamina")
-			"stamina_regen_boost":
-				max_stamina_per_turn += 1
-				applied_effects.append("stamina_regen_boost")
-			"mana_regen_boost":
-				mana_regen_per_turn += 1
-				applied_effects.append("mana_regen_boost")
+			"start_mana", "start_stamina":
+				gear_start_cp_bonus += 1
+				applied_effects.append("start_cp")
+			"stamina_regen_boost", "mana_regen_boost":
+				max_command_points += 1
+				applied_effects.append("cp_regen")
 			"draw_bonus":
 				gear_draw_per_turn_bonus += 1
 				applied_effects.append("draw_bonus")
@@ -2127,10 +2445,7 @@ func _apply_equipped_gear_bonuses() -> void:
 	champion_hp = clamp(champion_hp + hp_bonus, 1, champion_max_hp)
 	champion_armor += armor_bonus + start_armor_bonus
 
-	mana = min(max_mana, gear_start_mana_bonus)
-	stamina = max_stamina_per_turn
-	if turn == 1 and gear_first_turn_stamina_bonus > 0:
-		stamina += gear_first_turn_stamina_bonus
+	command_points = max_command_points + gear_start_cp_bonus
 	if not applied_names.is_empty():
 		_log("Gear active: %s" % ", ".join(applied_names))
 		var stat_line = "Bonuses: HP %+d, ARM %+d, DMG %+d, SPD %+d" % [

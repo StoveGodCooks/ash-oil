@@ -1,8 +1,8 @@
 # Ash & Oil — Development Roadmap
 
 **Current Version:** v0.9.0 — Phase 10: NPC Relationship System (finalized)
-**Last Updated:** February 24, 2026
-**Status:** Prompt 9 major systems and Phase 10 relationship/faction gating/dialogue are implemented; full suite passing (686 assertions)
+**Last Updated:** February 26, 2026
+**Status:** Prompt 9 major systems and Phase 10 relationship/faction gating/dialogue are implemented; Phase 11 command-point combat polish + hub rebuild underway; full suite passing (692 assertions)
 
 ---
 
@@ -178,12 +178,21 @@
 ### Phase 11: Advanced Combat Features
 **Focus:** New card mechanics, special effects, environmental factors
 
-- [ ] Poison stacking mechanics refinement
-- [ ] Reflect/retaliation system (Curse of Thorns interactions)
-- [ ] Mana pool system (currently 0, expand for mana-cost cards)
+- [x] Command Point resource (single CP pool replaces stamina/mana; gear start bonus supported)
+- [x] Combat readability polish (card hover pop-out preview, staggered draws, CP tooltips/reticle)
+- [x] Poison stacking mechanics refinement (capped at 12 stacks, decay each turn, UI log clarity)
+- [x] Reflect/retaliation system (Thorns effect: 50% returned for 2 turns)
+- [ ] Mana pool system → **de-scoped** (single Command Point resource confirmed)
 - [ ] Team ability system (lieutenant + champion combo moves)
-- [ ] Environmental hazards (mission-specific arena effects)
+- [x] Environmental hazards (mission-specific arena DoT added to M11)
 - [ ] Boss encounters (unique enemy AI with special moves)
+
+### Phase 11b: Hub & Builder UX
+**Focus:** Surface combat/narrative state clearly in hub screens
+
+- [x] MainHub tab content rebuilt (missions, squad, loadout, intel, log, deck) with animated transitions + mission briefer overlay
+- [x] Meter/gold change animations and lock reason surfacing
+- [x] Deck Builder restyled (deck/collection/detail columns, CardDisplay preview, build rule footer)
 
 ### Phase 12: Story & Narrative
 **Focus:** Story hooks, branching narrative, multiple endings
@@ -295,7 +304,7 @@
 | Missions (Side) | 15 | 50+ |
 | Lieutenants | 8 | 12 |
 | Unique Enemies | 45+ | 100+ |
-| Test Coverage | 686 assertions | 250+ |
+| Test Coverage | 692 assertions | 250+ |
 | Acts | 4 (implied) | 5 |
 | Endings | 3 planned | 5+ |
 

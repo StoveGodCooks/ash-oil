@@ -123,7 +123,7 @@ git commit -m "chore: update START_HERE.md with Phase 6 completion status"
 
 **Narrative:** Meters tied to mission outcomes. Story beats trigger at M01, M06, M13.
 
-**Combat:** 2 stamina per turn, draw 2 cards, max 30-card deck. Enemy AI prioritizes damage.
+**Combat:** 5 Command Points per turn (single resource), draw 2 cards, max 30-card deck. Enemy AI prioritizes damage.
 
 **Data:** All game data in JSON (`data/` folder). Singletons load once at startup.
 
@@ -135,9 +135,9 @@ git commit -m "chore: update START_HERE.md with Phase 6 completion status"
 
 # 📍 CURRENT STATUS
 
-**Last Patch:** db772f1 — fix: Add missing lieutenant recruitment in mission completion
+**Last Patch:** local-uncommitted — Hub tab rebuild + CP combat polish + arena hazards
 
-**Current Phase:** Phase 10 ✅ COMPLETE | Phase 11 🔲 PENDING (advanced combat features, balance tuning)
+**Current Phase:** Phase 11 🟡 IN PROGRESS | Phase 10 ✅ COMPLETE (advanced combat features underway)
 
 ## Phase 5: Card Art & Combat Clarity (COMPLETE)
 - ✅ Card face redesign (faction glyphs, frame overlay)
@@ -160,44 +160,27 @@ git commit -m "chore: update START_HERE.md with Phase 6 completion status"
 - ✅ MissionBriefer cancel flow + hide on missing hooks
 - ✅ Narrative hook meter_impact set to display-only (no double meter application)
 
-**Last Commit:** dc62d05 — feat_phase8_gear_hardening_rng_drops_tests_docs
+**Last Commit:** 1e62033 — style: Batch 2F — bottom bar hints and shortcuts
 
 ## What's Done This Session
 
-**Phase 10 Bug Fix (CRITICAL):**
-- Fixed missing lieutenant recruitment: lieutenants now properly recruit when their `unlock_mission` is completed
-  - Marcus recruits on M01 victory
-  - Julia recruits on M02 victory
-  - Livia recruits on M04 victory
-  - (Kara, Decimus, Titus, Corvus, Thane follow their respective unlock missions)
-- Added 3 new recruitment tests to MissionManager suite
-- Tests updated: 689 assertions passing (686 + 3 new)
+**Phase 11 Hub + Combat Polish:**
+- MainHub rebuilt: every tab now renders live data (missions with lock reasons + briefing overlay + arena launch, squad cards with loyalty bars and recruit/manage actions, loadout gear cycling, intel view for NPC relationships, mission log, deck grid) with animated tab transitions, gold/meter change tweens, and mission briefer instanced via script.
+- Deck Builder restyled to Codex look: three-column layout (deck / collection / card detail), CardDisplay preview, deck/collection counts, footer build rules, and quick back-to-hub button.
+- Combat resource overhaul: stamina/mana removed in favor of 5 Command Points (gear start bonus supported), card hover pop-out previews, staggered draw animation, CP gating/tooltip updates, Thorns reflect buff (50% for 2 turns), poison stacks capped at 12 with Decimus “Toxic” +1 stack, Kara “Tracker” intent logging, and mission-driven arena hazard system (M11 “Blood on the Sand” DoT).
+- Narrative polish pass: mission descriptions tightened for Acts 1–2; M11 now includes hazard metadata consumed by CombatUI.
 
-**Phase 9/10 Progress (Earlier):**
-- Added relationship-driven mission locks/impacts: M10, M14, M15, M17, M19 now require specific NPC trust/flags and track faction stances; M12 now pushes Syndicate alignment; new lock reasons surface in MainHub.
-- Expanded NPC dialogue coverage: new `mission_locked` context lines, betrayal/indebted hooks, Sabina dialogue entry, and flag-driven responses (injured/rescued/etc.).
-- New tests for relationship/faction gating + dialogue contexts (`tests/unit/test_relationships.gd`); mission/data JSON validated.
-- Lieutenant signature card depth pass: refreshed cards 037-060 with distinctive effects, resource hooks, and power tuning aligned to each lieutenant's role.
-- Completed Prompt 9 systems: mission/card rebalance pass, shop pricing updates, accessibility options, combat undo, portrait placeholders
-- Implemented Prompt 10 core NPC relationship system:
-  - Added `data/npcs.json` and `data/npc_dialogue.json`
-  - Extended `scripts/autoload/GameState.gd` with NPC/faction APIs, relationship levels, flags, dialogue lookup, and persistence
-  - Extended `scripts/autoload/MissionManager.gd` with mission lock checks, lock reasons, and NPC/faction mission impacts
-  - Added dialogue choice consequence hook in `scripts/autoload/NarrativeManager.gd`
-  - Added relationship/faction summary + mission lock feedback in `scripts/ui/MainHub.gd`
-- Hardened `scripts/autoload/SaveManager.gd` for headless runs (active save dir fallback + dual-path save checks/deletes)
-- Fixed strict typing warnings in `scripts/autoload/GameState.gd` (warnings treated as errors)
-
-**Tests:** `godot --headless --path C:\Users\beebo\Desktop\ash-oil -s res://tests/runner/RunTests.gd` (ALL TESTS PASSED, 689 assertions)
+**Tests:** `godot --headless --path C:\Users\beebo\Desktop\ash-oil -s res://tests/runner/RunTests.gd` (ALL TESTS PASSED, 692 assertions on Feb 26, 2026)
 **Lint:** `gdlint .` (not run this session; known pre-existing lint backlog)
 **Data validation:** not re-run after rebalance script this session
 
 **Blockers:** None
 
 **Next Steps:**
-1. Playtest Act 1/2/3 win rates and tune mission/card/shop balance values from live results (verify new mission locks feel fair)
-2. Hook portrait assets into all intended UI locations (hub, dialogue, combat)
-3. Run/triage gdlint backlog and reduce pre-existing violations
+1. Playtest Act 1/2/3 with Command Point economy + shard-sand hazard to retune card costs, shop prices, and enemy damage pacing.
+2. Hook portrait assets into all intended UI locations (hub tab cards, dialogue, combat pop-outs).
+3. Run/triage gdlint backlog and re-run data validation scripts.
+4. Finish Phase 11 scope: boss behaviors + team combo cards + additional hazard variants if they improve readability/fun.
 
 ---
 
@@ -403,7 +386,7 @@ ash-oil/
 | **Lieutenants** | 8 |
 | **Enemies** | 45+ |
 | **Gear** | 24 pieces |
-| **Test Assertions** | 689 |
+| **Test Assertions** | 692 |
 | **Test Coverage** | ~75% |
 | **Code Files** | 20+ |
 | **Data Files** | 8 (cards, missions, lieutenants, enemies, gear, hooks, npcs, npc_dialogue) |
