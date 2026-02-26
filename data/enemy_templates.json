@@ -197,7 +197,13 @@
     "armor": 5,
     "damage": 6,
     "poison": 0,
-    "type": "boss"
+    "type": "boss",
+    "scripted_actions": [
+      { "name": "Mark & Shred", "armor_shred": 3, "damage": 4, "hits": 1, "intent": "Shreds 3 armor, then strikes" },
+      { "name": "Collector's Reach", "damage": 4, "hits": 2, "intent": "2x sweeping strikes" },
+      { "name": "Tithe Leech", "damage": 5, "hits": 1, "lifesteal": 4, "intent": "Drains 4 HP on hit" },
+      { "name": "Debt Bomb", "damage": 3, "hits": 1, "true_damage": true, "intent": "Ignores armor" }
+    ]
   },
   "reckoning_enforcer": {
     "id": "reckoning_enforcer",

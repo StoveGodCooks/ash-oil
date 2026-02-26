@@ -185,7 +185,7 @@
 - [ ] Mana pool system → **de-scoped** (single Command Point resource confirmed)
 - [ ] Team ability system (lieutenant + champion combo moves)
 - [x] Environmental hazards (mission-specific arena DoT added to M11)
-- [ ] Boss encounters (unique enemy AI with special moves)
+- [x] Boss encounters (unique enemy AI with special moves — Act 2 “Collector” scripted cycle)
 
 ### Phase 11b: Hub & Builder UX
 **Focus:** Surface combat/narrative state clearly in hub screens
@@ -304,7 +304,7 @@
 | Missions (Side) | 15 | 50+ |
 | Lieutenants | 8 | 12 |
 | Unique Enemies | 45+ | 100+ |
-| Test Coverage | 692 assertions | 250+ |
+| Test Coverage | 696 assertions | 250+ |
 | Acts | 4 (implied) | 5 |
 | Endings | 3 planned | 5+ |
 

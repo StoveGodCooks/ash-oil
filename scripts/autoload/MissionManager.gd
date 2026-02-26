@@ -1,12 +1,12 @@
 extends Node
 ## Mission manager (Autoload Singleton)
 
+# ============ SIGNALS ============
+signal mission_completed(mission_id: String)
+
 var missions_data: Dictionary = {}
 var gear_rng: RandomNumberGenerator = RandomNumberGenerator.new()
 var last_reward: Dictionary = {}
-
-# ============ SIGNALS ============
-signal mission_completed(mission_id: String)
 
 func _ready() -> void:
 	randomize()
@@ -47,7 +47,7 @@ func start_mission(id: String) -> bool:
 func complete_mission(id: String, outcome: String = "victory") -> void:
 	var mission = get_mission(id)
 	if mission.is_empty():
-		push_error("Mission not found: " + id)
+		print("Mission not found: " + id)
 		return
 
 	GameState.complete_mission(id)
@@ -360,6 +360,11 @@ func get_last_reward_text() -> String:
 	return "Reward: +%d gold" % gold
 
 func check_ending_path() -> String:
-	if GameState.PIETY >= 7: return "Cult"
-	elif GameState.FAVOR >= 6: return "State"
-	else: return "Solo"
+	if GameState.piety >= 7:
+		return "Cult"
+	if GameState.favor >= 6:
+		return "State"
+	return "Solo"
+
+
+

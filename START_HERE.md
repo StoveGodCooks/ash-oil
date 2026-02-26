@@ -168,9 +168,10 @@ git commit -m "chore: update START_HERE.md with Phase 6 completion status"
 - MainHub rebuilt: every tab now renders live data (missions with lock reasons + briefing overlay + arena launch, squad cards with loyalty bars and recruit/manage actions, loadout gear cycling, intel view for NPC relationships, mission log, deck grid) with animated tab transitions, gold/meter change tweens, and mission briefer instanced via script.
 - Deck Builder restyled to Codex look: three-column layout (deck / collection / card detail), CardDisplay preview, deck/collection counts, footer build rules, and quick back-to-hub button.
 - Combat resource overhaul: stamina/mana removed in favor of 5 Command Points (gear start bonus supported), card hover pop-out previews, staggered draw animation, CP gating/tooltip updates, Thorns reflect buff (50% for 2 turns), poison stacks capped at 12 with Decimus “Toxic” +1 stack, Kara “Tracker” intent logging, and mission-driven arena hazard system (M11 “Blood on the Sand” DoT).
+- Act 2 boss “The Collector” now has a scripted four-turn cycle (armor shred opener, double-hit sweeps, lifesteal drain, true-damage bomb) with telegraphed intents and per-hit reflect handling.
 - Narrative polish pass: mission descriptions tightened for Acts 1–2; M11 now includes hazard metadata consumed by CombatUI.
 
-**Tests:** `godot --headless --path C:\Users\beebo\Desktop\ash-oil -s res://tests/runner/RunTests.gd` (ALL TESTS PASSED, 692 assertions on Feb 26, 2026)
+**Tests:** `godot --headless --path C:\Users\beebo\Desktop\ash-oil -s res://tests/runner/RunTests.gd` (ALL TESTS PASSED, 696 assertions on Feb 26, 2026)
 **Lint:** `gdlint .` (not run this session; known pre-existing lint backlog)
 **Data validation:** not re-run after rebalance script this session
 

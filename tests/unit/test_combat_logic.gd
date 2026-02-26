@@ -32,6 +32,24 @@ func _reflected_damage(incoming: int, ratio: float) -> int:
 		return 0
 	return maxi(1, int(ceil(float(incoming) * ratio)))
 
+func _simulate_boss_action(hp: int, armor: int, action: Dictionary) -> Dictionary:
+	var cur_hp: int = hp
+	var cur_armor: int = armor
+	var shred: int = int(action.get("armor_shred", 0))
+	if shred > 0:
+		cur_armor = max(0, cur_armor - shred)
+	var hits: int = max(1, int(action.get("hits", 1)))
+	var dmg: int = int(action.get("damage", 0))
+	var true_dmg: bool = bool(action.get("true_damage", false))
+	for i in range(hits):
+		if true_dmg:
+			cur_hp = max(0, cur_hp - dmg)
+		else:
+			var absorbed: int = min(cur_armor, dmg)
+			cur_armor = max(0, cur_armor - absorbed)
+			cur_hp = max(0, cur_hp - (dmg - absorbed))
+	return {"hp": cur_hp, "armor": cur_armor}
+
 # ── Damage Calculation ────────────────────────────────────────────────────────
 func test_damage_no_armor() -> void:
 	var e = _make_enemy("Grunt", 12, 0, 2)
@@ -149,6 +167,18 @@ func test_reflect_returns_damage() -> void:
 	var ratio = 0.5
 	var reflected = _reflected_damage(incoming, ratio)
 	assert_eq("50% reflect from 10 dmg = 5 returned", reflected, 5)
+
+func test_boss_armor_shred_then_multi_hit() -> void:
+	var action = {"armor_shred": 3, "damage": 4, "hits": 2}
+	var result = _simulate_boss_action(30, 5, action)
+	assert_eq("Armor reduced to 0 after shred + hits", result["armor"], 0)
+	assert_eq("HP drops by 6 total (shred 3, hit1 2 dmg, hit2 4 dmg)", result["hp"], 24)
+
+func test_boss_true_damage_ignores_armor() -> void:
+	var action = {"damage": 3, "hits": 2, "true_damage": true}
+	var result = _simulate_boss_action(20, 5, action)
+	assert_eq("Armor untouched by true damage", result["armor"], 5)
+	assert_eq("HP takes full true damage 3*2=6", result["hp"], 14)
 
 # ── Healing ────────────────────────────────────────────────────────────────────
 func test_heal_restores_hp() -> void:
@@ -290,3 +320,5 @@ func test_all_missions_victory_gold_gte_zero() -> void:
 		var m = MissionManager.missions_data[mid]
 		var gold = m.get("victory_rewards", {}).get("gold", 0)
 		assert_gte("%s victory gold >= 0" % mid, gold, 0)
+
+

@@ -41,7 +41,7 @@ func load_game(slot: int = 1) -> bool:
 			active_save_dir = alternate_dir
 			path = alternate_path
 		else:
-			push_error("No save found at: " + path)
+			print("No save found at: " + path)
 			return false
 	var file = FileAccess.open(path, FileAccess.READ)
 	if file == null:
@@ -83,3 +83,5 @@ func _ensure_save_dir() -> bool:
 	active_save_dir = FALLBACK_SAVE_DIR
 	DirAccess.make_dir_recursive_absolute(active_save_dir)
 	return DirAccess.dir_exists_absolute(active_save_dir)
+
+

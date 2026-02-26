@@ -2,23 +2,28 @@ extends Node
 ## Central game state manager (Autoload Singleton)
 ## Tracks all persistent game data: meters, relationships, inventory, progression
 
+# ============ SIGNALS ============
+signal meter_changed(meter_name: String, new_value: int)
+signal lieutenant_loyalty_changed(lt_name: String, loyalty: int)
+signal mission_completed(mission_id: String)
+signal game_loaded
+
 const NPC_DATA_PATH := "res://data/npcs.json"
 const NPC_DIALOGUE_PATH := "res://data/npc_dialogue.json"
 const RELATIONSHIP_MIN := -100
 const RELATIONSHIP_MAX := 100
-const RELATIONSHIP_ALLY_THRESHOLD := 50
-const RELATIONSHIP_ENEMY_THRESHOLD := -50
+const RELATIONSHIP_ALLY_THRESHOLD := 15
+const RELATIONSHIP_ENEMY_THRESHOLD := -5
 const FACTION_ALIGNMENT_MIN := -100
 const FACTION_ALIGNMENT_MAX := 100
-const FACTION_CONTENT_THRESHOLD := 25
+const FACTION_CONTENT_THRESHOLD := 5
 
-# ============ METERS ============
-var RENOWN: int = 0
-var HEAT: int = 0
-var PIETY: int = 0
-var FAVOR: int = 0
-var DEBT: int = 0
-var DREAD: int = 0
+var renown: int = 0
+var heat: int = 0
+var piety: int = 0
+var favor: int = 0
+var debt: int = 0
+var dread: int = 0
 
 # ============ LIEUTENANTS ============
 var lieutenant_data: Dictionary = {
@@ -116,12 +121,6 @@ var accessibility: Dictionary = {
 	"animation_speed": 1.0,
 }
 
-# ============ SIGNALS ============
-signal meter_changed(meter_name: String, new_value: int)
-signal lieutenant_loyalty_changed(lt_name: String, loyalty: int)
-signal mission_completed(mission_id: String)
-signal game_loaded
-
 func _ready() -> void:
 	_load_relationship_data()
 	_ensure_npc_relationships()
@@ -129,22 +128,22 @@ func _ready() -> void:
 # ============ METER FUNCTIONS ============
 func change_meter(meter_name: String, amount: int) -> void:
 	match meter_name:
-		"RENOWN": RENOWN = clamp(RENOWN + amount, 0, 20)
-		"HEAT":   HEAT   = clamp(HEAT   + amount, 0, 15)
-		"PIETY":  PIETY  = clamp(PIETY  + amount, 0, 10)
-		"FAVOR":  FAVOR  = clamp(FAVOR  + amount, 0, 10)
-		"DEBT":   DEBT   = max(0, DEBT  + amount)
-		"DREAD":  DREAD  = clamp(DREAD  + amount, 0, 10)
+		"RENOWN": renown = clamp(renown + amount, 0, 20)
+		"HEAT":   heat   = clamp(heat   + amount, 0, 15)
+		"PIETY":  piety  = clamp(piety  + amount, 0, 10)
+		"FAVOR":  favor  = clamp(favor  + amount, 0, 10)
+		"DEBT":   debt   = max(0, debt  + amount)
+		"DREAD":  dread  = clamp(dread  + amount, 0, 10)
 	meter_changed.emit(meter_name, get_meter(meter_name))
 
 func get_meter(meter_name: String) -> int:
 	match meter_name:
-		"RENOWN": return RENOWN
-		"HEAT":   return HEAT
-		"PIETY":  return PIETY
-		"FAVOR":  return FAVOR
-		"DEBT":   return DEBT
-		"DREAD":  return DREAD
+		"RENOWN": return renown
+		"HEAT":   return heat
+		"PIETY":  return piety
+		"FAVOR":  return favor
+		"DEBT":   return debt
+		"DREAD":  return dread
 	return 0
 
 # ============ LIEUTENANT FUNCTIONS ============
@@ -313,8 +312,8 @@ func is_mission_available(mission_id: String) -> bool:
 # ============ SAVE/LOAD ============
 func to_dict() -> Dictionary:
 	return {
-		"RENOWN": RENOWN, "HEAT": HEAT, "PIETY": PIETY,
-		"FAVOR": FAVOR, "DEBT": DEBT, "DREAD": DREAD,
+		"RENOWN": renown, "HEAT": heat, "PIETY": piety,
+		"FAVOR": favor, "DEBT": debt, "DREAD": dread,
 		"lieutenant_data": lieutenant_data,
 		"active_lieutenants": active_lieutenants,
 		"benched_lieutenants": benched_lieutenants,
@@ -345,12 +344,12 @@ func to_dict() -> Dictionary:
 	}
 
 func from_dict(data: Dictionary) -> void:
-	RENOWN = data.get("RENOWN", 0)
-	HEAT   = data.get("HEAT",   0)
-	PIETY  = data.get("PIETY",  0)
-	FAVOR  = data.get("FAVOR",  0)
-	DEBT   = data.get("DEBT",   0)
-	DREAD  = data.get("DREAD",  0)
+	renown = data.get("RENOWN", 0)
+	heat   = data.get("HEAT",   0)
+	piety  = data.get("PIETY",  0)
+	favor  = data.get("FAVOR",  0)
+	debt   = data.get("DEBT",   0)
+	dread  = data.get("DREAD",  0)
 	lieutenant_data    = data.get("lieutenant_data",    lieutenant_data)
 	active_lieutenants = data.get("active_lieutenants", [])
 	benched_lieutenants= data.get("benched_lieutenants",[])
@@ -398,7 +397,7 @@ func _normalize_string_array(value, fallback: Array[String]) -> Array[String]:
 	return result
 
 func reset() -> void:
-	RENOWN = 0; HEAT = 0; PIETY = 0; FAVOR = 0; DEBT = 0; DREAD = 0
+	renown = 0; heat = 0; piety = 0; favor = 0; debt = 0; dread = 0
 	for lt in lieutenant_data:
 		lieutenant_data[lt] = {"loyalty": 0, "level": 1, "recruited": false, "alive": true}
 	active_lieutenants = []; benched_lieutenants = []
@@ -526,3 +525,5 @@ func _log_relationship(line: String) -> void:
 	if relationship_log.size() > 120:
 		relationship_log.pop_front()
 	print("[REL] %s" % line)
+
+

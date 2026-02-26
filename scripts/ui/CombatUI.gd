@@ -20,6 +20,11 @@ const UI_TEXT: Color = Color(0.90, 0.88, 0.84, 1.0)
 const UI_TEXT_MUTED: Color = Color(0.72, 0.71, 0.69, 1.0)
 const UI_ACCENT_WARM: Color = Color(0.83, 0.65, 0.40, 1.0)
 const UI_ACCENT_COLD: Color = Color(0.58, 0.76, 0.92, 1.0)
+const RAIL_WIDTH: float = 140.0
+const PLAYER_RAIL_SIDE_MARGIN: float = 0.0
+const ENEMY_RAIL_SIDE_MARGIN: float = 8.0
+const PLAYER_RAIL_Y_OFFSET: float = 9.0
+const ENEMY_RAIL_Y_OFFSET: float = -9.0
 
 # ============ COMBAT STATE ============
 var champion_hp: int = 30
@@ -105,11 +110,6 @@ var turn_log_label: Label
 var turn_log_toggle_btn: Button
 var turn_log_collapsed: bool = true
 var turn_undo_stack: Array = []
-const RAIL_WIDTH: float = 140.0
-const PLAYER_RAIL_SIDE_MARGIN: float = 0.0
-const ENEMY_RAIL_SIDE_MARGIN: float = 8.0
-const PLAYER_RAIL_Y_OFFSET: float = 9.0
-const ENEMY_RAIL_Y_OFFSET: float = -9.0
 
 func _apply_panel_style(panel: PanelContainer, tone: int = 0) -> void:
 	if panel == null:
@@ -1954,28 +1954,18 @@ func _on_end_turn() -> void:
 		if enemy["hp"] <= 0:
 			continue
 		var active_slot = min(slot_idx, ENEMY_SLOT_COUNT - 1)
-		var incoming: int = int(enemy.get("damage", 2))
+		var action := _get_enemy_action(enemy)
+		var intent_text := _enemy_intent_text(enemy, action)
 		_set_enemy_card_slot_state(active_slot, "known")
 		var tele_lbl := enemy_card_slot_labels[active_slot] as Label
 		if tele_lbl:
-			tele_lbl.text = "⚔%d" % incoming
+			tele_lbl.text = intent_text
 		if not skip_enemy_animation:
 			await get_tree().create_timer(_scaled_time(0.30)).timeout
 		await _animate_enemy_card_appear(active_slot)
 		await _animate_enemy_card_flip(active_slot)
 		_set_enemy_card_slot_state(active_slot, "active")
-		var dmg: int = incoming
-		var absorbed: int = min(champion_armor, dmg)
-		champion_armor = max(0, champion_armor - absorbed)
-		var actual: int = dmg - absorbed
-		champion_hp = max(0, champion_hp - actual)
-		_spawn_float_text("-%d" % actual, Color(1.0, 0.24, 0.24, 1.0), _player_float_origin(), 28)
-		_log("%s attacks! %d dmg (-%d armor) → Champion: %d/%d HP" % [enemy["name"], actual, absorbed, champion_hp, champion_max_hp])
-		if reflect_ratio > 0.0 and reflect_turns > 0 and actual > 0:
-			var reflected: int = maxi(1, int(ceil(float(actual) * reflect_ratio)))
-			enemies[i]["hp"] = max(0, enemies[i]["hp"] - reflected)
-			_spawn_float_text("-%d" % reflected, Color(0.72, 0.92, 1.0, 1.0), _enemy_float_origin(i), 24)
-			_log("Thorns reflect %d dmg back to %s" % [reflected, enemy["name"]])
+		await _enemy_take_turn(i, action, active_slot)
 		await _animate_enemy_card_to_battlefield(active_slot, true)
 		if not skip_enemy_animation:
 			await get_tree().create_timer(_scaled_time(0.45)).timeout
@@ -2046,6 +2036,89 @@ func _restore_turn_state(state: Dictionary) -> void:
 	player_won = bool(state.get("player_won", player_won))
 	_log_lines = (state.get("log_lines", _log_lines) as Array).duplicate(true)
 	selected_enemy_idx = int(state.get("selected_enemy_idx", selected_enemy_idx))
+
+
+# ══════════════════════════════════════════════════════════════════════════════
+# ENEMY ACTION HELPERS (boss scripting, telegraphs, damage resolution)
+# ══════════════════════════════════════════════════════════════════════════════
+
+func _get_enemy_action(enemy: Dictionary) -> Dictionary:
+	var acts: Array = enemy.get("scripted_actions", [])
+	if acts is Array and acts.size() > 0:
+		var idx: int = wrapi(turn - 1, 0, acts.size())
+		var act: Dictionary = acts[idx] as Dictionary
+		if act is Dictionary:
+			return act
+	return {}
+
+
+func _enemy_intent_text(enemy: Dictionary, action: Dictionary) -> String:
+	if action.is_empty():
+		return "⚔%d" % int(enemy.get("damage", 2))
+	var hits: int = int(action.get("hits", 1))
+	var dmg: int = int(action.get("damage", enemy.get("damage", 2)))
+	var is_true: bool = bool(action.get("true_damage", false))
+	var icon: String = "✦" if is_true else "⚔"
+	if hits > 1:
+		return "%s%dx%d" % [icon, hits, dmg]
+	return "%s%d" % [icon, dmg]
+
+
+func _enemy_take_turn(enemy_idx: int, action: Dictionary, slot_idx: int) -> void:
+	var enemy: Dictionary = enemies[enemy_idx] as Dictionary
+	var name: String = str(action.get("name", enemy.get("name", "Enemy")))
+	var hits: int = max(1, int(action.get("hits", 1)))
+	var dmg: int = int(action.get("damage", enemy.get("damage", 2)))
+	var armor_shred: int = int(action.get("armor_shred", 0))
+	var lifesteal: int = int(action.get("lifesteal", 0))
+	var true_damage: bool = bool(action.get("true_damage", false))
+
+	if armor_shred > 0:
+		var before_armor := champion_armor
+		champion_armor = max(0, champion_armor - armor_shred)
+		_log("%s shreds %d armor (%d → %d)" % [name, armor_shred, before_armor, champion_armor])
+
+	var total_actual := 0
+	for hit in range(hits):
+		var actual := _apply_enemy_hit(dmg, true_damage, name, hit, hits)
+		total_actual += actual
+		if reflect_ratio > 0.0 and reflect_turns > 0 and actual > 0:
+			var reflected: int = maxi(1, int(ceil(float(actual) * reflect_ratio)))
+			enemy["hp"] = max(0, enemy["hp"] - reflected)
+			_spawn_float_text("-%d" % reflected, Color(0.72, 0.92, 1.0, 1.0), _enemy_float_origin(enemy_idx), 24)
+			_log("Thorns reflect %d dmg back to %s" % [reflected, name])
+		if champion_hp <= 0:
+			enemies[enemy_idx] = enemy
+			return
+
+	if lifesteal > 0 and total_actual > 0:
+		var before_hp := int(enemy.get("hp", 0))
+		enemy["hp"] = min(int(enemy.get("max_hp", before_hp)), before_hp + lifesteal)
+		_log("%s siphons %d HP (lifesteal) → %d/%d" % [name, lifesteal, enemy["hp"], enemy.get("max_hp", enemy["hp"])])
+
+	enemies[enemy_idx] = enemy
+
+
+func _apply_enemy_hit(dmg: int, true_damage: bool, name: String, hit_idx: int, total_hits: int) -> int:
+	var absorbed: int = 0
+	if not true_damage:
+		absorbed = min(champion_armor, dmg)
+		champion_armor = max(0, champion_armor - absorbed)
+	var actual: int = dmg - absorbed
+	champion_hp = max(0, champion_hp - actual)
+	var label := "Hit %d/%d" % [hit_idx + 1, total_hits] if total_hits > 1 else "Attack"
+	var tag := "%s (%s)" % [name, label]
+	var color := Color(1.0, 0.24, 0.24, 1.0)
+	_spawn_float_text("-%d" % actual, color, _player_float_origin(), 28)
+	_log("%s deals %d dmg%s → Champion: %d/%d HP (armor -%d)" % [
+		tag,
+		actual,
+		" true" if true_damage else "",
+		champion_hp,
+		champion_max_hp,
+		absorbed
+	])
+	return actual
 	_ensure_valid_enemy_target()
 
 func _on_undo_pressed() -> void:
@@ -2467,3 +2540,5 @@ func _log(msg: String) -> void:
 		log_label.text = "\n".join(_log_lines.slice(start_idx, _log_lines.size()))
 	_refresh_turn_log()
 	print("[COMBAT] " + msg)
+
+
