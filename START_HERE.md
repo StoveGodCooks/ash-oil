@@ -135,7 +135,7 @@ git commit -m "chore: update START_HERE.md with Phase 6 completion status"
 
 # 📍 CURRENT STATUS
 
-**Last Patch:** local-uncommitted — Hub tab rebuild + CP combat polish + arena hazards
+**Last Patch:** 618a13e — feat: hub tabs and command-point combat polish
 
 **Current Phase:** Phase 11 🟡 IN PROGRESS | Phase 10 ✅ COMPLETE (advanced combat features underway)
 
@@ -160,7 +160,7 @@ git commit -m "chore: update START_HERE.md with Phase 6 completion status"
 - ✅ MissionBriefer cancel flow + hide on missing hooks
 - ✅ Narrative hook meter_impact set to display-only (no double meter application)
 
-**Last Commit:** 1e62033 — style: Batch 2F — bottom bar hints and shortcuts
+**Last Commit:** 618a13e — feat: hub tabs and command-point combat polish
 
 ## What's Done This Session
 
