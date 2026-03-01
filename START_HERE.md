@@ -135,38 +135,64 @@ git commit -m "chore: update START_HERE.md with Phase 6 completion status"
 
 # 📍 CURRENT STATUS
 
-**Last Patch:** c01d83d — feat: cinematic landing page with Colosseum background | Phase 12
+**Last Patch:** e191d45 — fix: rename gear_item_btn to avoid duplicate variable | Phase 12
 
-**Current Phase:** Phase 12 (UI Polish & Narrative) 🔄 IN PROGRESS | Phase 11 ✅ COMPLETE
+**Current Phase:** Phase 12 (Hub UI Integration) 🔄 IN PROGRESS | Phase 11 ✅ COMPLETE
 
-## What's Done This Session
+## What's Done This Session (Phase 12b-c: Hub UI Refactor)
 
-- ✅ **Lieutenant Combat System (from previous session):** Refactored from 1 passive LT to 4 independent persistent on-battlefield units (LTCombatState class)
-- ✅ **Lieutenant Data:** Added combat stats to all 8 LTs (attack, defense, atkScale, defScale, spdScale, cp, portrait)
-- ✅ **GameState (Step 2):** Added XP tracking per LT, expanded loyalty range to -100/+100, increased squad size to 4 max, migration function for old saves
-- ✅ **CombatUI Refactoring (Step 3):** Converted singular LT fields to Array[LTCombatState], updated all 6 team ability effects to loop through active LTs, serialized save/load for 4-slot squad
-- ✅ **Professional MainHub Redesign (Phase 12a):** Created atmospheric shader + HeroCard/PrimaryMissionCard/AtmosphericBackground inner classes (rejected aesthetic)
-- ✅ **Cinematic Landing Page (Phase 12b):**
-  - Integrated AI-generated Colosseum background image (landing_colosseum.png)
-  - Implemented animated smoke particle system (~20 particles/sec, organic fade lifecycle)
-  - Added VignetteOverlay for depth effect (35% edge darkening)
-  - Implemented smooth button hover animations (scale 1.0→1.08, cubic easing)
-  - Proper z-indexing (background:0, smoke:1, vignette:2, awning:3, center:4, UI:5-10)
-  - Preserved existing title/buttons with professional scaling feedback
+- ✅ **UI Polish (Phase 12b):**
+  - Fixed Champion box alignment (flush left with nav, 12px → 0px margins)
+  - Increased mission card border emphasis (gold bottom border: 2px → 3px)
+  - Added gold text glow on hover (shadow effect with Color.GOLD alpha=0.3)
 
-**Tests:** Structure verified via code analysis; smoke system and animations follow combat UI patterns
-**Data validation:** `python tests/validate_data.py` passing
-**Lint:** Verified with gdlint (no errors)
+- ✅ **Narrative Status Integration (Phase 12b):**
+  - Moved NARRATIVE STATUS from standalone section into HeroCard
+  - 6-meter compact grid (2 columns) with dividers
+  - Achieved visual cohesion in left nav column
 
-**Blockers:** Godot headless runner not in PATH (cannot verify at runtime); structure inspection shows no issues.
+- ✅ **Map/Missions Restructuring (Phase 12c):**
+  - **Removed X button:** Deleted NavOrnament decorative element
+  - **Removed MAP tab:** Deleted from TAB_DEFS (7 tabs → 7 tabs; renumbered roman numerals I-VII)
+  - **Added missions toggle:** Created missions_view_mode state with LIST/MAP sub-sections
+  - Implemented _build_missions_list() and _build_missions_map() (map placeholder ready for image nodes)
+  - Toggle buttons with smooth _animate_tab_transition for mode switching
+
+- ✅ **Shop Inline Integration (Phase 12c):**
+  - Changed SHOP tab: `"kind": "scene"` → `"kind": "context"` (no external scene loads)
+  - Added shop state variables: shop_pool, gear_pool, shop_current_tab, shop_selected_card_id/price
+  - Implemented _build_shop_content() with full UI (header, CARDS/GEAR tabs, grid, preview)
+  - **Extracted from ShopUI.gd:**
+    - _generate_shop_pool() — randomize 9 cards, exclude owned/signature
+    - _build_gear_pool() — rarity filtering + Corvus "Black Market" trait (+2 epic slots)
+    - _has_lt_trait() — lieutenant trait checker (reusable for Connected discount, etc.)
+    - _card_price() — pricing logic with 20% Connected discount
+    - _card_summary() — card stats text generation
+    - _on_shop_buy_card() + _on_shop_buy_gear() — buy logic with GameState integration
+  - Left grid (3-col cards / 2-col gear) + Right preview panel with price/BUY button
+
+- ✅ **Deck Builder Inline Integration (Phase 12c):**
+  - Changed DECK tab: `"kind": "scene"` → `"kind": "context"`
+  - Added deck state variable: deck_selected_card_id
+  - Implemented _build_deck_content_inline() with full 3-column interface
+    - **Left (33%):** "YOUR DECK" — shows cards with counts, remove (–) buttons, clickable for preview
+    - **Center (33%):** "COLLECTION" — shows available cards, add (+) buttons, clickable for preview
+    - **Right (34%):** "CARD DETAIL" — selected card preview with stats/effects
+    - Vertical dividers (semi-transparent bronze)
+  - All card rows are interactive buttons with hover styling
+  - Remove/add operations trigger _animate_tab_transition for smooth updates
+  - Deck constraints enforced: max 4 copies per card, 30 total cards
+
+**Tests:** Code structure verified; all functions defined and wired to _populate_tab_content()
+**Lint:** Verified with gdlint (fixed gear_item_btn duplicate variable error)
 
 **Next Steps:**
-1. Scene system for text-based intermissions and Act 3 endings (data/scenes.json scaffolded)
-2. Hook journal entries to branching consequences + narrative flag system
-3. Author ending scenes for Cult / State / Solo paths
-4. Lieutenant XP/leveling system (tied to mission rewards)
-5. Lieutenant skill trees (tier-1, tier-2 abilities per LT unlocks)
-6. Portrait asset integration (hub, dialogue, card preview) once assets arrive
+1. **Interactive Mission Map** — Replace MAP placeholder with clickable image-based mission selector
+2. **Run full test suite** — Verify 706+ tests still pass with 7-tab structure (was 8 tabs with external SHOP/DECK)
+3. **Scene system** — Text-based intermissions and Act 3 endings (data/scenes.json scaffolded)
+4. **Hook system** — Journal entries → branching consequences + narrative flags
+5. **Lieutenant XP/leveling** — Distribute XP to all active LTs via MissionManager.get_mission_reward()
+6. **Skill trees** — Unlock abilities per LT tier (tier-1, tier-2 progression)
 
 ---
 

@@ -1,8 +1,8 @@
 # Ash & Oil — Development Roadmap
 
-**Current Version:** v0.10.0 — Phase 12: UI Polish & Lieutenant Combat System
-**Last Updated:** February 28, 2026
-**Status:** Phase 11 complete (command-point combat polish, team abilities, hub tab rebuild, collector boss scripted cycle); Phase 12a complete (4-LT system: lieutenant combat stats, GameState XP tracking, CombatUI 4-slot refactoring); Phase 12b-i complete (cinematic landing page with Colosseum background, animated smoke, hover animations); Phase 12b-ii pending (story/narrative scenes, endings, journal).
+**Current Version:** v0.10.0 — Phase 12: Hub UI Integration
+**Last Updated:** March 1, 2026
+**Status:** Phase 11 ✅ complete | Phase 12a ✅ complete (4-LT lieutenant system) | Phase 12b-i ✅ complete (cinematic landing page) | Phase 12b-ii ⏳ pending (story/narrative scenes, endings, journal) | Phase 12c ✅ complete (hub UI refactor: MAP removal, SHOP/DECK inline integration) | Phase 12d ⏳ pending (lieutenant XP leveling, skill trees).
 
 ---
 
@@ -220,7 +220,23 @@
 - [ ] Character arcs (5+ lieutenant-specific story branches)
 - [ ] Journal system (track completed missions, story progression)
 
-**Phase 12c: Lieutenant Progression** ⏳
+**Phase 12c: Hub UI Integration & Map Restructuring** ✅
+- [x] Removed MAP tab entirely (7 tabs total)
+- [x] Removed decorative X button (NavOrnament) from left nav
+- [x] Added MISSIONS view toggle (LIST/MAP sub-sections)
+- [x] SHOP integration: Converted from external scene to inline context tab with full UI
+  - [x] Extract shop pool generation, gear pool with traits, card pricing, buy logic
+  - [x] Implement card grid + gear grid with preview panel
+  - [x] Support Corvus "Black Market" trait for epic gear slots
+  - [x] Support lieutenant traits (Connected discount, etc.)
+- [x] DECK integration: Converted from external scene to inline context tab with 3-column interface
+  - [x] Left column: YOUR DECK with remove buttons, clickable for preview
+  - [x] Middle column: COLLECTION with add buttons, clickable for preview
+  - [x] Right column: CARD DETAIL preview panel
+  - [x] Max 4 copies per card, 30 total enforced in UI
+- [x] Smooth tab transitions with _animate_tab_transition for all inline tabs
+
+**Phase 12d: Lieutenant Progression** ⏳
 - [ ] Lieutenant XP leveling (gain XP per combat mission, unlock skill tiers)
 - [ ] Skill trees (tier-1 and tier-2 abilities per LT)
 - [ ] Team synergies (squad composition bonuses)
