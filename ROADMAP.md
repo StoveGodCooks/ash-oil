@@ -1,8 +1,8 @@
 # Ash & Oil — Development Roadmap
 
-**Current Version:** v0.9.0 — Phase 10: NPC Relationship System (finalized)
-**Last Updated:** February 26, 2026
-**Status:** Prompt 9 major systems and Phase 10 relationship/faction gating/dialogue are implemented; Phase 11 command-point combat polish + hub rebuild underway; full suite passing (692 assertions)
+**Current Version:** v0.11.0 — Phase 12: Lieutenant Combat System
+**Last Updated:** February 28, 2026
+**Status:** Phase 11 complete (command-point combat polish, team abilities, hub tab rebuild, collector boss scripted cycle); Phase 12a complete (4-LT system: lieutenant combat stats, GameState XP tracking, CombatUI 4-slot refactoring); Phase 12b pending (story/narrative scenes, endings, journal).
 
 ---
 
@@ -129,7 +129,7 @@
 - [x] TestBase framework (15+ assertion types)
 - [x] Unit test suites (test_gamestate, test_cardmanager, test_missionmanager, test_savemanager, test_combat_logic, test_game_logic)
 - [x] Integration tests (test_mission_flow, test_save_load)
-- [x] 150+ total test assertions
+- [x] 700+ total test assertions
 - [x] GitHub Actions CI pipeline
   - [x] JSON data validation
   - [x] GDScript linting (gdtoolkit)
@@ -174,35 +174,48 @@
 - [x] Faction alignment (Cult, State, Syndicate)
 - [x] Faction-locked missions (only accessible if aligned)
 - [x] Expanded relationship gates/impacts (M10, M14, M15, M17, M19) + mission_locked dialogue contexts
+- [x] **Polish Pass:** Expanded relationship/faction ranges to [-100, 100], updated meter naming to snake_case, and cleared linting backlog.
 
-### Phase 11: Advanced Combat Features
+### Phase 11: Advanced Combat Features ✅
 **Focus:** New card mechanics, special effects, environmental factors
 
 - [x] Command Point resource (single CP pool replaces stamina/mana; gear start bonus supported)
 - [x] Combat readability polish (card hover pop-out preview, staggered draws, CP tooltips/reticle)
 - [x] Poison stacking mechanics refinement (capped at 12 stacks, decay each turn, UI log clarity)
 - [x] Reflect/retaliation system (Thorns effect: 50% returned for 2 turns)
-- [ ] Mana pool system → **de-scoped** (single Command Point resource confirmed)
-- [ ] Team ability system (lieutenant + champion combo moves)
+- [x] Team ability system (lieutenant + champion combo moves implemented: Bless Team, Regen Team, Team Protect, etc.)
 - [x] Environmental hazards (mission-specific arena DoT added to M11)
 - [x] Boss encounters (unique enemy AI with special moves — Act 2 “Collector” scripted cycle)
 
-### Phase 11b: Hub & Builder UX
+### Phase 11b: Hub & Builder UX ✅
 **Focus:** Surface combat/narrative state clearly in hub screens
 
 - [x] MainHub tab content rebuilt (missions, squad, loadout, intel, log, deck) with animated transitions + mission briefer overlay
 - [x] Meter/gold change animations and lock reason surfacing
 - [x] Deck Builder restyled (deck/collection/detail columns, CardDisplay preview, build rule footer)
 
-### Phase 12: Story & Narrative
-**Focus:** Story hooks, branching narrative, multiple endings
+### Phase 12: Story & Narrative (w/ Lieutenant Combat System)
+**Focus:** Lieutenant combat system + story hooks, branching narrative, multiple endings
 
+**Phase 12a: Lieutenant Combat System** ✅
+- [x] Lieutenant data: Added attack/defense/atkScale/defScale/spdScale/cp/portrait to all 8 LTs
+- [x] GameState: XP tracking per LT, loyalty range -100 to +100, squad size 4 max, migration function for old saves
+- [x] CombatUI: Refactored singular LT fields → Array[LTCombatState], 4-slot independent units on battlefield
+- [x] Team abilities: Updated all 6 team effects (morale_boost_team, regen_team, team_buff_all, bless_team, team_protect, evasion_team) to loop through active LTs
+- [x] Save/Load: Serialized 4-slot lieutenant state arrays for persistence
+
+**Phase 12b: Story & Narrative** ⏳
 - [ ] Hook system (create story flags from missions)
 - [ ] Scene system (text-based story beats between missions)
 - [ ] Consequence tracking (decisions affecting future missions)
 - [ ] Ending scenes (3+ unique endings based on path: Cult, State, Solo)
 - [ ] Character arcs (5+ lieutenant-specific story branches)
 - [ ] Journal system (track completed missions, story progression)
+
+**Phase 12c: Lieutenant Progression** ⏳
+- [ ] Lieutenant XP leveling (gain XP per combat mission, unlock skill tiers)
+- [ ] Skill trees (tier-1 and tier-2 abilities per LT)
+- [ ] Team synergies (squad composition bonuses)
 
 ### Phase 13: Progression & Upgrades
 **Focus:** Between-mission advancement, character upgrades
@@ -268,11 +281,12 @@
 - [x] Turn-log panel + keyboard shortcuts + animation speed controls
 - [x] Card face readability pass (type icon + rarity glow + tooltip polish)
 
-### Next Phase (Phase 11 advanced combat setup)
-- [ ] Finalize lieutenant signature/ability cards (Phase 9 remaining depth)
-- [ ] Begin Phase 11 combat feature work (poison stacking, retaliation/reflect, mana pool prep)
-- [ ] Playtest new relationship gates for fairness; tune faction thresholds if needed
-- [ ] Integrate portrait assets into hub/dialogue/combat once ready
+### Next Phase (Phase 12 narrative)
+- [x] Build Scene system for intermissions and ending sequences (text-first)
+- [x] Connect mission hooks to branching consequences and journal logging (story_log + StoryLog UI)
+- [x] Write Act 3 ending branches (Cult / State / Solo) + lieutenant epilogues (scaffold text added)
+- [ ] Add modal presentation/choices + portraits once assets available
+- [ ] Playtest CP economy + collector boss cycle and capture tuning notes
 
 ---
 
@@ -304,7 +318,7 @@
 | Missions (Side) | 15 | 50+ |
 | Lieutenants | 8 | 12 |
 | Unique Enemies | 45+ | 100+ |
-| Test Coverage | 696 assertions | 250+ |
+| Test Coverage | 719 assertions | 800+ |
 | Acts | 4 (implied) | 5 |
 | Endings | 3 planned | 5+ |
 

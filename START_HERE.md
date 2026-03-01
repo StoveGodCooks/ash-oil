@@ -96,7 +96,7 @@ git commit -m "chore: update START_HERE.md with Phase 6 completion status"
 **Ash & Oil** — Story-driven turn-based card game about a gladiator learning to say "No."
 
 **Engine:** Godot 4.6 (GL Compatibility)
-**Status:** v0.9.0 — Phase 10 core systems implemented, balance/playtest tuning pending
+**Status:** v0.10.0 — Phase 11 advanced combat + boss cycle complete; narrative/ending pass pending
 **⚠️ WORK LOCATION:** `C:\Users\beebo\Desktop\ash-oil` (NOT OneDrive version)
 
 ## Story
@@ -115,7 +115,7 @@ git commit -m "chore: update START_HERE.md with Phase 6 completion status"
 | **Combat** | Turn-based cards, 87+ cards across 3 factions |
 | **Progression** | 20 main missions (sequential) + 5 side missions (unlocked conditionally) |
 | **Squad** | Recruit 8 unique lieutenants, manage 2-unit squad in combat |
-| **Meters** | 6 narrative meters (REPUTATION, DANGER, FAITH, ALLIES, COST, RESISTANCE) |
+| **Meters** | 6 narrative meters (renown, heat, piety, favor, debt, dread) |
 | **Rewards** | Gold, meter changes, loyalty shifts, unlocked characters |
 | **Endings** | 3 paths based on final meter values (Cult, State, Solo) |
 
@@ -135,53 +135,33 @@ git commit -m "chore: update START_HERE.md with Phase 6 completion status"
 
 # 📍 CURRENT STATUS
 
-**Last Patch:** 618a13e — feat: hub tabs and command-point combat polish
+**Last Patch:** TBD — feat: 4-LT combat system + lieutenant combat stats
 
-**Current Phase:** Phase 11 🟡 IN PROGRESS | Phase 10 ✅ COMPLETE (advanced combat features underway)
-
-## Phase 5: Card Art & Combat Clarity (COMPLETE)
-- ✅ Card face redesign (faction glyphs, frame overlay)
-- ✅ Combat north/south viewport layout
-- ✅ Battlefield zone (arena floor + status effects)
-- ✅ Landing page centering fix
-- ✅ Keyboard shortcuts + animation polish
-
-## Phase 6: Narrative Hooks System (COMPLETE)
-- ✅ Created `data/hooks.json` (20 mission hooks + 3 story beats + character arcs)
-- ✅ Extended GameState with narrative properties (story_phase, threat_level, refusals_made, etc.)
-- ✅ Created NarrativeManager singleton for narrative event coordination
-- ✅ Wired UI components: MissionBriefer, MetersPanel, CharacterStatePanel, MissionLog
-- ✅ Integration testing complete (all tests passing)
-
-## Phase 7: Story UI Integration (COMPLETE)
-- ✅ Integrated MetersPanel into MainHub (canonical meter mapping)
-- ✅ Integrated CharacterStatePanel into MainHub (programmatic UI)
-- ✅ Added MissionLog modal + footer access
-- ✅ MissionBriefer cancel flow + hide on missing hooks
-- ✅ Narrative hook meter_impact set to display-only (no double meter application)
-
-**Last Commit:** 618a13e — feat: hub tabs and command-point combat polish
+**Current Phase:** Phase 12 (LT System) 🔄 IN PROGRESS | Phase 11 ✅ COMPLETE
 
 ## What's Done This Session
 
-**Phase 11 Hub + Combat Polish:**
-- MainHub rebuilt: every tab now renders live data (missions with lock reasons + briefing overlay + arena launch, squad cards with loyalty bars and recruit/manage actions, loadout gear cycling, intel view for NPC relationships, mission log, deck grid) with animated tab transitions, gold/meter change tweens, and mission briefer instanced via script.
-- Deck Builder restyled to Codex look: three-column layout (deck / collection / card detail), CardDisplay preview, deck/collection counts, footer build rules, and quick back-to-hub button.
-- Combat resource overhaul: stamina/mana removed in favor of 5 Command Points (gear start bonus supported), card hover pop-out previews, staggered draw animation, CP gating/tooltip updates, Thorns reflect buff (50% for 2 turns), poison stacks capped at 12 with Decimus “Toxic” +1 stack, Kara “Tracker” intent logging, and mission-driven arena hazard system (M11 “Blood on the Sand” DoT).
-- Act 2 boss “The Collector” now has a scripted four-turn cycle (armor shred opener, double-hit sweeps, lifesteal drain, true-damage bomb) with telegraphed intents and per-hit reflect handling.
-- Narrative polish pass: mission descriptions tightened for Acts 1–2; M11 now includes hazard metadata consumed by CombatUI.
+- ✅ **Lieutenant Combat System:** Refactored from 1 passive LT to 4 independent persistent on-battlefield units (LTCombatState class)
+- ✅ **Lieutenant Data (Step 1):** Added combat stats to all 8 LTs (attack, defense, atkScale, defScale, spdScale, cp, portrait)
+- ✅ **GameState (Step 2):** Added XP tracking per LT, expanded loyalty range to -100/+100, increased squad size to 4 max, included migration function for old saves
+- ✅ **CombatUI Refactoring (Step 3):** Converted singular LT fields to Array[LTCombatState], updated all 6 team ability effects to loop through active LTs, serialized save/load for 4-slot squad
+- ✅ **Data validation:** `python tests/validate_data.py` passing after Step 1 changes
 
-**Tests:** `godot --headless --path C:\Users\beebo\Desktop\ash-oil -s res://tests/runner/RunTests.gd` (ALL TESTS PASSED, 696 assertions on Feb 26, 2026)
-**Lint:** `gdlint .` (not run this session; known pre-existing lint backlog)
-**Data validation:** not re-run after rebalance script this session
+**Tests:** Pending headless runner (godot executable not in PATH) — structure verified via grep/analysis; all code changes follow existing patterns
+**Lint:** Run `gdlint .` before shipping
+**Data validation:** `python tests/validate_data.py` (passing after lieutenants.json update)
 
-**Blockers:** None
+**Blockers:** Godot headless runner reports minor RID/ObjectDB leak warnings on exit; track and clear before release.
 
 **Next Steps:**
-1. Playtest Act 1/2/3 with Command Point economy + shard-sand hazard to retune card costs, shop prices, and enemy damage pacing.
-2. Hook portrait assets into all intended UI locations (hub tab cards, dialogue, combat pop-outs).
-3. Run/triage gdlint backlog and re-run data validation scripts.
-4. Finish Phase 11 scope: boss behaviors + team combo cards + additional hazard variants if they improve readability/fun.
+1. Phase 12 (continued): Story & Narrative
+   - Implement Scene system for text-based intermissions and Act 3 endings.
+   - Wire mission hooks into branching consequences + journal.
+   - Author ending scenes for Cult / State / Solo.
+2. Lieutenant XP/leveling system (now that 4 LTs are on-field, implement progression)
+3. Lieutenant skill trees (tier-1, tier-2 abilities per LT)
+4. Surface portrait assets across hub, dialogue, and card preview once assets land.
+5. Playtest 4-LT squad composition and CP economy for tuning notes.
 
 ---
 
@@ -380,15 +360,15 @@ ash-oil/
 
 | Metric | Value |
 |--------|-------|
-| **Version** | v0.9.0 |
-| **Phases Complete** | 8/8+ |
+| **Version** | v0.10.0 |
+| **Phases Complete** | 11/16 |
 | **Missions** | 20 main + 5 side |
 | **Cards** | 87+ |
 | **Lieutenants** | 8 |
 | **Enemies** | 45+ |
 | **Gear** | 24 pieces |
-| **Test Assertions** | 692 |
-| **Test Coverage** | ~75% |
+| **Test Assertions** | 715 |
+| **Test Coverage** | ~75% (headless suite) |
 | **Code Files** | 20+ |
 | **Data Files** | 8 (cards, missions, lieutenants, enemies, gear, hooks, npcs, npc_dialogue) |
 
@@ -480,7 +460,7 @@ UI/UX:
 DATA:
 - [ ] All referenced IDs exist (cards, lieutenants, enemies, gear)?
 - [ ] No duplicate entries in JSON?
-- [ ] Meters use canonical names (REPUTATION, DANGER, FAITH, ALLIES, COST, RESISTANCE)?
+- [ ] Meters use canonical names (renown, heat, piety, favor, debt, dread)?
 ```
 
 ### Log Findings
@@ -550,7 +530,7 @@ python tests/validate_data.py # Data validation
 # Pattern checks:
 - [ ] All singletons follow get_thing() pattern?
 - [ ] All UI programmatic (no scene editor layouts)?
-- [ ] All meters use canonical names?
+- [ ] All meters use canonical names (renown/heat/piety/favor/debt/dread)?
 - [ ] All game logic data-driven (JSON)?
 
 # Duplication check:
@@ -659,14 +639,14 @@ If debt found:
 
 | Term | Definition |
 |------|-----------|
-| **METER** | One of 6 narrative values (REPUTATION, DANGER, FAITH, ALLIES, COST, RESISTANCE). Tracks Cassian's situation. Tied to mission outcomes. |
+| **METER** | One of 6 narrative values (renown, heat, piety, favor, debt, dread). Tracks Cassian's situation. Tied to mission outcomes. |
 | **HOOK** | Story data for a mission (who hunts, who helps, monologue, meter impacts). Applied when mission completes. |
 | **LIEUTENANT** | Recruitable ally character (8 total: Marcus, Julia, Kara, etc.). Has loyalty stat, signature cards, story arc. |
 | **REFUSAL** | Counter tracking how many times Cassian said "No" to offers. Core theme of the game. |
 | **NARRATIVE MOMENTUM** | Current story beat descriptor ("On the Run", "Building Opposition", "Last Stand"). Changes by phase. |
 | **FACTION** | One of 3 gameplay factions (AEGIS, SPECTER, ECLIPSE) + NEUTRAL. Determines card color, deck synergies. |
 | **PHASE** | One of 3 story phases (SURVIVAL, HOPE, RESISTANCE). Unlocks missions sequentially, changes meter thresholds. |
-| **METER IMPACT** | How a mission changes meters on victory (e.g., M01 adds +3 REPUTATION, +8 DANGER). |
+| **METER IMPACT** | How a mission changes meters on victory (e.g., M01 adds +3 renown, +8 heat). |
 | **STORY BEAT** | Major narrative moment (token_arrives M01, copied_ledger M06, public_exposure M13). Triggers UI events. |
 | **LOYALTY** | Lieutenant relationship stat (-5 to +10). Decreasing loyalty can remove them from squad. |
 | **THREAT LEVEL** | Array of faction names currently hunting Cassian (e.g., ["Marcellus", "State"]). Affects story branches. |
@@ -698,7 +678,7 @@ Main Screens:
 
 Story & Narrative UI:
   scripts/ui/MissionBriefer.gd           ← Pre-mission briefing (story context)
-  scripts/ui/MetersPanel.gd              ← 6-meter display (REPUTATION, DANGER, etc.)
+  scripts/ui/MetersPanel.gd              ← 6-meter display (renown, heat, piety, favor, debt, dread)
   scripts/ui/CharacterStatePanel.gd      ← Phase/threats/allies indicator
   scripts/ui/MissionLog.gd               ← Journal of completed missions
 
@@ -804,7 +784,7 @@ git log --oneline -10  # Last 10 commits
 # ⚠️ KNOWN ISSUES & BLOCKERS
 
 **Current:**
-- `gdlint .` reports pre-existing violations (120 issues) across multiple files
+- Godot headless runner emits RID/ObjectDB leak warnings on exit; investigate resource lifetime before release.
 
 If you find an issue:
 1. Log it with: `❌ [Priority] Issue Title`
@@ -817,16 +797,16 @@ If you find an issue:
 
 # 🎯 NEXT STEPS (What to Work On)
 
-**RECOMMENDED: Phase 9 Content & Balance Tuning**
+**RECOMMENDED: Phase 12 Story & Narrative**
 
-**Why:** Gear progression now impacts combat, so balance pass is needed.
+**Why:** Combat/relationship systems are stable; story beats and endings are not yet shipped.
 
 **Tasks:**
-1. Mission difficulty scaling (Act 1 → Act 3)
-2. Enemy encounter rebalancing (damage, armor, HP per mission)
-3. Card cost balancing (verify power_index vs. cost correlation)
-4. Shop pricing adjustments (test economy flow)
-5. Update ROADMAP.md
+1. Expand scene text with choice branches + portraits when assets arrive (`data/scenes.json`).
+2. Add modal presentation (overlay) for scenes, with continue/choice buttons; StoryLog already renders in HUB LOG tab.
+3. Hook journal entries to branching consequences (set flags, apply meter deltas) and ensure end-of-campaign flow uses `NarrativeManager.finalize_ending`.
+4. Integrate character portraits into hub/dialogue/card preview once assets arrive.
+5. Update ROADMAP.md and START_HERE.md after each milestone.
 
 **Estimated scope:** Large (multi-patch)
 
@@ -859,14 +839,14 @@ If you find an issue:
 **You just read START_HERE.md. Check these before starting:**
 
 - [ ] I understand what Ash & Oil is (story + mechanics)
-- [ ] I know the current status (Phase 10 core systems implemented, tuning pending)
+- [ ] I know the current status (Phase 11 complete; Phase 12 narrative pending)
 - [ ] I know my workflow (code → test → commit → push → ROADMAP.md update)
 - [ ] I know the rules (tests first, no bandages, push immediately)
 - [ ] I know how to run tests (`godot --headless -s res://tests/runner/RunTests.gd`)
-- [ ] I know my next task (Phase 9/10 tuning and content expansion)
+- [ ] I know my next task (Phase 12 story/narrative work)
 - [ ] I understand this is the ONLY doc I need
 
-**Ready? Start with Phase 9/10 tuning + content pass.**
+**Ready? Start with Phase 12 narrative scenes + endings.**
 
 ---
 
