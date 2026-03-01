@@ -283,18 +283,16 @@ class AtmosphericBackground extends ColorRect:
 
 const TAB_DEFS: Array[Dictionary] = [
 	{"id": "missions", "roman": "I", "label": "MISSIONS", "kind": "context"},
-	{"id": "map", "roman": "II", "label": "MAP", "kind": "context"},
-	{"id": "squad", "roman": "III", "label": "SQUAD", "kind": "context"},
-	{"id": "loadout", "roman": "IV", "label": "LOADOUT", "kind": "context"},
-	{"id": "shop", "roman": "V", "label": "SHOP", "kind": "scene", "scene": "res://scenes/ShopUI.tscn"},
-	{"id": "intel", "roman": "VI", "label": "INTEL", "kind": "context"},
-	{"id": "log", "roman": "VII", "label": "LOG", "kind": "context"},
-	{"id": "deck", "roman": "VIII", "label": "DECK", "kind": "scene", "scene": "res://scenes/DeckBuilder.tscn"},
+	{"id": "squad", "roman": "II", "label": "SQUAD", "kind": "context"},
+	{"id": "loadout", "roman": "III", "label": "LOADOUT", "kind": "context"},
+	{"id": "shop", "roman": "IV", "label": "SHOP", "kind": "scene", "scene": "res://scenes/ShopUI.tscn"},
+	{"id": "intel", "roman": "V", "label": "INTEL", "kind": "context"},
+	{"id": "log", "roman": "VI", "label": "LOG", "kind": "context"},
+	{"id": "deck", "roman": "VII", "label": "DECK", "kind": "scene", "scene": "res://scenes/DeckBuilder.tscn"},
 ]
 
 const TAB_HINTS: Dictionary = {
 	"missions": "SELECT A MISSION CONTRACT",
-	"map": "REVIEW ROUTES AND REGIONS",
 	"squad": "MANAGE ACTIVE LIEUTENANTS",
 	"loadout": "ADJUST CASSIAN'S GEAR",
 	"shop": "VISIT THE MARKET",
@@ -351,6 +349,7 @@ var bottom_shortcut_label: Label
 
 var selected_tab_index := 0
 var _runtime_hash := ""
+var missions_view_mode := "list"  # "list" or "map"
 
 
 func _ready() -> void:
@@ -609,10 +608,6 @@ func _build_left_nav() -> void:
 	col.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	col.add_theme_constant_override("separation", 0)
 	left_nav.add_child(col)
-
-	var top_decoration := NavOrnament.new()
-	top_decoration.custom_minimum_size = Vector2(0, 40)
-	col.add_child(top_decoration)
 
 	var top_sep := ColorRect.new()
 	top_sep.custom_minimum_size = Vector2(0, 1)
@@ -1236,6 +1231,42 @@ func _make_wax_seal(color: Color) -> Control:
 # ── 3A  MISSIONS ─────────────────────────────────────────────────────────────
 
 func _build_missions_content() -> void:
+	# Add toggle buttons for LIST/MAP view
+	var toggle_row := HBoxContainer.new()
+	toggle_row.alignment = BoxContainer.ALIGNMENT_CENTER
+	toggle_row.add_theme_constant_override("separation", 8)
+	content_inner.add_child(toggle_row)
+
+	var list_btn := Button.new()
+	list_btn.text = "MISSIONS"
+	list_btn.custom_minimum_size = Vector2(120, 40)
+	list_btn.add_theme_stylebox_override("normal", UITheme.btn_secondary())
+	list_btn.add_theme_stylebox_override("hover", UITheme.btn_secondary_hover())
+	if missions_view_mode == "list":
+		list_btn.add_theme_stylebox_override("normal", UITheme.btn_active())
+	list_btn.pressed.connect(_on_missions_toggle_list)
+	toggle_row.add_child(list_btn)
+
+	var map_btn := Button.new()
+	map_btn.text = "MAP"
+	map_btn.custom_minimum_size = Vector2(120, 40)
+	map_btn.add_theme_stylebox_override("normal", UITheme.btn_secondary())
+	map_btn.add_theme_stylebox_override("hover", UITheme.btn_secondary_hover())
+	if missions_view_mode == "map":
+		map_btn.add_theme_stylebox_override("normal", UITheme.btn_active())
+	map_btn.pressed.connect(_on_missions_toggle_map)
+	toggle_row.add_child(map_btn)
+
+	content_inner.add_child(_gap(12))
+
+	# Build the appropriate content based on current view mode
+	if missions_view_mode == "list":
+		_build_missions_list()
+	else:
+		_build_missions_map()
+
+
+func _build_missions_list() -> void:
 	var all_ids := _all_mission_ids()
 	if all_ids.is_empty():
 		var lbl := Label.new()
@@ -1251,6 +1282,30 @@ func _build_missions_content() -> void:
 			continue
 		content_inner.add_child(_make_mission_card(mdata, str(mid), active_id))
 		content_inner.add_child(_gap(6))
+
+
+func _build_missions_map() -> void:
+	# Placeholder for interactive mission map
+	# In a future update, this will display:
+	# - An image-based mission map node with clickable regions
+	# - Each region links to a mission and displays briefing info
+	# - An "ENTER BATTLE" button to start the mission
+	var placeholder := Label.new()
+	placeholder.text = "[MISSION MAP - Coming Soon]\n\nInteractive map with clickable mission locations.\nClick a region to select a mission and view details."
+	placeholder.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	placeholder.add_theme_font_size_override("font_size", UITheme.FONT_SIZE_BODY)
+	placeholder.add_theme_color_override("font_color", UITheme.CLR_MUTED)
+	content_inner.add_child(placeholder)
+
+
+func _on_missions_toggle_list() -> void:
+	missions_view_mode = "list"
+	_animate_tab_transition("missions")
+
+
+func _on_missions_toggle_map() -> void:
+	missions_view_mode = "map"
+	_animate_tab_transition("missions")
 
 
 func _all_mission_ids() -> Array:
