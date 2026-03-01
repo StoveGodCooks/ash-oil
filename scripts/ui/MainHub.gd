@@ -87,6 +87,47 @@ class HeroCard extends PanelContainer:
 		phase_label.add_theme_color_override("font_color", UITheme.CLR_MUTED)
 		col.add_child(phase_label)
 
+		# Divider
+		var meter_divider := ColorRect.new()
+		meter_divider.custom_minimum_size = Vector2(0, 1)
+		meter_divider.color = Color(UITheme.CLR_GOLD.r, UITheme.CLR_GOLD.g, UITheme.CLR_GOLD.b, 0.40)
+		col.add_child(meter_divider)
+
+		# Narrative status header
+		var status_header := Label.new()
+		status_header.text = "NARRATIVE STATUS"
+		status_header.add_theme_font_size_override("font_size", UITheme.FONT_SIZE_CAPTION)
+		status_header.add_theme_color_override("font_color", UITheme.CLR_GOLD)
+		col.add_child(status_header)
+
+		# Compact meter indicators
+		var meters_grid := GridContainer.new()
+		meters_grid.columns = 2
+		meters_grid.add_theme_constant_override("h_separation", 2)
+		meters_grid.add_theme_constant_override("v_separation", 2)
+		col.add_child(meters_grid)
+		for i in range(6):
+			var meter_cell := VBoxContainer.new()
+			meter_cell.add_theme_constant_override("separation", 0)
+			var meter_abbr := Label.new()
+			meter_abbr.add_theme_font_size_override("font_size", UITheme.FONT_SIZE_FINE)
+			meter_abbr.add_theme_color_override("font_color", UITheme.CLR_MUTED)
+			meter_cell.add_child(meter_abbr)
+			var meter_bar := ProgressBar.new()
+			meter_bar.custom_minimum_size = Vector2(0, 4)
+			meter_bar.show_percentage = false
+			meter_bar.min_value = 0
+			meter_bar.max_value = 100
+			meter_bar.add_theme_stylebox_override("background", UITheme.panel_inset())
+			meter_cell.add_child(meter_bar)
+			meters_grid.add_child(meter_cell)
+
+		# Second divider
+		var ally_divider := ColorRect.new()
+		ally_divider.custom_minimum_size = Vector2(0, 1)
+		ally_divider.color = Color(UITheme.CLR_GOLD.r, UITheme.CLR_GOLD.g, UITheme.CLR_GOLD.b, 0.40)
+		col.add_child(ally_divider)
+
 		var loyalty_header := Label.new()
 		loyalty_header.text = "ALLIES"
 		loyalty_header.add_theme_font_size_override("font_size", UITheme.FONT_SIZE_CAPTION)
@@ -403,28 +444,7 @@ func _build_ui() -> void:
 	primary_mission_card.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	showcase_section.add_child(primary_mission_card)
 
-	# Status section placeholder
-	var status_section := PanelContainer.new()
-	status_section.add_theme_stylebox_override("panel", _frame_style(Color(0, 0, 0, 0.0), Color(0, 0, 0, 0)))
-	var status_pad := MarginContainer.new()
-	status_pad.add_theme_constant_override("margin_left", 12)
-	status_pad.add_theme_constant_override("margin_right", 12)
-	status_pad.add_theme_constant_override("margin_top", 12)
-	status_pad.add_theme_constant_override("margin_bottom", 12)
-	status_section.add_child(status_pad)
-	var status_row := HBoxContainer.new()
-	status_row.add_theme_constant_override("separation", 20)
-	status_pad.add_child(status_row)
-	root.add_child(status_section)
-
-	var meters_col := VBoxContainer.new()
-	meters_col.add_theme_constant_override("separation", 4)
-	status_row.add_child(meters_col)
-	var meters_header := Label.new()
-	meters_header.text = "NARRATIVE STATUS"
-	meters_header.add_theme_font_size_override("font_size", UITheme.FONT_SIZE_CAPTION)
-	meters_header.add_theme_color_override("font_color", UITheme.CLR_GOLD)
-	meters_col.add_child(meters_header)
+	# Narrative status now integrated into HeroCard (Cassian box)
 
 	# Tab navigation + content (existing pattern)
 	var tab_row := HBoxContainer.new()
