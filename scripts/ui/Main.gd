@@ -1,50 +1,6 @@
 extends Control
 ## Roman landing page composition for Ash & Oil with cinematic Colosseum background.
 
-class SmokeParticle:
-	var pos: Vector2
-	var vel: Vector2
-	var life: float = 1.0
-	var opacity: float = 0.0
-	var size: float = 0.0
-
-class SmokeSystem extends Node2D:
-	var particles: Array[SmokeParticle] = []
-	var spawn_timer: float = 0.0
-	var viewport_size: Vector2
-
-	func _ready() -> void:
-		viewport_size = get_viewport_rect().size
-
-	func _process(delta: float) -> void:
-		spawn_timer += delta
-		# Spawn new smoke particles
-		if spawn_timer > 0.05:  # ~20 particles/sec
-			var new_particle = SmokeParticle.new()
-			new_particle.pos = Vector2(randf_range(0, viewport_size.x), viewport_size.y + 20)
-			new_particle.vel = Vector2(randf_range(-15, 15), randf_range(-25, -40))
-			new_particle.opacity = randf_range(0.3, 0.6)
-			new_particle.size = randf_range(30, 80)
-			particles.append(new_particle)
-			spawn_timer = 0.0
-
-		# Update existing particles
-		for p in particles:
-			p.pos += p.vel * delta
-			p.vel.y *= 0.98  # Slight deceleration
-			p.life -= delta * 0.6
-			p.opacity = p.life * randf_range(0.2, 0.4)
-
-		# Remove dead particles
-		particles = particles.filter(func(p): return p.life > 0)
-		queue_redraw()
-
-	func _draw() -> void:
-		for p in particles:
-			var alpha = clamp(p.opacity, 0.0, 0.5)
-			draw_circle(p.pos, p.size, Color(0.3, 0.25, 0.2, alpha))
-			draw_circle(p.pos, p.size * 0.7, Color(0.4, 0.35, 0.3, alpha * 0.6))
-
 class RomanAwning extends Control:
 	var tint := Color(0.240, 0.192, 0.138, 0.30)
 
@@ -70,7 +26,6 @@ class RomanDivider extends Control:
 
 var start_btn: Button
 var continue_btn: Button
-var smoke_system: SmokeSystem
 
 func _ready() -> void:
 	# Background image — graceful fallback to dark stone if image not yet imported
@@ -89,11 +44,6 @@ func _ready() -> void:
 		bg_fallback.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		add_child(bg_fallback)
 		push_warning("Landing background not found — ensure landing_colosseum.png is a valid PNG and reimport in Godot editor")
-
-	# Smoke particle system (Node2D — no anchors, draws at viewport coords)
-	smoke_system = SmokeSystem.new()
-	smoke_system.z_index = 1
-	add_child(smoke_system)
 
 	# Vignette overlay — simple ColorRect, no custom class needed
 	var vignette := ColorRect.new()
