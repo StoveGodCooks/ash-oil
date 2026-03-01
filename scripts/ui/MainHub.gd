@@ -203,8 +203,8 @@ class PrimaryMissionCard extends PanelContainer:
 		briefing_button.pressed.connect(func(): briefing_pressed.emit())
 		button_row.add_child(briefing_button)
 
-	func set_mission_data(mission_id: String, name: String, desc: String, enemy_ct: int, reward: String) -> void:
-		mission_name.text = "%s: %s" % [mission_id, name]
+	func set_mission_data(mission_id: String, mission_title: String, desc: String, enemy_ct: int, reward: String) -> void:
+		mission_name.text = "%s: %s" % [mission_id, mission_title]
 		mission_desc.text = desc
 		enemy_count_label.text = "ENEMIES: %d" % enemy_ct
 		reward_label.text = reward
@@ -632,12 +632,12 @@ func _build_left_nav() -> void:
 		labels.add_child(roman)
 		nav_roman_by_index[i] = roman
 
-		var name := Label.new()
-		name.text = _tracked_caps(str(tab_def["label"]))
-		name.add_theme_font_size_override("font_size", UITheme.FONT_SIZE_BODY)
-		name.add_theme_color_override("font_color", UITheme.CLR_PARCHMENT)
-		labels.add_child(name)
-		nav_name_by_index[i] = name
+		var tab_label := Label.new()
+		tab_label.text = _tracked_caps(str(tab_def["label"]))
+		tab_label.add_theme_font_size_override("font_size", UITheme.FONT_SIZE_BODY)
+		tab_label.add_theme_color_override("font_color", UITheme.CLR_PARCHMENT)
+		labels.add_child(tab_label)
+		nav_name_by_index[i] = tab_label
 
 		if i < TAB_DEFS.size() - 1:
 			var sep := ColorRect.new()
@@ -673,19 +673,19 @@ func _build_left_nav() -> void:
 
 
 func _build_content_panel() -> void:
-	var wrap := MarginContainer.new()
-	wrap.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	wrap.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	wrap.add_theme_constant_override("margin_left", 20)
-	wrap.add_theme_constant_override("margin_right", 20)
-	wrap.add_theme_constant_override("margin_top", 20)
-	wrap.add_theme_constant_override("margin_bottom", 20)
-	content_panel.add_child(wrap)
+	var margin_wrap := MarginContainer.new()
+	margin_wrap.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	margin_wrap.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	margin_wrap.add_theme_constant_override("margin_left", 20)
+	margin_wrap.add_theme_constant_override("margin_right", 20)
+	margin_wrap.add_theme_constant_override("margin_top", 20)
+	margin_wrap.add_theme_constant_override("margin_bottom", 20)
+	content_panel.add_child(margin_wrap)
 
 	var col := VBoxContainer.new()
 	col.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	col.add_theme_constant_override("separation", 0)
-	wrap.add_child(col)
+	margin_wrap.add_child(col)
 
 	var header := HBoxContainer.new()
 	header.custom_minimum_size = Vector2(0, 20)
@@ -1004,7 +1004,7 @@ func _update_nav_states() -> void:
 		var btn := nav_buttons[i]
 		var accent := nav_accent_by_index.get(i, null) as ColorRect
 		var roman := nav_roman_by_index.get(i, null) as Label
-		var name := nav_name_by_index.get(i, null) as Label
+		var tab_lbl := nav_name_by_index.get(i, null) as Label
 		var is_active := i == selected_tab_index
 		var is_hover := btn.is_hovered() or btn.has_focus()
 		if is_active:
@@ -1016,9 +1016,9 @@ func _update_nav_states() -> void:
 				accent.self_modulate.a = 1.0
 			if roman != null:
 				roman.add_theme_color_override("font_color", UITheme.CLR_GOLD)
-			if name != null:
-				name.add_theme_color_override("font_color", UITheme.CLR_GOLD)
-				name.add_theme_font_size_override("font_size", UITheme.FONT_SIZE_SUBHEAD)
+			if tab_lbl != null:
+				tab_lbl.add_theme_color_override("font_color", UITheme.CLR_GOLD)
+				tab_lbl.add_theme_font_size_override("font_size", UITheme.FONT_SIZE_SUBHEAD)
 		elif is_hover:
 			btn.add_theme_stylebox_override("normal", UITheme.btn_secondary_hover())
 			btn.add_theme_stylebox_override("hover", UITheme.btn_secondary_hover())
@@ -1028,9 +1028,9 @@ func _update_nav_states() -> void:
 				accent.self_modulate.a = 1.0
 			if roman != null:
 				roman.add_theme_color_override("font_color", UITheme.CLR_PARCHMENT)
-			if name != null:
-				name.add_theme_color_override("font_color", UITheme.CLR_VELLUM)
-				name.add_theme_font_size_override("font_size", UITheme.FONT_SIZE_BODY)
+			if tab_lbl != null:
+				tab_lbl.add_theme_color_override("font_color", UITheme.CLR_VELLUM)
+				tab_lbl.add_theme_font_size_override("font_size", UITheme.FONT_SIZE_BODY)
 		else:
 			btn.add_theme_stylebox_override("normal", _transparent_button_style())
 			btn.add_theme_stylebox_override("hover", UITheme.btn_secondary_hover())
@@ -1039,9 +1039,9 @@ func _update_nav_states() -> void:
 				accent.self_modulate.a = 0.0
 			if roman != null:
 				roman.add_theme_color_override("font_color", UITheme.CLR_MUTED)
-			if name != null:
-				name.add_theme_color_override("font_color", UITheme.CLR_PARCHMENT)
-				name.add_theme_font_size_override("font_size", UITheme.FONT_SIZE_BODY)
+			if tab_lbl != null:
+				tab_lbl.add_theme_color_override("font_color", UITheme.CLR_PARCHMENT)
+				tab_lbl.add_theme_font_size_override("font_size", UITheme.FONT_SIZE_BODY)
 
 
 func _make_top_stat(parent: Node, icon_text: String, value_color: Color) -> Label:
