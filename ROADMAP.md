@@ -1,8 +1,8 @@
 # Ash & Oil — Development Roadmap
 
-**Current Version:** v0.10.0 — Phase 12: Hub UI Integration
+**Current Version:** v0.10.0 — Phase 12: Hub UI + Rival System Design
 **Last Updated:** March 1, 2026
-**Status:** Phase 11 ✅ complete | Phase 12a ✅ complete (4-LT lieutenant system) | Phase 12b-i ✅ complete (cinematic landing page) | Phase 12b-ii ⏳ pending (story/narrative scenes, endings, journal) | Phase 12c ✅ complete (hub UI refactor: MAP removal, SHOP/DECK inline integration) | Phase 12d ⏳ pending (lieutenant XP leveling, skill trees).
+**Status:** Phase 11 ✅ complete | Phase 12a ✅ complete (4-LT lieutenant system) | Phase 12b-i ✅ complete (cinematic landing page) | Phase 12b-ii ⏳ pending (story/narrative scenes, endings, journal) | Phase 12c ✅ complete (hub UI refactor: MAP removal, SHOP/DECK inline integration) | Phase 12d 🎨 design phase (rival system: dynamic threat generation, Intel tab integration, meter-based triggers) | Phase 12e ⏳ pending (lieutenant XP leveling, skill trees).
 
 ---
 
@@ -236,12 +236,66 @@
   - [x] Max 4 copies per card, 30 total enforced in UI
 - [x] Smooth tab transitions with _animate_tab_transition for all inline tabs
 
-**Phase 12d: Lieutenant Progression** ⏳
+**Phase 12d: Rival System (Design & Architecture)** 🎨
+**Focus:** Dynamic threat generation, investigation mechanics, persistent antagonists
+
+**Core Mechanics:**
+- [ ] **Rival Generation:** 2-3 rivals per act based on player's narrative meters (HEAT, RENOWN, DEBT)
+  - [ ] Pre-made rivals (not procedural) — written into story with actual character names
+  - [ ] Meter-based triggers: calculate thresholds using progression math (TBD in brainstorm)
+  - [ ] Rival types: Assassin, Gladiator, Creditor Agent, Corrupt Official, Ambitious Warrior, Mysterious Threat
+  - [ ] Rivals carry forward across acts unless defeated; undefeated rivals can ally with new rivals in Act 2+
+
+- [ ] **Investigation System (INTEL Tab Integration):**
+  - [ ] Players must SEEK OUT intel clues (not auto-accumulate)
+  - [ ] Build suspicion profiles from clues (confidence percentages per NPC)
+  - [ ] Challenge suspected rival → if correct, combat + gear drop; if wrong, permanent enemy + rumor spread
+  - [ ] Max 2 wrong guesses before real rival auto-reveals (3 if meters maxed)
+  - [ ] Can finish act without identifying rival (carries penalty to next act)
+
+- [ ] **Interference System:**
+  - [ ] Dynamic interference events: assassinations, sabotage, enemy reinforcement, forced duels
+  - [ ] Escalation levels 1-3 based on time + player progress + wrong identifications
+  - [ ] Risk/reward: identify early = lower risk; wait = higher rewards if successful identification
+
+- [ ] **Gear Progression:**
+  - [ ] Act 1: Rare gear drops from rival defeats
+  - [ ] Act 2: Epic gear drops
+  - [ ] Act 3: Legendary gear drops
+  - [ ] Act 4: Unique rival gear (one-of-a-kind pieces)
+
+**Pinned for Story Brainstorming:**
+- [ ] Define 3-4 rival characters per act (real names, motivations, character arcs)
+- [ ] Write rival narrative hooks (how they connect to main story)
+- [ ] Design unique interference patterns per rival type
+- [ ] Plan rival endings (do they appear in Act 3/4? Do they survive?)
+- [ ] Determine how rival defeats/alliances affect ending paths
+
+**Pinned for Difficulty/Balance Brainstorming:**
+- [ ] Calculate meter thresholds for rival triggers (60/70/80?)
+- [ ] Difficulty scaling: How hard does Act 2+ become if rivals undefeated? (+1 enemy? +20% HP?)
+- [ ] Intel clue distribution: How many clues needed to identify? (3/5? 4/6?)
+- [ ] Interference frequency: How often do rivals interfere? (30-70% per mission?)
+
+**Data Files Needed:**
+- [ ] `data/rivals.json` — rival templates, intel clues, interference events, gear drops
+- [ ] Update `data/missions.json` — add rival interference hooks to specific missions
+
+**Code Foundation:**
+- [ ] `RivalManager.gd` — singleton for rival generation, tracking, interference
+- [ ] Update `GameState.gd` — add rival tracking variables, history across acts
+- [ ] Update `INTEL tab` — add rival investigation panel (suspicions, clues, challenge UI)
+- [ ] Update `CombatUI.gd` — display rival interference alerts during fights
+- [ ] Create `RivalPanel.gd` — investigation UI component
+
+**Status:** Architecture designed. Awaiting story brainstorm + difficulty math before implementation.
+
+**Phase 12e: Lieutenant Progression** ⏳
 - [ ] Lieutenant XP leveling (gain XP per combat mission, unlock skill tiers)
 - [ ] Skill trees (tier-1 and tier-2 abilities per LT)
 - [ ] Team synergies (squad composition bonuses)
 
-### Phase 13: Progression & Upgrades
+### Phase 13: Story & Narrative (Act-to-Act Progression)
 **Focus:** Between-mission advancement, character upgrades
 
 - [ ] Skill trees (upgradeable lieutenant abilities)

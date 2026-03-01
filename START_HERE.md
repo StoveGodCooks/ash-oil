@@ -187,12 +187,41 @@ git commit -m "chore: update START_HERE.md with Phase 6 completion status"
 **Lint:** Verified with gdlint (fixed gear_item_btn duplicate variable error)
 
 **Next Steps:**
-1. **Interactive Mission Map** — Replace MAP placeholder with clickable image-based mission selector
-2. **Run full test suite** — Verify 706+ tests still pass with 7-tab structure (was 8 tabs with external SHOP/DECK)
-3. **Scene system** — Text-based intermissions and Act 3 endings (data/scenes.json scaffolded)
-4. **Hook system** — Journal entries → branching consequences + narrative flags
-5. **Lieutenant XP/leveling** — Distribute XP to all active LTs via MissionManager.get_mission_reward()
-6. **Skill trees** — Unlock abilities per LT tier (tier-1, tier-2 progression)
+
+**IMMEDIATE (Phase 12d - Rival System Design):**
+1. 🎨 **BRAINSTORM SESSION** — Story & narrative design
+   - Define 3-4 rival characters per act (Rival pool: 12-16 rivals total)
+   - Write rival names, motivations, character arcs
+   - Design rival interference patterns & escalation events
+   - Plan narrative consequences (do rivals affect story? endings?)
+   - Pin: Act 1 rival progression, Act 2+ alliance mechanics
+
+2. ⚙️ **BRAINSTORM SESSION** — Difficulty & balance math
+   - Calculate meter thresholds for rival triggers (60? 70? 80?)
+   - Determine difficulty scaling if rivals undefeated (Act 2+)
+   - Decide intel clue distribution (how many to identify rival?)
+   - Pin: Combat difficulty curves, interference frequency
+
+3. 📊 **Restructure data files**
+   - Update `data/missions.json`: Increase to 4 acts (10 main + 15 side per act = 100 total)
+   - Create `data/rivals.json`: Rival pool, intel clues, interference events, gear drops
+   - Define rival gear progression: Rare (Act 1) → Epic (Act 2) → Legendary (Act 3) → Unique (Act 4)
+
+4. 🛠️ **Implement Rival System** (after brainstorm locked in)
+   - Create `RivalManager.gd` singleton (generation, tracking, interference)
+   - Add rival variables to `GameState.gd` (active_rivals, rival_history, intel)
+   - Integrate rivals into **INTEL Tab** (new investigation panel, suspicions, challenge UI)
+   - Wire rival interference to `CombatUI.gd` (alerts, enemy additions)
+
+**CONCURRENT:**
+5. **Interactive Mission Map** — Replace MAP placeholder with clickable image-based mission selector
+6. **Run full test suite** — Verify 706+ tests still pass with new mission structure (40 main + 60 side)
+
+**AFTER RIVAL SYSTEM:**
+7. **Scene system** — Text-based intermissions and Act 3/4 endings
+8. **Hook system** — Journal entries → branching consequences + narrative flags
+9. **Lieutenant XP/leveling** — Distribute XP to all active LTs via MissionManager
+10. **Skill trees** — Unlock abilities per LT tier (tier-1, tier-2 progression)
 
 ---
 
