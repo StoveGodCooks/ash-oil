@@ -135,93 +135,72 @@ git commit -m "chore: update START_HERE.md with Phase 6 completion status"
 
 # 📍 CURRENT STATUS
 
-**Last Patch:** e191d45 — fix: rename gear_item_btn to avoid duplicate variable | Phase 12
+**Last Patch:** fa35739 — feat: enrich Act 1 missions with investigation system, rival emergence flags, reframe S01/S14 | Phase 12d
 
-**Current Phase:** Phase 12 (Hub UI Integration) 🔄 IN PROGRESS | Phase 11 ✅ COMPLETE
+**Current Phase:** Phase 12d (Rival System — Narrative Enrichment) ✅ ENRICHMENT COMPLETE | Phase 12d Implementation ⏳ PENDING
 
-## What's Done This Session (Phase 12b-c: Hub UI Refactor)
+## What's Done This Session (Phase 12d: Act 1 Narrative Enrichment)
 
-- ✅ **UI Polish (Phase 12b):**
-  - Fixed Champion box alignment (flush left with nav, 12px → 0px margins)
-  - Increased mission card border emphasis (gold bottom border: 2px → 3px)
-  - Added gold text glow on hover (shadow effect with Color.GOLD alpha=0.3)
+- ✅ **Act 1 Mission Enrichment (M02–M10):**
+  - Enriched narrative descriptions: rivals foreshadowed organically through prose
+  - Added `npc_impacts` with `investigation_clue` sub-fields on M02–M10
+  - Investigation confidence escalation: 35% → 60% → 65% → 85% across missions
+  - Added `investigation_ledger` fields tracking faction awareness of the ledger (10% → 85%)
+  - Three rivals seeded across missions:
+    - **Lucius** (M02 spotted → M03 talked_about → S14 met → M10 watching)
+    - **Varro** (M04 mentioned → M06 shadow → M07 reputation_known → M09 revealed → M10 watching)
+    - **Priestess** (M05 watching → M07 network_confirmed → M10 watching)
 
-- ✅ **Narrative Status Integration (Phase 12b):**
-  - Moved NARRATIVE STATUS from standalone section into HeroCard
-  - 6-meter compact grid (2 columns) with dividers
-  - Achieved visual cohesion in left nav column
+- ✅ **S01 Reframed: "The Rat Run" → "Syndicate Recruitment"**
+  - Moth recruits Cassian for Syndicate underground work
+  - Added DREAD +1, hook: `syndicate_recruited`
+  - NPC impact: Moth score +8, flag `["recruited"]`
+  - retreat_rewards reduced (35 vs 55 gold) — Syndicate disappointment mechanic
 
-- ✅ **Map/Missions Restructuring (Phase 12c):**
-  - **Removed X button:** Deleted NavOrnament decorative element
-  - **Removed MAP tab:** Deleted from TAB_DEFS (7 tabs → 7 tabs; renumbered roman numerals I-VII)
-  - **Added missions toggle:** Created missions_view_mode state with LIST/MAP sub-sections
-  - Implemented _build_missions_list() and _build_missions_map() (map placeholder ready for image nodes)
-  - Toggle buttons with smooth _animate_tab_transition for mode switching
+- ✅ **S14 Reframed: "Crowd Favorite" → "Lucius's Challenge"**
+  - First personal encounter with rival Lucius
+  - Enemy changed: `arena_vet` (Lucius stand-in, tougher than arena_rookie)
+  - RENOWN +3 (up from +2), HEAT +1 added; hook: `lucius_met`
+  - Investigation clue at 0.90 confidence — Lucius's desperation fully revealed
+  - retreat_rewards: 0 gold (lose wages; personal duel has real stakes)
 
-- ✅ **Shop Inline Integration (Phase 12c):**
-  - Changed SHOP tab: `"kind": "scene"` → `"kind": "context"` (no external scene loads)
-  - Added shop state variables: shop_pool, gear_pool, shop_current_tab, shop_selected_card_id/price
-  - Implemented _build_shop_content() with full UI (header, CARDS/GEAR tabs, grid, preview)
-  - **Extracted from ShopUI.gd:**
-    - _generate_shop_pool() — randomize 9 cards, exclude owned/signature
-    - _build_gear_pool() — rarity filtering + Corvus "Black Market" trait (+2 epic slots)
-    - _has_lt_trait() — lieutenant trait checker (reusable for Connected discount, etc.)
-    - _card_price() — pricing logic with 20% Connected discount
-    - _card_summary() — card stats text generation
-    - _on_shop_buy_card() + _on_shop_buy_gear() — buy logic with GameState integration
-  - Left grid (3-col cards / 2-col gear) + Right preview panel with price/BUY button
+- ✅ **New Hooks Created Across Act 1:**
+  - `lucius_spotted`, `lucius_talked_about`, `varro_mentioned`, `priestess_watching`
+  - `varro_shadow`, `ledger_street_rumor`, `varro_reputation_known`, `ledger_power_understood`
+  - `rivals_converge`, `lucius_watching`, `priestess_watching_confirmed`, `syndicate_recruited`, `lucius_met`
 
-- ✅ **Deck Builder Inline Integration (Phase 12c):**
-  - Changed DECK tab: `"kind": "scene"` → `"kind": "context"`
-  - Added deck state variable: deck_selected_card_id
-  - Implemented _build_deck_content_inline() with full 3-column interface
-    - **Left (33%):** "YOUR DECK" — shows cards with counts, remove (–) buttons, clickable for preview
-    - **Center (33%):** "COLLECTION" — shows available cards, add (+) buttons, clickable for preview
-    - **Right (34%):** "CARD DETAIL" — selected card preview with stats/effects
-    - Vertical dividers (semi-transparent bronze)
-  - All card rows are interactive buttons with hover styling
-  - Remove/add operations trigger _animate_tab_transition for smooth updates
-  - Deck constraints enforced: max 4 copies per card, 30 total cards
-
-**Tests:** Code structure verified; all functions defined and wired to _populate_tab_content()
-**Lint:** Verified with gdlint (fixed gear_item_btn duplicate variable error)
+- ✅ **Data Validator:** All mission checks PASS (25 entries, all enemy refs valid, all meter names valid, 20 main missions confirmed)
 
 **Next Steps:**
 
-**IMMEDIATE (Phase 12d - Rival System Design):**
-1. 🎨 **BRAINSTORM SESSION** — Story & narrative design
-   - Define 3-4 rival characters per act (Rival pool: 12-16 rivals total)
-   - Write rival names, motivations, character arcs
-   - Design rival interference patterns & escalation events
-   - Plan narrative consequences (do rivals affect story? endings?)
-   - Pin: Act 1 rival progression, Act 2+ alliance mechanics
+**IMMEDIATE (Phase 12d - Rival System Implementation):**
+1. 🛠️ **Create `RivalManager.gd` singleton**
+   - Rival generation (use three Act 1 rivals: Lucius, Varro, Priestess)
+   - Investigation tracking (read `investigation_clue` fields from missions.json)
+   - Intel confidence accumulation (35%/60%/85% gates)
+   - Interference event system (rival actions between missions)
 
-2. ⚙️ **BRAINSTORM SESSION** — Difficulty & balance math
-   - Calculate meter thresholds for rival triggers (60? 70? 80?)
-   - Determine difficulty scaling if rivals undefeated (Act 2+)
-   - Decide intel clue distribution (how many to identify rival?)
-   - Pin: Combat difficulty curves, interference frequency
+2. 📊 **Create `data/rivals.json`**
+   - Rival profiles: Lucius, Varro, Priestess (Act 1), + Act 2/3 rivals
+   - Intel clue IDs linking to mission `investigation_clue` fields
+   - Interference event templates per rival type
+   - Gear drops on rival defeat (Rare → Epic → Legendary by act)
 
-3. 📊 **Restructure data files**
-   - Update `data/missions.json`: Increase to 4 acts (10 main + 15 side per act = 100 total)
-   - Create `data/rivals.json`: Rival pool, intel clues, interference events, gear drops
-   - Define rival gear progression: Rare (Act 1) → Epic (Act 2) → Legendary (Act 3) → Unique (Act 4)
+3. 🖥️ **Wire INTEL Tab to investigation system**
+   - Display confidence percentages per rival
+   - Show gathered clues as suspicion profile
+   - Challenge button: if correct → combat + gear; if wrong → permanent enemy
 
-4. 🛠️ **Implement Rival System** (after brainstorm locked in)
-   - Create `RivalManager.gd` singleton (generation, tracking, interference)
-   - Add rival variables to `GameState.gd` (active_rivals, rival_history, intel)
-   - Integrate rivals into **INTEL Tab** (new investigation panel, suspicions, challenge UI)
-   - Wire rival interference to `CombatUI.gd` (alerts, enemy additions)
-
-**CONCURRENT:**
-5. **Interactive Mission Map** — Replace MAP placeholder with clickable image-based mission selector
-6. **Run full test suite** — Verify 706+ tests still pass with new mission structure (40 main + 60 side)
+4. 🎨 **Send ChatGPT prompts for Acts 2-4 content**
+   - CHATGPT_MASTER_PROMPT_ALL_IN_ONE.md is ready to send
+   - Generates: Acts 2-4 missions, faction lore, LT profiles, enemies, rival profiles
 
 **AFTER RIVAL SYSTEM:**
-7. **Scene system** — Text-based intermissions and Act 3/4 endings
-8. **Hook system** — Journal entries → branching consequences + narrative flags
-9. **Lieutenant XP/leveling** — Distribute XP to all active LTs via MissionManager
-10. **Skill trees** — Unlock abilities per LT tier (tier-1, tier-2 progression)
+5. **Scene system** — Text-based intermissions and Act 3/4 endings
+6. **Hook system** — Journal entries → branching consequences + narrative flags
+7. **Lieutenant XP/leveling** — Distribute XP to all active LTs via MissionManager
+8. **Skill trees** — Unlock abilities per LT tier (tier-1, tier-2 progression)
+9. **Interactive Mission Map** — Clickable arena city map with safe zone overlays
 
 ---
 

@@ -236,59 +236,50 @@
   - [x] Max 4 copies per card, 30 total enforced in UI
 - [x] Smooth tab transitions with _animate_tab_transition for all inline tabs
 
-**Phase 12d: Rival System (Design & Architecture)** 🎨
+**Phase 12d: Rival System (Design & Architecture)** 🔄
 **Focus:** Dynamic threat generation, investigation mechanics, persistent antagonists
 
-**Core Mechanics:**
+**Narrative Enrichment (COMPLETE ✅):**
+- [x] Act 1 missions M02–M10 enriched with rival foreshadowing (investigation_clue fields)
+- [x] Investigation confidence escalation: 35% → 60% → 65% → 85% across Act 1
+- [x] investigation_ledger fields added: faction awareness of ledger (10% → 85%)
+- [x] Three rivals seeded: Lucius (M02/M03/S14/M10), Varro (M04/M06/M07/M09/M10), Priestess (M05/M07/M10)
+- [x] S01 reframed: "Syndicate Recruitment" — Moth recruits Cassian, DREAD +1, hook: syndicate_recruited
+- [x] S14 reframed: "Lucius's Challenge" — first rival duel, RENOWN +3, hook: lucius_met, retreat 0 gold
+- [x] 13 new hooks created across Act 1 for rival/ledger/faction tracking
+
+**Core Mechanics (Pending):**
 - [ ] **Rival Generation:** 2-3 rivals per act based on player's narrative meters (HEAT, RENOWN, DEBT)
-  - [ ] Pre-made rivals (not procedural) — written into story with actual character names
-  - [ ] Meter-based triggers: calculate thresholds using progression math (TBD in brainstorm)
-  - [ ] Rival types: Assassin, Gladiator, Creditor Agent, Corrupt Official, Ambitious Warrior, Mysterious Threat
-  - [ ] Rivals carry forward across acts unless defeated; undefeated rivals can ally with new rivals in Act 2+
+  - [ ] Pre-made rivals — written into story with actual character names
+  - [ ] Act 1 rivals: Lucius (jealous gladiator), Varro (Lanista's enforcer), Priestess (cult guardian)
+  - [ ] Act 2 rivals: Marius (ECLIPSE enforcer), Cassius (State hunter), Aelia (Governor's spy)
+  - [ ] Rivals carry forward across acts unless defeated; undefeated rivals can ally with new rivals
 
 - [ ] **Investigation System (INTEL Tab Integration):**
-  - [ ] Players must SEEK OUT intel clues (not auto-accumulate)
+  - [ ] Clues auto-collected from missions (investigation_clue fields in missions.json ✅ seeded)
   - [ ] Build suspicion profiles from clues (confidence percentages per NPC)
-  - [ ] Challenge suspected rival → if correct, combat + gear drop; if wrong, permanent enemy + rumor spread
-  - [ ] Max 2 wrong guesses before real rival auto-reveals (3 if meters maxed)
-  - [ ] Can finish act without identifying rival (carries penalty to next act)
+  - [ ] Challenge suspected rival → if correct, combat + gear drop; if wrong, permanent enemy
+  - [ ] Max 2 wrong guesses before real rival auto-reveals
 
 - [ ] **Interference System:**
   - [ ] Dynamic interference events: assassinations, sabotage, enemy reinforcement, forced duels
   - [ ] Escalation levels 1-3 based on time + player progress + wrong identifications
-  - [ ] Risk/reward: identify early = lower risk; wait = higher rewards if successful identification
 
 - [ ] **Gear Progression:**
   - [ ] Act 1: Rare gear drops from rival defeats
-  - [ ] Act 2: Epic gear drops
-  - [ ] Act 3: Legendary gear drops
-  - [ ] Act 4: Unique rival gear (one-of-a-kind pieces)
-
-**Pinned for Story Brainstorming:**
-- [ ] Define 3-4 rival characters per act (real names, motivations, character arcs)
-- [ ] Write rival narrative hooks (how they connect to main story)
-- [ ] Design unique interference patterns per rival type
-- [ ] Plan rival endings (do they appear in Act 3/4? Do they survive?)
-- [ ] Determine how rival defeats/alliances affect ending paths
-
-**Pinned for Difficulty/Balance Brainstorming:**
-- [ ] Calculate meter thresholds for rival triggers (60/70/80?)
-- [ ] Difficulty scaling: How hard does Act 2+ become if rivals undefeated? (+1 enemy? +20% HP?)
-- [ ] Intel clue distribution: How many clues needed to identify? (3/5? 4/6?)
-- [ ] Interference frequency: How often do rivals interfere? (30-70% per mission?)
+  - [ ] Act 2: Epic gear drops; Act 3: Legendary; Act 4: Unique
 
 **Data Files Needed:**
 - [ ] `data/rivals.json` — rival templates, intel clues, interference events, gear drops
-- [ ] Update `data/missions.json` — add rival interference hooks to specific missions
+- [ ] Update missions.json Act 2+ — add rival interference hooks to specific missions
 
 **Code Foundation:**
 - [ ] `RivalManager.gd` — singleton for rival generation, tracking, interference
 - [ ] Update `GameState.gd` — add rival tracking variables, history across acts
 - [ ] Update `INTEL tab` — add rival investigation panel (suspicions, clues, challenge UI)
 - [ ] Update `CombatUI.gd` — display rival interference alerts during fights
-- [ ] Create `RivalPanel.gd` — investigation UI component
 
-**Status:** Architecture designed. Awaiting story brainstorm + difficulty math before implementation.
+**Status:** Act 1 narrative enrichment complete. Next: rivals.json + RivalManager.gd implementation.
 
 **Phase 12e: Lieutenant Progression** ⏳
 - [ ] Lieutenant XP leveling (gain XP per combat mission, unlock skill tiers)
