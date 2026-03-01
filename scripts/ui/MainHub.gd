@@ -1999,14 +1999,14 @@ func _build_shop_content() -> void:
 		for gear in gear_pool:
 			var gear_name = gear.get("name", "Unknown")
 			var gear_price = int(gear.get("price", 100))
-			var gear_btn := Button.new()
-			gear_btn.text = "%s\n[%d]" % [gear_name.to_upper(), gear_price]
-			gear_btn.custom_minimum_size = Vector2(100, 60)
-			gear_btn.add_theme_stylebox_override("normal", UITheme.btn_secondary())
-			gear_btn.pressed.connect(func() -> void:
+			var gear_item_btn := Button.new()
+			gear_item_btn.text = "%s\n[%d]" % [gear_name.to_upper(), gear_price]
+			gear_item_btn.custom_minimum_size = Vector2(100, 60)
+			gear_item_btn.add_theme_stylebox_override("normal", UITheme.btn_secondary())
+			gear_item_btn.pressed.connect(func() -> void:
 				shop_selected_card_id = gear.get("id", "")
 			)
-			grid_container.add_child(gear_btn)
+			grid_container.add_child(gear_item_btn)
 
 	# Right side: item preview panel
 	var preview_panel := PanelContainer.new()
