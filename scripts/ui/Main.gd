@@ -1,5 +1,50 @@
 extends Control
-## Roman landing page composition for Ash & Oil.
+## Roman landing page composition for Ash & Oil with cinematic Colosseum background.
+
+class SmokeParticle:
+	var pos: Vector2
+	var vel: Vector2
+	var life: float = 1.0
+	var opacity: float = 0.0
+	var size: float = 0.0
+
+class SmokeSystem extends CanvasItem:
+	var particles: Array[SmokeParticle] = []
+	var spawn_timer: float = 0.0
+	var viewport_size: Vector2
+
+	func _ready() -> void:
+		mouse_filter = Control.MOUSE_FILTER_IGNORE
+		viewport_size = get_viewport_rect().size
+
+	func _process(delta: float) -> void:
+		spawn_timer += delta
+		# Spawn new smoke particles
+		if spawn_timer > 0.05:  # ~20 particles/sec
+			var new_particle = SmokeParticle.new()
+			new_particle.pos = Vector2(randf_range(0, viewport_size.x), viewport_size.y + 20)
+			new_particle.vel = Vector2(randf_range(-15, 15), randf_range(-25, -40))
+			new_particle.opacity = randf_range(0.3, 0.6)
+			new_particle.size = randf_range(30, 80)
+			particles.append(new_particle)
+			spawn_timer = 0.0
+
+		# Update existing particles
+		for p in particles:
+			p.pos += p.vel * delta
+			p.vel.y *= 0.98  # Slight deceleration
+			p.life -= delta * 0.6
+			p.opacity = p.life * randf_range(0.2, 0.4)
+
+		# Remove dead particles
+		particles = particles.filter(func(p): return p.life > 0)
+		queue_redraw()
+
+	func _draw() -> void:
+		for p in particles:
+			var alpha = clamp(p.opacity, 0.0, 0.5)
+			draw_circle(p.pos, p.size, Color(0.3, 0.25, 0.2, alpha))
+			draw_circle(p.pos, p.size * 0.7, Color(0.4, 0.35, 0.3, alpha * 0.6))
 
 class RomanAwning extends Control:
 	var tint := Color(0.240, 0.192, 0.138, 0.30)
@@ -23,19 +68,47 @@ class RomanDivider extends Control:
 		UITheme.draw_section_divider(self, size.y * 0.5, size.x, tint)
 
 
+class VignetteOverlay extends CanvasItem:
+	func _ready() -> void:
+		mouse_filter = Control.MOUSE_FILTER_IGNORE
+
+	func _draw() -> void:
+		var rect = get_rect()
+		# Dark vignette at edges
+		var vignette_color = Color(0, 0, 0, 0.35)
+		draw_rect(rect, vignette_color)
+
 var start_btn: Button
 var continue_btn: Button
+var smoke_system: SmokeSystem
 
 func _ready() -> void:
-	var bg := ColorRect.new()
-	bg.color = UITheme.CLR_VOID
-	bg.set_anchors_preset(Control.PRESET_FULL_RECT)
-	bg.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	add_child(bg)
+	# Background image
+	var bg_texture_rect := TextureRect.new()
+	bg_texture_rect.texture = load("res://assets/backgrounds/landing_colosseum.png")
+	bg_texture_rect.expand_mode = TextureRect.EXPAND_FIT_WIDTH_IGNORING_RATIO
+	bg_texture_rect.stretch_mode = TextureRect.STRETCH_SCALE
+	bg_texture_rect.set_anchors_preset(Control.PRESET_FULL_RECT)
+	bg_texture_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	add_child(bg_texture_rect)
+
+	# Smoke particle system
+	smoke_system = SmokeSystem.new()
+	smoke_system.set_anchors_preset(Control.PRESET_FULL_RECT)
+	smoke_system.z_index = 1
+	add_child(smoke_system)
+
+	# Vignette overlay
+	var vignette := VignetteOverlay.new()
+	vignette.set_anchors_preset(Control.PRESET_FULL_RECT)
+	vignette.z_index = 2
+	vignette.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	add_child(vignette)
 
 	var awning := RomanAwning.new()
 	awning.name = "Awning"
 	awning.set_anchors_preset(Control.PRESET_FULL_RECT)
+	awning.z_index = 3
 	add_child(awning)
 
 	var top_ornament := RomanDivider.new()
@@ -49,11 +122,12 @@ func _ready() -> void:
 	top_ornament.offset_right = 300
 	top_ornament.offset_top = -9
 	top_ornament.offset_bottom = 9
-	top_ornament.z_index = 1
+	top_ornament.z_index = 5
 	add_child(top_ornament)
 
 	var center := CenterContainer.new()
 	center.set_anchors_preset(Control.PRESET_FULL_RECT)
+	center.z_index = 4
 	add_child(center)
 
 	var column := VBoxContainer.new()
@@ -67,7 +141,7 @@ func _ready() -> void:
 	title_block.custom_minimum_size = Vector2(560, 0)
 	title_block.alignment = BoxContainer.ALIGNMENT_CENTER
 	title_block.add_theme_constant_override("separation", 0)
-	title_block.z_index = 5
+	title_block.z_index = 10
 	column.add_child(title_block)
 
 	var ash_row := HBoxContainer.new()
@@ -142,6 +216,8 @@ func _ready() -> void:
 	start_btn.custom_minimum_size = Vector2(280, 52)
 	_apply_button_theme(start_btn, "primary")
 	start_btn.pressed.connect(_on_start_pressed)
+	start_btn.mouse_entered.connect(_on_button_hover.bindv([start_btn, true]))
+	start_btn.mouse_exited.connect(_on_button_hover.bindv([start_btn, false]))
 	btn_col.add_child(start_btn)
 
 	continue_btn = Button.new()
@@ -152,6 +228,8 @@ func _ready() -> void:
 	if continue_btn.disabled:
 		continue_btn.modulate = Color(1.0, 1.0, 1.0, 0.55)
 	continue_btn.pressed.connect(_on_continue_pressed)
+	continue_btn.mouse_entered.connect(_on_button_hover.bindv([continue_btn, true]))
+	continue_btn.mouse_exited.connect(_on_button_hover.bindv([continue_btn, false]))
 	btn_col.add_child(continue_btn)
 
 	if OS.is_debug_build():
@@ -160,10 +238,12 @@ func _ready() -> void:
 		dev_btn.custom_minimum_size = Vector2(200, 40)
 		_apply_button_theme(dev_btn, "secondary")
 		dev_btn.pressed.connect(_on_dev_pressed)
+		dev_btn.mouse_entered.connect(_on_button_hover.bindv([dev_btn, true]))
+		dev_btn.mouse_exited.connect(_on_button_hover.bindv([dev_btn, false]))
 		btn_col.add_child(dev_btn)
 
 	var version := Label.new()
-	version.text = "v0.4 - Phase 4 Complete"
+	version.text = "v0.10.0 - Phase 11 Complete"
 	version.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	version.add_theme_font_size_override("font_size", UITheme.FONT_SIZE_FINE)
 	version.add_theme_color_override("font_color", UITheme.CLR_MUTED)
@@ -175,11 +255,12 @@ func _ready() -> void:
 	version.offset_right = 160
 	version.offset_top = -20 - UITheme.FONT_SIZE_FINE
 	version.offset_bottom = -20
+	version.z_index = 10
 	add_child(version)
 
 	_fade_in(column, 0.0)
 
-	print("=== ASH & OIL - MAIN MENU LOADED ===")
+	print("=== ASH & OIL - CINEMATIC LANDING PAGE LOADED ===")
 	print("GameState online: RENOWN=%d HEAT=%d" % [GameState.renown, GameState.heat])
 	print("Missions available: ", MissionManager.get_available_missions())
 
@@ -222,6 +303,19 @@ func _apply_button_theme(btn: Button, style_kind: String) -> void:
 			btn.add_theme_stylebox_override("normal", UITheme.btn_secondary())
 			btn.add_theme_stylebox_override("hover", UITheme.btn_secondary_hover())
 			btn.add_theme_stylebox_override("pressed", UITheme.btn_active())
+
+func _on_button_hover(btn: Button, hovering: bool) -> void:
+	if btn.disabled:
+		return
+
+	if hovering:
+		var tween := create_tween()
+		tween.set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
+		tween.tween_property(btn, "scale", Vector2(1.08, 1.08), 0.12)
+	else:
+		var tween := create_tween()
+		tween.set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
+		tween.tween_property(btn, "scale", Vector2(1.0, 1.0), 0.12)
 
 func _fade_in(node: CanvasItem, delay: float) -> void:
 	node.modulate = Color(1, 1, 1, 0)
