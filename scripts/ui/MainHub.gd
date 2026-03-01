@@ -335,9 +335,31 @@ func _process(_delta: float) -> void:
 
 
 func _build_ui() -> void:
-	# Professional background shader
-	var bg := AtmosphericBackground.new()
-	add_child(bg)
+	# Cinematic hub background — graceful fallback to void if image not yet imported
+	var bg_tex: Texture2D = load("res://assets/backgrounds/hub_colosseum.png") if ResourceLoader.exists("res://assets/backgrounds/hub_colosseum.png") else null
+	if bg_tex:
+		var bg := TextureRect.new()
+		bg.texture = bg_tex
+		bg.stretch_mode = TextureRect.STRETCH_SCALE
+		bg.set_anchors_preset(Control.PRESET_FULL_RECT)
+		bg.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		bg.z_index = -1
+		add_child(bg)
+	else:
+		var bg := ColorRect.new()
+		bg.color = UITheme.CLR_VOID
+		bg.set_anchors_preset(Control.PRESET_FULL_RECT)
+		bg.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		bg.z_index = -1
+		add_child(bg)
+
+	# Subtle vignette — deepens corners and edges
+	var vignette := ColorRect.new()
+	vignette.color = Color(0, 0, 0, 0.22)
+	vignette.set_anchors_preset(Control.PRESET_FULL_RECT)
+	vignette.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	vignette.z_index = 0
+	add_child(vignette)
 
 	var root := VBoxContainer.new()
 	root.set_anchors_preset(Control.PRESET_FULL_RECT)
@@ -347,14 +369,14 @@ func _build_ui() -> void:
 	# Top bar
 	top_bar = PanelContainer.new()
 	top_bar.custom_minimum_size = Vector2(0, 56)
-	top_bar.add_theme_stylebox_override("panel", _frame_style(UITheme.CLR_VOID, UITheme.CLR_GOLD, 0, 0, 0, 2))
+	top_bar.add_theme_stylebox_override("panel", _frame_style(Color(0.04, 0.03, 0.02, 0.90), UITheme.CLR_GOLD, 0, 0, 0, 2))
 	root.add_child(top_bar)
 	_build_top_bar()
 
 	# Meters strip
 	meters_strip = PanelContainer.new()
 	meters_strip.custom_minimum_size = Vector2(0, 32)
-	meters_strip.add_theme_stylebox_override("panel", _frame_style(UITheme.CLR_STONE, UITheme.CLR_BRONZE, 0, 0, 0, 1))
+	meters_strip.add_theme_stylebox_override("panel", _frame_style(Color(0.07, 0.055, 0.04, 0.82), UITheme.CLR_BRONZE, 0, 0, 0, 1))
 	root.add_child(meters_strip)
 	_build_meters_strip()
 
@@ -381,7 +403,7 @@ func _build_ui() -> void:
 
 	# Status section placeholder
 	var status_section := PanelContainer.new()
-	status_section.add_theme_stylebox_override("panel", _frame_style(UITheme.CLR_STONE_MID, UITheme.CLR_BRONZE, 1, 0, 0, 0))
+	status_section.add_theme_stylebox_override("panel", _frame_style(Color(0.10, 0.08, 0.05, 0.72), UITheme.CLR_BRONZE, 1, 0, 0, 0))
 	var status_pad := MarginContainer.new()
 	status_pad.add_theme_constant_override("margin_left", 12)
 	status_pad.add_theme_constant_override("margin_right", 12)
@@ -410,21 +432,21 @@ func _build_ui() -> void:
 
 	left_nav = PanelContainer.new()
 	left_nav.custom_minimum_size = Vector2(220, 0)
-	left_nav.add_theme_stylebox_override("panel", _frame_style(UITheme.CLR_STONE, UITheme.CLR_BRONZE, 0, 0, 1, 0))
+	left_nav.add_theme_stylebox_override("panel", _frame_style(Color(0.05, 0.04, 0.03, 0.85), UITheme.CLR_BRONZE, 0, 0, 1, 0))
 	tab_row.add_child(left_nav)
 	_build_left_nav()
 
 	content_panel = PanelContainer.new()
 	content_panel.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	content_panel.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	content_panel.add_theme_stylebox_override("panel", _frame_style(UITheme.CLR_STONE_MID, UITheme.CLR_BRONZE, 1, 0, 0, 0))
+	content_panel.add_theme_stylebox_override("panel", _frame_style(Color(0.10, 0.08, 0.05, 0.68), UITheme.CLR_BRONZE, 1, 0, 0, 0))
 	tab_row.add_child(content_panel)
 	_build_content_panel()
 
 	# Bottom bar
 	bottom_bar = PanelContainer.new()
 	bottom_bar.custom_minimum_size = Vector2(0, 36)
-	bottom_bar.add_theme_stylebox_override("panel", _frame_style(UITheme.CLR_VOID, UITheme.CLR_BRONZE, 0, 1, 0, 0))
+	bottom_bar.add_theme_stylebox_override("panel", _frame_style(Color(0.04, 0.03, 0.02, 0.90), UITheme.CLR_BRONZE, 0, 1, 0, 0))
 	root.add_child(bottom_bar)
 	_build_bottom_bar()
 
