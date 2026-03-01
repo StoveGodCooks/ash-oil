@@ -11,7 +11,10 @@ func _ready() -> void:
 	_load_lieutenants()
 	_load_enemy_templates()
 	_load_gear()
-	print("CardManager ready: %d cards, %d lieutenants, %d enemies, %d gear" % [cards_data.size(), lieutenants_data.size(), enemy_templates.size(), gear_data.size()])
+	var status_msg = "CardManager ready: %d cards, %d lieutenants, %d enemies, %d gear" % [
+		cards_data.size(), lieutenants_data.size(), enemy_templates.size(), gear_data.size()
+	]
+	print(status_msg)
 
 func _load_cards() -> void:
 	var path = "res://data/cards.json"
@@ -110,3 +113,29 @@ func get_starter_deck() -> Array:
 		"card_033", "card_033",                          # 2x First Aid (reliable sustain)
 		"card_026", "card_030",                          # 1x Parry, 1x Iron Skin (reactive + scaling defense)
 	]
+
+func save_card(card_id: String, card_data: Dictionary) -> bool:
+	## Save a single card back to cards.json
+	cards_data[card_id] = card_data
+	return _write_cards_to_file()
+
+func reload_cards() -> void:
+	## Reload cards.json from disk
+	_load_cards()
+	print("✓ Cards reloaded: %d cards" % cards_data.size())
+
+func _write_cards_to_file() -> bool:
+	## Write cards_data back to cards.json
+	var path = "res://data/cards.json"
+	var file = FileAccess.open(path, FileAccess.WRITE)
+	if file == null:
+		push_error("Failed to open cards.json for writing")
+		return false
+
+	# Convert to JSON and write (indented for readability)
+	var json_string = JSON.stringify(cards_data, "\t")
+	file.store_string(json_string)
+	print("✓ Saved card: cards.json updated")
+	return true
+
+

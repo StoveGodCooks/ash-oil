@@ -99,6 +99,11 @@ func complete_mission(id: String, outcome: String = "victory") -> void:
 	# Emit signal for narrative manager and other subscribers
 	mission_completed.emit(id)
 
+	# Final ending trigger (campaign completion)
+	if id == "M20":
+		var ending := check_ending_path()
+		NarrativeManager.finalize_ending(ending)
+
 func _unlock_next(id: String) -> void:
 	if id.begins_with("M"):
 		var num = int(id.substr(1))
@@ -365,6 +370,3 @@ func check_ending_path() -> String:
 	if GameState.favor >= 6:
 		return "State"
 	return "Solo"
-
-
-

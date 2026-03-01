@@ -324,3 +324,5 @@ static func rarity_color(rarity: String) -> Color:
 			return CLR_BLOOD
 		_:
 			return CLR_PARCHMENT
+
+

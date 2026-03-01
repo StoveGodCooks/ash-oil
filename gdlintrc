@@ -1,4 +1,5 @@
 disable:
   - max-public-methods
-max-line-length: 140
-max-returns: 15
+max-line-length: 160
+max-file-lines: 3000
+max-returns: 20

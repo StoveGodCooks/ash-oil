@@ -1,6 +1,21 @@
 extends Control
 ## Full combat screen with UI built programmatically
 
+## ============ LIEUTENANT COMBAT STATE ============
+class LTCombatState:
+	var name: String = ""
+	var hp: int = 0
+	var max_hp: int = 0
+	var armor: int = 0
+	var active: bool = false
+
+	func _init(p_name: String = "", p_hp: int = 0, p_max_hp: int = 0, p_armor: int = 0, p_active: bool = false) -> void:
+		name = p_name
+		hp = p_hp
+		max_hp = p_max_hp
+		armor = p_armor
+		active = p_active
+
 const LOG_AUTOWRAP_MODE: TextServer.AutowrapMode = TextServer.AutowrapMode.AUTOWRAP_WORD
 const MAX_HAND_SIZE: int = 8
 const BASE_TURN_DRAW: int = 3
@@ -9,6 +24,7 @@ const CARD_HOVER_LIFT_PX: float = 14.0
 const CARD_HOVER_TIME: float = 0.15
 const CARD_PLAY_MOVE_TIME: float = 0.35
 const CARD_PLAY_PULSE_TIME: float = 0.10
+const CARD_POPUP_HIDE_DELAY: float = 0.10
 const MAX_POISON_STACKS: int = 12
 const HAND_REFLOW_TIME: float = 0.20
 const HAND_REFLOW_SHIFT: float = 112.0
@@ -32,10 +48,8 @@ var champion_max_hp: int = 30
 var champion_armor: int = 0
 var last_ui_champion_armor: int = 0  # tracks armor for animation
 
-var lt_name: String = "Marcus"
-var lt_hp: int = 25
-var lt_max_hp: int = 25
-var lt_armor: int = 2
+var lieutenant_states: Array[LTCombatState] = []  # Up to 4 LTs on battlefield
+var lt_label: Label  # Display label (for first LT status)
 
 var enemies: Array = []
 var hand: Array = []
@@ -61,13 +75,16 @@ var reflect_turns: int = 0                # remaining turns the reflect buff is 
 var hazard_data: Dictionary = {}          # optional mission hazard (damage-over-time, etc.)
 var hazard_intro_shown: bool = false
 
+const VIGNETTE_GRAIN_SHADER = preload("res://ui/shaders/vignette_grain.gdshader")
+const GLOW_RIM_SHADER = preload("res://ui/shaders/ui_glow_rim.gdshader")
+
 # ============ UI REFERENCES ============
+var atmosphere_fx: ColorRect
 var log_label: Label
 var health_label: Label
 var cp_label: Label
 var turn_label: Label
 var champion_label: Label
-var lt_label: Label
 var hand_container: HBoxContainer
 var play_target_marker: Control
 var end_turn_btn: Button
@@ -91,7 +108,11 @@ var hover_tooltip_label: Label
 var card_popup_panel: PanelContainer = null
 var hover_card_display: Control = null
 var hover_effect_label: Label = null
+var card_popup_tween: Tween = null
+var card_popup_hide_timer: Timer = null
+var last_popup_card_id: String = ""
 var player_hp_bar: ProgressBar
+var player_hp_ghost_bar: ProgressBar
 var player_stats_panel_ref: Control
 var player_party_cards: Array = []
 var unit_popout_backdrop: ColorRect
@@ -110,24 +131,16 @@ var turn_log_label: Label
 var turn_log_toggle_btn: Button
 var turn_log_collapsed: bool = true
 var turn_undo_stack: Array = []
+var _log_lines: Array = []
+
+const STONE_PANEL_SHADER = preload("res://ui/shaders/ui_panel_stone.gdshader")
+const PARCHMENT_TEXTURE = preload("res://assets/ui/roman/parchment.png")
 
 func _apply_panel_style(panel: PanelContainer, tone: int = 0) -> void:
 	if panel == null:
 		return
 	var style := StyleBoxFlat.new()
-	match tone:
-		1:
-			style.bg_color = Color(0.15, 0.11, 0.09, 0.86)
-			style.border_color = Color(0.45, 0.34, 0.24, 0.92)
-		2:
-			style.bg_color = Color(0.10, 0.10, 0.11, 0.82)
-			style.border_color = Color(0.28, 0.30, 0.34, 0.90)
-		3:
-			style.bg_color = Color(0.11, 0.10, 0.09, 0.90)
-			style.border_color = Color(0.52, 0.41, 0.28, 0.95)
-		_:
-			style.bg_color = Color(0.12, 0.10, 0.09, 0.82)
-			style.border_color = Color(0.32, 0.28, 0.24, 0.90)
+	style.bg_color = Color(0.12, 0.10, 0.09, 0.82)
 	style.border_width_left = 1
 	style.border_width_top = 1
 	style.border_width_right = 1
@@ -136,7 +149,42 @@ func _apply_panel_style(panel: PanelContainer, tone: int = 0) -> void:
 	style.corner_radius_top_right = 5
 	style.corner_radius_bottom_left = 5
 	style.corner_radius_bottom_right = 5
+	style.border_color = Color(0.32, 0.28, 0.24, 0.90)
+	
+	var mat := ShaderMaterial.new()
+	mat.shader = STONE_PANEL_SHADER
+	var tint := Color(0.12, 0.10, 0.09, 0.82)
+	var texture_str := 0.35
+	var edge_glow := 0.15
+	
+	match tone:
+		1:
+			style.bg_color = Color(0.15, 0.11, 0.09, 0.86)
+			style.border_color = Color(0.45, 0.34, 0.24, 0.92)
+			tint = style.bg_color
+			texture_str = 0.45
+			edge_glow = 0.10
+		2:
+			style.bg_color = Color(0.10, 0.10, 0.11, 0.82)
+			style.border_color = Color(0.28, 0.30, 0.34, 0.90)
+			tint = style.bg_color
+			texture_str = 0.25
+			edge_glow = 0.20
+		3:
+			style.bg_color = Color(0.11, 0.10, 0.09, 0.90)
+			style.border_color = Color(0.52, 0.41, 0.28, 0.95)
+			tint = style.bg_color
+			texture_str = 0.40
+			edge_glow = 0.30
+		_:
+			pass
+			
 	panel.add_theme_stylebox_override("panel", style)
+	mat.set_shader_parameter("tint_color", tint)
+	mat.set_shader_parameter("texture_albedo", PARCHMENT_TEXTURE)
+	mat.set_shader_parameter("texture_strength", texture_str)
+	mat.set_shader_parameter("edge_glow_strength", edge_glow)
+	panel.material = mat
 
 func _style_section_title(label: Label, accent: bool = false) -> void:
 	if label == null:
@@ -492,20 +540,40 @@ func _build_ui() -> void:
 	health_label.add_theme_color_override("font_color", UITheme.CLR_VELLUM)
 	res_vbox.add_child(health_label)
 
+	# --- Layered HP Bar (Ghosting) ---
+	var hp_container = Control.new()
+	hp_container.custom_minimum_size = Vector2(240, 14)
+	res_vbox.add_child(hp_container)
+
+	# The Ghost Bar (Lighter red, sits behind)
+	player_hp_ghost_bar = ProgressBar.new()
+	player_hp_ghost_bar.set_anchors_preset(Control.PRESET_FULL_RECT)
+	player_hp_ghost_bar.min_value = 0
+	player_hp_ghost_bar.max_value = champion_max_hp
+	player_hp_ghost_bar.value = champion_hp
+	player_hp_ghost_bar.show_percentage = false
+	var ghost_bg = StyleBoxFlat.new()
+	ghost_bg.bg_color = Color(0.15, 0.10, 0.10, 0.9)
+	player_hp_ghost_bar.add_theme_stylebox_override("background", ghost_bg)
+	var ghost_fill = StyleBoxFlat.new()
+	ghost_fill.bg_color = Color(0.85, 0.45, 0.45, 0.8) # Lighter "Ghost Blood"
+	player_hp_ghost_bar.add_theme_stylebox_override("fill", ghost_fill)
+	hp_container.add_child(player_hp_ghost_bar)
+
+	# The Main Bar (Solid blood red)
 	player_hp_bar = ProgressBar.new()
+	player_hp_bar.set_anchors_preset(Control.PRESET_FULL_RECT)
 	player_hp_bar.min_value = 0
 	player_hp_bar.max_value = champion_max_hp
 	player_hp_bar.value = champion_hp
-	player_hp_bar.custom_minimum_size = Vector2(240, 12)
 	player_hp_bar.show_percentage = false
-	# Style HP bar with red/blood color
 	var hp_bg_style = StyleBoxFlat.new()
-	hp_bg_style.bg_color = Color(0.20, 0.12, 0.12, 0.8)
+	hp_bg_style.bg_color = Color(0, 0, 0, 0) # Transparent bg since ghost is behind
 	player_hp_bar.add_theme_stylebox_override("background", hp_bg_style)
 	var hp_fill_style = StyleBoxFlat.new()
 	hp_fill_style.bg_color = UITheme.CLR_BLOOD
 	player_hp_bar.add_theme_stylebox_override("fill", hp_fill_style)
-	res_vbox.add_child(player_hp_bar)
+	hp_container.add_child(player_hp_bar)
 
 	var armor_label = Label.new()
 	armor_label.text = "Armor tracked in card readout"
@@ -676,6 +744,12 @@ func _build_ui() -> void:
 	hover_effect_label.autowrap_mode = TextServer.AUTOWRAP_WORD
 	hover_effect_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	popup_vbox.add_child(hover_effect_label)
+
+	card_popup_hide_timer = Timer.new()
+	card_popup_hide_timer.one_shot = true
+	card_popup_hide_timer.wait_time = CARD_POPUP_HIDE_DELAY
+	add_child(card_popup_hide_timer)
+	card_popup_hide_timer.timeout.connect(_hide_card_popup)
 
 	# Side-wall party rails — both parented to rail_overlay (full-screen).
 	var player_rail = PanelContainer.new()
@@ -961,6 +1035,22 @@ func _build_ui() -> void:
 	_refresh_turn_log()
 	_apply_turn_log_state()
 
+	# --- Phase 1: AAA Atmosphere Overlay ---
+	atmosphere_fx = ColorRect.new()
+	atmosphere_fx.set_anchors_preset(Control.PRESET_FULL_RECT)
+	atmosphere_fx.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	atmosphere_fx.z_index = 300 # Overlay everything
+	var fx_mat = ShaderMaterial.new()
+	fx_mat.shader = VIGNETTE_GRAIN_SHADER
+	# Tune for a dark, dusty Roman arena
+	fx_mat.set_shader_parameter("tint_color", Color(0.02, 0.015, 0.01, 1.0))
+	fx_mat.set_shader_parameter("vignette_strength", 0.52)
+	fx_mat.set_shader_parameter("grain_strength", 0.045)
+	fx_mat.set_shader_parameter("fog_strength", 0.18)
+	fx_mat.set_shader_parameter("dust_strength", 0.12)
+	atmosphere_fx.material = fx_mat
+	add_child(atmosphere_fx)
+
 	_set_enemy_card_slot_state(-1, "empty")
 
 func _set_enemy_card_slot_state(active_slot: int, state: String) -> void:
@@ -1106,41 +1196,78 @@ func _refresh_target_display() -> void:
 		var armor := int(e.get("armor", 0))
 		enemy_target_reticle_label.text = "◉ %s" % str(e.get("name", "Enemy"))
 		enemy_target_reticle_label.tooltip_text = "HP %d/%d  ARM %d" % [hp, max_hp, armor]
+		
+		# Juice: slight pulse on text when selection changes
+		var pulse = create_tween()
+		pulse.tween_property(enemy_target_reticle_label, "scale", Vector2(1.1, 1.1), 0.1).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+		pulse.tween_property(enemy_target_reticle_label, "scale", Vector2.ONE, 0.1).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN)
 	else:
 		enemy_target_reticle_label.text = "◉"
 		enemy_target_reticle_label.tooltip_text = "No target selected"
 
+func _apply_selection_glow(panel: Control, active: bool, color_mode: int = 0) -> void:
+	if panel == null:
+		return
+	if not active:
+		panel.material = null
+		return
+	
+	var mat := ShaderMaterial.new()
+	mat.shader = GLOW_RIM_SHADER
+	# Gold/Warm for selection, Red/Blood for danger, Blue/Cold for friendly focus
+	var rim_col: Color = UI_ACCENT_WARM
+	match color_mode:
+		1: rim_col = Color(0.92, 0.28, 0.28, 1.0) # Danger/Target
+		2: rim_col = UI_ACCENT_COLD # Focus/Friendly
+	
+	mat.set_shader_parameter("rim_color", rim_col)
+	mat.set_shader_parameter("glow_strength", 1.2)
+	mat.set_shader_parameter("pulse_speed", 2.2)
+	mat.set_shader_parameter("pulse_amount", 0.15)
+	mat.set_shader_parameter("rim_width", 0.12)
+	mat.set_shader_parameter("inner_glow", 0.08)
+	panel.material = mat
+
 func _update_enemy_selection_highlight() -> void:
+	var selected_idx := _get_selected_enemy()
 	for i in range(enemy_party_cards.size()):
 		var panel := enemy_party_cards[i].get("panel") as Control
 		if panel == null:
 			continue
-		if i == _get_selected_enemy():
-			panel.modulate = Color(1.08, 1.04, 0.92, 1.0)
-		else:
+		
+		var is_selected: bool = (i == selected_idx)
+		_apply_selection_glow(panel, is_selected, 0) # Use Gold for selection
+		
+		if not is_selected:
 			var alive: bool = (i < enemies.size() and enemies[i].get("hp", 0) > 0)
 			panel.modulate = Color(1.0, 1.0, 1.0, 1.0) if alive else Color(0.72, 0.72, 0.72, 0.9)
 
 func _set_enemy_target_highlight(active: bool, valid: bool = true) -> void:
 	if enemy_target_reticle_label:
 		if active:
-			enemy_target_reticle_label.modulate = Color(1.0, 0.85, 0.45, 1.0) if valid else Color(0.60, 0.60, 0.60, 0.90)
+			enemy_target_reticle_label.modulate = Color(1.0, 0.45, 0.45, 1.0) if valid else Color(0.60, 0.60, 0.60, 0.90)
 			enemy_target_reticle_label.mouse_default_cursor_shape = Control.CURSOR_CROSS if valid else Control.CURSOR_FORBIDDEN
 			var pulse = create_tween()
-			pulse.tween_property(enemy_target_reticle_label, "scale", Vector2(1.10, 1.10), 0.20).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
-			pulse.tween_property(enemy_target_reticle_label, "scale", Vector2.ONE, 0.20).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN)
+			pulse.tween_property(enemy_target_reticle_label, "scale", Vector2(1.15, 1.15), 0.12).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+			pulse.tween_property(enemy_target_reticle_label, "scale", Vector2.ONE, 0.12).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN)
 		else:
 			enemy_target_reticle_label.modulate = Color(1, 1, 1, 1)
 			enemy_target_reticle_label.scale = Vector2.ONE
 			enemy_target_reticle_label.mouse_default_cursor_shape = Control.CURSOR_ARROW
-	for card in enemy_party_cards:
-		var enemy_panel := card.get("panel") as Control
+	
+	var target_idx := _get_target_enemy()
+	for i in range(enemy_party_cards.size()):
+		var enemy_panel := enemy_party_cards[i].get("panel") as Control
 		if enemy_panel == null:
 			continue
-		if active:
-			enemy_panel.modulate = Color(1.0, 0.90, 0.75, 1.0) if valid else Color(0.62, 0.62, 0.62, 0.95)
-		else:
-			enemy_panel.modulate = Color(1, 1, 1, 1)
+		
+		# Only apply targeted glow to the specific target or all if multi-target
+		if active and valid and i == target_idx:
+			_apply_selection_glow(enemy_panel, true, 1) # Red Danger Glow
+		elif not active:
+			# Restore selection highlight if it was selected
+			var is_selected: bool = (i == _get_selected_enemy())
+			_apply_selection_glow(enemy_panel, is_selected, 0)
 
 func _start_turn() -> void:
 	if combat_over:
@@ -1275,6 +1402,8 @@ func _apply_hand_fan() -> void:
 func _on_card_hover_entered(card_btn: Control) -> void:
 	if card_btn == null:
 		return
+	if card_popup_hide_timer and not card_popup_hide_timer.is_stopped():
+		card_popup_hide_timer.stop()
 	var can_play := bool(card_btn.get_meta("can_play", true))
 	if card_btn.has_method("set_hovered"):
 		card_btn.call("set_hovered", true)
@@ -1295,7 +1424,8 @@ func _on_card_hover_exited(card_btn: Control) -> void:
 	if card_btn.has_method("set_hovered"):
 		card_btn.call("set_hovered", false)
 	_set_enemy_target_highlight(false, true)
-	_hide_card_popup()
+	if card_popup_hide_timer:
+		card_popup_hide_timer.start()
 	var base_rot = float(card_btn.get_meta("base_rot", 0.0))
 	card_btn.z_index = 0
 	var tween = create_tween()
@@ -1329,12 +1459,17 @@ func _hide_hover_tooltip() -> void:
 func _show_card_popup(card_btn: Control, card_id: String) -> void:
 	if card_popup_panel == null or hover_card_display == null or card_id.is_empty():
 		return
-	hover_card_display.call("set_card", card_id)
-	var card_data := CardManager.get_card(card_id)
-	var effect_desc := _get_card_desc(card_data)
-	if hover_effect_label != null:
-		hover_effect_label.text = "" if (effect_desc == "" or effect_desc == "none") else effect_desc
-		hover_effect_label.visible = hover_effect_label.text != ""
+	if card_popup_tween != null:
+		card_popup_tween.kill()
+	var is_same_card := last_popup_card_id == card_id and card_popup_panel.visible
+	last_popup_card_id = card_id
+	if not is_same_card:
+		hover_card_display.call("set_card", card_id)
+		var card_data := CardManager.get_card(card_id)
+		var effect_desc := _get_card_desc(card_data)
+		if hover_effect_label != null:
+			hover_effect_label.text = "" if (effect_desc == "" or effect_desc == "none") else effect_desc
+			hover_effect_label.visible = hover_effect_label.text != ""
 	var card_rect := card_btn.get_global_rect()
 	var viewport_size := get_viewport_rect().size
 	var panel_w := 176.0
@@ -1347,16 +1482,23 @@ func _show_card_popup(card_btn: Control, card_id: String) -> void:
 	pos.y = clamp(pos.y, 8.0, viewport_size.y - panel_h - 8.0)
 	card_popup_panel.global_position = pos
 	card_popup_panel.visible = true
-	var tw := create_tween()
-	tw.tween_property(card_popup_panel, "modulate:a", 1.0, 0.15).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+	if is_same_card and card_popup_panel.modulate.a > 0.0:
+		return
+	card_popup_panel.modulate.a = 0.0
+	card_popup_tween = create_tween()
+	card_popup_tween.tween_property(card_popup_panel, "modulate:a", 1.0, 0.10).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
 
 func _hide_card_popup() -> void:
 	if card_popup_panel == null:
 		return
-	var tw := create_tween()
-	tw.tween_property(card_popup_panel, "modulate:a", 0.0, 0.15).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN)
-	await tw.finished
-	card_popup_panel.visible = false
+	if card_popup_tween != null:
+		card_popup_tween.kill()
+	card_popup_tween = create_tween()
+	card_popup_tween.tween_property(card_popup_panel, "modulate:a", 0.0, 0.12).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN)
+	card_popup_tween.finished.connect(func() -> void:
+		card_popup_panel.visible = false
+		last_popup_card_id = ""
+	)
 
 func _animate_hand_reflow(removed_idx: int) -> void:
 	var moved := false
@@ -1445,18 +1587,16 @@ func _player_stat_tooltip(slot_idx: int) -> String:
 		return "CHAMPION\nHP: %d/%d\nArmor: %d\nCP: %d/%d\nWarrior Stance" % [
 			champion_hp, champion_max_hp, champion_armor, command_points, max_command_points
 		]
-	var active_lt: Array = GameState.active_lieutenants
 	var lt_idx := slot_idx - 1
-	if lt_idx < 0 or lt_idx >= active_lt.size():
+	if lt_idx < 0 or lt_idx >= lieutenant_states.size() or not lieutenant_states[lt_idx].active:
 		return "Empty Lieutenant Slot"
-	var unit_name := str(active_lt[lt_idx]).to_upper()
-	if lt_idx == 0:
-		return "%s\nHP: %d/%d\nArmor: %d\nStatus: Active Wingman" % [unit_name, lt_hp, lt_max_hp, lt_armor]
-	var lt_data: Dictionary = CardManager.get_lieutenant(str(active_lt[lt_idx]))
+	var lt_state = lieutenant_states[lt_idx]
+	var lt_data: Dictionary = CardManager.get_lieutenant(lt_state.name)
+	var unit_name := str(lt_data.get("name", lt_state.name)).to_upper()
 	return "%s\nHP: %d/%d\nArmor: %d\nTrait: %s" % [
 		unit_name,
-		int(lt_data.get("hp", 25)),
-		int(lt_data.get("hp", 25)),
+		lt_state.hp,
+		lt_state.max_hp,
 		int(lt_data.get("armor", 0)),
 		str(lt_data.get("trait", "None"))
 	]
@@ -1478,7 +1618,10 @@ func _on_unit_plate_gui_input(event: InputEvent, side: String, slot_idx: int) ->
 	if side == "enemy" and mouse_event.button_index == MOUSE_BUTTON_LEFT and mouse_event.pressed:
 		_select_enemy(slot_idx)
 		return
-	var opens_popout := (mouse_event.button_index == MOUSE_BUTTON_RIGHT and mouse_event.pressed) or (mouse_event.button_index == MOUSE_BUTTON_LEFT and mouse_event.pressed and side != "enemy")
+
+	var is_right_click := (mouse_event.button_index == MOUSE_BUTTON_RIGHT and mouse_event.pressed)
+	var is_left_click_non_enemy := (mouse_event.button_index == MOUSE_BUTTON_LEFT and mouse_event.pressed and side != "enemy")
+	var opens_popout := is_right_click or is_left_click_non_enemy
 	if not opens_popout:
 		return
 	var details: String = ""
@@ -1655,14 +1798,27 @@ func _on_card_pressed(card_idx: int, card_btn: Control) -> void:
 	await _animate_hand_reflow(card_idx)
 
 	command_points -= cost
+	_execute_card_logic(card_data, _get_target_enemy())
 
+	discard_pile.append(hand[card_idx])
+	hand.remove_at(card_idx)
+
+	is_play_animating = false
+	if card_btn.has_method("set_selected"):
+		card_btn.call("set_selected", false)
+	_update_all_ui()
+	_check_victory()
+	if not combat_over:
+		end_turn_btn.disabled = false
+	_update_undo_state()
+
+func _execute_card_logic(card_data: Dictionary, target: int) -> void:
 	var type = card_data.get("type", "attack")
 	var effect = card_data.get("effect", "none")
 
 	match type:
 		"attack":
 			var dmg = _get_total_attack_damage(int(card_data.get("damage", 0)))
-			var target = _get_target_enemy()
 			if target >= 0:
 				_deal_damage_to_enemy(target, dmg)
 				_spawn_float_text("-%d" % dmg, Color(1.0, 0.26, 0.26, 1.0), _enemy_float_origin(target), 28)
@@ -1677,6 +1833,11 @@ func _on_card_pressed(card_idx: int, card_btn: Control) -> void:
 			champion_armor += armor
 			_spawn_float_text("+%d Armor" % armor, Color(0.45, 0.76, 1.0, 1.0), _player_float_origin(), 22)
 			_log("Champion gained %d armor (total: %d)" % [armor, champion_armor])
+			if effect == "team_protect":
+				for lt_state in lieutenant_states:
+					if lt_state.active:
+						lt_state.armor += 4
+				_log("All lieutenants gain +4 armor from Team Protect.")
 
 		"support":
 			var heal = card_data.get("heal", 0)
@@ -1690,9 +1851,8 @@ func _on_card_pressed(card_idx: int, card_btn: Control) -> void:
 			var react_dmg = _get_total_attack_damage(int(card_data.get("damage", 0)))
 			var react_armor = card_data.get("armor", 0)
 			if react_dmg > 0:
-				var react_target = _get_target_enemy()
-				if react_target >= 0:
-					_deal_damage_to_enemy(react_target, react_dmg)
+				if target >= 0:
+					_deal_damage_to_enemy(target, react_dmg)
 			if react_armor > 0:
 				champion_armor += react_armor
 				_log("Champion gained %d armor (total: %d)" % [react_armor, champion_armor])
@@ -1714,23 +1874,13 @@ func _on_card_pressed(card_idx: int, card_btn: Control) -> void:
 			champion_armor += 3
 			_log("Evasion! +3 temp armor to absorb incoming hits.")
 			if effect == "evasion_team":
-				lt_armor += 2
-				_log("%s also gains +2 armor." % lt_name)
+				for lt_state in lieutenant_states:
+					if lt_state.active:
+						lt_state.armor += 2
+				_log("All lieutenants gain +2 armor.")
 
 		"effect":
 			_apply_global_effect(effect)
-
-	discard_pile.append(hand[card_idx])
-	hand.remove_at(card_idx)
-
-	is_play_animating = false
-	if card_btn.has_method("set_selected"):
-		card_btn.call("set_selected", false)
-	_update_all_ui()
-	_check_victory()
-	if not combat_over:
-		end_turn_btn.disabled = false
-	_update_undo_state()
 
 func _parse_effect_stacks(effect: String) -> int:
 	var parts = effect.split("_")
@@ -1795,6 +1945,26 @@ func _apply_support_effect(effect: String) -> void:
 		"card_draw":
 			_draw_cards(1)
 			_log("Drew 1 card from effect.")
+		"morale_boost_team":
+			champion_hp = min(champion_max_hp, champion_hp + 3)
+			for lt_state in lieutenant_states:
+				if lt_state.active:
+					lt_state.hp = min(lt_state.max_hp, lt_state.hp + 3)
+			_log("Morale Boost! All units heal 3 HP.")
+		"regen_team":
+			champion_hp = min(champion_max_hp, champion_hp + 5)
+			for lt_state in lieutenant_states:
+				if lt_state.active:
+					lt_state.hp = min(lt_state.max_hp, lt_state.hp + 5)
+			_log("Team Regen! All units heal 5 HP.")
+		"team_buff_all":
+			champion_armor += 2
+			champion_hp = min(champion_max_hp, champion_hp + 2)
+			for lt_state in lieutenant_states:
+				if lt_state.active:
+					lt_state.armor += 2
+					lt_state.hp = min(lt_state.max_hp, lt_state.hp + 2)
+			_log("Team Buff! +2 Armor/HP to all units.")
 		_:
 			pass
 
@@ -1853,10 +2023,18 @@ func _apply_global_effect(effect: String) -> void:
 				if enemies[i]["hp"] > 0:
 					enemies[i]["damage"] = max(0, enemies[i].get("damage", 0) - 1)
 			_log("Intimidate! Enemy damage reduced by 1 this turn.")
-		"morale_boost_all":
+		"morale_boost_team":
 			champion_hp = min(champion_max_hp, champion_hp + 3)
-			lt_hp = min(lt_max_hp, lt_hp + 3)
-			_log("Morale Boost! Champion and %s heal 3 HP." % lt_name)
+			for lt_state in lieutenant_states:
+				if lt_state.active:
+					lt_state.hp = min(lt_state.max_hp, lt_state.hp + 3)
+			_log("Morale Boost! All units heal 3 HP.")
+		"bless_team":
+			champion_armor += 3
+			for lt_state in lieutenant_states:
+				if lt_state.active:
+					lt_state.armor += 3
+			_log("Blessing! +3 Armor to all units.")
 		_:
 			_log("Effect: %s applied." % effect)
 
@@ -1869,14 +2047,35 @@ func _deal_damage_to_enemy(idx: int, amount: int) -> void:
 	var actual: int = amount - absorbed
 	enemy["hp"] = max(0, enemy["hp"] - actual)
 	_log("Hit %s for %d dmg (%d armor) → %d/%d HP" % [enemy["name"], actual, absorbed, enemy["hp"], enemy["max_hp"]])
+	
 	if idx >= 0 and idx < enemy_party_cards.size():
 		var enemy_panel := enemy_party_cards[idx].get("panel") as Control
 		if enemy_panel:
+			_flash_panel(enemy_panel, Color(1.0, 0.90, 0.85, 1.0))
+			_shake_ui(4.5, 0.2)
 			var recoil = create_tween()
 			recoil.tween_property(enemy_panel, "position:x", 8.0, 0.08).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
 			recoil.tween_property(enemy_panel, "position:x", 0.0, 0.12).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN)
+	
 	if idx == _get_selected_enemy() and enemy["hp"] <= 0:
 		_ensure_valid_enemy_target()
+
+func _flash_panel(panel: Control, color: Color = Color.WHITE) -> void:
+	if panel == null or panel.material == null:
+		return
+	var mat := panel.material as ShaderMaterial
+	if mat == null:
+		return
+	
+	mat.set_shader_parameter("flash_color", color)
+	var tw = create_tween()
+	tw.tween_method(func(v: float): mat.set_shader_parameter("flash_intensity", v), 1.0, 0.0, 0.25).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+
+func _shake_ui(intensity: float = 6.0, duration: float = 0.25) -> void:
+	# Shake the main vbox for a global "hit" feel
+	var main_vbox = get_child(1) as Control
+	if main_vbox:
+		_shake_element(main_vbox, duration, intensity)
 
 func _on_end_turn_btn_entered() -> void:
 	if end_turn_btn.disabled or combat_over:
@@ -1996,13 +2195,14 @@ func _capture_turn_state() -> Dictionary:
 	for enemy in enemies:
 		if enemy is Dictionary:
 			enemies_snapshot.append((enemy as Dictionary).duplicate(true))
+	var lt_states_save = []
+	for lt_state in lieutenant_states:
+		lt_states_save.append({"name": lt_state.name, "hp": lt_state.hp, "max_hp": lt_state.max_hp, "armor": lt_state.armor, "active": lt_state.active})
 	return {
 		"champion_hp": champion_hp,
 		"champion_max_hp": champion_max_hp,
 		"champion_armor": champion_armor,
-		"lt_hp": lt_hp,
-		"lt_max_hp": lt_max_hp,
-		"lt_armor": lt_armor,
+		"lieutenant_states": lt_states_save,
 		"enemies": enemies_snapshot,
 		"hand": hand.duplicate(true),
 		"deck": deck.duplicate(true),
@@ -2021,9 +2221,17 @@ func _restore_turn_state(state: Dictionary) -> void:
 	champion_hp = int(state.get("champion_hp", champion_hp))
 	champion_max_hp = int(state.get("champion_max_hp", champion_max_hp))
 	champion_armor = int(state.get("champion_armor", champion_armor))
-	lt_hp = int(state.get("lt_hp", lt_hp))
-	lt_max_hp = int(state.get("lt_max_hp", lt_max_hp))
-	lt_armor = int(state.get("lt_armor", lt_armor))
+	lieutenant_states.clear()
+	var lt_states_data = state.get("lieutenant_states", [])
+	for lt_data in lt_states_data:
+		var lt_state = LTCombatState.new(
+			str(lt_data.get("name", "")),
+			int(lt_data.get("hp", 0)),
+			int(lt_data.get("max_hp", 0)),
+			int(lt_data.get("armor", 0)),
+			bool(lt_data.get("active", false))
+		)
+		lieutenant_states.append(lt_state)
 	enemies = (state.get("enemies", enemies) as Array).duplicate(true)
 	hand = (state.get("hand", hand) as Array).duplicate(true)
 	deck = (state.get("deck", deck) as Array).duplicate(true)
@@ -2064,7 +2272,7 @@ func _enemy_intent_text(enemy: Dictionary, action: Dictionary) -> String:
 	return "%s%d" % [icon, dmg]
 
 
-func _enemy_take_turn(enemy_idx: int, action: Dictionary, slot_idx: int) -> void:
+func _enemy_take_turn(enemy_idx: int, action: Dictionary, _slot_idx: int) -> void:
 	var enemy: Dictionary = enemies[enemy_idx] as Dictionary
 	var name: String = str(action.get("name", enemy.get("name", "Enemy")))
 	var hits: int = max(1, int(action.get("hits", 1)))
@@ -2246,31 +2454,29 @@ func _update_player_party_ui() -> void:
 		return
 	_set_unit_card_ui(player_party_cards[0], "CHAMPION", champion_hp, champion_max_hp, champion_armor, true)
 
-	var active_lt: Array = GameState.active_lieutenants
-	for slot_idx in range(1, player_party_cards.size()):
+	# Update all 4 LT slots from lieutenant_states array
+	for slot_idx in range(1, mini(5, player_party_cards.size())):  # Slots 1-4 for LTs
 		var lt_idx := slot_idx - 1
-		if lt_idx >= active_lt.size():
+		if lt_idx >= lieutenant_states.size() or not lieutenant_states[lt_idx].active:
 			_set_unit_card_ui(player_party_cards[slot_idx], "Empty", 0, 1, 0, false)
 			continue
-		var lt_key := str(active_lt[lt_idx])
-		var lt_data: Dictionary = CardManager.get_lieutenant(lt_key)
-		var lt_display_name: String = str(lt_data.get("name", lt_key)).to_upper()
-		if lt_idx == 0:
-			_set_unit_card_ui(player_party_cards[slot_idx], lt_display_name, lt_hp, lt_max_hp, lt_armor, true)
-		else:
-			var est_hp := int(lt_data.get("hp", 25))
-			var est_armor := int(lt_data.get("armor", 0))
-			_set_unit_card_ui(player_party_cards[slot_idx], lt_display_name, est_hp, est_hp, est_armor, true)
+		var lt_state = lieutenant_states[lt_idx]
+		var lt_data: Dictionary = CardManager.get_lieutenant(lt_state.name)
+		var lt_display_name: String = str(lt_data.get("name", lt_state.name)).to_upper()
+		_set_unit_card_ui(player_party_cards[slot_idx], lt_display_name, lt_state.hp, lt_state.max_hp, lt_state.armor, true)
 
 func _get_champion_display() -> String:
 	return "CHAMPION\nHP %d/%d  ARM %d\nWarrior Stance" % [champion_hp, champion_max_hp, champion_armor]
 
 func _get_lt_display() -> String:
-	var lt_data := CardManager.get_lieutenant(lt_name)
-	var display: String = str(lt_data.get("name", lt_name)) if not lt_data.is_empty() else lt_name
-	if lt_hp <= 0:
+	if lieutenant_states.is_empty() or not lieutenant_states[0].active:
+		return "No Lieutenant"
+	var lt_state = lieutenant_states[0]
+	var lt_data := CardManager.get_lieutenant(lt_state.name)
+	var display: String = str(lt_data.get("name", lt_state.name)) if not lt_data.is_empty() else lt_state.name
+	if lt_state.hp <= 0:
 		return "%s [DOWN]" % display
-	return "%s\n❤ %d/%d  🛡 %d" % [display, lt_hp, lt_max_hp, lt_armor]
+	return "%s\n❤ %d/%d  🛡 %d" % [display, lt_state.hp, lt_state.max_hp, lt_state.armor]
 
 func _update_all_ui() -> void:
 	var hp_before := last_ui_champion_hp
@@ -2281,8 +2487,28 @@ func _update_all_ui() -> void:
 		health_label.text = "Health: %d/%d" % [champion_hp, champion_max_hp]
 	if player_hp_bar:
 		player_hp_bar.max_value = champion_max_hp
-		var hp_tw = create_tween()
-		hp_tw.tween_property(player_hp_bar, "value", champion_hp, 0.30).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+		if player_hp_ghost_bar:
+			player_hp_ghost_bar.max_value = champion_max_hp
+		
+		if champion_hp < last_ui_champion_hp: # Damage taken
+			# Main bar drops instantly
+			player_hp_bar.value = champion_hp
+			
+			# Ghost bar follows after a delay
+			var ghost_tw = create_tween()
+			ghost_tw.tween_interval(0.4) # Wait to show the lost chunk
+			ghost_tw.tween_property(player_hp_ghost_bar, "value", champion_hp, 0.45).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+			
+			# Flash the bar
+			var flash_tw = create_tween()
+			player_hp_bar.modulate = Color(1.5, 1.5, 1.5, 1.0) # Overbright flash
+			flash_tw.tween_property(player_hp_bar, "modulate", Color.WHITE, 0.2).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN)
+		else: # Healed or unchanged
+			var hp_tw = create_tween()
+			hp_tw.set_parallel(true)
+			hp_tw.tween_property(player_hp_bar, "value", champion_hp, 0.30).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+			if player_hp_ghost_bar:
+				hp_tw.tween_property(player_hp_ghost_bar, "value", champion_hp, 0.30).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
 	if cp_label:
 		_animate_cp_update()
 
@@ -2297,7 +2523,8 @@ func _update_all_ui() -> void:
 			var armor_color = Color(0.70, 1.0, 0.75, 1.0) if armor_change > 0 else Color(1.0, 0.85, 0.70, 1.0)
 			var tw = create_tween()
 			tw.set_parallel(true)
-			tw.tween_property(champion_label, "modulate", Color(1.0, 1.0, 1.0, 1.0) * armor_color, _scaled_time(0.12)).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+			var armor_tween = tw.tween_property(champion_label, "modulate", Color(1.0, 1.0, 1.0, 1.0) * armor_color, _scaled_time(0.12))
+			armor_tween.set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
 			tw.tween_property(champion_label, "scale", Vector2(1.06, 1.06), _scaled_time(0.12)).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
 			var tw2 = create_tween()
 			tw2.set_parallel(true)
@@ -2342,26 +2569,26 @@ func _animate_cp_update() -> void:
 		return
 
 	var cp_change = command_points - last_ui_command_points
-	var cp_color = Color(0.70, 1.0, 0.75, 1.0) if cp_change > 0 else Color(1.0, 0.70, 0.70, 1.0)
+	var cp_color = Color(0.70, 1.0, 0.75, 1.0) if cp_change > 0 else Color(1.0, 0.82, 0.45, 1.0)
 	var sign_str = "+" if cp_change > 0 else ""
 
-	# Flash the CP label with color feedback
-	var tw = create_tween()
-	tw.set_parallel(true)
-	tw.tween_property(cp_label, "modulate", Color(1.0, 1.0, 1.0, 1.0) * cp_color, _scaled_time(0.12)).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
-	tw.tween_property(cp_label, "scale", Vector2(1.08, 1.08), _scaled_time(0.12)).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
-
-	# Return to normal
-	var tw2 = create_tween()
-	tw2.set_parallel(true)
-	tw2.tween_property(cp_label, "modulate", Color.WHITE, _scaled_time(0.18)).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN)
-	tw2.tween_property(cp_label, "scale", Vector2.ONE, _scaled_time(0.18)).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN)
+	# SPRING BOUNCE: Scale up and elastic snap back
+	cp_label.pivot_offset = cp_label.size * 0.5
+	var bounce = create_tween()
+	bounce.set_parallel(true)
+	bounce.tween_property(cp_label, "scale", Vector2(1.35, 1.35), _scaled_time(0.08)).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+	bounce.tween_property(cp_label, "modulate", cp_color, _scaled_time(0.08)).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+	
+	var spring = create_tween()
+	spring.set_parallel(true)
+	spring.tween_property(cp_label, "scale", Vector2.ONE, _scaled_time(0.4)).set_trans(Tween.TRANS_ELASTIC).set_ease(Tween.EASE_OUT)
+	spring.tween_property(cp_label, "modulate", Color.WHITE, _scaled_time(0.3)).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN)
 
 	# Update text
 	cp_label.text = "CP: %d/%d" % [command_points, max_command_points]
 
 	# Spawn floating text for the change
-	_spawn_float_text(sign_str + str(cp_change), cp_color, cp_label.get_global_rect().get_center(), 16)
+	_spawn_float_text(sign_str + str(cp_change), cp_color, cp_label.get_global_rect().get_center(), 20)
 
 	last_ui_command_points = command_points
 
@@ -2430,14 +2657,18 @@ func _has_lt_trait(trait_name: String) -> bool:
 
 func _init_lieutenant_state() -> void:
 	var active = GameState.active_lieutenants
-	lt_name = "Marcus"
-	if not active.is_empty():
-		lt_name = str(active[0])
 
-	var lt_data = CardManager.get_lieutenant(lt_name)
-	lt_hp = int(lt_data.get("hp", 25))
-	lt_max_hp = lt_hp
-	lt_armor = int(lt_data.get("armor", 2))
+	# Initialize 4 LT slots from active_lieutenants
+	lieutenant_states.clear()
+	for i in range(4):
+		if i < active.size():
+			var lt_name_str = str(active[i])
+			var lt_data = CardManager.get_lieutenant(lt_name_str)
+			var hp = int(lt_data.get("hp", 25))
+			var armor = int(lt_data.get("armor", 2))
+			lieutenant_states.append(LTCombatState.new(lt_name_str, hp, hp, armor, true))
+		else:
+			lieutenant_states.append(LTCombatState.new("", 0, 0, 0, false))
 
 	# Apply passive traits from ALL active lieutenants
 	opening_draw_bonus = 0
@@ -2530,7 +2761,6 @@ func _apply_equipped_gear_bonuses() -> void:
 	if not unhandled_effects.is_empty():
 		_log("Gear effects (not implemented): %s" % ", ".join(unhandled_effects))
 
-var _log_lines: Array = []
 func _log(msg: String) -> void:
 	_log_lines.append(msg)
 	if _log_lines.size() > 10:
@@ -2540,5 +2770,3 @@ func _log(msg: String) -> void:
 		log_label.text = "\n".join(_log_lines.slice(start_idx, _log_lines.size()))
 	_refresh_turn_log()
 	print("[COMBAT] " + msg)
-
-

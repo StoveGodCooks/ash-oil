@@ -147,3 +147,5 @@ func get_skipped()  -> int:   return _skipped
 
 func suite_name() -> String:
 	return get_script().resource_path.get_file().replace(".gd", "")
+
+

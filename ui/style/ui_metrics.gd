@@ -1,5 +1,5 @@
-extends RefCounted
 class_name UIMetrics
+extends RefCounted
 
 # Geometry and motion timing constants for a coherent UI system.
 
@@ -37,3 +37,5 @@ const DUR_PRESS := 0.10
 const DUR_SELECT := 0.20
 const DUR_PANEL := 0.26
 const DUR_TRANSITION := 0.42
+
+

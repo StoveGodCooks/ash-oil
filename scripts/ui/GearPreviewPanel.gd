@@ -175,3 +175,5 @@ func slide_out() -> void:
 
 func _on_buy_pressed() -> void:
 	buy_requested.emit(gear_id, gear_price)
+
+

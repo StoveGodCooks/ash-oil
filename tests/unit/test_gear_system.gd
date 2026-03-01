@@ -103,7 +103,7 @@ func test_no_negative_stats_from_gear() -> void:
 func test_combat_does_not_modify_persistent_gear() -> void:
 	var equipped = {"weapon": "gear_001", "armor": "", "accessory": ""}
 	GameState.equipped_gear = equipped.duplicate()
-	var _combat = _make_combat_with_gear(equipped)
+	var combat = _make_combat_with_gear(equipped)
 	assert_eq("Equipped gear unchanged after combat init", GameState.equipped_gear["weapon"], "gear_001")
 
 func test_rarity_distribution_over_5000_drops() -> void:
@@ -192,3 +192,5 @@ func test_fallback_gold_when_all_gear_owned() -> void:
 	MissionManager.missions_data.erase("TEST_DROP")
 	assert_eq("No gear awarded when pool empty", reward.get("gear_id", ""), "")
 	assert_gt("Fallback gold granted", int(reward.get("gold", 0)), 0)
+
+

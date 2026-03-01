@@ -1,5 +1,5 @@
-extends RefCounted
 class_name UIAnimator
+extends RefCounted
 
 const UI_METRICS := preload("res://ui/style/ui_metrics.gd")
 
@@ -93,3 +93,5 @@ static func _kill(node: Object, meta_key: String) -> void:
 	var tw = node.get_meta(meta_key)
 	if tw is Tween:
 		tw.kill()
+
+

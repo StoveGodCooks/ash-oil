@@ -35,17 +35,17 @@ func test_full_state_roundtrip() -> void:
 	GameState.reset()
 
 	# Verify reset actually cleared things
-	assert_eq("Sanity: RENOWN=0 after reset", GameState.RENOWN, 0)
+	assert_eq("Sanity: RENOWN=0 after reset", GameState.renown, 0)
 
 	var load_result = SaveManager.load_game(SLOT)
 	assert_true("Load succeeded", load_result)
 
-	assert_eq("RENOWN restored", GameState.RENOWN, 10)
-	assert_eq("HEAT restored",   GameState.HEAT,    5)
-	assert_eq("PIETY restored",  GameState.PIETY,   3)
-	assert_eq("FAVOR restored",  GameState.FAVOR,   4)
-	assert_eq("DREAD restored",  GameState.DREAD,   2)
-	assert_eq("DEBT restored",   GameState.DEBT,  150)
+	assert_eq("RENOWN restored", GameState.renown, 10)
+	assert_eq("HEAT restored",   GameState.heat,    5)
+	assert_eq("PIETY restored",  GameState.piety,   3)
+	assert_eq("FAVOR restored",  GameState.favor,   4)
+	assert_eq("DREAD restored",  GameState.dread,   2)
+	assert_eq("DEBT restored",   GameState.debt,  150)
 	assert_eq("Gold restored",   GameState.gold,  350)
 	assert_in("M01 in completed", "M01", GameState.completed_missions)
 	assert_in("M02 in unlocked",  "M02", GameState.unlocked_missions)
@@ -61,14 +61,14 @@ func test_save_mid_mission_progress() -> void:
 	MissionManager.complete_mission("M01", "victory")
 	MissionManager.complete_mission("M02", "victory")
 	var gold_before = GameState.gold
-	var renown_before = GameState.RENOWN
+	var renown_before = GameState.renown
 
 	SaveManager.save_game(SLOT)
 	GameState.reset()
 	SaveManager.load_game(SLOT)
 
 	assert_eq("Gold preserved mid-campaign", GameState.gold, gold_before)
-	assert_eq("RENOWN preserved mid-campaign", GameState.RENOWN, renown_before)
+	assert_eq("RENOWN preserved mid-campaign", GameState.renown, renown_before)
 	assert_in("M01 completed preserved", "M01", GameState.completed_missions)
 	assert_in("M02 completed preserved", "M02", GameState.completed_missions)
 	assert_in("M03 unlocked preserved",  "M03", GameState.unlocked_missions)
@@ -125,12 +125,12 @@ func test_continue_from_saved_game_is_correct_state() -> void:
 
 	# Simulate "quit"
 	GameState.reset()
-	assert_eq("State reset (simulating quit)", GameState.RENOWN, 0)
+	assert_eq("State reset (simulating quit)", GameState.renown, 0)
 
 	# Simulate "continue"
 	var loaded = SaveManager.load_game(0)
 	assert_true("Continue: load succeeded", loaded)
-	assert_eq("Continue: RENOWN correct", GameState.RENOWN, 5)
+	assert_eq("Continue: RENOWN correct", GameState.renown, 5)
 	assert_eq("Continue: gold correct",   GameState.gold, 200)
 	assert_in("Continue: M01 completed",  "M01", GameState.completed_missions)
 	assert_true("Continue: M02 available", GameState.is_mission_available("M02"))

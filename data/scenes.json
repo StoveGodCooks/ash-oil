@@ -1,0 +1,160 @@
+{
+  "story_beats": {
+    "copied_ledger": {
+      "title": "Story Beat: Copied Ledger",
+      "text": "Copies move faster than knives. The city wakes to an idea: the fights were fixed, the names are named, and the sand remembers everything.",
+      "type": "story_beat",
+      "tags": ["act2", "exposure"],
+      "choices": [
+        {
+          "label": "Lean into exposure (show the names)",
+          "effects": {
+            "meter_changes": {"RENOWN": 2, "HEAT": 2},
+            "set_flags": ["ledger_public"],
+            "faction_changes": {"State": -2, "Cult": 1}
+          }
+        },
+        {
+          "label": "Control the rumor (limit copies)",
+          "effects": {
+            "meter_changes": {"RENOWN": 1, "HEAT": -2},
+            "set_flags": ["ledger_controlled"],
+            "faction_changes": {"State": 2}
+          }
+        }
+      ]
+    },
+    "public_exposure": {
+      "title": "Story Beat: Public Exposure",
+      "text": "Arena gates splinter; the crowd learns its roar had been purchased. Anger finds a direction. It points at the podium.",
+      "type": "story_beat",
+      "tags": ["act3", "uprising"],
+      "choices": [
+        {
+          "label": "Point them at the Syndicate",
+          "effects": {
+            "meter_changes": {"HEAT": -1, "DREAD": -2},
+            "faction_changes": {"Syndicate": -6, "State": 2},
+            "relationship_changes": {"Moth": 2}
+          }
+        },
+        {
+          "label": "Point them at the State",
+          "effects": {
+            "meter_changes": {"RENOWN": 2, "DEBT": 1},
+            "faction_changes": {"State": -6, "Cult": 3},
+            "relationship_changes": {"Iona": 2}
+          }
+        }
+      ]
+    },
+    "act1_intermission": {
+      "title": "Intermission: The Breathing Room",
+      "text": "A single night without a contract. Cassian wraps his hands in silence and counts the people he can still trust on one hand. It does not require all his fingers.",
+      "type": "intermission",
+      "tags": ["act1", "rest"],
+      "choices": [
+        {
+          "label": "Train alone",
+          "effects": {"meter_changes": {"RENOWN": 1, "HEAT": 1}}
+        },
+        {
+          "label": "Visit the infirmary",
+          "effects": {"meter_changes": {"DREAD": -1}, "relationship_changes": {"Rhesus": 1}}
+        }
+      ]
+    },
+    "act2_intermission": {
+      "title": "Intermission: Ledger in the Wind",
+      "text": "Pages move across taverns and shrines. Everyone claims to have a copy; few can read the numbers. The rumor is more dangerous than the evidence.",
+      "type": "intermission",
+      "tags": ["act2", "tension"],
+      "choices": [
+        {
+          "label": "Feed the rumor",
+          "effects": {
+            "meter_changes": {"RENOWN": 2, "HEAT": 2},
+            "set_flags": ["rumor_fanned"]
+          }
+        },
+        {
+          "label": "Protect allies' names",
+          "effects": {
+            "meter_changes": {"RENOWN": 1, "HEAT": -2},
+            "relationship_changes": {"Iona": 1, "Varro": 1}
+          }
+        }
+      ]
+    },
+    "act3_intermission": {
+      "title": "Intermission: Before the Gate",
+      "text": "The city holds its breath. Factions wait for Cassian to choose a banner. He tightens his greaves and wonders who will write the version of the story that survives.",
+      "type": "intermission",
+      "tags": ["act3", "finale"],
+      "choices": [
+        {
+          "label": "Meet Cult envoys",
+          "effects": {"faction_changes": {"Cult": 6}, "relationship_changes": {"Iona": 2}}
+        },
+        {
+          "label": "Meet State magistrate",
+          "effects": {"faction_changes": {"State": 6}, "relationship_changes": {"Varro": 2}}
+        },
+        {
+          "label": "Stay alone",
+          "effects": {"meter_changes": {"RENOWN": 1}, "set_flags": ["solo_mindset"]}
+        }
+      ]
+    }
+  },
+  "endings": {
+    "Cult": {
+      "title": "Ending: Cult Ascendant",
+      "text": "Incense floods the arena tunnels. The crowd chants a name that is not a god but becomes one anyway. Cassian is lifted on shoulders that tremble with belief and hunger.",
+      "type": "ending",
+      "tags": ["cult", "act3"]
+    },
+    "State": {
+      "title": "Ending: State Restored",
+      "text": "The ledger vanishes into sealed archives. Marcellus bows; the magistrates smile thinly. Cassian signs a confession he does not read and is granted clemency that feels like exile.",
+      "type": "ending",
+      "tags": ["state", "act3"]
+    },
+    "Solo": {
+      "title": "Ending: Alone Beyond the Walls",
+      "text": "No banner, no blessing. Cassian walks east with a broken spear and a ledger page folded in his boot. Behind him, a city argues about whether he ever existed.",
+      "type": "ending",
+      "tags": ["solo", "act3"]
+    },
+    "epilogue_rhesus": {
+      "title": "Epilogue: Rhesus",
+      "text": "Rhesus keeps fighting long after the crowd forgets the ledger. He shouts Cassian's name before every bout, daring the house to fix the odds again.",
+      "type": "epilogue",
+      "tags": ["ally", "arena"]
+    },
+    "epilogue_iona": {
+      "title": "Epilogue: Iona",
+      "text": "Shrine braziers burn late. Iona rewrites the litany to include refusal as a sacrament. Pilgrims leave with ash on their brows and names of officials in their pockets.",
+      "type": "epilogue",
+      "tags": ["ally", "cult"]
+    },
+    "epilogue_moth": {
+      "title": "Epilogue: Moth",
+      "text": "Moth sells copies of the ledger for a coin apiece. Most are blank parchment. The story is worth more than accuracy.",
+      "type": "epilogue",
+      "tags": ["ally", "street"]
+    },
+    "epilogue_varro": {
+      "title": "Epilogue: Varro",
+      "text": "Varro balances new ledgers with old debts. He keeps one empty page open, waiting for the next gladiator who learns to say no.",
+      "type": "epilogue",
+      "tags": ["ally", "state"]
+    },
+    "epilogue_solo": {
+      "title": "Epilogue: Quiet Road",
+      "text": "There is a road where no one knows Cassian’s name. He walks it until the ledger’s ink smears and the memories become weather.",
+      "type": "epilogue",
+      "tags": ["solo"]
+    }
+  }
+}

@@ -37,7 +37,7 @@ func test_save_and_load_renown() -> void:
 	SaveManager.save_game(TEST_SLOT)
 	GameState.reset()
 	SaveManager.load_game(TEST_SLOT)
-	assert_eq("RENOWN restored to 12", GameState.RENOWN, 12)
+	assert_eq("RENOWN restored to 12", GameState.renown, 12)
 
 func test_save_and_load_all_meters() -> void:
 	GameState.change_meter("RENOWN", 8)
@@ -49,12 +49,12 @@ func test_save_and_load_all_meters() -> void:
 	SaveManager.save_game(TEST_SLOT)
 	GameState.reset()
 	SaveManager.load_game(TEST_SLOT)
-	assert_eq("RENOWN roundtrip", GameState.RENOWN, 8)
-	assert_eq("HEAT roundtrip",   GameState.HEAT,   7)
-	assert_eq("PIETY roundtrip",  GameState.PIETY,  5)
-	assert_eq("FAVOR roundtrip",  GameState.FAVOR,  4)
-	assert_eq("DREAD roundtrip",  GameState.DREAD,  3)
-	assert_eq("DEBT roundtrip",   GameState.DEBT,  200)
+	assert_eq("RENOWN roundtrip", GameState.renown, 8)
+	assert_eq("HEAT roundtrip",   GameState.heat,   7)
+	assert_eq("PIETY roundtrip",  GameState.piety,  5)
+	assert_eq("FAVOR roundtrip",  GameState.favor,  4)
+	assert_eq("DREAD roundtrip",  GameState.dread,  3)
+	assert_eq("DEBT roundtrip",   GameState.debt,  200)
 
 func test_save_and_load_deck() -> void:
 	GameState.current_deck = ["card_001", "card_002", "card_027"]
@@ -160,3 +160,6 @@ func test_multiple_slots_are_independent() -> void:
 	# Cleanup
 	SaveManager.delete_save(slot_a)
 	SaveManager.delete_save(slot_b)
+
+
+

@@ -19,8 +19,8 @@ func test_new_game_gold_is_zero() -> void:
 	assert_eq("Gold starts at 0", GameState.gold, 0)
 
 func test_new_game_all_meters_zero() -> void:
-	assert_eq("RENOWN=0", GameState.RENOWN, 0)
-	assert_eq("HEAT=0",   GameState.HEAT,   0)
+	assert_eq("RENOWN=0", GameState.renown, 0)
+	assert_eq("HEAT=0",   GameState.heat,   0)
 
 # ── Mission Start ─────────────────────────────────────────────────────────────
 func test_start_mission_sets_id() -> void:
@@ -55,7 +55,7 @@ func test_victory_updates_renown() -> void:
 	var m = MissionManager.get_mission("M01")
 	var renown_change = m.get("meter_changes", {}).get("RENOWN", 0)
 	MissionManager.complete_mission("M01", "victory")
-	assert_eq("RENOWN updated after M01", GameState.RENOWN, renown_change)
+	assert_eq("RENOWN updated after M01", GameState.renown, renown_change)
 
 func test_victory_unlocks_next_mission() -> void:
 	MissionManager.start_mission("M01")
@@ -143,12 +143,12 @@ func test_piety_missions_push_toward_cult() -> void:
 	var m = MissionManager.get_mission("M05")
 	var piety_change = m.get("meter_changes", {}).get("PIETY", 0)
 	assert_gt("M05 increases PIETY", piety_change, 0)
-	assert_gt("PIETY > 0 after M05", GameState.PIETY, 0)
+	assert_gt("PIETY > 0 after M05", GameState.piety, 0)
 
 func test_favor_missions_push_toward_state() -> void:
 	GameState.unlock_mission("M06")
 	MissionManager.complete_mission("M06", "victory")
-	assert_gt("FAVOR > 0 after M06", GameState.FAVOR, 0)
+	assert_gt("FAVOR > 0 after M06", GameState.favor, 0)
 
 func test_enemy_data_loaded_for_m01() -> void:
 	var enemies = CardManager.get_mission_enemies("M01")
@@ -157,3 +157,6 @@ func test_enemy_data_loaded_for_m01() -> void:
 		assert_has_key("Enemy has hp", e, "hp")
 		assert_has_key("Enemy has damage", e, "damage")
 		assert_gt("Enemy hp > 0", e.get("hp", 0), 0)
+
+
+

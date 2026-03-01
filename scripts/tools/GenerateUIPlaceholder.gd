@@ -50,3 +50,5 @@ func _draw_question_mark(image: Image, color: Color) -> void:
 			for py in range(scale):
 				for px in range(scale):
 					image.set_pixel(start_x + col * scale + px, start_y + row * scale + py, color)
+
+

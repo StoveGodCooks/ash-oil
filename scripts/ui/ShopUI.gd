@@ -10,6 +10,7 @@ const TEX_SEAL   := "res://assets/ui/roman/seal.png"
 
 var shop_pool: Array = []
 var gear_pool: Array[Dictionary] = []
+var current_tab: String = "cards"  # "cards" or "gear"
 
 var gold_label: Label
 var msg_label: Label
@@ -94,7 +95,6 @@ func _build_gear_pool() -> void:
 			if gear_pool.size() >= max_gear_items + 2:
 				break
 
-var current_tab: String = "cards"  # "cards" or "gear"
 
 func _build_ui() -> void:
 	var bg := ColorRect.new()

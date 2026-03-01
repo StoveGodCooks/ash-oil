@@ -578,6 +578,8 @@ func _connect_runtime_signals() -> void:
 		GameState.mission_completed.connect(_on_game_state_changed_any)
 	if not GameState.game_loaded.is_connected(_on_game_loaded):
 		GameState.game_loaded.connect(_on_game_loaded)
+	if not NarrativeManager.scene_triggered.is_connected(_on_scene_triggered):
+		NarrativeManager.scene_triggered.connect(_on_scene_triggered)
 
 
 func _on_game_state_changed(_meter_name: String, _new_value: int) -> void:
@@ -598,11 +600,11 @@ func _refresh_runtime_values() -> void:
 		int(GameState.gold),
 		GameState.current_deck.size(),
 		GameState.completed_missions.size(),
-		int(GameState.RENOWN),
-		int(GameState.HEAT),
-		int(GameState.PIETY),
-		int(GameState.FAVOR),
-		int(GameState.DREAD),
+		int(GameState.renown),
+		int(GameState.heat),
+		int(GameState.piety),
+		int(GameState.favor),
+		int(GameState.dread),
 	]
 	if snapshot == _runtime_hash:
 		return
@@ -1581,6 +1583,22 @@ func _make_intel_entry(npc_id: String, rel: Dictionary) -> Control:
 # ── 3E  LOG ──────────────────────────────────────────────────────────────────
 
 func _build_log_content() -> void:
+	var story_header := Label.new()
+	story_header.text = "STORY LOG"
+	UITheme.style_header(story_header, UITheme.FONT_SECONDARY, true)
+	content_inner.add_child(story_header)
+
+	var story_log := preload("res://scripts/ui/StoryLog.gd").new()
+	story_log.custom_minimum_size = Vector2(0, 240)
+	content_inner.add_child(story_log)
+
+	content_inner.add_child(_divider_line(0.35))
+
+	var mission_header := Label.new()
+	mission_header.text = "MISSION RECORD"
+	UITheme.style_header(mission_header, UITheme.FONT_SECONDARY, true)
+	content_inner.add_child(mission_header)
+
 	if GameState.completed_missions.is_empty():
 		var lbl := Label.new()
 		lbl.text = "No missions completed yet."
@@ -1618,6 +1636,15 @@ func _make_log_entry(mid: String, data: Dictionary) -> Control:
 	row.add_child(out_lbl)
 
 	return row
+
+# ========== Narrative Scene Modal ==========
+func _on_scene_triggered(scene_id: String, payload: Dictionary) -> void:
+	var modal := preload("res://scripts/ui/SceneModal.gd").new()
+	modal.present(scene_id, payload)
+	modal.dismissed.connect(func(_sid: String) -> void:
+		_refresh_runtime_values()
+	)
+	get_tree().root.add_child(modal)
 
 
 # ── 3F  DECK ─────────────────────────────────────────────────────────────────

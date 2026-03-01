@@ -180,7 +180,7 @@ func _ready() -> void:
 	_fade_in(column, 0.0)
 
 	print("=== ASH & OIL - MAIN MENU LOADED ===")
-	print("GameState online: RENOWN=%d HEAT=%d" % [GameState.RENOWN, GameState.HEAT])
+	print("GameState online: RENOWN=%d HEAT=%d" % [GameState.renown, GameState.heat])
 	print("Missions available: ", MissionManager.get_available_missions())
 
 func _on_start_pressed() -> void:
@@ -204,7 +204,7 @@ func _on_dev_pressed() -> void:
 func _on_continue_pressed() -> void:
 	if SaveManager.load_game(1):
 		print("--- GAME LOADED ---")
-		print("RENOWN: %d | HEAT: %d | Gold: %d" % [GameState.RENOWN, GameState.HEAT, GameState.gold])
+		print("RENOWN: %d | HEAT: %d | Gold: %d" % [GameState.renown, GameState.heat, GameState.gold])
 		get_tree().change_scene_to_file("res://scenes/CombatScreen.tscn")
 	else:
 		print("No save file found!")

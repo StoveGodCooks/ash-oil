@@ -480,3 +480,5 @@ func _faction_color(faction: String) -> Color:
 		"SPECTER": return Color(0.72, 0.45, 1.0)
 		"ECLIPSE": return UITheme.CLR_GOLD
 		_:         return UITheme.CLR_MUTED
+
+

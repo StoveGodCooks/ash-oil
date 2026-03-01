@@ -1,5 +1,5 @@
-extends RefCounted
 class_name UITypography
+extends RefCounted
 
 const FONT_TITLE := 34
 const FONT_SECTION := 22
@@ -34,3 +34,5 @@ static func scale(accessibility: Dictionary = {}) -> float:
 
 static func scaled_size(base_size: int, accessibility: Dictionary = {}) -> int:
 	return int(round(float(base_size) * scale(accessibility)))
+
+

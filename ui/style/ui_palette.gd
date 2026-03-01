@@ -1,5 +1,5 @@
-extends RefCounted
 class_name UIPalette
+extends RefCounted
 
 # Single source of truth for hub/UI palette and lighting.
 
@@ -71,3 +71,5 @@ static func resolve(accessibility: Dictionary = {}) -> Dictionary:
 
 static func with_alpha(c: Color, alpha: float) -> Color:
 	return Color(c.r, c.g, c.b, alpha)
+
+

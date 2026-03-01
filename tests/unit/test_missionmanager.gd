@@ -63,6 +63,13 @@ func test_unlock_makes_mission_available() -> void:
 	var avail = MissionManager.get_available_missions()
 	assert_in("M05 available after unlock", "M05", avail)
 
+func test_m20_completes_triggers_ending_scene() -> void:
+	GameState.reset()
+	GameState.story_log.clear()
+	MissionManager.complete_mission("M20", "victory")
+	assert_eq("Ending path set", GameState.ending_reached, MissionManager.check_ending_path())
+	assert_gt("Story log contains ending entry", GameState.story_log.size(), 0)
+
 func test_locked_by_npc_and_faction_requirements() -> void:
 	GameState.unlock_mission("S02")
 	var reasons = MissionManager.get_mission_lock_reasons("S02")
@@ -109,7 +116,7 @@ func test_complete_mission_applies_meter_changes() -> void:
 	var m = MissionManager.get_mission("M01")
 	var renown_change = m.get("meter_changes", {}).get("RENOWN", 0)
 	MissionManager.complete_mission("M01", "victory")
-	assert_eq("M01 RENOWN meter applied", GameState.RENOWN, renown_change)
+	assert_eq("M01 RENOWN meter applied", GameState.renown, renown_change)
 
 func test_complete_mission_retreat_halves_gold() -> void:
 	var m = MissionManager.get_mission("M01")
@@ -225,3 +232,6 @@ func test_ending_path_solo_low_meters() -> void:
 	GameState.change_meter("PIETY", 5)
 	GameState.change_meter("FAVOR", 4)
 	assert_eq("Low meters = Solo ending", MissionManager.check_ending_path(), "Solo")
+
+
+

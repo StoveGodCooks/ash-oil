@@ -83,5 +83,3 @@ func _ensure_save_dir() -> bool:
 	active_save_dir = FALLBACK_SAVE_DIR
 	DirAccess.make_dir_recursive_absolute(active_save_dir)
 	return DirAccess.dir_exists_absolute(active_save_dir)
-
-

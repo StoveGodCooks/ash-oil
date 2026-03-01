@@ -117,10 +117,9 @@ func _get_meter_color(meter_name: String, value: int, max_val: int) -> Color:
 		# High = red, Low = green
 		var ratio = float(value) / float(max_val)
 		return Color.GREEN.lerp(Color.RED, ratio)
-	else:
-		# High = green, Low = red
-		var ratio = float(value) / float(max_val)
-		return Color.RED.lerp(Color.GREEN, ratio)
+	# High = green, Low = red
+	var ratio = float(value) / float(max_val)
+	return Color.RED.lerp(Color.GREEN, ratio)
 
 func _resolve_canonical_meter(meter_name: String) -> String:
 	if meter_name in meter_config:

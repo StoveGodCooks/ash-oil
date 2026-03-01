@@ -27,18 +27,18 @@ var dread: int = 0
 
 # ============ LIEUTENANTS ============
 var lieutenant_data: Dictionary = {
-	"Marcus":  {"loyalty": 0, "level": 1, "recruited": false, "alive": true},
-	"Livia":   {"loyalty": 0, "level": 1, "recruited": false, "alive": true},
-	"Titus":   {"loyalty": 0, "level": 1, "recruited": false, "alive": true},
-	"Kara":    {"loyalty": 0, "level": 1, "recruited": false, "alive": true},
-	"Decimus": {"loyalty": 0, "level": 1, "recruited": false, "alive": true},
-	"Julia":   {"loyalty": 0, "level": 1, "recruited": false, "alive": true},
-	"Corvus":  {"loyalty": 0, "level": 1, "recruited": false, "alive": true},
-	"Thane":   {"loyalty": 0, "level": 1, "recruited": false, "alive": true},
+	"Marcus":  {"loyalty": 0, "level": 1, "xp": 0, "recruited": false, "alive": true, "attack": 55, "defense": 35},
+	"Livia":   {"loyalty": 0, "level": 1, "xp": 0, "recruited": false, "alive": true, "attack": 40, "defense": 28},
+	"Titus":   {"loyalty": 0, "level": 1, "xp": 0, "recruited": false, "alive": true, "attack": 50, "defense": 32},
+	"Kara":    {"loyalty": 0, "level": 1, "xp": 0, "recruited": false, "alive": true, "attack": 65, "defense": 50},
+	"Decimus": {"loyalty": 0, "level": 1, "xp": 0, "recruited": false, "alive": true, "attack": 70, "defense": 25},
+	"Julia":   {"loyalty": 0, "level": 1, "xp": 0, "recruited": false, "alive": true, "attack": 35, "defense": 30},
+	"Corvus":  {"loyalty": 0, "level": 1, "xp": 0, "recruited": false, "alive": true, "attack": 48, "defense": 28},
+	"Thane":   {"loyalty": 0, "level": 1, "xp": 0, "recruited": false, "alive": true, "attack": 60, "defense": 40},
 }
 
 # ============ SQUAD ============
-var active_lieutenants: Array = []   # Currently fighting (max 2)
+var active_lieutenants: Array = []   # Currently fighting (max 4)
 var benched_lieutenants: Array = []  # Backup bench
 var swapped_out: String = ""
 var swap_cooldown: int = 0
@@ -111,6 +111,7 @@ var current_location: String = "Arena City"
 var season: int = 1
 var act: int = 1
 var ending_reached: String = ""
+var story_log: Array = []  # Chronological narrative events (scenes, beats, endings)
 
 # ============ ACCESSIBILITY ============
 var accessibility: Dictionary = {
@@ -150,16 +151,16 @@ func get_meter(meter_name: String) -> int:
 func recruit_lieutenant(lt_name: String) -> void:
 	if lt_name in lieutenant_data:
 		lieutenant_data[lt_name]["recruited"] = true
-		if lt_name not in active_lieutenants and active_lieutenants.size() < 2:
+		if lt_name not in active_lieutenants and active_lieutenants.size() < 4:
 			active_lieutenants.append(lt_name)
 
 func change_loyalty(lt_name: String, amount: int) -> void:
 	if lt_name in lieutenant_data:
 		lieutenant_data[lt_name]["loyalty"] = clamp(
-			lieutenant_data[lt_name]["loyalty"] + amount, -5, 10
+			lieutenant_data[lt_name]["loyalty"] + amount, -100, 100
 		)
 		lieutenant_loyalty_changed.emit(lt_name, lieutenant_data[lt_name]["loyalty"])
-		if lieutenant_data[lt_name]["loyalty"] < -3:
+		if lieutenant_data[lt_name]["loyalty"] < -50:
 			active_lieutenants.erase(lt_name)
 
 # ============ INVENTORY FUNCTIONS ============
@@ -340,6 +341,7 @@ func to_dict() -> Dictionary:
 		"season": season,
 		"act": act,
 		"ending_reached": ending_reached,
+		"story_log": story_log,
 		"accessibility": accessibility,
 	}
 
@@ -351,6 +353,7 @@ func from_dict(data: Dictionary) -> void:
 	debt   = data.get("DEBT",   0)
 	dread  = data.get("DREAD",  0)
 	lieutenant_data    = data.get("lieutenant_data",    lieutenant_data)
+	_migrate_lieutenant_data()  # Ensure old saves have new fields
 	active_lieutenants = data.get("active_lieutenants", [])
 	benched_lieutenants= data.get("benched_lieutenants",[])
 	gold               = data.get("gold",               0)
@@ -376,6 +379,7 @@ func from_dict(data: Dictionary) -> void:
 	season             = data.get("season", 1)
 	act                = data.get("act",    1)
 	ending_reached     = data.get("ending_reached", "")
+	story_log          = data.get("story_log", [])
 	accessibility = data.get("accessibility", accessibility)
 	accessibility["text_scale"] = clampf(float(accessibility.get("text_scale", 1.0)), 0.8, 1.5)
 	accessibility["animation_speed"] = clampf(float(accessibility.get("animation_speed", 1.0)), 0.5, 2.0)
@@ -398,8 +402,22 @@ func _normalize_string_array(value, fallback: Array[String]) -> Array[String]:
 
 func reset() -> void:
 	renown = 0; heat = 0; piety = 0; favor = 0; debt = 0; dread = 0
+	var lt_combat_stats = {
+		"Marcus":  {"attack": 55, "defense": 35},
+		"Livia":   {"attack": 40, "defense": 28},
+		"Titus":   {"attack": 50, "defense": 32},
+		"Kara":    {"attack": 65, "defense": 50},
+		"Decimus": {"attack": 70, "defense": 25},
+		"Julia":   {"attack": 35, "defense": 30},
+		"Corvus":  {"attack": 48, "defense": 28},
+		"Thane":   {"attack": 60, "defense": 40},
+	}
 	for lt in lieutenant_data:
-		lieutenant_data[lt] = {"loyalty": 0, "level": 1, "recruited": false, "alive": true}
+		var stats = lt_combat_stats.get(lt, {"attack": 50, "defense": 30})
+		lieutenant_data[lt] = {
+			"loyalty": 0, "level": 1, "xp": 0, "recruited": false, "alive": true,
+			"attack": stats["attack"], "defense": stats["defense"]
+		}
 	active_lieutenants = []; benched_lieutenants = []
 	gold = 0; current_deck = []; discovered_cards = []
 	owned_gear = []
@@ -409,6 +427,7 @@ func reset() -> void:
 	story_phase = "SURVIVAL"; threat_level = ["Marcellus"]; refusals_made = 0
 	costs_paid = []; narrative_momentum = "On the Run"; completed_story_beats = []
 	current_location = "Arena City"; season = 1; act = 1; ending_reached = ""
+	story_log = []
 	faction_status = {
 		"Cult": {"alignment": 0, "hostile": false},
 		"State": {"alignment": 0, "hostile": false},
@@ -431,6 +450,40 @@ func reset() -> void:
 	}
 	_load_relationship_data()
 	_ensure_npc_relationships()
+
+func _migrate_lieutenant_data() -> void:
+	"""Ensure loaded lieutenant data has all required fields (for old saves compatibility)"""
+	var lt_combat_stats = {
+		"Marcus":  {"attack": 55, "defense": 35},
+		"Livia":   {"attack": 40, "defense": 28},
+		"Titus":   {"attack": 50, "defense": 32},
+		"Kara":    {"attack": 65, "defense": 50},
+		"Decimus": {"attack": 70, "defense": 25},
+		"Julia":   {"attack": 35, "defense": 30},
+		"Corvus":  {"attack": 48, "defense": 28},
+		"Thane":   {"attack": 60, "defense": 40},
+	}
+	for lt_name in lieutenant_data.keys():
+		var lt_state = lieutenant_data[lt_name]
+		if "xp" not in lt_state:
+			lt_state["xp"] = 0
+		if "attack" not in lt_state:
+			var stats = lt_combat_stats.get(lt_name, {"attack": 50, "defense": 30})
+			lt_state["attack"] = stats["attack"]
+		if "defense" not in lt_state:
+			var stats = lt_combat_stats.get(lt_name, {"attack": 50, "defense": 30})
+			lt_state["defense"] = stats["defense"]
+		# Migrate old loyalty range (-5/+10) to new range (-100/+100)
+		if "loyalty" in lt_state:
+			var old_loyalty = int(lt_state.get("loyalty", 0))
+			if old_loyalty > 10 or old_loyalty < -5:
+				# Already migrated or new save, don't touch it
+				pass
+			else:
+				# Scale old range to new range: -5..10 → -100..100
+				var scaled = int(round(old_loyalty * 10.0))
+				lt_state["loyalty"] = clamp(scaled, -100, 100)
+		lieutenant_data[lt_name] = lt_state
 
 func _load_relationship_data() -> void:
 	var loaded_profiles := _load_json_dict(NPC_DATA_PATH)
@@ -525,5 +578,3 @@ func _log_relationship(line: String) -> void:
 	if relationship_log.size() > 120:
 		relationship_log.pop_front()
 	print("[REL] %s" % line)
-
-

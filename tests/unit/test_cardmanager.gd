@@ -176,3 +176,5 @@ func test_all_main_missions_have_enemies() -> void:
 			continue
 		var enemies = CardManager.get_mission_enemies(mid)
 		assert_not_empty("%s has enemies" % mid, enemies)
+
+

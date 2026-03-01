@@ -1,5 +1,5 @@
-extends RefCounted
 class_name UIThemeBuilder
+extends RefCounted
 
 const UI_PALETTE := preload("res://ui/style/ui_palette.gd")
 const UI_METRICS := preload("res://ui/style/ui_metrics.gd")
@@ -172,3 +172,5 @@ static func _progress_fill_style(p: Dictionary) -> StyleBoxFlat:
 	s.corner_radius_bottom_left = UI_METRICS.RADIUS_SM
 	s.corner_radius_bottom_right = UI_METRICS.RADIUS_SM
 	return s
+
+

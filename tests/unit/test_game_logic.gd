@@ -10,35 +10,35 @@ func test_gamestate_meters() -> void:
 
 	# RENOWN clamps at 20
 	GameState.change_meter("RENOWN", 25)
-	assert_eq("RENOWN max clamp (25 -> 20)", GameState.RENOWN, 20)
+	assert_eq("RENOWN max clamp (25 -> 20)", GameState.renown, 20)
 
 	# RENOWN clamps at 0
 	GameState.change_meter("RENOWN", -999)
-	assert_eq("RENOWN min clamp (0)", GameState.RENOWN, 0)
+	assert_eq("RENOWN min clamp (0)", GameState.renown, 0)
 
 	# HEAT clamps at 15
 	GameState.change_meter("HEAT", 100)
-	assert_eq("HEAT max clamp (100 -> 15)", GameState.HEAT, 15)
+	assert_eq("HEAT max clamp (100 -> 15)", GameState.heat, 15)
 
 	# PIETY clamps at 10
 	GameState.change_meter("PIETY", 50)
-	assert_eq("PIETY max clamp (50 -> 10)", GameState.PIETY, 10)
+	assert_eq("PIETY max clamp (50 -> 10)", GameState.piety, 10)
 
 	# FAVOR clamps at 10
 	GameState.change_meter("FAVOR", 50)
-	assert_eq("FAVOR max clamp (50 -> 10)", GameState.FAVOR, 10)
+	assert_eq("FAVOR max clamp (50 -> 10)", GameState.favor, 10)
 
 	# DREAD clamps at 10
 	GameState.change_meter("DREAD", 99)
-	assert_eq("DREAD max clamp (99 -> 10)", GameState.DREAD, 10)
+	assert_eq("DREAD max clamp (99 -> 10)", GameState.dread, 10)
 
 	# DEBT can go high (unlimited)
 	GameState.change_meter("DEBT", 1000)
-	assert_gt("DEBT unlimited (>0)", GameState.DEBT, 0)
+	assert_gt("DEBT unlimited (>0)", GameState.debt, 0)
 
 	# DEBT clamps at 0 (no negative debt)
 	GameState.change_meter("DEBT", -99999)
-	assert_eq("DEBT min clamp (0)", GameState.DEBT, 0)
+	assert_eq("DEBT min clamp (0)", GameState.debt, 0)
 
 
 func test_gamestate_gold() -> void:
@@ -166,4 +166,7 @@ func test_enemy_loading() -> void:
 	enemies[0]["hp"] = 0
 	var enemies2 = CardManager.get_mission_enemies("M01")
 	assert_eq("Enemies are independent copies", enemies2[0].get("hp"), enemies2[0].get("max_hp"))
+
+
+
 

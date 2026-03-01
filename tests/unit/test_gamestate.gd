@@ -3,62 +3,62 @@ extends "res://tests/runner/TestBase.gd"
 
 # ── Meter Initialization ────────────────────────────────────────────────────
 func test_meters_start_at_zero() -> void:
-	assert_eq("RENOWN starts at 0",  GameState.RENOWN, 0)
-	assert_eq("HEAT starts at 0",    GameState.HEAT,   0)
-	assert_eq("PIETY starts at 0",   GameState.PIETY,  0)
-	assert_eq("FAVOR starts at 0",   GameState.FAVOR,  0)
-	assert_eq("DEBT starts at 0",    GameState.DEBT,   0)
-	assert_eq("DREAD starts at 0",   GameState.DREAD,  0)
+	assert_eq("RENOWN starts at 0",  GameState.renown, 0)
+	assert_eq("HEAT starts at 0",    GameState.heat,   0)
+	assert_eq("PIETY starts at 0",   GameState.piety,  0)
+	assert_eq("FAVOR starts at 0",   GameState.favor,  0)
+	assert_eq("DEBT starts at 0",    GameState.debt,   0)
+	assert_eq("DREAD starts at 0",   GameState.dread,  0)
 
 # ── Meter Clamping ─────────────────────────────────────────────────────────
 func test_renown_clamps_at_max() -> void:
 	GameState.change_meter("RENOWN", 999)
-	assert_eq("RENOWN clamps at 20", GameState.RENOWN, 20)
+	assert_eq("RENOWN clamps at 20", GameState.renown, 20)
 
 func test_renown_clamps_at_min() -> void:
 	GameState.change_meter("RENOWN", -999)
-	assert_eq("RENOWN clamps at 0", GameState.RENOWN, 0)
+	assert_eq("RENOWN clamps at 0", GameState.renown, 0)
 
 func test_heat_clamps_at_max() -> void:
 	GameState.change_meter("HEAT", 999)
-	assert_eq("HEAT clamps at 15", GameState.HEAT, 15)
+	assert_eq("HEAT clamps at 15", GameState.heat, 15)
 
 func test_heat_clamps_at_min() -> void:
 	GameState.change_meter("HEAT", 10)
 	GameState.change_meter("HEAT", -999)
-	assert_eq("HEAT clamps at 0", GameState.HEAT, 0)
+	assert_eq("HEAT clamps at 0", GameState.heat, 0)
 
 func test_piety_clamps_at_max() -> void:
 	GameState.change_meter("PIETY", 999)
-	assert_eq("PIETY clamps at 10", GameState.PIETY, 10)
+	assert_eq("PIETY clamps at 10", GameState.piety, 10)
 
 func test_favor_clamps_at_max() -> void:
 	GameState.change_meter("FAVOR", 999)
-	assert_eq("FAVOR clamps at 10", GameState.FAVOR, 10)
+	assert_eq("FAVOR clamps at 10", GameState.favor, 10)
 
 func test_dread_clamps_at_max() -> void:
 	GameState.change_meter("DREAD", 999)
-	assert_eq("DREAD clamps at 10", GameState.DREAD, 10)
+	assert_eq("DREAD clamps at 10", GameState.dread, 10)
 
 func test_debt_is_unlimited() -> void:
 	GameState.change_meter("DEBT", 500)
-	assert_eq("DEBT accepts 500", GameState.DEBT, 500)
+	assert_eq("DEBT accepts 500", GameState.debt, 500)
 	GameState.change_meter("DEBT", 500)
-	assert_eq("DEBT accepts 1000", GameState.DEBT, 1000)
+	assert_eq("DEBT accepts 1000", GameState.debt, 1000)
 
 func test_debt_clamps_at_zero() -> void:
 	GameState.change_meter("DEBT", -999)
-	assert_eq("DEBT cannot go negative", GameState.DEBT, 0)
+	assert_eq("DEBT cannot go negative", GameState.debt, 0)
 
 func test_meter_partial_increment() -> void:
 	GameState.change_meter("RENOWN", 5)
 	GameState.change_meter("RENOWN", 3)
-	assert_eq("RENOWN accumulates: 5+3=8", GameState.RENOWN, 8)
+	assert_eq("RENOWN accumulates: 5+3=8", GameState.renown, 8)
 
 func test_meter_decrement() -> void:
 	GameState.change_meter("HEAT", 10)
 	GameState.change_meter("HEAT", -4)
-	assert_eq("HEAT decrements: 10-4=6", GameState.HEAT, 6)
+	assert_eq("HEAT decrements: 10-4=6", GameState.heat, 6)
 
 func test_get_meter_returns_correct_value() -> void:
 	GameState.change_meter("RENOWN", 7)
@@ -225,9 +225,9 @@ func test_reset_clears_all_meters() -> void:
 	GameState.change_meter("HEAT", 10)
 	GameState.change_meter("PIETY", 8)
 	GameState.reset()
-	assert_eq("RENOWN reset to 0", GameState.RENOWN, 0)
-	assert_eq("HEAT reset to 0",   GameState.HEAT,   0)
-	assert_eq("PIETY reset to 0",  GameState.PIETY,  0)
+	assert_eq("RENOWN reset to 0", GameState.renown, 0)
+	assert_eq("HEAT reset to 0",   GameState.heat,   0)
+	assert_eq("PIETY reset to 0",  GameState.piety,  0)
 
 func test_reset_clears_gold() -> void:
 	GameState.add_gold(500)
@@ -266,7 +266,7 @@ func test_from_dict_restores_state() -> void:
 	var saved = GameState.to_dict()
 	GameState.reset()
 	GameState.from_dict(saved)
-	assert_eq("RENOWN restored from dict", GameState.RENOWN, 7)
+	assert_eq("RENOWN restored from dict", GameState.renown, 7)
 	assert_eq("Gold restored from dict",   GameState.gold, 250)
 	assert_in("M01 restored in completed", "M01", GameState.completed_missions)
 
@@ -279,11 +279,11 @@ func test_from_dict_roundtrip_all_meters() -> void:
 	var saved = GameState.to_dict()
 	GameState.reset()
 	GameState.from_dict(saved)
-	assert_eq("HEAT roundtrip",  GameState.HEAT,  9)
-	assert_eq("PIETY roundtrip", GameState.PIETY, 5)
-	assert_eq("FAVOR roundtrip", GameState.FAVOR, 4)
-	assert_eq("DREAD roundtrip", GameState.DREAD, 3)
-	assert_eq("DEBT roundtrip",  GameState.DEBT,  100)
+	assert_eq("HEAT roundtrip",  GameState.heat,  9)
+	assert_eq("PIETY roundtrip", GameState.piety, 5)
+	assert_eq("FAVOR roundtrip", GameState.favor, 4)
+	assert_eq("DREAD roundtrip", GameState.dread, 3)
+	assert_eq("DEBT roundtrip",  GameState.debt,  100)
 
 # ── NPC Relationships / Factions ─────────────────────────────────────────────
 func test_npc_registry_loaded() -> void:
@@ -310,3 +310,6 @@ func test_relationship_log_persists_roundtrip() -> void:
 	GameState.reset()
 	GameState.from_dict(saved)
 	assert_not_empty("relationship_log restored", GameState.relationship_log)
+
+
+

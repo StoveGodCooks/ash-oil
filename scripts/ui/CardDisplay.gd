@@ -7,7 +7,6 @@ signal card_pressed()
 
 # ── Size variants ──
 enum CardSize { SMALL = 0, MEDIUM = 1, LARGE = 2 }
-var current_size: CardSize = CardSize.MEDIUM
 
 # ── Parchment & Wax palette (legacy, override with UITheme) ──
 const CLR_BG      = Color(0.08, 0.065, 0.050)
@@ -51,6 +50,8 @@ const TYPE_COLOR: Dictionary = {
 	"effect": Color(0.86, 0.62, 1.0, 0.95),
 }
 
+# ── Card State ──
+var current_size: CardSize = CardSize.MEDIUM
 var current_card_id: String = ""
 
 # Internal node refs (built in _build_card)
@@ -65,6 +66,8 @@ var _hover_glow:    ColorRect
 var _unplayable_x:  Label
 var _frame_overlay: TextureRect
 var _rarity_frame:  PanelContainer
+var _portrait_image: TextureRect
+var _card_shell_bg: TextureRect
 
 func _ready() -> void:
 	custom_minimum_size = Vector2(120, 180)
@@ -126,6 +129,18 @@ func _build_card() -> void:
 	_type_icon.offset_bottom = 0
 	_type_icon.mouse_filter = MOUSE_FILTER_IGNORE
 	add_child(_type_icon)
+
+	# 4b — Portrait image (over faction bg, hidden until set)
+	_portrait_image = TextureRect.new()
+	_portrait_image.anchor_left   = 0.0; _portrait_image.anchor_right  = 1.0
+	_portrait_image.anchor_top    = 0.0; _portrait_image.anchor_bottom = 0.42
+	_portrait_image.offset_left   = 2;   _portrait_image.offset_right  = -2
+	_portrait_image.offset_top    = 2;   _portrait_image.offset_bottom = 0
+	_portrait_image.expand_mode   = TextureRect.EXPAND_IGNORE_SIZE
+	_portrait_image.stretch_mode  = TextureRect.STRETCH_KEEP_ASPECT_COVERED
+	_portrait_image.mouse_filter  = MOUSE_FILTER_IGNORE
+	_portrait_image.visible = false
+	add_child(_portrait_image)
 
 	# 5 — Frame PNG overlay (on top of colour layers)
 	_frame_overlay = TextureRect.new()
@@ -223,6 +238,15 @@ func _build_card() -> void:
 	_cost_label.add_theme_color_override("font_color", UITheme.CLR_VOID if (UITheme != null) else Color(0.07, 0.06, 0.05))
 	cost_badge.add_child(_cost_label)
 
+	# Card shell overlay — covers procedural design when full card art exists
+	_card_shell_bg = TextureRect.new()
+	_card_shell_bg.set_anchors_preset(Control.PRESET_FULL_RECT)
+	_card_shell_bg.expand_mode  = TextureRect.EXPAND_IGNORE_SIZE
+	_card_shell_bg.stretch_mode = TextureRect.STRETCH_SCALE
+	_card_shell_bg.mouse_filter = MOUSE_FILTER_IGNORE
+	_card_shell_bg.visible = false
+	add_child(_card_shell_bg)
+
 	_unplayable_x = Label.new()
 	_unplayable_x.text = "✖"
 	_unplayable_x.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
@@ -239,6 +263,7 @@ func set_card(card_id: String) -> void:
 		return
 	var card = CardManager.get_card(card_id)
 	if card.is_empty():
+		push_warning("CardDisplay: no data for card_id '%s'" % card_id)
 		return
 
 	current_card_id = card_id
@@ -271,6 +296,32 @@ func set_card(card_id: String) -> void:
 	if _effect_label:
 		_effect_label.text = "" if (effect == "" or effect == "none") else effect
 	_apply_rarity_style(_rarity_tier(card))
+
+	# Full card shell — covers all procedural elements when real card art exists
+	var shell_path: String = card.get("cardShell", "")
+	var shell_tex: Texture2D = null
+	if shell_path != "":
+		shell_tex = load(shell_path) as Texture2D
+		if shell_tex == null:
+			push_warning("CardDisplay: failed to load cardShell '%s'" % shell_path)
+	if _card_shell_bg:
+		_card_shell_bg.texture = shell_tex
+		_card_shell_bg.visible = shell_tex != null
+
+	# Portrait zone — only used when no full card shell is set
+	var portrait_path: String = card.get("portraitFile", "")
+	if _portrait_image:
+		var tex: Texture2D = null
+		if shell_tex == null and portrait_path != "":
+			tex = load(portrait_path) as Texture2D
+			if tex == null:
+				push_warning("CardDisplay: failed to load portrait '%s'" % portrait_path)
+		_portrait_image.texture = tex
+		_portrait_image.visible = tex != null
+		if _faction_glyph:
+			_faction_glyph.visible = tex == null
+		if _type_icon:
+			_type_icon.visible = tex == null and current_size != CardSize.SMALL
 
 func set_card_size(card_size: Vector2) -> void:
 	custom_minimum_size = card_size

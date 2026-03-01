@@ -33,3 +33,5 @@ func _start() -> void:
 	root.add_child(_runner)
 	_runner.run_all()
 	quit()
+
+
