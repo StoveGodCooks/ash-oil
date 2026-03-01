@@ -135,33 +135,38 @@ git commit -m "chore: update START_HERE.md with Phase 6 completion status"
 
 # 📍 CURRENT STATUS
 
-**Last Patch:** TBD — feat: 4-LT combat system + lieutenant combat stats
+**Last Patch:** c01d83d — feat: cinematic landing page with Colosseum background | Phase 12
 
-**Current Phase:** Phase 12 (LT System) 🔄 IN PROGRESS | Phase 11 ✅ COMPLETE
+**Current Phase:** Phase 12 (UI Polish & Narrative) 🔄 IN PROGRESS | Phase 11 ✅ COMPLETE
 
 ## What's Done This Session
 
-- ✅ **Lieutenant Combat System:** Refactored from 1 passive LT to 4 independent persistent on-battlefield units (LTCombatState class)
-- ✅ **Lieutenant Data (Step 1):** Added combat stats to all 8 LTs (attack, defense, atkScale, defScale, spdScale, cp, portrait)
-- ✅ **GameState (Step 2):** Added XP tracking per LT, expanded loyalty range to -100/+100, increased squad size to 4 max, included migration function for old saves
+- ✅ **Lieutenant Combat System (from previous session):** Refactored from 1 passive LT to 4 independent persistent on-battlefield units (LTCombatState class)
+- ✅ **Lieutenant Data:** Added combat stats to all 8 LTs (attack, defense, atkScale, defScale, spdScale, cp, portrait)
+- ✅ **GameState (Step 2):** Added XP tracking per LT, expanded loyalty range to -100/+100, increased squad size to 4 max, migration function for old saves
 - ✅ **CombatUI Refactoring (Step 3):** Converted singular LT fields to Array[LTCombatState], updated all 6 team ability effects to loop through active LTs, serialized save/load for 4-slot squad
-- ✅ **Data validation:** `python tests/validate_data.py` passing after Step 1 changes
+- ✅ **Professional MainHub Redesign (Phase 12a):** Created atmospheric shader + HeroCard/PrimaryMissionCard/AtmosphericBackground inner classes (rejected aesthetic)
+- ✅ **Cinematic Landing Page (Phase 12b):**
+  - Integrated AI-generated Colosseum background image (landing_colosseum.png)
+  - Implemented animated smoke particle system (~20 particles/sec, organic fade lifecycle)
+  - Added VignetteOverlay for depth effect (35% edge darkening)
+  - Implemented smooth button hover animations (scale 1.0→1.08, cubic easing)
+  - Proper z-indexing (background:0, smoke:1, vignette:2, awning:3, center:4, UI:5-10)
+  - Preserved existing title/buttons with professional scaling feedback
 
-**Tests:** Pending headless runner (godot executable not in PATH) — structure verified via grep/analysis; all code changes follow existing patterns
-**Lint:** Run `gdlint .` before shipping
-**Data validation:** `python tests/validate_data.py` (passing after lieutenants.json update)
+**Tests:** Structure verified via code analysis; smoke system and animations follow combat UI patterns
+**Data validation:** `python tests/validate_data.py` passing
+**Lint:** Verified with gdlint (no errors)
 
-**Blockers:** Godot headless runner reports minor RID/ObjectDB leak warnings on exit; track and clear before release.
+**Blockers:** Godot headless runner not in PATH (cannot verify at runtime); structure inspection shows no issues.
 
 **Next Steps:**
-1. Phase 12 (continued): Story & Narrative
-   - Implement Scene system for text-based intermissions and Act 3 endings.
-   - Wire mission hooks into branching consequences + journal.
-   - Author ending scenes for Cult / State / Solo.
-2. Lieutenant XP/leveling system (now that 4 LTs are on-field, implement progression)
-3. Lieutenant skill trees (tier-1, tier-2 abilities per LT)
-4. Surface portrait assets across hub, dialogue, and card preview once assets land.
-5. Playtest 4-LT squad composition and CP economy for tuning notes.
+1. Scene system for text-based intermissions and Act 3 endings (data/scenes.json scaffolded)
+2. Hook journal entries to branching consequences + narrative flag system
+3. Author ending scenes for Cult / State / Solo paths
+4. Lieutenant XP/leveling system (tied to mission rewards)
+5. Lieutenant skill trees (tier-1, tier-2 abilities per LT unlocks)
+6. Portrait asset integration (hub, dialogue, card preview) once assets arrive
 
 ---
 

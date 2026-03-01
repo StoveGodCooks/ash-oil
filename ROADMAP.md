@@ -1,8 +1,8 @@
 # Ash & Oil — Development Roadmap
 
-**Current Version:** v0.11.0 — Phase 12: Lieutenant Combat System
+**Current Version:** v0.10.0 — Phase 12: UI Polish & Lieutenant Combat System
 **Last Updated:** February 28, 2026
-**Status:** Phase 11 complete (command-point combat polish, team abilities, hub tab rebuild, collector boss scripted cycle); Phase 12a complete (4-LT system: lieutenant combat stats, GameState XP tracking, CombatUI 4-slot refactoring); Phase 12b pending (story/narrative scenes, endings, journal).
+**Status:** Phase 11 complete (command-point combat polish, team abilities, hub tab rebuild, collector boss scripted cycle); Phase 12a complete (4-LT system: lieutenant combat stats, GameState XP tracking, CombatUI 4-slot refactoring); Phase 12b-i complete (cinematic landing page with Colosseum background, animated smoke, hover animations); Phase 12b-ii pending (story/narrative scenes, endings, journal).
 
 ---
 
@@ -204,7 +204,15 @@
 - [x] Team abilities: Updated all 6 team effects (morale_boost_team, regen_team, team_buff_all, bless_team, team_protect, evasion_team) to loop through active LTs
 - [x] Save/Load: Serialized 4-slot lieutenant state arrays for persistence
 
-**Phase 12b: Story & Narrative** ⏳
+**Phase 12b-i: Cinematic Landing Page UI Polish** ✅
+- [x] AI-generated Colosseum background image (landing_colosseum.png integrated)
+- [x] Animated smoke particle system (~20 particles/sec, organic lifecycle)
+- [x] Vignette overlay (35% edge darkening for depth)
+- [x] Button hover animations (scale 1.0→1.08, cubic easing 120ms)
+- [x] Proper z-indexing (background/smoke/vignette/awning/center/ui stacking)
+- [x] Professional juice (smooth scaling feedback, responsive feel)
+
+**Phase 12b-ii: Story & Narrative** ⏳
 - [ ] Hook system (create story flags from missions)
 - [ ] Scene system (text-based story beats between missions)
 - [ ] Consequence tracking (decisions affecting future missions)
