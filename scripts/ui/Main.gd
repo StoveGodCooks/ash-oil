@@ -73,7 +73,6 @@ var continue_btn: Button
 var smoke_system: SmokeSystem
 
 func _ready() -> void:
-	# Background image
 	# Background image — graceful fallback to dark stone if image not yet imported
 	var bg_tex: Texture2D = load("res://assets/backgrounds/landing_colosseum.png") if ResourceLoader.exists("res://assets/backgrounds/landing_colosseum.png") else null
 	if bg_tex:
