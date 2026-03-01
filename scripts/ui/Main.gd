@@ -8,13 +8,12 @@ class SmokeParticle:
 	var opacity: float = 0.0
 	var size: float = 0.0
 
-class SmokeSystem extends CanvasItem:
+class SmokeSystem extends Node2D:
 	var particles: Array[SmokeParticle] = []
 	var spawn_timer: float = 0.0
 	var viewport_size: Vector2
 
 	func _ready() -> void:
-		mouse_filter = Control.MOUSE_FILTER_IGNORE
 		viewport_size = get_viewport_rect().size
 
 	func _process(delta: float) -> void:
@@ -68,15 +67,6 @@ class RomanDivider extends Control:
 		UITheme.draw_section_divider(self, size.y * 0.5, size.x, tint)
 
 
-class VignetteOverlay extends CanvasItem:
-	func _ready() -> void:
-		mouse_filter = Control.MOUSE_FILTER_IGNORE
-
-	func _draw() -> void:
-		var rect = get_rect()
-		# Dark vignette at edges
-		var vignette_color = Color(0, 0, 0, 0.35)
-		draw_rect(rect, vignette_color)
 
 var start_btn: Button
 var continue_btn: Button
@@ -86,20 +76,19 @@ func _ready() -> void:
 	# Background image
 	var bg_texture_rect := TextureRect.new()
 	bg_texture_rect.texture = load("res://assets/backgrounds/landing_colosseum.png")
-	bg_texture_rect.expand_mode = TextureRect.EXPAND_FIT_WIDTH_IGNORING_RATIO
 	bg_texture_rect.stretch_mode = TextureRect.STRETCH_SCALE
 	bg_texture_rect.set_anchors_preset(Control.PRESET_FULL_RECT)
 	bg_texture_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	add_child(bg_texture_rect)
 
-	# Smoke particle system
+	# Smoke particle system (Node2D — no anchors, draws at viewport coords)
 	smoke_system = SmokeSystem.new()
-	smoke_system.set_anchors_preset(Control.PRESET_FULL_RECT)
 	smoke_system.z_index = 1
 	add_child(smoke_system)
 
-	# Vignette overlay
-	var vignette := VignetteOverlay.new()
+	# Vignette overlay — simple ColorRect, no custom class needed
+	var vignette := ColorRect.new()
+	vignette.color = Color(0, 0, 0, 0.35)
 	vignette.set_anchors_preset(Control.PRESET_FULL_RECT)
 	vignette.z_index = 2
 	vignette.mouse_filter = Control.MOUSE_FILTER_IGNORE
