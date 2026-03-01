@@ -801,28 +801,6 @@ func _populate_tab_content(tab_id: String) -> void:
 			pass
 
 
-# Content builders (placeholder)
-func _populate_tab_content(tab_id: String) -> void:
-	if content_inner == null:
-		return
-	for child in content_inner.get_children():
-		child.queue_free()
-	match tab_id:
-		"missions": _build_missions_content()
-		"squad":    _build_squad_content()
-		"loadout":  _build_loadout_content()
-		"intel":    _build_intel_content()
-		"log":      _build_log_content()
-		"deck":     _build_deck_content()
-		_:
-			var lbl := Label.new()
-			lbl.text = "[ %s ]" % tab_id.to_upper()
-			lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-			lbl.add_theme_font_size_override("font_size", UITheme.FONT_SIZE_HEADER)
-			lbl.add_theme_color_override("font_color", UITheme.CLR_MUTED)
-			content_inner.add_child(lbl)
-
-
 # ── Shared Helpers ────────────────────────────────────────────────────────────
 
 func _gap(px: int) -> Control:
