@@ -2196,9 +2196,13 @@ func _on_shop_buy_gear(gear_id: String, price: int) -> void:
 		return
 	if GameState.has_gear(gear_id):
 		return
+	var gear_data := CardManager.get_gear(gear_id)
+	if gear_data.is_empty():
+		return
 	GameState.spend_gold(price)
 	GameState.add_gear(gear_id)
-	GameState.equip_gear(gear_id)
+	var gear_slot := str(gear_data.get("slot", "weapon"))
+	GameState.equip_gear(gear_slot, gear_id)
 	# Refresh gear pool
 	_build_gear_pool()
 	_animate_tab_transition("shop")
