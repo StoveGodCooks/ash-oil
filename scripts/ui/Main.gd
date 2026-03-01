@@ -74,12 +74,22 @@ var smoke_system: SmokeSystem
 
 func _ready() -> void:
 	# Background image
-	var bg_texture_rect := TextureRect.new()
-	bg_texture_rect.texture = load("res://assets/backgrounds/landing_colosseum.png")
-	bg_texture_rect.stretch_mode = TextureRect.STRETCH_SCALE
-	bg_texture_rect.set_anchors_preset(Control.PRESET_FULL_RECT)
-	bg_texture_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	add_child(bg_texture_rect)
+	# Background image — graceful fallback to dark stone if image not yet imported
+	var bg_tex: Texture2D = load("res://assets/backgrounds/landing_colosseum.png") if ResourceLoader.exists("res://assets/backgrounds/landing_colosseum.png") else null
+	if bg_tex:
+		var bg_texture_rect := TextureRect.new()
+		bg_texture_rect.texture = bg_tex
+		bg_texture_rect.stretch_mode = TextureRect.STRETCH_SCALE
+		bg_texture_rect.set_anchors_preset(Control.PRESET_FULL_RECT)
+		bg_texture_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		add_child(bg_texture_rect)
+	else:
+		var bg_fallback := ColorRect.new()
+		bg_fallback.color = Color(0.07, 0.055, 0.04)  # Deep dark stone — cinematic fallback
+		bg_fallback.set_anchors_preset(Control.PRESET_FULL_RECT)
+		bg_fallback.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		add_child(bg_fallback)
+		push_warning("Landing background not found — ensure landing_colosseum.png is a valid PNG and reimport in Godot editor")
 
 	# Smoke particle system (Node2D — no anchors, draws at viewport coords)
 	smoke_system = SmokeSystem.new()
