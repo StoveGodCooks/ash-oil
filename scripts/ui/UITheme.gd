@@ -155,7 +155,7 @@ static func panel_glass_accent() -> StyleBoxFlat:
 	var style := StyleBoxFlat.new()
 	style.bg_color = Color(0.0, 0.0, 0.0, 0.12)
 	style.border_color = CLR_GOLD
-	style.border_width_bottom = 2
+	style.border_width_bottom = 3
 	style.content_margin_left = PAD_MD
 	style.content_margin_right = PAD_MD
 	style.content_margin_top = PAD_MD

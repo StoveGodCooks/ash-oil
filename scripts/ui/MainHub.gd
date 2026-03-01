@@ -387,9 +387,9 @@ func _build_ui() -> void:
 	showcase_section.add_theme_constant_override("separation", 12)
 	showcase_section.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	var showcase_pad := MarginContainer.new()
-	showcase_pad.add_theme_constant_override("margin_left", 12)
-	showcase_pad.add_theme_constant_override("margin_right", 12)
-	showcase_pad.add_theme_constant_override("margin_top", 12)
+	showcase_pad.add_theme_constant_override("margin_left", 0)
+	showcase_pad.add_theme_constant_override("margin_right", 0)
+	showcase_pad.add_theme_constant_override("margin_top", 0)
 	showcase_pad.add_theme_constant_override("margin_bottom", 0)
 	showcase_pad.add_child(showcase_section)
 	root.add_child(showcase_pad)
@@ -482,6 +482,17 @@ func _build_top_bar() -> void:
 	cassian.text = "CASSIAN"
 	cassian.add_theme_font_size_override("font_size", UITheme.FONT_SIZE_HEADER)
 	cassian.add_theme_color_override("font_color", UITheme.CLR_GOLD)
+	cassian.mouse_filter = Control.MOUSE_FILTER_STOP
+	cassian.mouse_entered.connect(func() -> void:
+		cassian.add_theme_constant_override("shadow_offset_x", 1)
+		cassian.add_theme_constant_override("shadow_offset_y", 1)
+		cassian.add_theme_color_override("font_shadow_color", Color(UITheme.CLR_GOLD.r, UITheme.CLR_GOLD.g, UITheme.CLR_GOLD.b, 0.3))
+	)
+	cassian.mouse_exited.connect(func() -> void:
+		cassian.remove_theme_constant_override("shadow_offset_x")
+		cassian.remove_theme_constant_override("shadow_offset_y")
+		cassian.remove_theme_color_override("font_shadow_color")
+	)
 	left_col.add_child(cassian)
 
 	top_bar_phase_label = Label.new()
