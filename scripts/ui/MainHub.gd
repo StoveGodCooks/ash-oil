@@ -1,40 +1,221 @@
 extends Control
-## Main hub shell (Batch 2): frame, bars, meters, navigation, and content host.
+## MainHub Professional Redesign - Studio Card Game Quality (Phase 12b)
+## Features: Hero showcase, primary mission focus, atmospheric background, professional animations
 
 
-class SectionDivider extends Control:
-	var tint: Color = UITheme.CLR_BRONZE
+# Inner classes for modular showcase components
+class HeroCard extends PanelContainer:
+	var character_name: Label
+	var level_badge: Label
+	var hp_bar: ProgressBar
+	var phase_label: Label
+	var loyalty_list: VBoxContainer
 
-	func _ready() -> void:
-		mouse_filter = Control.MOUSE_FILTER_IGNORE
-
-	func _draw() -> void:
-		UITheme.draw_section_divider(self, size.y * 0.5, size.x, tint)
-
-
-class NavOrnament extends Control:
-	var tint: Color = UITheme.CLR_BRONZE
-
-	func _ready() -> void:
-		mouse_filter = Control.MOUSE_FILTER_IGNORE
-
-	func _draw() -> void:
-		var center := Vector2(size.x * 0.5, size.y * 0.5)
-		var half: float = minf(size.x, size.y) * 0.28
-		draw_line(center + Vector2(-half, -half), center + Vector2(half, half), tint, 1.5)
-		draw_line(center + Vector2(half, -half), center + Vector2(-half, half), tint, 1.5)
-
-
-class WaxSealControl extends Control:
-	var seal_color: Color = UITheme.CLR_GOLD
+	func _init() -> void:
+		custom_minimum_size = Vector2(250, 350)
+		add_theme_stylebox_override("panel", UITheme.panel_raised())
+		mouse_filter = Control.MOUSE_FILTER_STOP
 
 	func _ready() -> void:
+		var margin := MarginContainer.new()
+		margin.add_theme_constant_override("margin_left", 12)
+		margin.add_theme_constant_override("margin_right", 12)
+		margin.add_theme_constant_override("margin_top", 12)
+		margin.add_theme_constant_override("margin_bottom", 12)
+		add_child(margin)
+
+		var col := VBoxContainer.new()
+		col.add_theme_constant_override("separation", 8)
+		margin.add_child(col)
+
+		# Character name
+		character_name = Label.new()
+		character_name.text = "CASSIAN"
+		character_name.add_theme_font_size_override("font_size", UITheme.FONT_SIZE_HEADER)
+		character_name.add_theme_color_override("font_color", UITheme.CLR_GOLD)
+		col.add_child(character_name)
+
+		# Level badge (top right corner done via position)
+		level_badge = Label.new()
+		level_badge.text = "LVL 1"
+		level_badge.add_theme_font_size_override("font_size", UITheme.FONT_SIZE_FINE)
+		level_badge.add_theme_color_override("font_color", UITheme.CLR_GOLD)
+		col.add_child(level_badge)
+
+		# HP bar
+		hp_bar = ProgressBar.new()
+		hp_bar.custom_minimum_size = Vector2(0, 20)
+		hp_bar.min_value = 0
+		hp_bar.max_value = 100
+		hp_bar.show_percentage = false
+		hp_bar.add_theme_stylebox_override("background", UITheme.panel_inset())
+		col.add_child(hp_bar)
+
+		# Phase status
+		phase_label = Label.new()
+		phase_label.text = "PHASE 1: SURVIVAL"
+		phase_label.add_theme_font_size_override("font_size", UITheme.FONT_SIZE_FINE)
+		phase_label.add_theme_color_override("font_color", UITheme.CLR_MUTED)
+		col.add_child(phase_label)
+
+		# Loyalty list
+		var loyalty_header := Label.new()
+		loyalty_header.text = "ALLIES"
+		loyalty_header.add_theme_font_size_override("font_size", UITheme.FONT_SIZE_CAPTION)
+		loyalty_header.add_theme_color_override("font_color", UITheme.CLR_VELLUM)
+		col.add_child(loyalty_header)
+
+		loyalty_list = VBoxContainer.new()
+		loyalty_list.add_theme_constant_override("separation", 4)
+		col.add_child(loyalty_list)
+
+		col.add_child(Control.new())  # Spacer
+
+	func set_hero_data(cassian_hp: int, cassian_max_hp: int, phase: int, loyalty_data: Array) -> void:
+		hp_bar.max_value = cassian_max_hp
+		hp_bar.value = cassian_hp
+		phase_label.text = "PHASE %d: %s" % [phase, ["SURVIVAL", "HOPE", "RESISTANCE"][phase - 1]]
+
+		loyalty_list.queue_free_children()
+		for loyalty_entry in loyalty_data.slice(0, 3):  # Show top 3 allies
+			var entry_label := Label.new()
+			entry_label.text = "%s %+d" % [loyalty_entry["name"], loyalty_entry["value"]]
+			entry_label.add_theme_font_size_override("font_size", UITheme.FONT_SIZE_FINE)
+			if loyalty_entry["value"] > 0:
+				entry_label.add_theme_color_override("font_color", UITheme.CLR_VELLUM)
+			else:
+				entry_label.add_theme_color_override("font_color", Color.RED)
+			loyalty_list.add_child(entry_label)
+
+
+class PrimaryMissionCard extends PanelContainer:
+	signal enter_mission_pressed
+	signal briefing_pressed
+
+	var mission_name: Label
+	var mission_desc: Label
+	var enemy_count_label: Label
+	var reward_label: Label
+	var enter_button: Button
+	var briefing_button: Button
+
+	func _init() -> void:
+		custom_minimum_size = Vector2(600, 240)
+		add_theme_stylebox_override("panel", UITheme.panel_raised())
+		mouse_filter = Control.MOUSE_FILTER_STOP
+
+	func _ready() -> void:
+		var margin := MarginContainer.new()
+		margin.add_theme_constant_override("margin_left", 16)
+		margin.add_theme_constant_override("margin_right", 16)
+		margin.add_theme_constant_override("margin_top", 16)
+		margin.add_theme_constant_override("margin_bottom", 16)
+		add_child(margin)
+
+		var col := VBoxContainer.new()
+		col.add_theme_constant_override("separation", 12)
+		margin.add_child(col)
+
+		# Title
+		mission_name = Label.new()
+		mission_name.text = "M01: THE TOKEN"
+		mission_name.add_theme_font_size_override("font_size", UITheme.FONT_SIZE_HEADER)
+		mission_name.add_theme_color_override("font_color", UITheme.CLR_GOLD)
+		col.add_child(mission_name)
+
+		# Description
+		mission_desc = Label.new()
+		mission_desc.text = "Prove yourself in the arena."
+		mission_desc.add_theme_font_size_override("font_size", UITheme.FONT_SIZE_BODY)
+		mission_desc.add_theme_color_override("font_color", UITheme.CLR_VELLUM)
+		mission_desc.autowrap_mode = TextServer.AUTOWRAP_WORD
+		mission_desc.custom_minimum_size = Vector2(560, 0)
+		col.add_child(mission_desc)
+
+		# Stats row
+		var stats_row := HBoxContainer.new()
+		stats_row.add_theme_constant_override("separation", 20)
+		col.add_child(stats_row)
+
+		enemy_count_label = Label.new()
+		enemy_count_label.text = "ENEMIES: 3"
+		enemy_count_label.add_theme_font_size_override("font_size", UITheme.FONT_SIZE_FINE)
+		enemy_count_label.add_theme_color_override("font_color", UITheme.CLR_GOLD)
+		stats_row.add_child(enemy_count_label)
+
+		var difficulty_label := Label.new()
+		difficulty_label.text = "DIFFICULTY: ★★★"
+		difficulty_label.add_theme_font_size_override("font_size", UITheme.FONT_SIZE_FINE)
+		difficulty_label.add_theme_color_override("font_color", UITheme.CLR_GOLD)
+		stats_row.add_child(difficulty_label)
+
+		reward_label = Label.new()
+		reward_label.text = "REWARD: 85g + 2 RENOWN"
+		reward_label.add_theme_font_size_override("font_size", UITheme.FONT_SIZE_FINE)
+		reward_label.add_theme_color_override("font_color", UITheme.CLR_GOLD)
+		stats_row.add_child(reward_label)
+
+		col.add_child(Control.new())  # Spacer
+
+		# Button row
+		var button_row := HBoxContainer.new()
+		button_row.add_theme_constant_override("separation", 12)
+		col.add_child(button_row)
+
+		enter_button = Button.new()
+		enter_button.text = "ENTER ARENA"
+		enter_button.custom_minimum_size = Vector2(0, 48)
+		enter_button.add_theme_stylebox_override("normal", UITheme.btn_primary())
+		enter_button.add_theme_stylebox_override("hover", UITheme.btn_primary_hover())
+		enter_button.add_theme_stylebox_override("pressed", UITheme.btn_active())
+		enter_button.pressed.connect(func(): enter_mission_pressed.emit())
+		button_row.add_child(enter_button)
+
+		briefing_button = Button.new()
+		briefing_button.text = "BRIEFING"
+		briefing_button.custom_minimum_size = Vector2(150, 48)
+		briefing_button.add_theme_stylebox_override("normal", UITheme.btn_secondary())
+		briefing_button.add_theme_stylebox_override("hover", UITheme.btn_secondary_hover())
+		briefing_button.add_theme_stylebox_override("pressed", UITheme.btn_active())
+		briefing_button.pressed.connect(func(): briefing_pressed.emit())
+		button_row.add_child(briefing_button)
+
+	func set_mission_data(mission_id: String, name: String, desc: String, enemy_ct: int, reward: String) -> void:
+		mission_name.text = "%s: %s" % [mission_id, name]
+		mission_desc.text = desc
+		enemy_count_label.text = "ENEMIES: %d" % enemy_ct
+		reward_label.text = reward
+
+
+class AtmosphericBackground extends ColorRect:
+	func _init() -> void:
+		set_anchors_preset(Control.PRESET_FULL_RECT)
+		color = UITheme.CLR_VOID
 		mouse_filter = Control.MOUSE_FILTER_IGNORE
+		z_index = -1
 
-	func _draw() -> void:
-		UITheme.draw_wax_seal(self, size * 0.5, seal_color, 6.0)
+	func _ready() -> void:
+		var mat := ShaderMaterial.new()
+		mat.shader = preload("res://ui/shaders/ui_parallax_atmosphere.gdshader")
+		mat.set_shader_parameter("phase_color", _get_phase_color())
+		mat.set_shader_parameter("intensity", 0.8)
+		mat.set_shader_parameter("noise_strength", 0.2)
+		material = mat
+
+	func _get_phase_color() -> Vector3:
+		var phase := GameState.story_phase
+		match phase:
+			1:
+				return Vector3(0.2, 0.18, 0.15)  # SURVIVAL: Dark stone/sand
+			2:
+				return Vector3(0.35, 0.25, 0.15)  # HOPE: Warm amber
+			3:
+				return Vector3(0.4, 0.15, 0.15)  # RESISTANCE: Chaotic red
+			_:
+				return Vector3(0.2, 0.18, 0.15)
 
 
+# Keep original constants and references
 const TAB_DEFS: Array[Dictionary] = [
 	{"id": "missions", "roman": "I", "label": "MISSIONS", "kind": "context"},
 	{"id": "map", "roman": "II", "label": "MAP", "kind": "context"},
@@ -68,14 +249,23 @@ const METER_DEFS: Array[Dictionary] = [
 
 const MISSION_BRIEFER_SCRIPT := preload("res://scripts/ui/MissionBriefer.gd")
 
+# UI component references
+var bg: AtmosphericBackground
+var root: VBoxContainer
 var top_bar: PanelContainer
 var meters_strip: PanelContainer
-var main_row: HBoxContainer
-var left_nav: PanelContainer
-var content_panel: PanelContainer
+var showcase_section: HBoxContainer
+var hero_card: HeroCard
+var primary_mission_card: PrimaryMissionCard
+var secondary_panels_grid: HBoxContainer
+var status_section: PanelContainer
+var tab_nav_panel: PanelContainer
+var tab_scroll: ScrollContainer
+var tab_content_panel: PanelContainer
+var content_inner: VBoxContainer
 var bottom_bar: PanelContainer
-var mission_briefer: PanelContainer
 
+# Labels and controls
 var top_bar_phase_label: Label
 var top_bar_masthead_label: Label
 var top_gold_value_label: Label
@@ -95,16 +285,12 @@ var save_button: Button
 
 var content_header_tab_label: Label
 var content_header_context_label: Label
-var content_placeholder_title: Label
-var content_placeholder_body: Label
-var content_scroll: ScrollContainer
-var content_inner: VBoxContainer
-
 var bottom_hint_label: Label
 var bottom_shortcut_label: Label
 
 var selected_tab_index := 0
 var _runtime_hash := ""
+var mission_briefer: PanelContainer  # gdlint: ignore=class-definitions-order
 
 
 func _ready() -> void:
@@ -131,56 +317,102 @@ func _process(_delta: float) -> void:
 	_refresh_runtime_values()
 
 
+## Professional UI Layout
+## Top:  Phase bar
+## Mid: Showcase (Hero | Mission | SecondaryPanels)
+## Bottom: Status | Tabs | Content
 func _build_ui() -> void:
-	var bg := ColorRect.new()
-	bg.set_anchors_preset(Control.PRESET_FULL_RECT)
-	bg.color = UITheme.CLR_VOID
-	bg.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	# Background shader
+	bg = AtmosphericBackground.new()
 	add_child(bg)
 
-	var root := VBoxContainer.new()
+	# Root vertical layout
+	root = VBoxContainer.new()
 	root.set_anchors_preset(Control.PRESET_FULL_RECT)
 	root.add_theme_constant_override("separation", 0)
 	add_child(root)
 
+	# Top bar (phase, cassian, stats)
 	top_bar = PanelContainer.new()
 	top_bar.custom_minimum_size = Vector2(0, 56)
 	top_bar.add_theme_stylebox_override("panel", _frame_style(UITheme.CLR_VOID, UITheme.CLR_GOLD, 0, 0, 0, 2))
 	root.add_child(top_bar)
+	_build_top_bar()
 
+	# Meters strip
 	meters_strip = PanelContainer.new()
 	meters_strip.custom_minimum_size = Vector2(0, 32)
 	meters_strip.add_theme_stylebox_override("panel", _frame_style(UITheme.CLR_STONE, UITheme.CLR_BRONZE, 0, 0, 0, 1))
 	root.add_child(meters_strip)
+	_build_meters_strip()
 
-	main_row = HBoxContainer.new()
-	main_row.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	main_row.add_theme_constant_override("separation", 0)
-	root.add_child(main_row)
+	# Showcase section: Hero | Mission | Secondary Panels
+	showcase_section = HBoxContainer.new()
+	showcase_section.add_theme_constant_override("separation", 12)
+	showcase_section.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	var showcase_pad := MarginContainer.new()
+	showcase_pad.add_theme_constant_override("margin_left", 12)
+	showcase_pad.add_theme_constant_override("margin_right", 12)
+	showcase_pad.add_theme_constant_override("margin_top", 12)
+	showcase_pad.add_theme_constant_override("margin_bottom", 0)
+	showcase_pad.add_child(showcase_section)
+	root.add_child(showcase_pad)
 
-	left_nav = PanelContainer.new()
-	left_nav.custom_minimum_size = Vector2(220, 0)
-	left_nav.add_theme_stylebox_override("panel", _frame_style(UITheme.CLR_STONE, UITheme.CLR_BRONZE, 0, 0, 1, 0))
-	main_row.add_child(left_nav)
+	# Hero Card
+	hero_card = HeroCard.new()
+	showcase_section.add_child(hero_card)
 
-	content_panel = PanelContainer.new()
-	content_panel.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	content_panel.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	content_panel.add_theme_stylebox_override("panel", _frame_style(UITheme.CLR_STONE_MID, UITheme.CLR_BRONZE, 1, 0, 0, 0))
-	main_row.add_child(content_panel)
+	# Primary Mission Card
+	primary_mission_card = PrimaryMissionCard.new()
+	primary_mission_card.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	primary_mission_card.enter_mission_pressed.connect(_on_enter_mission_pressed)
+	primary_mission_card.briefing_pressed.connect(_on_briefing_pressed)
+	showcase_section.add_child(primary_mission_card)
 
+	# Status section: Meters | Threats | Allies
+	status_section = PanelContainer.new()
+	status_section.add_theme_stylebox_override("panel", _frame_style(UITheme.CLR_STONE_MID, UITheme.CLR_BRONZE, 1, 0, 0, 0))
+	var status_pad := MarginContainer.new()
+	status_pad.add_theme_constant_override("margin_left", 12)
+	status_pad.add_theme_constant_override("margin_right", 12)
+	status_pad.add_theme_constant_override("margin_top", 12)
+	status_pad.add_theme_constant_override("margin_bottom", 12)
+	status_section.add_child(status_pad)
+	var status_row := HBoxContainer.new()
+	status_row.add_theme_constant_override("separation", 20)
+	status_pad.add_child(status_row)
+	root.add_child(status_section)
+	_build_status_section(status_row)
+
+	# Tab Navigation + Content (existing pattern, preserved)
+	var tab_row := HBoxContainer.new()
+	tab_row.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	tab_row.add_theme_constant_override("separation", 0)
+	root.add_child(tab_row)
+
+	# Left nav with tabs
+	tab_nav_panel = PanelContainer.new()
+	tab_nav_panel.custom_minimum_size = Vector2(220, 0)
+	tab_nav_panel.add_theme_stylebox_override("panel", _frame_style(UITheme.CLR_STONE, UITheme.CLR_BRONZE, 0, 0, 1, 0))
+	tab_row.add_child(tab_nav_panel)
+	_build_tab_nav()
+
+	# Content panel
+	tab_content_panel = PanelContainer.new()
+	tab_content_panel.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	tab_content_panel.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	tab_content_panel.add_theme_stylebox_override("panel", _frame_style(UITheme.CLR_STONE_MID, UITheme.CLR_BRONZE, 1, 0, 0, 0))
+	tab_row.add_child(tab_content_panel)
+	_build_tab_content_panel()
+
+	# Bottom bar
 	bottom_bar = PanelContainer.new()
 	bottom_bar.custom_minimum_size = Vector2(0, 36)
 	bottom_bar.add_theme_stylebox_override("panel", _frame_style(UITheme.CLR_VOID, UITheme.CLR_BRONZE, 0, 1, 0, 0))
 	root.add_child(bottom_bar)
-
-	_build_top_bar()
-	_build_meters_strip()
-	_build_left_nav()
-	_build_content_panel()
 	_build_bottom_bar()
 
-	# Mission briefing overlay — instantiated from script, shown on demand
+	# Mission briefer overlay
 	mission_briefer = MISSION_BRIEFER_SCRIPT.new()
 	mission_briefer.set_anchors_preset(Control.PRESET_FULL_RECT)
 	mission_briefer.z_index = 10
@@ -253,6 +485,15 @@ func _build_top_bar() -> void:
 		right_col.add_child(dev_btn)
 
 
+func _make_top_stat(parent: Container, icon: String, color: Color) -> Label:
+	var label := Label.new()
+	label.text = icon + " 0"
+	label.add_theme_font_size_override("font_size", UITheme.FONT_SIZE_FINE)
+	label.add_theme_color_override("font_color", color)
+	parent.add_child(label)
+	return label
+
+
 func _build_meters_strip() -> void:
 	var row := HBoxContainer.new()
 	row.size_flags_horizontal = Control.SIZE_EXPAND_FILL
@@ -298,557 +539,269 @@ func _build_meters_strip() -> void:
 			var sep := ColorRect.new()
 			sep.custom_minimum_size = Vector2(1, 32)
 			sep.color = UITheme.CLR_BRONZE
+			sep.mouse_filter = Control.MOUSE_FILTER_IGNORE
 			row.add_child(sep)
 
 
-func _build_left_nav() -> void:
+func _build_status_section(parent: HBoxContainer) -> void:
+	# Left: Meters summary (condensed)
+	var meters_col := VBoxContainer.new()
+	meters_col.add_theme_constant_override("separation", 4)
+	parent.add_child(meters_col)
+
+	var meters_header := Label.new()
+	meters_header.text = "NARRATIVE STATUS"
+	meters_header.add_theme_font_size_override("font_size", UITheme.FONT_SIZE_CAPTION)
+	meters_header.add_theme_color_override("font_color", UITheme.CLR_GOLD)
+	meters_col.add_child(meters_header)
+
+	for meter_def in METER_DEFS:
+		var meter_label := Label.new()
+		meter_label.text = "%s: ..." % meter_def["abbr"]
+		meter_label.add_theme_font_size_override("font_size", UITheme.FONT_SIZE_FINE)
+		meter_label.add_theme_color_override("font_color", UITheme.CLR_MUTED)
+		meters_col.add_child(meter_label)
+
+	# Middle: Threats
+	var threats_col := VBoxContainer.new()
+	threats_col.add_theme_constant_override("separation", 4)
+	parent.add_child(threats_col)
+
+	var threats_header := Label.new()
+	threats_header.text = "HUNTED BY"
+	threats_header.add_theme_font_size_override("font_size", UITheme.FONT_SIZE_CAPTION)
+	threats_header.add_theme_color_override("font_color", UITheme.CLR_GOLD)
+	threats_col.add_child(threats_header)
+
+	var threat_placeholder := Label.new()
+	threat_placeholder.text = "None active"
+	threat_placeholder.add_theme_font_size_override("font_size", UITheme.FONT_SIZE_FINE)
+	threat_placeholder.add_theme_color_override("font_color", UITheme.CLR_MUTED)
+	threats_col.add_child(threat_placeholder)
+
+	# Right: Allies
+	var allies_col := VBoxContainer.new()
+	allies_col.add_theme_constant_override("separation", 4)
+	parent.add_child(allies_col)
+
+	var allies_header := Label.new()
+	allies_header.text = "ALLIES"
+	allies_header.add_theme_font_size_override("font_size", UITheme.FONT_SIZE_CAPTION)
+	allies_header.add_theme_color_override("font_color", UITheme.CLR_GOLD)
+	allies_col.add_child(allies_header)
+
+	var allies_placeholder := Label.new()
+	allies_placeholder.text = "None recruited"
+	allies_placeholder.add_theme_font_size_override("font_size", UITheme.FONT_SIZE_FINE)
+	allies_placeholder.add_theme_color_override("font_color", UITheme.CLR_MUTED)
+	allies_col.add_child(allies_placeholder)
+
+
+func _build_tab_nav() -> void:
+	var pad := MarginContainer.new()
+	pad.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	pad.add_theme_constant_override("margin_left", 0)
+	pad.add_theme_constant_override("margin_right", 0)
+	pad.add_theme_constant_override("margin_top", 12)
+	pad.add_theme_constant_override("margin_bottom", 12)
+	tab_nav_panel.add_child(pad)
+
 	var col := VBoxContainer.new()
-	col.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	col.add_theme_constant_override("separation", 0)
-	left_nav.add_child(col)
-
-	var top_decoration := NavOrnament.new()
-	top_decoration.custom_minimum_size = Vector2(0, 40)
-	col.add_child(top_decoration)
-
-	var top_sep := ColorRect.new()
-	top_sep.custom_minimum_size = Vector2(0, 1)
-	top_sep.color = UITheme.CLR_BRONZE
-	col.add_child(top_sep)
+	col.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	col.add_theme_constant_override("separation", 6)
+	pad.add_child(col)
 
 	for i in range(TAB_DEFS.size()):
-		var tab_def: Dictionary = TAB_DEFS[i]
+		var tab_def := TAB_DEFS[i]
 		var btn := Button.new()
-		btn.custom_minimum_size = Vector2(0, 52)
-		btn.focus_mode = Control.FOCUS_ALL
-		btn.text = ""
-		btn.pressed.connect(_on_tab_pressed.bind(i))
-		btn.mouse_entered.connect(_update_nav_states)
-		btn.mouse_exited.connect(_update_nav_states)
-		btn.focus_entered.connect(_update_nav_states)
-		btn.focus_exited.connect(_update_nav_states)
+		btn.custom_minimum_size = Vector2(200, 40)
+		btn.add_theme_font_size_override("font_size", UITheme.FONT_SIZE_SUBHEAD)
+		btn.add_theme_stylebox_override("normal", UITheme.btn_secondary())
+		btn.add_theme_stylebox_override("hover", UITheme.btn_secondary_hover())
+		btn.add_theme_stylebox_override("pressed", UITheme.btn_active())
+		btn.text = "%s. %s" % [tab_def["roman"], tab_def["label"]]
+		btn.pressed.connect(func(): _on_tab_pressed(i))
 		col.add_child(btn)
 		nav_buttons.append(btn)
+		nav_name_by_index[i] = tab_def["id"]
 
-		var row_pad := MarginContainer.new()
-		row_pad.set_anchors_preset(Control.PRESET_FULL_RECT)
-		row_pad.add_theme_constant_override("margin_left", 8)
-		row_pad.add_theme_constant_override("margin_right", 8)
-		btn.add_child(row_pad)
-
-		var row := HBoxContainer.new()
-		row.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		row.size_flags_vertical = Control.SIZE_EXPAND_FILL
-		row.alignment = BoxContainer.ALIGNMENT_CENTER
-		row.add_theme_constant_override("separation", 6)
-		row_pad.add_child(row)
-
-		var accent := ColorRect.new()
-		accent.custom_minimum_size = Vector2(3, 0)
-		accent.size_flags_vertical = Control.SIZE_EXPAND_FILL
-		accent.color = UITheme.CLR_GOLD
-		row.add_child(accent)
-		nav_accent_by_index[i] = accent
-
-		var labels := HBoxContainer.new()
-		labels.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		labels.add_theme_constant_override("separation", 6)
-		row.add_child(labels)
-
-		var roman := Label.new()
-		roman.text = "%s." % str(tab_def["roman"])
-		roman.add_theme_font_size_override("font_size", UITheme.FONT_SIZE_FINE)
-		roman.add_theme_color_override("font_color", UITheme.CLR_MUTED)
-		labels.add_child(roman)
-		nav_roman_by_index[i] = roman
-
-		var name := Label.new()
-		name.text = _tracked_caps(str(tab_def["label"]))
-		name.add_theme_font_size_override("font_size", UITheme.FONT_SIZE_BODY)
-		name.add_theme_color_override("font_color", UITheme.CLR_PARCHMENT)
-		labels.add_child(name)
-		nav_name_by_index[i] = name
-
-		if i < TAB_DEFS.size() - 1:
-			var sep := ColorRect.new()
-			sep.custom_minimum_size = Vector2(0, 1)
-			sep.color = UITheme.CLR_BRONZE
-			col.add_child(sep)
-
-	var spacer := Control.new()
-	spacer.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	col.add_child(spacer)
-
-	var bottom_sep := ColorRect.new()
-	bottom_sep.custom_minimum_size = Vector2(0, 1)
-	bottom_sep.color = UITheme.CLR_BRONZE
-	col.add_child(bottom_sep)
+	col.add_child(Control.new())  # Spacer
 
 	save_button = Button.new()
 	save_button.text = "SAVE"
-	save_button.custom_minimum_size = Vector2(0, 44)
-	save_button.add_theme_font_size_override("font_size", UITheme.FONT_SIZE_BODY)
-	save_button.add_theme_stylebox_override("normal", _save_button_style(false))
-	save_button.add_theme_stylebox_override("hover", _save_button_style(true))
+	save_button.custom_minimum_size = Vector2(0, 36)
+	save_button.add_theme_font_size_override("font_size", UITheme.FONT_SIZE_SUBHEAD)
+	save_button.add_theme_stylebox_override("normal", UITheme.btn_secondary())
+	save_button.add_theme_stylebox_override("hover", UITheme.btn_secondary_hover())
 	save_button.add_theme_stylebox_override("pressed", UITheme.btn_active())
 	save_button.pressed.connect(_on_save_pressed)
 	col.add_child(save_button)
 
 	var version := Label.new()
-	version.text = "v0.4 - Phase 4"
+	version.text = "v0.11.0 Phase 12"
 	version.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	version.add_theme_font_size_override("font_size", UITheme.FONT_SIZE_FINE)
 	version.add_theme_color_override("font_color", UITheme.CLR_MUTED)
 	col.add_child(version)
 
 
-func _build_content_panel() -> void:
-	var wrap := MarginContainer.new()
-	wrap.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	wrap.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	wrap.add_theme_constant_override("margin_left", 20)
-	wrap.add_theme_constant_override("margin_right", 20)
-	wrap.add_theme_constant_override("margin_top", 20)
-	wrap.add_theme_constant_override("margin_bottom", 20)
-	content_panel.add_child(wrap)
+func _build_tab_content_panel() -> void:
+	var pad := MarginContainer.new()
+	pad.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	pad.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	pad.add_theme_constant_override("margin_left", 12)
+	pad.add_theme_constant_override("margin_right", 12)
+	pad.add_theme_constant_override("margin_top", 12)
+	pad.add_theme_constant_override("margin_bottom", 12)
+	tab_content_panel.add_child(pad)
 
 	var col := VBoxContainer.new()
+	col.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	col.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	col.add_theme_constant_override("separation", 0)
-	wrap.add_child(col)
+	pad.add_child(col)
 
+	# Header
 	var header := HBoxContainer.new()
-	header.custom_minimum_size = Vector2(0, 20)
+	header.custom_minimum_size = Vector2(0, 32)
+	header.add_theme_constant_override("separation", 12)
 	col.add_child(header)
 
 	content_header_tab_label = Label.new()
-	content_header_tab_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	content_header_tab_label.add_theme_font_size_override("font_size", UITheme.FONT_SIZE_TITLE)
-	content_header_tab_label.add_theme_color_override("font_color", UITheme.CLR_GOLD)
 	content_header_tab_label.text = "MISSIONS"
+	content_header_tab_label.add_theme_font_size_override("font_size", UITheme.FONT_SIZE_HEADER)
+	content_header_tab_label.add_theme_color_override("font_color", UITheme.CLR_GOLD)
 	header.add_child(content_header_tab_label)
 
 	content_header_context_label = Label.new()
+	content_header_context_label.text = "SELECT A MISSION CONTRACT"
+	content_header_context_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	content_header_context_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
-	content_header_context_label.add_theme_font_size_override("font_size", UITheme.FONT_SIZE_BODY)
+	content_header_context_label.add_theme_font_size_override("font_size", UITheme.FONT_SIZE_FINE)
 	content_header_context_label.add_theme_color_override("font_color", UITheme.CLR_MUTED)
-	content_header_context_label.text = ""
 	header.add_child(content_header_context_label)
 
-	var header_gap := Control.new()
-	header_gap.custom_minimum_size = Vector2(0, 8)
-	col.add_child(header_gap)
+	# Divider
+	var div := ColorRect.new()
+	div.custom_minimum_size = Vector2(0, 2)
+	div.color = UITheme.CLR_BRONZE
+	col.add_child(div)
 
-	var divider := SectionDivider.new()
-	divider.custom_minimum_size = Vector2(0, 16)
-	col.add_child(divider)
+	# Content
+	var scroll_pad := MarginContainer.new()
+	scroll_pad.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	scroll_pad.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	scroll_pad.add_theme_constant_override("margin_left", 0)
+	scroll_pad.add_theme_constant_override("margin_right", 0)
+	scroll_pad.add_theme_constant_override("margin_top", 8)
+	scroll_pad.add_theme_constant_override("margin_bottom", 0)
+	col.add_child(scroll_pad)
 
-	var body_gap := Control.new()
-	body_gap.custom_minimum_size = Vector2(0, 12)
-	col.add_child(body_gap)
-
-	content_scroll = ScrollContainer.new()
-	content_scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	content_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
-	col.add_child(content_scroll)
+	var scroll := ScrollContainer.new()
+	scroll.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	scroll_pad.add_child(scroll)
 
 	content_inner = VBoxContainer.new()
 	content_inner.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	content_inner.add_theme_constant_override("separation", 8)
-	content_scroll.add_child(content_inner)
+	content_inner.add_theme_constant_override("separation", 12)
+	scroll.add_child(content_inner)
+
+	tab_scroll = scroll
 
 
 func _build_bottom_bar() -> void:
 	var pad := MarginContainer.new()
 	pad.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	pad.add_theme_constant_override("margin_left", 16)
-	pad.add_theme_constant_override("margin_right", 16)
+	pad.add_theme_constant_override("margin_left", 12)
+	pad.add_theme_constant_override("margin_right", 12)
 	bottom_bar.add_child(pad)
 
 	var row := HBoxContainer.new()
-	row.alignment = BoxContainer.ALIGNMENT_CENTER
 	row.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	row.add_theme_constant_override("separation", 12)
+	row.add_theme_constant_override("separation", 0)
 	pad.add_child(row)
 
 	bottom_hint_label = Label.new()
-	bottom_hint_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	bottom_hint_label.text = "SELECT A MISSION CONTRACT"
 	bottom_hint_label.add_theme_font_size_override("font_size", UITheme.FONT_SIZE_CAPTION)
-	bottom_hint_label.add_theme_color_override("font_color", UITheme.CLR_MUTED)
-	bottom_hint_label.text = "SELECT A TAB TO BEGIN"
+	bottom_hint_label.add_theme_color_override("font_color", UITheme.CLR_VELLUM)
 	row.add_child(bottom_hint_label)
 
+	row.add_child(Control.new())
+
 	bottom_shortcut_label = Label.new()
-	bottom_shortcut_label.add_theme_font_size_override("font_size", UITheme.FONT_SIZE_FINE)
+	bottom_shortcut_label.text = "ARROW KEYS: Navigate | ENTER: Confirm | ESC: Back"
+	bottom_shortcut_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+	bottom_shortcut_label.add_theme_font_size_override("font_size", UITheme.FONT_SIZE_CAPTION)
 	bottom_shortcut_label.add_theme_color_override("font_color", UITheme.CLR_MUTED)
-	bottom_shortcut_label.text = "TAB: NAVIGATE    ENTER: SELECT    ESC: BACK"
 	row.add_child(bottom_shortcut_label)
 
 
+# Tab Management
 func _set_active_tab(index: int, run_action: bool) -> void:
 	if index < 0 or index >= TAB_DEFS.size():
 		return
+
 	selected_tab_index = index
-	var tab_def: Dictionary = TAB_DEFS[index]
-	var tab_label := str(tab_def["label"])
-	content_header_tab_label.text = tab_label
-	bottom_hint_label.text = str(TAB_HINTS.get(str(tab_def["id"]), "SELECT A TAB TO BEGIN"))
-	_update_nav_states()
-	var kind := str(tab_def.get("kind", "context"))
-	if kind == "context":
-		# Animate tab transition with slide effect
-		var tab_id := str(tab_def["id"])
-		_animate_tab_transition(tab_id)
+	var tab_id := nav_name_by_index.get(index, "missions")
+
+	# Update nav button styles
+	for i in range(nav_buttons.size()):
+		var btn := nav_buttons[i]
+		if i == index:
+			btn.add_theme_stylebox_override("normal", UITheme.btn_active())
+			btn.add_theme_color_override("font_color", UITheme.CLR_GOLD)
+		else:
+			btn.add_theme_stylebox_override("normal", UITheme.btn_secondary())
+			btn.add_theme_color_override("font_color", UITheme.CLR_VELLUM)
+
+	# Update content
+	_animate_tab_transition(tab_id)
+
 	if run_action:
 		_execute_tab_action(index)
 
-func _animate_tab_transition(new_tab_id: String) -> void:
-	# Fade out and slide out old content
-	var fade_out_tween := create_tween()
-	fade_out_tween.set_parallel(true)
-	fade_out_tween.tween_property(content_scroll, "modulate:a", 0.0, 0.10).set_trans(Tween.TRANS_LINEAR)
-	fade_out_tween.tween_property(content_scroll, "position:x", content_scroll.position.x + 12.0, 0.10)
 
-	# Wait for fade out to complete, then populate new content
-	await fade_out_tween.finished
+func _animate_tab_transition(new_tab_id: String) -> void:
+	content_header_tab_label.text = new_tab_id.to_upper()
+	content_header_context_label.text = TAB_HINTS.get(new_tab_id, "")
+
+	var tw = create_tween()
+	tw.set_trans(Tween.TRANS_CUBIC)
+	tw.set_ease(Tween.EASE_IN)
+	tw.tween_property(content_inner, "modulate:a", 0.0, 0.1)
+
+	await tw.finished
+
+	content_inner.queue_free_children()
 	_populate_tab_content(new_tab_id)
 
-	# Reset position for slide in animation
-	content_scroll.position.x -= 12.0
-	content_scroll.modulate.a = 0.0
-
-	# Fade in and slide in new content
-	var fade_in_tween := create_tween()
-	fade_in_tween.set_parallel(true)
-	fade_in_tween.tween_property(content_scroll, "modulate:a", 1.0, 0.18).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
-	fade_in_tween.tween_property(content_scroll, "position:x", content_scroll.position.x + 12.0, 0.18).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
+	tw = create_tween()
+	tw.set_trans(Tween.TRANS_CUBIC)
+	tw.set_ease(Tween.EASE_OUT)
+	tw.tween_property(content_inner, "modulate:a", 1.0, 0.18)
 
 
-func _select_relative_tab(delta: int) -> void:
-	if nav_buttons.is_empty():
-		return
-	var next := wrapi(selected_tab_index + delta, 0, nav_buttons.size())
-	_set_active_tab(next, false)
-	_grab_selected_tab_focus()
-
-
-func _grab_selected_tab_focus() -> void:
-	if selected_tab_index >= 0 and selected_tab_index < nav_buttons.size():
-		nav_buttons[selected_tab_index].grab_focus()
-
-
-func _on_tab_pressed(index: int) -> void:
-	_set_active_tab(index, false)
-	_execute_tab_action(index)
-
-
-func _execute_tab_action(index: int) -> void:
-	if index < 0 or index >= TAB_DEFS.size():
-		return
-	var tab_def: Dictionary = TAB_DEFS[index]
-	var kind := str(tab_def.get("kind", "context"))
-	match kind:
-		"context":
-			pass
-		"scene":
-			_transition_to_scene(str(tab_def.get("scene", "")))
+func _populate_tab_content(tab_id: String) -> void:
+	match tab_id:
+		"missions":
+			_build_missions_content()
+		"squad":
+			_build_squad_content()
+		"loadout":
+			_build_loadout_content()
+		"intel":
+			_build_intel_content()
+		"log":
+			_build_log_content()
+		"map":
+			_build_map_content()
 		_:
 			pass
 
 
-func _transition_to_scene(scene_path: String) -> void:
-	if scene_path == "":
-		return
-	get_tree().change_scene_to_file(scene_path)
-
-
-func _on_save_pressed() -> void:
-	SaveManager.save_game(0)
-	bottom_hint_label.text = "PROGRESS SAVED TO SLOT 0."
-
-
-func _on_dev_pressed() -> void:
-	_transition_to_scene("res://scenes/DevMenu.tscn")
-
-
-func _connect_runtime_signals() -> void:
-	if not GameState.meter_changed.is_connected(_on_game_state_changed):
-		GameState.meter_changed.connect(_on_game_state_changed)
-	if not GameState.mission_completed.is_connected(_on_game_state_changed_any):
-		GameState.mission_completed.connect(_on_game_state_changed_any)
-	if not GameState.game_loaded.is_connected(_on_game_loaded):
-		GameState.game_loaded.connect(_on_game_loaded)
-	if not NarrativeManager.scene_triggered.is_connected(_on_scene_triggered):
-		NarrativeManager.scene_triggered.connect(_on_scene_triggered)
-
-
-func _on_game_state_changed(_meter_name: String, _new_value: int) -> void:
-	_refresh_runtime_values()
-
-
-func _on_game_state_changed_any(_value: String) -> void:
-	_refresh_runtime_values()
-
-
-func _on_game_loaded() -> void:
-	_refresh_runtime_values()
-
-
-func _refresh_runtime_values() -> void:
-	var snapshot := "%s|%d|%d|%d|%d|%d|%d|%d|%d" % [
-		str(GameState.story_phase),
-		int(GameState.gold),
-		GameState.current_deck.size(),
-		GameState.completed_missions.size(),
-		int(GameState.renown),
-		int(GameState.heat),
-		int(GameState.piety),
-		int(GameState.favor),
-		int(GameState.dread),
-	]
-	if snapshot == _runtime_hash:
-		return
-	_runtime_hash = snapshot
-
-	if top_bar_phase_label != null:
-		top_bar_phase_label.text = _story_phase_label()
-	if top_gold_value_label != null:
-		var current_gold := int(GameState.gold)
-		if current_gold != previous_gold_value:
-			_animate_gold_change(top_gold_value_label, previous_gold_value, current_gold)
-			previous_gold_value = current_gold
-		else:
-			top_gold_value_label.text = str(GameState.gold)
-	if top_deck_value_label != null:
-		top_deck_value_label.text = str(GameState.current_deck.size())
-	if top_completed_value_label != null:
-		top_completed_value_label.text = str(GameState.completed_missions.size())
-
-	for meter_def in METER_DEFS:
-		var meter_name := str(meter_def["name"])
-		var legacy := str(meter_def["legacy"])
-		var value := float(GameState.get_meter(legacy))
-		var bar := meter_bars.get(meter_name, null) as ProgressBar
-		if bar == null:
-			continue
-		bar.max_value = _meter_max_value(legacy, value)
-		var prev_value: float = previous_meter_values.get(meter_name, value)
-
-		# Animate if meter changed
-		if value != prev_value:
-			_animate_meter_change(bar, prev_value, value, bar.max_value)
-		else:
-			bar.value = minf(value, bar.max_value)
-
-		previous_meter_values[meter_name] = value
-		bar.tooltip_text = "%s: %d" % [meter_name, int(value)]
-
-
-func _animate_meter_change(bar: ProgressBar, _from_value: float, to_value: float, max_value: float) -> void:
-	# Flash border with gold color
-	var original_style := bar.get_theme_stylebox("background")
-	var flash_style := UITheme.panel_inset()
-	flash_style.border_color = UITheme.CLR_GOLD
-	flash_style.border_width_left = 2
-	flash_style.border_width_right = 2
-	flash_style.border_width_top = 2
-	flash_style.border_width_bottom = 2
-
-	bar.add_theme_stylebox_override("background", flash_style)
-
-	# Tween the value change over 400ms
-	var tween := create_tween()
-	tween.set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
-	tween.tween_property(bar, "value", minf(to_value, max_value), 0.4)
-
-	# Flash the fill color
-	var fill_style := bar.get_theme_stylebox("fill")
-	if fill_style != null:
-		var flash_fill_style := fill_style.duplicate() as StyleBoxFlat
-		flash_fill_style.bg_color = UITheme.CLR_GOLD
-		bar.add_theme_stylebox_override("fill", flash_fill_style)
-
-		await get_tree().create_timer(0.15).timeout
-		bar.add_theme_stylebox_override("fill", fill_style)
-
-	# Restore original background style after flash
-	await get_tree().create_timer(0.3).timeout
-	bar.add_theme_stylebox_override("background", original_style)
-
-
-func _animate_gold_change(label: Label, from_value: int, to_value: int) -> void:
-	# Flash to bright white at start
-	label.add_theme_color_override("font_color", Color.WHITE)
-	label.text = str(from_value)
-
-	# Numeric interpolation - interpolate displayed value over 400ms
-	var tween := create_tween()
-	tween.set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
-	tween.tween_callback(func() -> void:
-		# Start animation
-		var int_tween := create_tween()
-		int_tween.set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
-		int_tween.tween_method(func(v: float) -> void:
-			label.text = str(int(v))
-		, from_value as float, to_value as float, 0.4)
-	)
-
-	# Restore color after animation
-	await get_tree().create_timer(0.4).timeout
-	label.add_theme_color_override("font_color", UITheme.CLR_GOLD)
-
-
-func _meter_max_value(legacy_meter_name: String, current_value: float) -> float:
-	match legacy_meter_name:
-		"RENOWN":
-			return 20.0
-		"HEAT":
-			return 15.0
-		"PIETY":
-			return 10.0
-		"FAVOR":
-			return 10.0
-		"DREAD":
-			return 10.0
-		"DEBT":
-			return maxf(30.0, current_value)
-		_:
-			return maxf(20.0, current_value)
-
-
-func _story_phase_label() -> String:
-	var phase := str(GameState.story_phase).strip_edges().to_upper()
-	match phase:
-		"SURVIVAL":
-			return "PHASE I — SURVIVAL"
-		"HOPE":
-			return "PHASE II — HOPE"
-		"RESISTANCE":
-			return "PHASE III — RESISTANCE"
-		_:
-			return "PHASE — %s" % phase
-
-
-func _update_nav_states() -> void:
-	for i in range(nav_buttons.size()):
-		var btn := nav_buttons[i]
-		var accent := nav_accent_by_index.get(i, null) as ColorRect
-		var roman := nav_roman_by_index.get(i, null) as Label
-		var name := nav_name_by_index.get(i, null) as Label
-		var is_active := i == selected_tab_index
-		var is_hover := btn.is_hovered() or btn.has_focus()
-		if is_active:
-			btn.add_theme_stylebox_override("normal", UITheme.btn_active())
-			btn.add_theme_stylebox_override("hover", UITheme.btn_active())
-			btn.add_theme_stylebox_override("pressed", UITheme.btn_active())
-			if accent != null:
-				accent.color = UITheme.CLR_GOLD
-				accent.self_modulate.a = 1.0
-			if roman != null:
-				roman.add_theme_color_override("font_color", UITheme.CLR_GOLD)
-			if name != null:
-				name.add_theme_color_override("font_color", UITheme.CLR_GOLD)
-				name.add_theme_font_size_override("font_size", UITheme.FONT_SIZE_SUBHEAD)
-		elif is_hover:
-			btn.add_theme_stylebox_override("normal", UITheme.btn_secondary_hover())
-			btn.add_theme_stylebox_override("hover", UITheme.btn_secondary_hover())
-			btn.add_theme_stylebox_override("pressed", UITheme.btn_active())
-			if accent != null:
-				accent.color = UITheme.CLR_BRONZE
-				accent.self_modulate.a = 1.0
-			if roman != null:
-				roman.add_theme_color_override("font_color", UITheme.CLR_PARCHMENT)
-			if name != null:
-				name.add_theme_color_override("font_color", UITheme.CLR_VELLUM)
-				name.add_theme_font_size_override("font_size", UITheme.FONT_SIZE_BODY)
-		else:
-			btn.add_theme_stylebox_override("normal", _transparent_button_style())
-			btn.add_theme_stylebox_override("hover", UITheme.btn_secondary_hover())
-			btn.add_theme_stylebox_override("pressed", UITheme.btn_active())
-			if accent != null:
-				accent.self_modulate.a = 0.0
-			if roman != null:
-				roman.add_theme_color_override("font_color", UITheme.CLR_MUTED)
-			if name != null:
-				name.add_theme_color_override("font_color", UITheme.CLR_PARCHMENT)
-				name.add_theme_font_size_override("font_size", UITheme.FONT_SIZE_BODY)
-
-
-func _make_top_stat(parent: Node, icon_text: String, value_color: Color) -> Label:
-	var col := VBoxContainer.new()
-	col.alignment = BoxContainer.ALIGNMENT_CENTER
-	col.add_theme_constant_override("separation", 0)
-	parent.add_child(col)
-
-	var icon := Label.new()
-	icon.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	icon.text = icon_text
-	icon.add_theme_font_size_override("font_size", UITheme.FONT_SIZE_FINE)
-	icon.add_theme_color_override("font_color", UITheme.CLR_MUTED)
-	col.add_child(icon)
-
-	var value := Label.new()
-	value.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	value.text = "0"
-	value.add_theme_font_size_override("font_size", UITheme.FONT_SIZE_BODY)
-	value.add_theme_color_override("font_color", value_color)
-	col.add_child(value)
-
-	return value
-
-
-func _meter_fill_style(meter_name: String) -> StyleBoxFlat:
-	var style := StyleBoxFlat.new()
-	style.bg_color = UITheme.get_meter_color(meter_name)
-	style.corner_radius_top_left = 2
-	style.corner_radius_top_right = 2
-	style.corner_radius_bottom_left = 2
-	style.corner_radius_bottom_right = 2
-	return style
-
-
-func _frame_style(
-		bg_color: Color,
-		border_color: Color,
-		border_left: int = 0,
-		border_top: int = 0,
-		border_right: int = 0,
-		border_bottom: int = 0
-	) -> StyleBoxFlat:
-	var style := StyleBoxFlat.new()
-	style.bg_color = bg_color
-	style.border_color = border_color
-	style.border_width_left = border_left
-	style.border_width_top = border_top
-	style.border_width_right = border_right
-	style.border_width_bottom = border_bottom
-	return style
-
-
-func _transparent_button_style() -> StyleBoxFlat:
-	var style := StyleBoxFlat.new()
-	style.bg_color = UITheme.CLR_VOID
-	style.bg_color.a = 0.0
-	style.border_color = UITheme.CLR_VOID
-	style.border_color.a = 0.0
-	return style
-
-
-func _save_button_style(hovered: bool) -> StyleBoxFlat:
-	var style := UITheme.btn_secondary_hover() if hovered else UITheme.btn_secondary()
-	style.content_margin_top = 12
-	style.content_margin_bottom = 12
-	return style
-
-
-func _tracked_caps(text: String) -> String:
-	return " ".join(text.to_upper().split(""))
-
-
-# ══════════════════════════════════════════════════════════════════════════════
-# BATCH 3 — TAB CONTENT BUILDERS
-# ══════════════════════════════════════════════════════════════════════════════
-
+# Content builders (placeholder)
 func _populate_tab_content(tab_id: String) -> void:
 	if content_inner == null:
 		return
