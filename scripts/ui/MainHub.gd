@@ -44,8 +44,9 @@ class HeroCard extends PanelContainer:
 	var loyalty_list: VBoxContainer
 
 	func _init() -> void:
-		custom_minimum_size = Vector2(250, 350)
-		add_theme_stylebox_override("panel", UITheme.panel_raised())
+		custom_minimum_size = Vector2(220, 0)
+		size_flags_vertical = Control.SIZE_EXPAND_FILL
+		add_theme_stylebox_override("panel", UITheme.panel_glass())
 		mouse_filter = Control.MOUSE_FILTER_STOP
 
 	func _ready() -> void:
@@ -127,8 +128,9 @@ class PrimaryMissionCard extends PanelContainer:
 	var briefing_button: Button
 
 	func _init() -> void:
-		custom_minimum_size = Vector2(600, 240)
-		add_theme_stylebox_override("panel", UITheme.panel_raised())
+		size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		size_flags_vertical = Control.SIZE_EXPAND_FILL
+		add_theme_stylebox_override("panel", UITheme.panel_glass_accent())
 		mouse_filter = Control.MOUSE_FILTER_STOP
 
 	func _ready() -> void:
@@ -355,7 +357,7 @@ func _build_ui() -> void:
 
 	# Subtle vignette — deepens corners and edges
 	var vignette := ColorRect.new()
-	vignette.color = Color(0, 0, 0, 0.22)
+	vignette.color = Color(0, 0, 0, 0.32)
 	vignette.set_anchors_preset(Control.PRESET_FULL_RECT)
 	vignette.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	vignette.z_index = 0
@@ -369,14 +371,14 @@ func _build_ui() -> void:
 	# Top bar
 	top_bar = PanelContainer.new()
 	top_bar.custom_minimum_size = Vector2(0, 56)
-	top_bar.add_theme_stylebox_override("panel", _frame_style(Color(0.04, 0.03, 0.02, 0.90), UITheme.CLR_GOLD, 0, 0, 0, 2))
+	top_bar.add_theme_stylebox_override("panel", _frame_style(Color(0, 0, 0, 0.48), UITheme.CLR_GOLD, 0, 0, 0, 2))
 	root.add_child(top_bar)
 	_build_top_bar()
 
 	# Meters strip
 	meters_strip = PanelContainer.new()
 	meters_strip.custom_minimum_size = Vector2(0, 32)
-	meters_strip.add_theme_stylebox_override("panel", _frame_style(Color(0.07, 0.055, 0.04, 0.82), UITheme.CLR_BRONZE, 0, 0, 0, 1))
+	meters_strip.add_theme_stylebox_override("panel", _frame_style(Color(0, 0, 0, 0.30), UITheme.CLR_BRONZE, 0, 0, 0, 1))
 	root.add_child(meters_strip)
 	_build_meters_strip()
 
@@ -403,7 +405,7 @@ func _build_ui() -> void:
 
 	# Status section placeholder
 	var status_section := PanelContainer.new()
-	status_section.add_theme_stylebox_override("panel", _frame_style(Color(0.10, 0.08, 0.05, 0.72), UITheme.CLR_BRONZE, 1, 0, 0, 0))
+	status_section.add_theme_stylebox_override("panel", _frame_style(Color(0, 0, 0, 0.0), Color(0, 0, 0, 0)))
 	var status_pad := MarginContainer.new()
 	status_pad.add_theme_constant_override("margin_left", 12)
 	status_pad.add_theme_constant_override("margin_right", 12)
@@ -432,21 +434,21 @@ func _build_ui() -> void:
 
 	left_nav = PanelContainer.new()
 	left_nav.custom_minimum_size = Vector2(220, 0)
-	left_nav.add_theme_stylebox_override("panel", _frame_style(Color(0.05, 0.04, 0.03, 0.85), UITheme.CLR_BRONZE, 0, 0, 1, 0))
+	left_nav.add_theme_stylebox_override("panel", _frame_style(Color(0, 0, 0, 0.0), UITheme.CLR_GOLD, 0, 0, 1, 0))
 	tab_row.add_child(left_nav)
 	_build_left_nav()
 
 	content_panel = PanelContainer.new()
 	content_panel.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	content_panel.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	content_panel.add_theme_stylebox_override("panel", _frame_style(Color(0.10, 0.08, 0.05, 0.68), UITheme.CLR_BRONZE, 1, 0, 0, 0))
+	content_panel.add_theme_stylebox_override("panel", _frame_style(Color(0, 0, 0, 0.22), UITheme.CLR_GOLD, 1, 0, 0, 0))
 	tab_row.add_child(content_panel)
 	_build_content_panel()
 
 	# Bottom bar
 	bottom_bar = PanelContainer.new()
 	bottom_bar.custom_minimum_size = Vector2(0, 36)
-	bottom_bar.add_theme_stylebox_override("panel", _frame_style(Color(0.04, 0.03, 0.02, 0.90), UITheme.CLR_BRONZE, 0, 1, 0, 0))
+	bottom_bar.add_theme_stylebox_override("panel", _frame_style(Color(0, 0, 0, 0.48), UITheme.CLR_BRONZE, 0, 1, 0, 0))
 	root.add_child(bottom_bar)
 	_build_bottom_bar()
 
@@ -567,7 +569,7 @@ func _build_meters_strip() -> void:
 		if meter_def != METER_DEFS[METER_DEFS.size() - 1]:
 			var sep := ColorRect.new()
 			sep.custom_minimum_size = Vector2(1, 32)
-			sep.color = UITheme.CLR_BRONZE
+			sep.color = Color(UITheme.CLR_BRONZE.r, UITheme.CLR_BRONZE.g, UITheme.CLR_BRONZE.b, 0.45)
 			row.add_child(sep)
 
 
@@ -583,7 +585,7 @@ func _build_left_nav() -> void:
 
 	var top_sep := ColorRect.new()
 	top_sep.custom_minimum_size = Vector2(0, 1)
-	top_sep.color = UITheme.CLR_BRONZE
+	top_sep.color = Color(UITheme.CLR_BRONZE.r, UITheme.CLR_BRONZE.g, UITheme.CLR_BRONZE.b, 0.50)
 	col.add_child(top_sep)
 
 	for i in range(TAB_DEFS.size()):
@@ -642,7 +644,7 @@ func _build_left_nav() -> void:
 		if i < TAB_DEFS.size() - 1:
 			var sep := ColorRect.new()
 			sep.custom_minimum_size = Vector2(0, 1)
-			sep.color = UITheme.CLR_BRONZE
+			sep.color = Color(UITheme.CLR_BRONZE.r, UITheme.CLR_BRONZE.g, UITheme.CLR_BRONZE.b, 0.40)
 			col.add_child(sep)
 
 	var spacer := Control.new()
@@ -651,7 +653,7 @@ func _build_left_nav() -> void:
 
 	var bottom_sep := ColorRect.new()
 	bottom_sep.custom_minimum_size = Vector2(0, 1)
-	bottom_sep.color = UITheme.CLR_BRONZE
+	bottom_sep.color = Color(UITheme.CLR_BRONZE.r, UITheme.CLR_BRONZE.g, UITheme.CLR_BRONZE.b, 0.50)
 	col.add_child(bottom_sep)
 
 	save_button = Button.new()

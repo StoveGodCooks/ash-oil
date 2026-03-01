@@ -313,6 +313,7 @@ func is_mission_available(mission_id: String) -> bool:
 # ============ SAVE/LOAD ============
 func to_dict() -> Dictionary:
 	return {
+		"save_version": 2,
 		"RENOWN": renown, "HEAT": heat, "PIETY": piety,
 		"FAVOR": favor, "DEBT": debt, "DREAD": dread,
 		"lieutenant_data": lieutenant_data,
@@ -353,7 +354,7 @@ func from_dict(data: Dictionary) -> void:
 	debt   = data.get("DEBT",   0)
 	dread  = data.get("DREAD",  0)
 	lieutenant_data    = data.get("lieutenant_data",    lieutenant_data)
-	_migrate_lieutenant_data()  # Ensure old saves have new fields
+	_migrate_lieutenant_data(int(data.get("save_version", 1)))  # Ensure old saves have new fields
 	active_lieutenants = data.get("active_lieutenants", [])
 	benched_lieutenants= data.get("benched_lieutenants",[])
 	gold               = data.get("gold",               0)
@@ -451,7 +452,7 @@ func reset() -> void:
 	_load_relationship_data()
 	_ensure_npc_relationships()
 
-func _migrate_lieutenant_data() -> void:
+func _migrate_lieutenant_data(save_version: int = 1) -> void:
 	"""Ensure loaded lieutenant data has all required fields (for old saves compatibility)"""
 	var lt_combat_stats = {
 		"Marcus":  {"attack": 55, "defense": 35},
@@ -473,16 +474,12 @@ func _migrate_lieutenant_data() -> void:
 		if "defense" not in lt_state:
 			var stats = lt_combat_stats.get(lt_name, {"attack": 50, "defense": 30})
 			lt_state["defense"] = stats["defense"]
-		# Migrate old loyalty range (-5/+10) to new range (-100/+100)
-		if "loyalty" in lt_state:
+		# Migrate old loyalty range (-5/+10) to new range (-100/+100) — only on pre-v2 saves
+		if "loyalty" in lt_state and save_version < 2:
 			var old_loyalty = int(lt_state.get("loyalty", 0))
-			if old_loyalty > 10 or old_loyalty < -5:
-				# Already migrated or new save, don't touch it
-				pass
-			else:
-				# Scale old range to new range: -5..10 → -100..100
-				var scaled = int(round(old_loyalty * 10.0))
-				lt_state["loyalty"] = clamp(scaled, -100, 100)
+			# Scale old range to new range: -5..10 → -100..100
+			var scaled = int(round(old_loyalty * 10.0))
+			lt_state["loyalty"] = clamp(scaled, -100, 100)
 		lieutenant_data[lt_name] = lt_state
 
 func _load_relationship_data() -> void:

@@ -196,11 +196,13 @@ func test_recruited_lieutenant_in_active_squad() -> void:
 	GameState.recruit_lieutenant("Marcus")
 	assert_in("Marcus in active squad", "Marcus", GameState.active_lieutenants)
 
-func test_active_squad_max_two() -> void:
+func test_active_squad_max_four() -> void:
 	GameState.recruit_lieutenant("Marcus")
 	GameState.recruit_lieutenant("Livia")
 	GameState.recruit_lieutenant("Titus")
-	assert_lte("Active squad max 2", GameState.active_lieutenants.size(), 2)
+	GameState.recruit_lieutenant("Kara")
+	GameState.recruit_lieutenant("Decimus")
+	assert_lte("Active squad max 4", GameState.active_lieutenants.size(), 4)
 
 func test_loyalty_change_positive() -> void:
 	GameState.change_loyalty("Marcus", 5)
@@ -211,13 +213,13 @@ func test_loyalty_change_negative() -> void:
 	GameState.change_loyalty("Marcus", -2)
 	assert_eq("Marcus loyalty 3-2=1", GameState.lieutenant_data["Marcus"]["loyalty"], 1)
 
-func test_loyalty_clamps_at_max_ten() -> void:
+func test_loyalty_clamps_at_max() -> void:
 	GameState.change_loyalty("Marcus", 999)
-	assert_eq("Marcus loyalty clamped at 10", GameState.lieutenant_data["Marcus"]["loyalty"], 10)
+	assert_eq("Marcus loyalty clamped at 100", GameState.lieutenant_data["Marcus"]["loyalty"], 100)
 
-func test_loyalty_clamps_at_min_neg_five() -> void:
+func test_loyalty_clamps_at_min() -> void:
 	GameState.change_loyalty("Marcus", -999)
-	assert_eq("Marcus loyalty clamped at -5", GameState.lieutenant_data["Marcus"]["loyalty"], -5)
+	assert_eq("Marcus loyalty clamped at -100", GameState.lieutenant_data["Marcus"]["loyalty"], -100)
 
 # ── Reset ────────────────────────────────────────────────────────────────────
 func test_reset_clears_all_meters() -> void:

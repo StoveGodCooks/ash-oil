@@ -93,13 +93,13 @@ func test_gamestate_lieutenants() -> void:
 	GameState.change_loyalty("Marcus", 5)
 	assert_eq("Marcus loyalty +5", GameState.lieutenant_data["Marcus"]["loyalty"], 5)
 
-	# Clamp at max 10
-	GameState.change_loyalty("Marcus", 10)
-	assert_eq("Marcus loyalty clamped at 10", GameState.lieutenant_data["Marcus"]["loyalty"], 10)
+	# Clamp at max 100
+	GameState.change_loyalty("Marcus", 999)
+	assert_eq("Marcus loyalty clamped at 100", GameState.lieutenant_data["Marcus"]["loyalty"], 100)
 
-	# Clamp at min -5
-	GameState.change_loyalty("Marcus", -20)
-	assert_eq("Marcus loyalty clamped at -5", GameState.lieutenant_data["Marcus"]["loyalty"], -5)
+	# Clamp at min -100
+	GameState.change_loyalty("Marcus", -999)
+	assert_eq("Marcus loyalty clamped at -100", GameState.lieutenant_data["Marcus"]["loyalty"], -100)
 
 	# Recruit
 	GameState.recruit_lieutenant("Marcus")

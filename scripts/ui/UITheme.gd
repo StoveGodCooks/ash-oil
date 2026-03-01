@@ -130,6 +130,38 @@ static func panel_inset() -> StyleBoxFlat:
 	style.content_margin_bottom = PAD_SM
 	return style
 
+## Glass panel: near-transparent dark bg with full gold border + gold glow shadow.
+## Used for champion boxes and featured elements over cinematic backgrounds.
+static func panel_glass() -> StyleBoxFlat:
+	var style := StyleBoxFlat.new()
+	style.bg_color = Color(0.02, 0.015, 0.01, 0.50)
+	style.border_color = CLR_GOLD
+	style.border_width_left = 2
+	style.border_width_top = 2
+	style.border_width_right = 2
+	style.border_width_bottom = 2
+	style.shadow_color = Color(CLR_GOLD.r, CLR_GOLD.g, CLR_GOLD.b, 0.22)
+	style.shadow_size = 8
+	style.shadow_offset = Vector2(0, 2)
+	style.content_margin_left = PAD_MD
+	style.content_margin_right = PAD_MD
+	style.content_margin_top = PAD_MD
+	style.content_margin_bottom = PAD_MD
+	return style
+
+## Glass accent panel: nearly fully transparent with a single gold bottom border line.
+## Used for mission cards and info blocks that float over the background.
+static func panel_glass_accent() -> StyleBoxFlat:
+	var style := StyleBoxFlat.new()
+	style.bg_color = Color(0.0, 0.0, 0.0, 0.12)
+	style.border_color = CLR_GOLD
+	style.border_width_bottom = 2
+	style.content_margin_left = PAD_MD
+	style.content_margin_right = PAD_MD
+	style.content_margin_top = PAD_MD
+	style.content_margin_bottom = PAD_MD
+	return style
+
 static func btn_primary() -> StyleBoxFlat:
 	var style := _new_stylebox(CLR_GOLD, CLR_BRASS, 2, 3)
 	style.content_margin_left = 14
