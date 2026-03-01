@@ -31,7 +31,7 @@
     "name": "Blood Contract",
     "type": "main",
     "act": 1,
-    "description": "A cloaked broker offers gold for a job with no name. The alley smells like a trap, the terms smell like a trap, and the broker's eyes move like a man who has done this before. Your debts don't care about any of that.",
+    "description": "A cloaked broker offers gold for a job with no name. The alley smells like a trap, the terms smell like a trap, and the broker's eyes move like a man who has done this before. Your debts don't care about any of that. As you negotiate, a drunk man leans against the far wall, muttering in the sour language of lost money — something about ruined odds, about fighters who don't stay down when they're supposed to. His eyes find yours for a moment, sharp through the wine. 'Enjoy the crowd's love while it lasts,' he says. 'The house always balances its books.'",
     "location": "Arena City",
     "enemies": [
       "broker_guard",
@@ -46,8 +46,26 @@
     "relationships": {
       "Marcus": 1
     },
+    "npc_impacts": {
+      "Lucius": {
+        "score": 0,
+        "set_flags": ["spotted"],
+        "investigation_clue": {
+          "rival_id": "lucius_jealous",
+          "clue_id": "lucius_clue_1_spotted",
+          "confidence": 0.35,
+          "text": "Drunk man muttering about lost money and ruined odds after Cassian's wins — bitter, specific, personal"
+        }
+      }
+    },
+    "investigation_ledger": {
+      "flag_id": "ledger_hint_1",
+      "confidence": 0.10,
+      "event": "A drunk man warns the house always balances its books — first hint that records and debts matter to powerful people"
+    },
     "hooks_created": [
-      "broker_met"
+      "broker_met",
+      "lucius_spotted"
     ],
     "victory_rewards": {
       "gold": 100
@@ -61,7 +79,7 @@
     "name": "Gladiator Debt",
     "type": "main",
     "act": 1,
-    "description": "A former champion sends word through a mutual contact. The favor is old — you didn't think he remembered it. He remembers everything. Fight or pay what you owe. There is no third option he's willing to discuss.",
+    "description": "A former champion sends word through a mutual contact. The favor is old — you didn't think he remembered it. He remembers everything. Fight or pay what you owe. There is no third option he's willing to discuss. Before the bout, the old champion leans in close, voice low enough that only you hear: 'I've seen a hundred fighters come through here. That yellow coward Lucius used to be worth watching — real talent once. Now he avoids anyone who might actually beat him. Bets on the outcome instead of fighting. Feeds on the crowd's memory of what he used to be.' He spits. 'You should know who else is watching you rise.'",
     "location": "Arena City",
     "enemies": [
       "old_champion",
@@ -75,7 +93,21 @@
       "Marcus": 1,
       "Titus": 1
     },
-    "hooks_created": [],
+    "npc_impacts": {
+      "Lucius": {
+        "score": 2,
+        "set_flags": ["talked_about"],
+        "investigation_clue": {
+          "rival_id": "lucius_jealous",
+          "clue_id": "lucius_clue_2_talked_about",
+          "confidence": 0.60,
+          "text": "Old champion names Lucius as a coward who avoids real fighters and bets on outcomes instead"
+        }
+      }
+    },
+    "hooks_created": [
+      "lucius_talked_about"
+    ],
     "victory_rewards": {
       "gold": 115
     },
@@ -88,7 +120,7 @@
     "name": "The Lanista",
     "type": "main",
     "act": 1,
-    "description": "The Lanista doesn't summon people twice. She owns the arena, the contracts, the debts that keep fighters compliant — and she wants a conversation. She won't explain what about. She doesn't have to.",
+    "description": "The Lanista doesn't summon people twice. She owns the arena, the contracts, the debts that keep fighters compliant — and she wants a conversation. She won't explain what about. She doesn't have to. What she does say, at the edge of dismissal, stays with you: 'I have eyes on the ridge. I have people everywhere. Varro runs my networks — he keeps the numbers straight, knows who owes what to whom, knows which records would ruin which men if they surfaced. He's loyal because loyalty keeps him alive. Remember that the next time you wonder if you're being watched.'",
     "location": "Arena City",
     "enemies": [
       "lanista_guard_a",
@@ -105,13 +137,29 @@
       "Lanista": {
         "score": 15,
         "set_flags": ["met"]
+      },
+      "Varro": {
+        "score": 0,
+        "set_flags": ["mentioned"],
+        "investigation_clue": {
+          "rival_id": "varro_enforcer",
+          "clue_id": "varro_clue_1_mentioned",
+          "confidence": 0.35,
+          "text": "Lanista says Varro runs her networks — controls information, keeps records of who owes what to whom"
+        }
       }
+    },
+    "investigation_ledger": {
+      "flag_id": "ledger_hint_2",
+      "confidence": 0.20,
+      "event": "Lanista references Varro's record-keeping — powerful people track debts and secrets, and those records have real value"
     },
     "faction_alignment_changes": {
       "State": 18
     },
     "hooks_created": [
-      "lanista_met"
+      "lanista_met",
+      "varro_mentioned"
     ],
     "victory_rewards": {
       "gold": 130
@@ -125,7 +173,7 @@
     "name": "The Shrine Fracture",
     "type": "main",
     "act": 1,
-    "description": "A wounded priest needs safe passage to the ridge shrine before whoever put three knife wounds in him finishes the job. The ridge road is Cult territory — they're watching for exactly this kind of errand. You'll be visible the entire way.",
+    "description": "A wounded priest needs safe passage to the ridge shrine before whoever put three knife wounds in him finishes the job. The ridge road is Cult territory — they're watching for exactly this kind of errand. You'll be visible the entire way. At the shrine, you meet Iona and the boy called Moth. But before you leave, you feel eyes from the colonnade — an older woman standing apart from the other priests, watching you specifically. She doesn't speak. She doesn't need to. She's cataloguing something about you, deciding whether you are a danger or a tool.",
     "location": "Ridge Road",
     "enemies": [
       "cult_acolyte",
@@ -148,6 +196,16 @@
       "Moth": {
         "score": 8,
         "set_flags": ["met"]
+      },
+      "Priestess": {
+        "score": 0,
+        "set_flags": ["watching"],
+        "investigation_clue": {
+          "rival_id": "priestess_guardian",
+          "clue_id": "priestess_clue_1_watching",
+          "confidence": 0.35,
+          "text": "An older woman watches from the shrine colonnade, evaluating Cassian with deliberate, institutional attention"
+        }
       }
     },
     "faction_alignment_changes": {
@@ -155,7 +213,8 @@
       "State": -6
     },
     "hooks_created": [
-      "cult_noticed"
+      "cult_noticed",
+      "priestess_watching"
     ],
     "victory_rewards": {
       "gold": 145
@@ -169,7 +228,7 @@
     "name": "The State's Eye",
     "type": "main",
     "act": 1,
-    "description": "Two State agents have been following you for four days. They're not subtle — they want you to know. That means they're either very confident or under orders to be visible. Either way, the decision is yours: run, talk, or make them regret the assignment.",
+    "description": "Two State agents have been following you for four days. They're not subtle — they want you to know. That means they're either very confident or under orders to be visible. Either way, the decision is yours: run, talk, or make them regret the assignment. What becomes clear as you plan is that someone else has been watching both you and the State agents. The surveillance has its own shadow. You don't know who. You only know that if the State is watching you, someone else is already watching the State.",
     "location": "Arena City",
     "enemies": [
       "state_agent",
@@ -186,6 +245,16 @@
       "Lanista": {
         "score": 6,
         "set_flags": ["met"]
+      },
+      "Varro": {
+        "score": 0,
+        "set_flags": ["shadow"],
+        "investigation_clue": {
+          "rival_id": "varro_enforcer",
+          "clue_id": "varro_clue_2_shadow",
+          "confidence": 0.60,
+          "text": "Someone watches both Cassian and the State agents — surveillance has its own unseen layer"
+        }
       }
     },
     "faction_alignment_changes": {
@@ -193,7 +262,8 @@
       "Cult": -6
     },
     "hooks_created": [
-      "state_contact"
+      "state_contact",
+      "varro_shadow"
     ],
     "victory_rewards": {
       "gold": 160
@@ -207,7 +277,7 @@
     "name": "Underground Market",
     "type": "main",
     "act": 1,
-    "description": "Beneath the docks, in the part of Port City that doesn't appear on any official map, there's a market that operates on a different economy. Rare goods, rare debts, rare opportunities. The risks are priced accordingly.",
+    "description": "Beneath the docks, in the part of Port City that doesn't appear on any official map, there's a market that operates on a different economy. Rare goods, rare debts, rare opportunities. The risks are priced accordingly. The man who runs this floor, Corvus, speaks like someone who has survived by knowing things. 'Good fighters come here,' he says. 'Bad fighters disappear. There's talk of a book — names, debts, corruption trails — worth more than gold to the right hands. Varro's network has a hand in everything that moves through here; information is the real currency. The Priestess has people watching too. Faith is its own economy. Everybody's watching somebody.'",
     "location": "Port District",
     "enemies": [
       "dock_thug",
@@ -222,8 +292,37 @@
     "relationships": {
       "Corvus": 2
     },
+    "npc_impacts": {
+      "Varro": {
+        "score": 2,
+        "set_flags": ["reputation_known"],
+        "investigation_clue": {
+          "rival_id": "varro_enforcer",
+          "clue_id": "varro_clue_3_reputation",
+          "confidence": 0.65,
+          "text": "Corvus confirms Varro's network controls information flow through the black market — he knows who holds what"
+        }
+      },
+      "Priestess": {
+        "score": 0,
+        "set_flags": ["network_confirmed"],
+        "investigation_clue": {
+          "rival_id": "priestess_guardian",
+          "clue_id": "priestess_clue_2_network",
+          "confidence": 0.60,
+          "text": "Corvus confirms the Priestess has people watching the black market — the cult monitors all power flows"
+        }
+      }
+    },
+    "investigation_ledger": {
+      "flag_id": "ledger_street_rumor",
+      "confidence": 0.35,
+      "event": "Corvus mentions talk of a book containing names, debts, and corruption trails — it has value to anyone who can read it"
+    },
     "hooks_created": [
-      "black_market_open"
+      "black_market_open",
+      "ledger_street_rumor",
+      "varro_reputation_known"
     ],
     "victory_rewards": {
       "gold": 175
@@ -237,7 +336,7 @@
     "name": "The Dread Pact",
     "type": "main",
     "act": 2,
-    "description": "The shadow faction doesn't announce itself. It presents a set of arrangements, a mutual understanding, an implied future where certain doors stay open. Accept their terms and certain things become possible that weren't before. What becomes impossible is something they'll explain later.",
+    "description": "The shadow faction doesn't announce itself. It presents a set of arrangements, a mutual understanding, an implied future where certain doors stay open. Accept their terms and certain things become possible that weren't before. What becomes impossible is something they'll explain later. A shadowed voice, near the end of the meeting: 'There's something being held by someone in this city. A ledger. Names, figures — the kind of record-keeping that would redraw alliances and unmake power. We've heard whispers. We're interested in whoever holds it. If you hear anything, remember we pay well for that kind of information.'",
     "location": "Port District",
     "enemies": [
       "shadow_enforcer",
@@ -262,13 +361,19 @@
         "score": -6
       }
     },
+    "investigation_ledger": {
+      "flag_id": "ledger_power_understood",
+      "confidence": 0.50,
+      "event": "Shadow faction explicitly states a ledger would redraw alliances and unmake power — all factions are hunting it"
+    },
     "faction_alignment_changes": {
       "Syndicate": 24,
       "Cult": -8,
       "State": -5
     },
     "hooks_created": [
-      "dread_pact_signed"
+      "dread_pact_signed",
+      "ledger_power_understood"
     ],
     "victory_rewards": {
       "gold": 105
@@ -282,7 +387,7 @@
     "name": "Varro's Trial",
     "type": "main",
     "act": 2,
-    "description": "Varro tests things before he trusts them. The ambush on the ridge road is a test — one that could get you killed if you don't understand that in time. Survive it without hating him for it and you might have the most valuable ally in the city.",
+    "description": "Varro tests things before he trusts them. The ambush on the ridge road is a test — one that could get you killed if you don't understand that in time. Survive it without hating him for it and you might have the most valuable ally in the city. When the men step back and Varro himself appears, he watches you with the patience of a man who has been watching for a while. 'You carry more than a blade,' he says. 'Something close. Something that makes people nervous.' He pauses. 'That's either bravery or desperation. I need to know which before I decide what you are to me.'",
     "location": "Ridge Road",
     "enemies": [
       "varro_decoy",
@@ -300,8 +405,19 @@
     "npc_impacts": {
       "Varro": {
         "score": 18,
-        "set_flags": ["met", "revealed"]
+        "set_flags": ["met", "revealed"],
+        "investigation_clue": {
+          "rival_id": "varro_enforcer",
+          "clue_id": "varro_clue_4_revealed",
+          "confidence": 0.85,
+          "text": "Varro directly confronts Cassian — knows his movements, senses he carries something valuable and dangerous"
+        }
       }
+    },
+    "investigation_ledger": {
+      "flag_id": "ledger_varro_suspects",
+      "confidence": 0.65,
+      "event": "Varro implies Cassian carries something close — someone with networks now suspects the ledger's location"
     },
     "hooks_created": [
       "varro_met"
@@ -318,7 +434,7 @@
     "name": "The First Reckoning",
     "type": "main",
     "act": 2,
-    "description": "Every debt you've run up, every favor you've called in, every enemy you've made — they've all arrived at the same hour. This is what the point of no return actually feels like. Less dramatic than you expected. More final.",
+    "description": "Every debt you've run up, every favor you've called in, every enemy you've made — they've all arrived at the same hour. This is what the point of no return actually feels like. Less dramatic than you expected. More final. In the stands: a man who has been losing money on your wins, watching with the specific attention of someone who has nothing left to lose. At the perimeter: a silhouette that knows your schedule better than you do. At the colonnade: a woman who has been deciding whether you are a danger or a tool and has now made her decision. All of them are watching. You no longer exist in the shadows.",
     "location": "Arena City",
     "enemies": [
       "reckoning_boss",
@@ -350,11 +466,40 @@
         "set_flags": ["met"]
       },
       "Varro": {
-        "score": 6
+        "score": 6,
+        "set_flags": ["watching"]
+      },
+      "Lucius": {
+        "score": 0,
+        "set_flags": ["watching"],
+        "investigation_clue": {
+          "rival_id": "lucius_jealous",
+          "clue_id": "lucius_clue_3_watching",
+          "confidence": 0.85,
+          "text": "Lucius watches from the stands with precise, predatory attention — Cassian's rise is his financial ruin"
+        }
+      },
+      "Priestess": {
+        "score": 0,
+        "set_flags": ["watching"],
+        "investigation_clue": {
+          "rival_id": "priestess_guardian",
+          "clue_id": "priestess_clue_3_watching",
+          "confidence": 0.85,
+          "text": "The Priestess watches from the colonnade — Cassian is no longer invisible to the cult's institutional eye"
+        }
       }
     },
+    "investigation_ledger": {
+      "flag_id": "rivals_converge",
+      "confidence": 0.85,
+      "event": "All three rivals and multiple factions present simultaneously — Cassian's anonymity is permanently broken"
+    },
     "hooks_created": [
-      "act1_resolved"
+      "act1_resolved",
+      "rivals_converge",
+      "lucius_watching",
+      "priestess_watching_confirmed"
     ],
     "victory_rewards": {
       "gold": 135
@@ -773,10 +918,10 @@
   },
   "S01": {
     "id": "S01",
-    "name": "The Rat Run",
+    "name": "Syndicate Recruitment",
     "type": "side",
     "act": 1,
-    "description": "A local thug has been borrowing from people who don't lend charitably. He's three payments behind and running out of explanations. Someone has to go collect, and that someone is apparently you. He won't be happy about it.",
+    "description": "Moth finds you before the docks clear out. She doesn't waste words. 'You handled yourself down there. We noticed. The Syndicate doesn't hire people — we test them first.' The job is straightforward on the surface: collect a debt from a local who has been dodging payment for three months. The man is not dangerous in the way fighters are dangerous — he's dangerous in the way cornered people are dangerous, with nothing left to lose and every reason to make this difficult. You're being watched on this errand. Not by the debtor. By whoever sent you. Do it clean, do it quiet, don't ask what the debt was originally for. That's the whole test. The money isn't the point. Proving you can be useful — and discreet — is.",
     "location": "Arena City",
     "enemies": [
       "alley_thug",
@@ -784,38 +929,67 @@
     ],
     "meter_changes": {
       "HEAT": 1,
-      "DEBT": -5
+      "DEBT": -5,
+      "DREAD": 1
     },
     "relationships": {},
-    "hooks_created": [],
+    "npc_impacts": {
+      "Moth": {
+        "score": 8,
+        "set_flags": ["recruited"],
+        "investigation_clue": {
+          "rival_id": "moth_syndicate",
+          "clue_id": "moth_clue_1_recruited",
+          "confidence": 0.40,
+          "text": "Moth personally recruits Cassian for Syndicate work — she's been watching, she chose this moment deliberately"
+        }
+      }
+    },
+    "hooks_created": [
+      "syndicate_recruited"
+    ],
     "victory_rewards": {
       "gold": 55
     },
     "retreat_rewards": {
-      "gold": 55
+      "gold": 35
     }
   },
   "S14": {
     "id": "S14",
-    "name": "Crowd Favorite",
+    "name": "Lucius's Challenge",
     "type": "side",
     "act": 1,
-    "description": "An exhibition bout — no real stakes, just the crowd and the spectacle and the particular pleasure of a clean fight with no political weight attached. These moments don't last long. Enjoy the simplicity of it.",
+    "description": "He corners you near the fighters' gate, and there's nothing professional about the way he's standing. Lucius looks like a man who has been making bad decisions for so long he no longer recognizes them as decisions. 'I've been watching you,' he says. 'Everyone's been watching you. Odds are perfect right now — everyone thinks you're untouchable. I've lost everything on better odds than this.' He wants a duel. No official record. No witnesses that matter. Just the kind of fight that settles something personal before the city decides what you are. He's not wrong that something is unsettled — he's been losing money on your wins for months. Whether you owe him anything for that is a different question. He's asking you to answer it with a fight. How you answer will follow you.",
     "location": "Arena City",
     "enemies": [
-      "arena_rookie",
-      "arena_rookie"
+      "arena_vet"
     ],
     "meter_changes": {
-      "RENOWN": 2
+      "RENOWN": 3,
+      "HEAT": 1
     },
     "relationships": {},
-    "hooks_created": [],
+    "npc_impacts": {
+      "Lucius": {
+        "score": 10,
+        "set_flags": ["met", "challenged"],
+        "investigation_clue": {
+          "rival_id": "lucius_jealous",
+          "clue_id": "lucius_clue_direct_met",
+          "confidence": 0.90,
+          "text": "Lucius directly confronts Cassian — desperate, cornered, his entire financial ruin tied to Cassian's success"
+        }
+      }
+    },
+    "hooks_created": [
+      "lucius_met"
+    ],
     "victory_rewards": {
-      "gold": 94
+      "gold": 120
     },
     "retreat_rewards": {
-      "gold": 94
+      "gold": 0
     }
   },
   "S02": {
