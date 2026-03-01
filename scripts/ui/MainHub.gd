@@ -285,10 +285,10 @@ const TAB_DEFS: Array[Dictionary] = [
 	{"id": "missions", "roman": "I", "label": "MISSIONS", "kind": "context"},
 	{"id": "squad", "roman": "II", "label": "SQUAD", "kind": "context"},
 	{"id": "loadout", "roman": "III", "label": "LOADOUT", "kind": "context"},
-	{"id": "shop", "roman": "IV", "label": "SHOP", "kind": "scene", "scene": "res://scenes/ShopUI.tscn"},
+	{"id": "shop", "roman": "IV", "label": "SHOP", "kind": "context"},
 	{"id": "intel", "roman": "V", "label": "INTEL", "kind": "context"},
 	{"id": "log", "roman": "VI", "label": "LOG", "kind": "context"},
-	{"id": "deck", "roman": "VII", "label": "DECK", "kind": "scene", "scene": "res://scenes/DeckBuilder.tscn"},
+	{"id": "deck", "roman": "VII", "label": "DECK", "kind": "context"},
 ]
 
 const TAB_HINTS: Dictionary = {
@@ -350,6 +350,16 @@ var bottom_shortcut_label: Label
 var selected_tab_index := 0
 var _runtime_hash := ""
 var missions_view_mode := "list"  # "list" or "map"
+
+# Shop state
+var shop_pool: Array = []                     # Card IDs (up to 9)
+var gear_pool: Array[Dictionary] = []         # Gear dicts (up to 8)
+var shop_current_tab: String = "cards"        # "cards" or "gear"
+var shop_selected_card_id: String = ""        # Card being previewed
+var shop_selected_card_price: int = 0         # Price of selected card
+
+# Deck state
+var deck_selected_card_id: String = ""        # Card being previewed
 
 
 func _ready() -> void:
@@ -1156,9 +1166,10 @@ func _populate_tab_content(tab_id: String) -> void:
 		"missions": _build_missions_content()
 		"squad":    _build_squad_content()
 		"loadout":  _build_loadout_content()
+		"shop":     _build_shop_content()
 		"intel":    _build_intel_content()
 		"log":      _build_log_content()
-		"deck":     _build_deck_content()
+		"deck":     _build_deck_content_inline()
 		_:
 			var lbl := Label.new()
 			lbl.text = "[ %s ]" % tab_id.to_upper()
@@ -1879,6 +1890,320 @@ func _make_gear_tile(gear_id: String, gear_data: Dictionary) -> Control:
 	return tile
 
 
+# ── SHOP INTEGRATION ──────────────────────────────────────────────────────────
+
+func _build_shop_content() -> void:
+	# Initialize shop on first entry
+	if shop_pool.is_empty() and gear_pool.is_empty():
+		_generate_shop_pool()
+		_build_gear_pool()
+
+	# Header: crest + title + gold counter
+	var header := PanelContainer.new()
+	header.custom_minimum_size = Vector2(0, 60)
+	header.add_theme_stylebox_override("panel", UITheme.panel_raised())
+	content_inner.add_child(header)
+
+	var header_hbox := HBoxContainer.new()
+	header_hbox.alignment = BoxContainer.ALIGNMENT_CENTER
+	header_hbox.add_theme_constant_override("separation", 12)
+	header.add_child(header_hbox)
+
+	var shop_title := Label.new()
+	shop_title.text = "THE MARKET"
+	shop_title.add_theme_font_size_override("font_size", UITheme.FONT_SIZE_HEADER)
+	shop_title.add_theme_color_override("font_color", UITheme.CLR_GOLD)
+	header_hbox.add_child(shop_title)
+
+	var spacer := Control.new()
+	spacer.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	header_hbox.add_child(spacer)
+
+	var gold_label := Label.new()
+	gold_label.text = "GOLD: %d" % GameState.gold
+	gold_label.add_theme_font_size_override("font_size", UITheme.FONT_SIZE_BODY)
+	gold_label.add_theme_color_override("font_color", UITheme.CLR_GOLD)
+	header_hbox.add_child(gold_label)
+
+	content_inner.add_child(_gap(12))
+
+	# Tab buttons: CARDS / GEAR
+	var tab_row := HBoxContainer.new()
+	tab_row.alignment = BoxContainer.ALIGNMENT_CENTER
+	tab_row.add_theme_constant_override("separation", 8)
+	content_inner.add_child(tab_row)
+
+	var cards_btn := Button.new()
+	cards_btn.text = "CARDS"
+	cards_btn.custom_minimum_size = Vector2(120, 40)
+	cards_btn.add_theme_stylebox_override("normal", UITheme.btn_secondary())
+	cards_btn.add_theme_stylebox_override("hover", UITheme.btn_secondary_hover())
+	if shop_current_tab == "cards":
+		cards_btn.add_theme_stylebox_override("normal", UITheme.btn_active())
+	cards_btn.pressed.connect(func() -> void:
+		shop_current_tab = "cards"
+		_animate_tab_transition("shop")
+	)
+	tab_row.add_child(cards_btn)
+
+	var gear_btn := Button.new()
+	gear_btn.text = "GEAR"
+	gear_btn.custom_minimum_size = Vector2(120, 40)
+	gear_btn.add_theme_stylebox_override("normal", UITheme.btn_secondary())
+	gear_btn.add_theme_stylebox_override("hover", UITheme.btn_secondary_hover())
+	if shop_current_tab == "gear":
+		gear_btn.add_theme_stylebox_override("normal", UITheme.btn_active())
+	gear_btn.pressed.connect(func() -> void:
+		shop_current_tab = "gear"
+		_animate_tab_transition("shop")
+	)
+	tab_row.add_child(gear_btn)
+
+	content_inner.add_child(_gap(12))
+
+	# Content: HBox with grid (left) + preview (right)
+	var content_hbox := HBoxContainer.new()
+	content_hbox.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	content_hbox.add_theme_constant_override("separation", 12)
+	content_inner.add_child(content_hbox)
+
+	# Left side: scrollable grid of items
+	var left_scroll := ScrollContainer.new()
+	left_scroll.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	left_scroll.size_flags_stretch_ratio = 0.6
+	left_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	content_hbox.add_child(left_scroll)
+
+	var grid_container := GridContainer.new()
+	grid_container.columns = 3 if shop_current_tab == "cards" else 2
+	grid_container.add_theme_constant_override("h_separation", 8)
+	grid_container.add_theme_constant_override("v_separation", 8)
+	left_scroll.add_child(grid_container)
+
+	# Populate grid based on tab
+	if shop_current_tab == "cards":
+		for card_id in shop_pool:
+			var card_data := CardManager.get_card(card_id)
+			if not card_data.is_empty():
+				var price := _card_price(card_data)
+				var card_btn := Button.new()
+				card_btn.text = "%s\n[%d]" % [card_data.get("name", card_id).to_upper(), price]
+				card_btn.custom_minimum_size = Vector2(100, 60)
+				card_btn.add_theme_stylebox_override("normal", UITheme.btn_secondary())
+				card_btn.pressed.connect(func() -> void:
+					shop_selected_card_id = card_id
+					shop_selected_card_price = price
+				)
+				grid_container.add_child(card_btn)
+	else:
+		for gear in gear_pool:
+			var gear_name = gear.get("name", "Unknown")
+			var gear_price = int(gear.get("price", 100))
+			var gear_btn := Button.new()
+			gear_btn.text = "%s\n[%d]" % [gear_name.to_upper(), gear_price]
+			gear_btn.custom_minimum_size = Vector2(100, 60)
+			gear_btn.add_theme_stylebox_override("normal", UITheme.btn_secondary())
+			gear_btn.pressed.connect(func() -> void:
+				shop_selected_card_id = gear.get("id", "")
+			)
+			grid_container.add_child(gear_btn)
+
+	# Right side: item preview panel
+	var preview_panel := PanelContainer.new()
+	preview_panel.custom_minimum_size = Vector2(200, 0)
+	preview_panel.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	preview_panel.size_flags_stretch_ratio = 0.4
+	preview_panel.add_theme_stylebox_override("panel", UITheme.panel_raised())
+	content_hbox.add_child(preview_panel)
+
+	var preview_col := VBoxContainer.new()
+	preview_col.add_theme_constant_override("separation", 8)
+	preview_panel.add_child(preview_col)
+
+	if shop_selected_card_id.is_empty():
+		var preview_placeholder := Label.new()
+		preview_placeholder.text = "SELECT AN ITEM\nTO VIEW DETAILS"
+		preview_placeholder.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		preview_placeholder.add_theme_font_size_override("font_size", UITheme.FONT_SIZE_BODY)
+		preview_placeholder.add_theme_color_override("font_color", UITheme.CLR_MUTED)
+		preview_col.add_child(preview_placeholder)
+	else:
+		# Show preview for selected item
+		if shop_current_tab == "cards":
+			var card_data := CardManager.get_card(shop_selected_card_id)
+			if not card_data.is_empty():
+				var name_lbl := Label.new()
+				name_lbl.text = card_data.get("name", "").to_upper()
+				name_lbl.add_theme_font_size_override("font_size", UITheme.FONT_SIZE_HEADER)
+				name_lbl.add_theme_color_override("font_color", UITheme.CLR_GOLD)
+				preview_col.add_child(name_lbl)
+
+				var summary := _card_summary(card_data)
+				var summary_lbl := Label.new()
+				summary_lbl.text = summary
+				summary_lbl.autowrap_mode = TextServer.AUTOWRAP_WORD
+				summary_lbl.add_theme_font_size_override("font_size", UITheme.FONT_SIZE_CAPTION)
+				summary_lbl.add_theme_color_override("font_color", UITheme.CLR_VELLUM)
+				preview_col.add_child(summary_lbl)
+
+				preview_col.add_child(_gap(8))
+
+				var price_lbl := Label.new()
+				price_lbl.text = "PRICE: %d GOLD" % shop_selected_card_price
+				price_lbl.add_theme_font_size_override("font_size", UITheme.FONT_SIZE_BODY)
+				price_lbl.add_theme_color_override("font_color", UITheme.CLR_GOLD)
+				preview_col.add_child(price_lbl)
+
+				var buy_btn := Button.new()
+				buy_btn.text = "BUY"
+				buy_btn.custom_minimum_size = Vector2(0, 40)
+				buy_btn.add_theme_stylebox_override("normal", UITheme.btn_primary())
+				buy_btn.add_theme_stylebox_override("hover", UITheme.btn_primary_hover())
+				buy_btn.pressed.connect(func() -> void:
+					_on_shop_buy_card(shop_selected_card_id, shop_selected_card_price)
+				)
+				preview_col.add_child(buy_btn)
+		else:
+			# Gear preview
+			for gear in gear_pool:
+				if gear.get("id", "") == shop_selected_card_id:
+					var gear_name_lbl := Label.new()
+					gear_name_lbl.text = gear.get("name", "").to_upper()
+					gear_name_lbl.add_theme_font_size_override("font_size", UITheme.FONT_SIZE_HEADER)
+					gear_name_lbl.add_theme_color_override("font_color", UITheme.CLR_GOLD)
+					preview_col.add_child(gear_name_lbl)
+
+					var rarity_lbl := Label.new()
+					rarity_lbl.text = str(gear.get("rarity", "common")).to_upper()
+					rarity_lbl.add_theme_font_size_override("font_size", UITheme.FONT_SIZE_CAPTION)
+					rarity_lbl.add_theme_color_override("font_color", UITheme.CLR_BRONZE)
+					preview_col.add_child(rarity_lbl)
+
+					preview_col.add_child(_gap(8))
+
+					var price_lbl := Label.new()
+					price_lbl.text = "PRICE: %d GOLD" % int(gear.get("price", 100))
+					price_lbl.add_theme_font_size_override("font_size", UITheme.FONT_SIZE_BODY)
+					price_lbl.add_theme_color_override("font_color", UITheme.CLR_GOLD)
+					preview_col.add_child(price_lbl)
+
+					var buy_btn := Button.new()
+					buy_btn.text = "BUY"
+					buy_btn.custom_minimum_size = Vector2(0, 40)
+					buy_btn.add_theme_stylebox_override("normal", UITheme.btn_primary())
+					buy_btn.add_theme_stylebox_override("hover", UITheme.btn_primary_hover())
+					buy_btn.pressed.connect(func() -> void:
+						_on_shop_buy_gear(shop_selected_card_id, int(gear.get("price", 100)))
+					)
+					preview_col.add_child(buy_btn)
+					break
+
+
+func _generate_shop_pool() -> void:
+	var ids = CardManager.cards_data.keys()
+	ids.shuffle()
+	shop_pool.clear()
+	for card_id in ids:
+		var card := CardManager.get_card(card_id)
+		if bool(card.get("is_signature", false)):
+			continue
+		if card_id not in GameState.current_deck:
+			shop_pool.append(card_id)
+		if shop_pool.size() >= 9:
+			break
+
+
+func _build_gear_pool() -> void:
+	gear_pool.clear()
+	# Corvus "Black Market": epic gear can appear; otherwise only common/rare
+	var corvus_active := _has_lt_trait("Black Market")
+	var max_gear_items := 8 if corvus_active else 6
+	var common_rare: Array[Dictionary] = []
+	var epic_legendary: Array[Dictionary] = []
+	for gear_id in CardManager.gear_data.keys():
+		if GameState.has_gear(gear_id):
+			continue
+		var gear: Dictionary = CardManager.get_gear(gear_id)
+		if gear.is_empty():
+			continue
+		var rarity := str(gear.get("rarity", "common")).to_lower()
+		if rarity in ["epic", "legendary"]:
+			epic_legendary.append(gear.duplicate())
+		else:
+			common_rare.append(gear.duplicate())
+	if common_rare.is_empty() and epic_legendary.is_empty():
+		return
+	common_rare.shuffle()
+	epic_legendary.shuffle()
+	# Fill pool: always show common/rare; add epic slots if Corvus active
+	for gear in common_rare:
+		gear_pool.append(gear)
+		if gear_pool.size() >= max_gear_items:
+			break
+	if corvus_active:
+		for gear in epic_legendary:
+			gear_pool.append(gear)
+			if gear_pool.size() >= max_gear_items + 2:
+				break
+
+
+func _has_lt_trait(trait_name: String) -> bool:
+	for lt_id in GameState.active_lieutenants:
+		var lt_data: Dictionary = CardManager.get_lieutenant(str(lt_id))
+		if str(lt_data.get("trait", "")) == trait_name:
+			return true
+	return false
+
+
+func _card_price(card_data: Dictionary) -> int:
+	var stamina := int(card_data.get("stamina_cost", 0))
+	var power := int(card_data.get("power_index", 0))
+	var price := (stamina * 35) + (power * 60)
+	# Apply discount if Titus is active and has "Connected" trait
+	if _has_lt_trait("Connected"):
+		price = int(price * 0.8)
+	return maxi(10, price)
+
+
+func _card_summary(card_data: Dictionary) -> String:
+	var parts: Array[String] = []
+	if int(card_data.get("attack_power", 0)) > 0:
+		parts.append("DMG: %d" % int(card_data.get("attack_power", 0)))
+	if int(card_data.get("armor", 0)) > 0:
+		parts.append("ARM: %d" % int(card_data.get("armor", 0)))
+	if int(card_data.get("healing", 0)) > 0:
+		parts.append("HEAL: %d" % int(card_data.get("healing", 0)))
+	var effect := str(card_data.get("effect_description", ""))
+	if not effect.is_empty():
+		parts.append(effect)
+	return "\n".join(parts)
+
+
+func _on_shop_buy_card(card_id: String, price: int) -> void:
+	if GameState.gold < price:
+		return
+	if GameState.current_deck.size() >= 30:
+		return
+	GameState.spend_gold(price)
+	GameState.add_card(card_id)
+	# Refresh shop to remove purchased card
+	_generate_shop_pool()
+	_animate_tab_transition("shop")
+
+
+func _on_shop_buy_gear(gear_id: String, price: int) -> void:
+	if GameState.gold < price:
+		return
+	if GameState.has_gear(gear_id):
+		return
+	GameState.spend_gold(price)
+	GameState.add_gear(gear_id)
+	GameState.equip_gear(gear_id)
+	# Refresh gear pool
+	_build_gear_pool()
+	_animate_tab_transition("shop")
+
+
 func _on_gear_cycle(slot: String, slot_gear: Array, direction: int) -> void:
 	var current := str(GameState.equipped_gear.get(slot, ""))
 	var idx      := slot_gear.find(current)
@@ -2006,6 +2331,203 @@ func _on_scene_triggered(scene_id: String, payload: Dictionary) -> void:
 
 
 # ── 3F  DECK ─────────────────────────────────────────────────────────────────
+
+func _build_deck_content_inline() -> void:
+	# Full DeckBuilder interface: 3-column layout (deck, collection, preview)
+
+	# Header: Deck counter
+	var header := Label.new()
+	header.text = "DECK: %d / 30 CARDS" % GameState.current_deck.size()
+	header.add_theme_font_size_override("font_size", UITheme.FONT_SIZE_BODY)
+	header.add_theme_color_override("font_color", UITheme.CLR_GOLD)
+	content_inner.add_child(header)
+	content_inner.add_child(_gap(8))
+
+	var main_hbox := HBoxContainer.new()
+	main_hbox.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	main_hbox.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	main_hbox.add_theme_constant_override("separation", 0)
+	content_inner.add_child(main_hbox)
+
+	# Left column: Your Deck
+	var deck_panel := PanelContainer.new()
+	deck_panel.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	deck_panel.size_flags_stretch_ratio = 0.33
+	deck_panel.add_theme_stylebox_override("panel", UITheme.panel_base())
+	main_hbox.add_child(deck_panel)
+
+	var deck_col := VBoxContainer.new()
+	deck_col.add_theme_constant_override("separation", 8)
+	deck_panel.add_child(deck_col)
+
+	var deck_title := Label.new()
+	deck_title.text = "YOUR DECK"
+	deck_title.add_theme_font_size_override("font_size", UITheme.FONT_SIZE_HEADER)
+	deck_title.add_theme_color_override("font_color", UITheme.CLR_GOLD)
+	deck_col.add_child(deck_title)
+
+	var deck_scroll := ScrollContainer.new()
+	deck_scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	deck_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	deck_col.add_child(deck_scroll)
+
+	var deck_list := VBoxContainer.new()
+	deck_list.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	deck_list.add_theme_constant_override("separation", 4)
+	deck_scroll.add_child(deck_list)
+
+	# Build deck list with card counts
+	var deck_counts: Dictionary = {}
+	for cid in GameState.current_deck:
+		var s := str(cid)
+		deck_counts[s] = int(deck_counts.get(s, 0)) + 1
+
+	for cid in deck_counts:
+		var cdata := CardManager.get_card(cid)
+		if not cdata.is_empty():
+			var count = int(deck_counts[cid])
+			var row := HBoxContainer.new()
+			row.add_theme_constant_override("separation", 8)
+			deck_list.add_child(row)
+
+			var name_btn := Button.new()
+			name_btn.text = "%s ×%d" % [cdata.get("name", cid).to_upper(), count]
+			name_btn.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+			name_btn.add_theme_stylebox_override("normal", UITheme.btn_secondary())
+			name_btn.add_theme_stylebox_override("hover", UITheme.btn_secondary_hover())
+			name_btn.pressed.connect(func() -> void:
+				deck_selected_card_id = cid
+				_animate_tab_transition("deck")
+			)
+			row.add_child(name_btn)
+
+			var remove_btn := Button.new()
+			remove_btn.text = "–"
+			remove_btn.custom_minimum_size = Vector2(32, 24)
+			remove_btn.add_theme_stylebox_override("normal", UITheme.btn_secondary())
+			remove_btn.pressed.connect(func() -> void:
+				GameState.remove_from_deck(cid)
+				deck_selected_card_id = ""
+				_animate_tab_transition("deck")
+			)
+			row.add_child(remove_btn)
+
+	# Vertical divider
+	var divider1 := ColorRect.new()
+	divider1.custom_minimum_size = Vector2(1, 0)
+	divider1.color = UITheme.CLR_BRONZE
+	divider1.color.a = 0.5
+	main_hbox.add_child(divider1)
+
+	# Middle column: Collection
+	var collection_panel := PanelContainer.new()
+	collection_panel.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	collection_panel.size_flags_stretch_ratio = 0.33
+	collection_panel.add_theme_stylebox_override("panel", UITheme.panel_base())
+	main_hbox.add_child(collection_panel)
+
+	var collection_col := VBoxContainer.new()
+	collection_col.add_theme_constant_override("separation", 8)
+	collection_panel.add_child(collection_col)
+
+	var collection_title := Label.new()
+	collection_title.text = "COLLECTION"
+	collection_title.add_theme_font_size_override("font_size", UITheme.FONT_SIZE_HEADER)
+	collection_title.add_theme_color_override("font_color", UITheme.CLR_GOLD)
+	collection_col.add_child(collection_title)
+
+	var collection_scroll := ScrollContainer.new()
+	collection_scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	collection_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	collection_col.add_child(collection_scroll)
+
+	var collection_list := VBoxContainer.new()
+	collection_list.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	collection_list.add_theme_constant_override("separation", 4)
+	collection_scroll.add_child(collection_list)
+
+	# Build collection list (cards not at max copies in deck)
+	for cid in GameState.discovered_cards:
+		if cid in GameState.current_deck:
+			var count = int(deck_counts.get(cid, 0))
+			if count >= 4:
+				continue  # Skip if already at max
+		var cdata := CardManager.get_card(cid)
+		if not cdata.is_empty():
+			var row := HBoxContainer.new()
+			row.add_theme_constant_override("separation", 8)
+			collection_list.add_child(row)
+
+			var name_btn := Button.new()
+			name_btn.text = cdata.get("name", cid).to_upper()
+			name_btn.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+			name_btn.add_theme_stylebox_override("normal", UITheme.btn_secondary())
+			name_btn.add_theme_stylebox_override("hover", UITheme.btn_secondary_hover())
+			name_btn.pressed.connect(func() -> void:
+				deck_selected_card_id = cid
+				_animate_tab_transition("deck")
+			)
+			row.add_child(name_btn)
+
+			var add_btn := Button.new()
+			add_btn.text = "+"
+			add_btn.custom_minimum_size = Vector2(32, 24)
+			add_btn.add_theme_stylebox_override("normal", UITheme.btn_secondary())
+			add_btn.pressed.connect(func() -> void:
+				if GameState.current_deck.size() < 30:
+					GameState.add_card(cid)
+					_animate_tab_transition("deck")
+			)
+			row.add_child(add_btn)
+
+	# Vertical divider
+	var divider2 := ColorRect.new()
+	divider2.custom_minimum_size = Vector2(1, 0)
+	divider2.color = UITheme.CLR_BRONZE
+	divider2.color.a = 0.5
+	main_hbox.add_child(divider2)
+
+	# Right column: Card Detail/Preview
+	var preview_panel := PanelContainer.new()
+	preview_panel.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	preview_panel.size_flags_stretch_ratio = 0.34
+	preview_panel.add_theme_stylebox_override("panel", UITheme.panel_base())
+	main_hbox.add_child(preview_panel)
+
+	var preview_col := VBoxContainer.new()
+	preview_col.add_theme_constant_override("separation", 8)
+	preview_panel.add_child(preview_col)
+
+	var preview_title := Label.new()
+	preview_title.text = "CARD DETAIL"
+	preview_title.add_theme_font_size_override("font_size", UITheme.FONT_SIZE_HEADER)
+	preview_title.add_theme_color_override("font_color", UITheme.CLR_GOLD)
+	preview_col.add_child(preview_title)
+
+	if deck_selected_card_id.is_empty():
+		var placeholder := Label.new()
+		placeholder.text = "SELECT A CARD\nTO VIEW DETAILS"
+		placeholder.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		placeholder.add_theme_font_size_override("font_size", UITheme.FONT_SIZE_BODY)
+		placeholder.add_theme_color_override("font_color", UITheme.CLR_MUTED)
+		preview_col.add_child(placeholder)
+	else:
+		var card_data := CardManager.get_card(deck_selected_card_id)
+		if not card_data.is_empty():
+			var card_name := Label.new()
+			card_name.text = card_data.get("name", "").to_upper()
+			card_name.add_theme_font_size_override("font_size", UITheme.FONT_SIZE_HEADER)
+			card_name.add_theme_color_override("font_color", UITheme.CLR_GOLD)
+			preview_col.add_child(card_name)
+
+			var card_summary := _card_summary(card_data)
+			var summary_lbl := Label.new()
+			summary_lbl.text = card_summary
+			summary_lbl.autowrap_mode = TextServer.AUTOWRAP_WORD
+			summary_lbl.add_theme_font_size_override("font_size", UITheme.FONT_SIZE_CAPTION)
+			summary_lbl.add_theme_color_override("font_color", UITheme.CLR_VELLUM)
+			preview_col.add_child(summary_lbl)
+
 
 func _build_deck_content() -> void:
 	var deck := GameState.current_deck
