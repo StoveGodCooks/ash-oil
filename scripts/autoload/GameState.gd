@@ -344,6 +344,7 @@ func to_dict() -> Dictionary:
 		"ending_reached": ending_reached,
 		"story_log": story_log,
 		"accessibility": accessibility,
+		"rival_manager": RivalManager.save_state(),
 	}
 
 func from_dict(data: Dictionary) -> void:
@@ -384,6 +385,9 @@ func from_dict(data: Dictionary) -> void:
 	accessibility = data.get("accessibility", accessibility)
 	accessibility["text_scale"] = clampf(float(accessibility.get("text_scale", 1.0)), 0.8, 1.5)
 	accessibility["animation_speed"] = clampf(float(accessibility.get("animation_speed", 1.0)), 0.5, 2.0)
+	var rival_state = data.get("rival_manager", {})
+	if not rival_state.is_empty():
+		RivalManager.load_state(rival_state)
 	_load_relationship_data()
 	_ensure_npc_relationships()
 	_enforce_npc_faction_consistency()

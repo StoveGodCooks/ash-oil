@@ -22,6 +22,7 @@ SaveManager="*res://scripts/autoload/SaveManager.gd"
 MissionManager="*res://scripts/autoload/MissionManager.gd"
 CardManager="*res://scripts/autoload/CardManager.gd"
 NarrativeManager="*res://scripts/autoload/NarrativeManager.gd"
+RivalManager="*res://scripts/autoload/RivalManager.gd"
 
 [physics]
 

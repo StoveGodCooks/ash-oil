@@ -80,6 +80,7 @@ func complete_mission(id: String, outcome: String = "victory") -> void:
 		GameState.change_loyalty(lt, relationships[lt])
 	_apply_npc_relationship_impacts(id, mission, multiplier)
 	_apply_faction_alignment_impacts(id, mission, multiplier)
+	_register_investigation_clues(id, mission, outcome)
 
 	# Apply hooks
 	for hook in mission.get("hooks_created", []):
@@ -269,6 +270,30 @@ func _apply_faction_alignment_impacts(mission_id: String, mission: Dictionary, m
 		var delta := int(round(float(inferred[faction_id]) * multiplier))
 		if delta != 0:
 			GameState.modify_faction_alignment(str(faction_id), delta, "inferred:%s" % mission_id)
+
+func _register_investigation_clues(mission_id: String, mission: Dictionary, outcome: String) -> void:
+	## Register investigation clues for rivals when mission completes
+	## Clues are only registered on victory (not retreat/defeat)
+	if outcome != "victory":
+		return
+
+	var npc_impacts = mission.get("npc_impacts", {})
+	for npc_name in npc_impacts.keys():
+		var npc_data = npc_impacts[npc_name]
+		var investigation_clue = npc_data.get("investigation_clue", {})
+
+		if investigation_clue.is_empty():
+			continue
+
+		var rival_id = investigation_clue.get("rival_id", "")
+		var clue_id = investigation_clue.get("clue_id", "")
+
+		if rival_id.is_empty() or clue_id.is_empty():
+			continue
+
+		# Register clue with RivalManager
+		RivalManager.register_clue(rival_id, clue_id)
+		print("[Investigation] Registered clue '%s' for rival '%s' from mission %s" % [clue_id, rival_id, mission_id])
 
 func _roll_gear_drop() -> String:
 	var target_rarity := roll_gear_rarity()

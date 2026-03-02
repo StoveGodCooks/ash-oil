@@ -1,0 +1,192 @@
+{
+  "rivals": {
+    "lucius_jealous": {
+      "id": "lucius_jealous",
+      "name": "Lucius",
+      "title": "The Bitter Gambler",
+      "act": 1,
+      "faction": "NEUTRAL",
+      "role": "Jealous Competitor",
+      "description": "A veteran arena gambler who once controlled the betting pools. Cassian's unexpected rise threatens his livelihood and status. He watches from the shadows, calculating odds, bitter about his own obsolescence.",
+      "threat_level": "medium",
+      "discovery_threshold": 0.90,
+      "clues": [
+        {
+          "clue_id": "lucius_clue_1_spotted",
+          "confidence": 0.35,
+          "text": "Drunk man muttering about lost money and ruined odds after Cassian's wins — bitter, specific, personal"
+        },
+        {
+          "clue_id": "lucius_clue_2_talked_about",
+          "confidence": 0.60,
+          "text": "Old champion names Lucius as a coward who avoids real fighters and bets on outcomes instead"
+        },
+        {
+          "clue_id": "lucius_clue_3_reputation",
+          "confidence": 0.90,
+          "text": "Lucius's identity confirmed: desperate man clinging to power through manipulation rather than skill. He will challenge you directly when cornered."
+        }
+      ],
+      "challenge_reward": {
+        "combat": true,
+        "enemy_template": "arena_vet",
+        "gold": 150,
+        "gear": "rare_rare_talisman_of_determination",
+        "meter_changes": {
+          "RENOWN": 2,
+          "HEAT": 1
+        }
+      },
+      "challenge_failure": {
+        "permanent_enemy": true,
+        "meter_changes": {
+          "HEAT": 3,
+          "DREAD": 2
+        }
+      },
+      "interference_events": [
+        {
+          "event_id": "lucius_spreads_rumors",
+          "trigger": "after_confident_win",
+          "description": "Lucius spreads vicious rumors about Cassian's fighting style, trying to damage your reputation with serious competitors"
+        },
+        {
+          "event_id": "lucius_manipulates_odds",
+          "trigger": "before_important_match",
+          "description": "Lucius uses remaining connections to manipulate betting odds against Cassian, increasing HEAT"
+        }
+      ]
+    },
+
+    "varro_enforcer": {
+      "id": "varro_enforcer",
+      "name": "Varro",
+      "title": "The Trainer",
+      "act": 1,
+      "faction": "NEUTRAL",
+      "role": "Complex Antagonist",
+      "description": "Cassian's trainer from the ludus. He's caught between institutional loyalty and genuine concern for Cassian's survival. Varro controls information networks and maintains an uneasy peace between the ludus and state.",
+      "threat_level": "high",
+      "discovery_threshold": 0.85,
+      "clues": [
+        {
+          "clue_id": "varro_clue_1_mentioned",
+          "confidence": 0.35,
+          "text": "Lanista says Varro runs her networks — controls information, keeps records of who owes what to whom"
+        },
+        {
+          "clue_id": "varro_clue_2_shadow",
+          "confidence": 0.60,
+          "text": "Someone watches both Cassian and the State agents — surveillance has its own unseen layer"
+        },
+        {
+          "clue_id": "varro_clue_3_reputation",
+          "confidence": 0.85,
+          "text": "Varro's role confirmed: enforcer of the old order, but increasingly sympathetic to dissent. His protection comes with chains."
+        }
+      ],
+      "challenge_reward": {
+        "combat": true,
+        "enemy_template": "varro_scout",
+        "gold": 200,
+        "gear": "rare_trainers_mark",
+        "meter_changes": {
+          "RENOWN": 3,
+          "FAVOR": 2
+        }
+      },
+      "challenge_failure": {
+        "permanent_enemy": false,
+        "meter_changes": {
+          "HEAT": 2,
+          "DREAD": 3
+        }
+      },
+      "interference_events": [
+        {
+          "event_id": "varro_increases_difficulty",
+          "trigger": "after_major_mission",
+          "description": "Varro raises the stakes of your training, forcing harder matches to 'keep you sharp' — more pressure, harder enemies"
+        },
+        {
+          "event_id": "varro_protects",
+          "trigger": "when_hunted",
+          "description": "Varro uses his network to shield you from immediate threats, buying time but increasing his leverage over you"
+        }
+      ]
+    },
+
+    "priestess_guardian": {
+      "id": "priestess_guardian",
+      "name": "The Priestess",
+      "title": "The Shrine's Watcher",
+      "act": 1,
+      "faction": "NEUTRAL",
+      "role": "Institutional Observer",
+      "description": "An older woman who watches from the shrine's shadows. She represents the cult's eyes on the arena. She reads Cassian not as a slave or fighter, but as a piece in a larger game. She knows his power.",
+      "threat_level": "high",
+      "discovery_threshold": 0.85,
+      "clues": [
+        {
+          "clue_id": "priestess_clue_1_watching",
+          "confidence": 0.35,
+          "text": "An older woman watches from the shrine colonnade, evaluating Cassian with deliberate, institutional attention"
+        },
+        {
+          "clue_id": "priestess_clue_2_network",
+          "confidence": 0.70,
+          "text": "Priestess network confirmed: she coordinates shrine activities across the city. Her reach is subtle but pervasive."
+        },
+        {
+          "clue_id": "priestess_clue_3_knowledge",
+          "confidence": 0.85,
+          "text": "Priestess knows about the ledger. She always knew. She's waiting to see what you choose to do with it."
+        }
+      ],
+      "challenge_reward": {
+        "combat": false,
+        "enemy_template": "cult_acolyte",
+        "gold": 100,
+        "gear": "rare_piety_medallion",
+        "meter_changes": {
+          "PIETY": 3,
+          "RENOWN": 1
+        }
+      },
+      "challenge_failure": {
+        "permanent_enemy": false,
+        "meter_changes": {
+          "DREAD": 4,
+          "PIETY": -2
+        }
+      },
+      "interference_events": [
+        {
+          "event_id": "priestess_grants_blessing",
+          "trigger": "after_moral_choice",
+          "description": "Priestess offers blessing for pious acts, increasing PIETY but deepening her institutional hold"
+        },
+        {
+          "event_id": "priestess_warns",
+          "trigger": "before_dangerous_path",
+          "description": "Priestess warns you away from heretical paths, attempting to guide your choices toward cult interests"
+        }
+      ]
+    }
+  },
+
+  "act_definitions": {
+    "act_1": {
+      "name": "Arena City",
+      "rival_ids": ["lucius_jealous", "varro_enforcer", "priestess_guardian"],
+      "investigation_phase": "survival",
+      "meter_focus": ["RENOWN", "HEAT", "DREAD"]
+    },
+    "act_2": {
+      "name": "Ridge City",
+      "rival_ids": ["lucius_jealous", "varro_enforcer", "priestess_guardian", "axiom_merch", "marius_eclipse", "cassius_veil", "octavian_dawn"],
+      "investigation_phase": "escalation",
+      "meter_focus": ["RENOWN", "HEAT", "DREAD", "FAVOR", "DEBT", "PIETY"]
+    }
+  }
+}
