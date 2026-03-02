@@ -60,6 +60,17 @@ func get_enemy(id: String) -> Dictionary:
 	return enemy_templates.get(id, {})
 
 func get_mission_enemies(mission_id: String) -> Array:
+	# Handle rival missions (RIVAL_* format)
+	if mission_id.begins_with("RIVAL_"):
+		var rival_id = mission_id.substr(6).to_lower()
+		var combat_data = RivalManager.get_challenge_combat_data(rival_id)
+		var enemy_template = combat_data.get("enemy_template", "")
+		if not enemy_template.is_empty():
+			return [enemy_template]
+		else:
+			print("WARNING: No enemy template for rival: %s" % rival_id)
+			return []
+
 	var mission = MissionManager.get_mission(mission_id)
 	var enemy_ids: Array = mission.get("enemies", ["warrior_a", "warrior_b"])
 	var act: int = int(mission.get("act", 1))

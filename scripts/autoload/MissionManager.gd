@@ -45,6 +45,11 @@ func start_mission(id: String) -> bool:
 	return false
 
 func complete_mission(id: String, outcome: String = "victory") -> void:
+	# Handle rival missions specially
+	if id.begins_with("RIVAL_"):
+		_complete_rival_mission(id, outcome)
+		return
+
 	var mission = get_mission(id)
 	if mission.is_empty():
 		print("Mission not found: " + id)
@@ -395,3 +400,47 @@ func check_ending_path() -> String:
 	if GameState.favor >= 6:
 		return "State"
 	return "Solo"
+
+
+func _complete_rival_mission(rival_mission_id: String, outcome: String) -> void:
+	## Handle rival challenge mission completion
+	## Extract rival_id from RIVAL_* format and apply rewards
+	var rival_id = rival_mission_id.substr(6).to_lower()
+
+	print("[Rival Mission] Completing rival challenge: %s (outcome: %s)" % [rival_id, outcome])
+
+	if outcome != "victory":
+		print("[Rival Mission] Rival challenge not won (outcome: %s), no rewards applied" % outcome)
+		mission_completed.emit(rival_mission_id)
+		return
+
+	# Get rival combat data for rewards
+	var combat_data = RivalManager.get_challenge_combat_data(rival_id)
+	var meter_changes = combat_data.get("meter_changes", {})
+	var gold_reward = combat_data.get("gold", 0)
+	var gear_id = combat_data.get("gear", "")
+
+	# Apply meter changes
+	for meter in meter_changes:
+		GameState.change_meter(meter, int(meter_changes[meter]))
+		print("[Rival Reward] +%d %s" % [meter_changes[meter], meter])
+
+	# Apply gold reward
+	if gold_reward > 0:
+		GameState.gold += gold_reward
+		print("[Rival Reward] +%d gold" % gold_reward)
+
+	# Apply gear reward
+	if gear_id != "":
+		GameState.owned_gear.append(gear_id)
+		print("[Rival Reward] +1 Gear: %s" % gear_id)
+
+	# Save and emit completion signal
+	last_reward = {
+		"gold": gold_reward,
+		"gear_id": gear_id,
+		"gear_name": CardManager.get_gear(gear_id).get("name", gear_id) if gear_id != "" else "",
+	}
+
+	SaveManager.auto_save()
+	mission_completed.emit(rival_mission_id)

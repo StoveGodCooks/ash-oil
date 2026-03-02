@@ -2379,9 +2379,112 @@ func _get_confidence_color(confidence: float) -> Color:
 
 func _on_rival_challenge_pressed(rival_id: String) -> void:
 	## Handle rival challenge button press
-	## For now, just show a message - full integration comes later
-	print("Challenge pressed for rival: %s" % rival_id)
-	# TODO: Launch challenge flow (identify → combat → rewards)
+	## Shows identification dialog → combat flow if correct
+	var rival_profile = RivalManager.get_rival_profile(rival_id)
+	if rival_profile.is_empty():
+		print("ERROR: No rival profile found for %s" % rival_id)
+		return
+
+	var rival_name = rival_profile.get("name", rival_id)
+	_show_challenge_dialog(rival_id, rival_name)
+
+
+func _show_challenge_dialog(rival_id: String, rival_name: String) -> void:
+	## Create and show challenge confirmation dialog
+	var dialog = _create_challenge_dialog(rival_id, rival_name)
+	get_tree().root.add_child(dialog)
+	dialog.popup_centered_ratio(0.6)
+
+
+func _create_challenge_dialog(rival_id: String, rival_name: String) -> Window:
+	## Create challenge confirmation dialog window
+	var dialog = Window.new()
+	dialog.title = "CHALLENGE RIVAL"
+	dialog.exclusive = true
+	dialog.transient = true
+
+	var vbox = VBoxContainer.new()
+	vbox.add_theme_constant_override("separation", 12)
+	dialog.add_child(vbox)
+
+	# Title
+	var title_lbl = Label.new()
+	title_lbl.text = "CHALLENGE %s?" % rival_name.to_upper()
+	title_lbl.add_theme_font_size_override("font_size", UITheme.FONT_SIZE_TITLE)
+	title_lbl.add_theme_color_override("font_color", UITheme.CLR_VELLUM)
+	vbox.add_child(title_lbl)
+
+	# Description
+	var desc_lbl = Label.new()
+	desc_lbl.text = "You have gathered enough evidence to confront this rival.\nAre you certain of your identification?"
+	desc_lbl.autowrap_mode = TextServer.AUTOWRAP_WORD
+	desc_lbl.add_theme_color_override("font_color", UITheme.CLR_MUTED)
+	vbox.add_child(desc_lbl)
+
+	vbox.add_child(_gap(8))
+
+	# Button row
+	var btn_row = HBoxContainer.new()
+	btn_row.add_theme_constant_override("separation", 8)
+	vbox.add_child(btn_row)
+
+	btn_row.add_child(Control.new())  # Spacer
+
+	var cancel_btn = Button.new()
+	cancel_btn.text = "CANCEL"
+	cancel_btn.pressed.connect(func(): dialog.queue_free())
+	btn_row.add_child(cancel_btn)
+
+	var confirm_btn = Button.new()
+	confirm_btn.text = "CHALLENGE!"
+	confirm_btn.add_theme_color_override("font_color", UITheme.CLR_BLOOD)
+	confirm_btn.pressed.connect(func():
+		dialog.queue_free()
+		_execute_challenge(rival_id)
+	)
+	btn_row.add_child(confirm_btn)
+
+	return dialog
+
+
+func _execute_challenge(rival_id: String) -> void:
+	## Execute the challenge: identify rival → determine outcome
+	print("[Challenge] Executing challenge for rival: %s" % rival_id)
+
+	# Identify rival (this will be correct since player clicked on identified rival)
+	var result = RivalManager.identify_rival(rival_id, true)
+
+	if result.get("success", false):
+		print("[Challenge] Identification successful!")
+		_launch_rival_combat(rival_id)
+	else:
+		# Should not happen for correct identification, but handle gracefully
+		print("[Challenge] Identification failed: %s" % result.get("message", "Unknown error"))
+
+
+func _launch_rival_combat(rival_id: String) -> void:
+	## Launch combat encounter with rival
+	var combat_data = RivalManager.get_challenge_combat_data(rival_id)
+	if combat_data.is_empty():
+		print("ERROR: No combat data for rival %s" % rival_id)
+		return
+
+	var enemy_template = combat_data.get("enemy_template", "")
+	if enemy_template.is_empty():
+		print("ERROR: No enemy template for rival %s" % rival_id)
+		return
+
+	# Start combat mission with rival as boss
+	print("[Challenge] Starting rival combat with enemy template: %s" % enemy_template)
+
+	# Create temporary rival mission ID (CombatUI will use this for context)
+	var rival_mission_id = "RIVAL_%s" % rival_id.to_upper()
+
+	# Set current mission to rival encounter
+	GameState.current_mission_id = rival_mission_id
+
+	# Navigate to combat screen
+	get_tree().change_scene_to_file("res://scenes/CombatScreen.tscn")
 
 
 func _make_intel_entry(npc_id: String, rel: Dictionary) -> Control:
