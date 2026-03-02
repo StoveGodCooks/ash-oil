@@ -1,8 +1,8 @@
 # Ash & Oil — Development Roadmap
 
-**Current Version:** v0.10.0 — Phase 12: Hub UI + Rival System Design
+**Current Version:** v0.10.0 — Phase 12: Hub UI + Rival System
 **Last Updated:** March 1, 2026
-**Status:** Phase 11 ✅ complete | Phase 12a ✅ complete (4-LT lieutenant system) | Phase 12b-i ✅ complete (cinematic landing page) | Phase 12b-ii ⏳ pending (story/narrative scenes, endings, journal) | Phase 12c ✅ complete (hub UI refactor: MAP removal, SHOP/DECK inline integration) | Phase 12d 🎨 design phase (rival system: dynamic threat generation, Intel tab integration, meter-based triggers) | Phase 12e ⏳ pending (lieutenant XP leveling, skill trees).
+**Status:** Phase 11 ✅ complete | Phase 12a ✅ complete (4-LT lieutenant system) | Phase 12b-i ✅ complete (cinematic landing page) | Phase 12b-ii ⏳ pending (story/narrative scenes, endings, journal) | Phase 12c ✅ complete (hub UI refactor: MAP removal, SHOP/DECK inline integration) | Phase 12d ✅ complete (RivalManager singleton + investigation system) | Phase 12d-UI ⏳ pending (INTEL tab wiring, confidence visualization) | Phase 12e ⏳ pending (lieutenant XP leveling, skill trees).
 
 ---
 

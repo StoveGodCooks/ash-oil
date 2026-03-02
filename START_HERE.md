@@ -135,72 +135,77 @@ git commit -m "chore: update START_HERE.md with Phase 6 completion status"
 
 # 📍 CURRENT STATUS
 
-**Last Patch:** fa35739 — feat: enrich Act 1 missions with investigation system, rival emergence flags, reframe S01/S14 | Phase 12d
+**Last Patch:** a03d91c — feat: Phase 12d RivalManager singleton + investigation system
 
-**Current Phase:** Phase 12d (Rival System — Narrative Enrichment) ✅ ENRICHMENT COMPLETE | Phase 12d Implementation ⏳ PENDING
+**Current Phase:** Phase 12d ✅ COMPLETE (RivalManager.gd + investigation system wired)
 
-## What's Done This Session (Phase 12d: Act 1 Narrative Enrichment)
+## What's Done This Session (Phase 12d: Complete Implementation)
 
-- ✅ **Act 1 Mission Enrichment (M02–M10):**
-  - Enriched narrative descriptions: rivals foreshadowed organically through prose
-  - Added `npc_impacts` with `investigation_clue` sub-fields on M02–M10
-  - Investigation confidence escalation: 35% → 60% → 65% → 85% across missions
-  - Added `investigation_ledger` fields tracking faction awareness of the ledger (10% → 85%)
-  - Three rivals seeded across missions:
-    - **Lucius** (M02 spotted → M03 talked_about → S14 met → M10 watching)
-    - **Varro** (M04 mentioned → M06 shadow → M07 reputation_known → M09 revealed → M10 watching)
-    - **Priestess** (M05 watching → M07 network_confirmed → M10 watching)
+**NARRATIVE ENRICHMENT (Previous):**
+- ✅ Act 1 mission enrichment (M02-M10) with investigation clues
+- ✅ S01/S14 reframes with hooks and NPC impacts
+- ✅ M11-M20 created with full investigation progression (75% → 100%)
 
-- ✅ **S01 Reframed: "The Rat Run" → "Syndicate Recruitment"**
-  - Moth recruits Cassian for Syndicate underground work
-  - Added DREAD +1, hook: `syndicate_recruited`
-  - NPC impact: Moth score +8, flag `["recruited"]`
-  - retreat_rewards reduced (35 vs 55 gold) — Syndicate disappointment mechanic
+**RIVAL SYSTEM IMPLEMENTATION (This Session):**
+- ✅ **RivalManager.gd singleton** (514 lines)
+  - Rival data loading from data/rivals.json
+  - Investigation clue registration & confidence calculation
+  - Auto-identification when thresholds reached
+  - Challenge mechanics (combat vs wrong identification)
+  - Interference event generation between missions
+  - Save/load state integration with GameState
 
-- ✅ **S14 Reframed: "Crowd Favorite" → "Lucius's Challenge"**
-  - First personal encounter with rival Lucius
-  - Enemy changed: `arena_vet` (Lucius stand-in, tougher than arena_rookie)
-  - RENOWN +3 (up from +2), HEAT +1 added; hook: `lucius_met`
-  - Investigation clue at 0.90 confidence — Lucius's desperation fully revealed
-  - retreat_rewards: 0 gold (lose wages; personal duel has real stakes)
+- ✅ **data/rivals.json** — Complete rival database
+  - 3 Act 1 rivals: Lucius (jealous gambler), Varro (trainer enforcer), Priestess (guardian)
+  - Per-rival clues, discovery thresholds, challenge rewards, interference events
+  - Challenge combat data with meter changes & gear drops
+  - Extendable for Act 2-4 rivals
 
-- ✅ **New Hooks Created Across Act 1:**
-  - `lucius_spotted`, `lucius_talked_about`, `varro_mentioned`, `priestess_watching`
-  - `varro_shadow`, `ledger_street_rumor`, `varro_reputation_known`, `ledger_power_understood`
-  - `rivals_converge`, `lucius_watching`, `priestess_watching_confirmed`, `syndicate_recruited`, `lucius_met`
+- ✅ **MissionManager Integration**
+  - `_register_investigation_clues()` extracts clues from npc_impacts after mission victory
+  - Calls RivalManager.register_clue() for each investigation_clue found
+  - Only registers on victory (not retreat/defeat)
 
-- ✅ **Data Validator:** All mission checks PASS (25 entries, all enemy refs valid, all meter names valid, 20 main missions confirmed)
+- ✅ **GameState Save/Load**
+  - RivalManager state included in to_dict() & from_dict()
+  - Persists: registered_clues, identified_rivals, challenge_history
+  - Confidence recalculated on load
+
+- ✅ **project.godot**
+  - RivalManager registered as autoload singleton
+  - Initialization order: GameState → SaveManager → MissionManager → CardManager → NarrativeManager → **RivalManager**
+
+**INVESTIGATION FLOW:**
+1. Mission completes (victory) → clues extracted from npc_impacts
+2. RivalManager.register_clue() adds clue → recalculates confidence
+3. If confidence >= discovery_threshold → auto-identify rival
+4. Player can challenge rival with `identify_rival(rival_id, correct: bool)`
+5. Correct challenge → combat with MissionManager-style rewards
+6. Wrong challenge → permanent enemy + meter penalties
 
 **Next Steps:**
 
-**IMMEDIATE (Phase 12d - Rival System Implementation):**
-1. 🛠️ **Create `RivalManager.gd` singleton**
-   - Rival generation (use three Act 1 rivals: Lucius, Varro, Priestess)
-   - Investigation tracking (read `investigation_clue` fields from missions.json)
-   - Intel confidence accumulation (35%/60%/85% gates)
-   - Interference event system (rival actions between missions)
+**IMMEDIATE (Phase 12d - UI Integration):**
+1. 🖥️ **Wire INTEL Tab to investigation system**
+   - Display rival profiles with clue counts & confidence %
+   - Show discovered clues as suspicion cards
+   - Challenge button: launches identify flow
 
-2. 📊 **Create `data/rivals.json`**
-   - Rival profiles: Lucius, Varro, Priestess (Act 1), + Act 2/3 rivals
-   - Intel clue IDs linking to mission `investigation_clue` fields
-   - Interference event templates per rival type
-   - Gear drops on rival defeat (Rare → Epic → Legendary by act)
+2. 📊 **ConfidenceBar visualization**
+   - Progress bar showing 0%-100% investigation confidence per rival
+   - Visual distinction: investigating → confident → identified
 
-3. 🖥️ **Wire INTEL Tab to investigation system**
-   - Display confidence percentages per rival
-   - Show gathered clues as suspicion profile
-   - Challenge button: if correct → combat + gear; if wrong → permanent enemy
+3. 🎮 **Challenge outcome integration**
+   - Success path: combat scene + reward distribution
+   - Failure path: permanent enemy flag + meter penalties
 
-4. 🎨 **Send ChatGPT prompts for Acts 2-4 content**
-   - CHATGPT_MASTER_PROMPT_ALL_IN_ONE.md is ready to send
-   - Generates: Acts 2-4 missions, faction lore, LT profiles, enemies, rival profiles
-
-**AFTER RIVAL SYSTEM:**
-5. **Scene system** — Text-based intermissions and Act 3/4 endings
-6. **Hook system** — Journal entries → branching consequences + narrative flags
-7. **Lieutenant XP/leveling** — Distribute XP to all active LTs via MissionManager
-8. **Skill trees** — Unlock abilities per LT tier (tier-1, tier-2 progression)
-9. **Interactive Mission Map** — Clickable arena city map with safe zone overlays
+**LATER (Phase 12e onwards):**
+4. **Scene system** — Text-based intermissions and Act 3/4 endings
+5. **Hook system** — Journal entries → branching consequences
+6. **Lieutenant XP/leveling** — Distribute XP to all active LTs
+7. **Skill trees** — Unlock abilities per LT tier
+8. **Interactive Mission Map** — Clickable arena city map with safe zones
+9. **Act 2-4 rivals** — Additional rivals for expanded campaign
 
 ---
 
