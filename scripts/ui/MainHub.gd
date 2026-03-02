@@ -2219,11 +2219,169 @@ func _on_gear_cycle(slot: String, slot_gear: Array, direction: int) -> void:
 # ── 3D  INTEL ────────────────────────────────────────────────────────────────
 
 func _build_intel_content() -> void:
+	# RIVALS INVESTIGATION SECTION
+	var investigation_header := Label.new()
+	investigation_header.text = "INVESTIGATION DOSSIER"
+	UITheme.style_header(investigation_header, UITheme.FONT_SECONDARY, true)
+	content_inner.add_child(investigation_header)
+
+	var act_number = GameState.act
+	var rivals_for_act = RivalManager.get_rivals_for_act(act_number)
+
+	if rivals_for_act.is_empty():
+		var no_rivals_lbl := Label.new()
+		no_rivals_lbl.text = "No rivals detected in this region."
+		no_rivals_lbl.add_theme_color_override("font_color", UITheme.CLR_MUTED)
+		content_inner.add_child(no_rivals_lbl)
+	else:
+		for rival_id in rivals_for_act:
+			var rival_profile = RivalManager.get_rival_profile(rival_id)
+			content_inner.add_child(_make_rival_entry(rival_id, rival_profile))
+			content_inner.add_child(_divider_line(0.35))
+			content_inner.add_child(_gap(4))
+
+	content_inner.add_child(_divider_line(0.5))
+	content_inner.add_child(_gap(8))
+
+	# NPC RELATIONSHIPS SECTION
+	var npc_header := Label.new()
+	npc_header.text = "NPC RELATIONSHIPS"
+	UITheme.style_header(npc_header, UITheme.FONT_SECONDARY, true)
+	content_inner.add_child(npc_header)
+
 	for npc_id in GameState.npc_relationships:
 		var rel := GameState.npc_relationships.get(str(npc_id), {}) as Dictionary
 		content_inner.add_child(_make_intel_entry(str(npc_id), rel))
 		content_inner.add_child(_divider_line(0.35))
 		content_inner.add_child(_gap(4))
+
+
+func _make_rival_entry(rival_id: String, profile: Dictionary) -> Control:
+	var container := VBoxContainer.new()
+	container.add_theme_constant_override("separation", 6)
+
+	# Header row: name, title, threat level
+	var header_row := HBoxContainer.new()
+	header_row.add_theme_constant_override("separation", 12)
+	container.add_child(header_row)
+
+	var name_lbl := Label.new()
+	name_lbl.text = profile.get("name", rival_id).to_upper()
+	name_lbl.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	name_lbl.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	name_lbl.add_theme_font_size_override("font_size", UITheme.FONT_SIZE_BODY)
+	name_lbl.add_theme_color_override("font_color", UITheme.CLR_VELLUM)
+	header_row.add_child(name_lbl)
+
+	var title := str(profile.get("title", "Unknown"))
+	var title_lbl := Label.new()
+	title_lbl.text = title
+	title_lbl.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	title_lbl.add_theme_font_size_override("font_size", UITheme.FONT_SIZE_CAPTION)
+	title_lbl.add_theme_color_override("font_color", UITheme.CLR_MUTED)
+	header_row.add_child(title_lbl)
+
+	var threat_level := str(profile.get("threat_level", "unknown")).to_upper()
+	var threat_color := {
+		"LOW": UITheme.CLR_METER_FAVORABLE,
+		"MEDIUM": UITheme.CLR_GOLD,
+		"HIGH": UITheme.CLR_BLOOD,
+	}.get(threat_level, UITheme.CLR_MUTED)
+	header_row.add_child(_make_chip(threat_level, Color(threat_color.r, threat_color.g, threat_color.b, 0.2), threat_color))
+
+	# Confidence bar row
+	var confidence := profile.get("confidence", 0.0)
+	var identified := profile.get("identified", false)
+	var clue_count := profile.get("clue_count", 0)
+	var total_clues := profile.get("total_clues", 0)
+
+	var confidence_row := HBoxContainer.new()
+	confidence_row.add_theme_constant_override("separation", 8)
+	confidence_row.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	container.add_child(confidence_row)
+
+	var confidence_label := Label.new()
+	confidence_label.text = "INVESTIGATION: "
+	confidence_label.add_theme_font_size_override("font_size", UITheme.FONT_SIZE_CAPTION)
+	confidence_label.add_theme_color_override("font_color", UITheme.CLR_MUTED)
+	confidence_row.add_child(confidence_label)
+
+	# Confidence bar with percentage
+	var bar_container := HBoxContainer.new()
+	bar_container.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	confidence_row.add_child(bar_container)
+
+	var confidence_bar := ProgressBar.new()
+	confidence_bar.value = confidence * 100.0
+	confidence_bar.max_value = 100.0
+	confidence_bar.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	confidence_bar.custom_minimum_size = Vector2(150, 12)
+	confidence_bar.add_theme_color_override("fill", _get_confidence_color(confidence))
+	bar_container.add_child(confidence_bar)
+
+	var percentage_lbl := Label.new()
+	percentage_lbl.text = "%d%%" % int(confidence * 100.0)
+	percentage_lbl.add_theme_font_size_override("font_size", UITheme.FONT_SIZE_CAPTION)
+	percentage_lbl.add_theme_color_override("font_color", _get_confidence_color(confidence))
+	percentage_lbl.custom_minimum_size = Vector2(40, 0)
+	percentage_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+	bar_container.add_child(percentage_lbl)
+
+	# Clue count and status
+	var status_row := HBoxContainer.new()
+	status_row.add_theme_constant_override("separation", 8)
+	container.add_child(status_row)
+
+	var clue_lbl := Label.new()
+	clue_lbl.text = "CLUES: %d/%d" % [clue_count, total_clues]
+	clue_lbl.add_theme_font_size_override("font_size", UITheme.FONT_SIZE_CAPTION)
+	clue_lbl.add_theme_color_override("font_color", UITheme.CLR_MUTED)
+	status_row.add_child(clue_lbl)
+
+	status_row.add_child(Control.new())  # Spacer
+
+	if identified:
+		var challenge_btn := Button.new()
+		challenge_btn.text = "CHALLENGE"
+		challenge_btn.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+		challenge_btn.pressed.connect(_on_rival_challenge_pressed.bind(rival_id))
+		status_row.add_child(challenge_btn)
+	else:
+		var investigating_lbl := Label.new()
+		investigating_lbl.text = "INVESTIGATING..."
+		investigating_lbl.add_theme_font_size_override("font_size", UITheme.FONT_SIZE_CAPTION)
+		investigating_lbl.add_theme_color_override("font_color", UITheme.CLR_MUTED)
+		status_row.add_child(investigating_lbl)
+
+	# Wrap in panel for visual grouping
+	var panel := PanelContainer.new()
+	panel.add_theme_stylebox_override("panel", UITheme.panel_base())
+	panel.add_child(container)
+
+	var margin = MarginContainer.new()
+	margin.add_theme_constant_override("margin_left", 8)
+	margin.add_theme_constant_override("margin_right", 8)
+	margin.add_theme_constant_override("margin_top", 8)
+	margin.add_theme_constant_override("margin_bottom", 8)
+	margin.add_child(panel)
+
+	return margin
+
+
+func _get_confidence_color(confidence: float) -> Color:
+	if confidence < 0.35:
+		return UITheme.CLR_MUTED
+	elif confidence < 0.65:
+		return UITheme.CLR_GOLD
+	else:
+		return UITheme.CLR_METER_FAVORABLE
+
+
+func _on_rival_challenge_pressed(rival_id: String) -> void:
+	## Handle rival challenge button press
+	## For now, just show a message - full integration comes later
+	print("Challenge pressed for rival: %s" % rival_id)
+	# TODO: Launch challenge flow (identify → combat → rewards)
 
 
 func _make_intel_entry(npc_id: String, rel: Dictionary) -> Control:
